@@ -1,0 +1,22 @@
+#include "Character.h"
+
+#pragma warning(disable:4996)
+
+Character::Character() {
+
+}
+
+Character::~Character() {
+
+}
+
+Character::Character(const Character& source)
+	:Glyph(source) {
+
+}
+
+Character& Character::operator=(const Character& source) {
+	Glyph::operator=(source);
+
+	return *this;
+}

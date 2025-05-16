@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="notepad250410.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Array.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoWrapCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BackspaceAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Caret.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CaretController.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandFactory.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Composite.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlEndAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlHomeAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlLeftAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlRightAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlShiftTAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlTAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DownArrowAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyRow.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="EndAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="EraseCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Glyph.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GlyphFactory.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="HomeAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="InsertAtCaretCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyActionFactory.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="LeftArrowAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiByteCharacter.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NoteConverter.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NotepadForm.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NoteWrapper.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RightArrowAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Row.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBarController.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectFontCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleByteCharacter.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SizeCalculator.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UpArrowAction.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="WriteAtEndCommand.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AutoWrapCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BackspaceAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Caret.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CaretController.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandFactory.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Composite.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlEndAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlHomeAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlLeftAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlRightAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlShiftTAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlTAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DownArrowAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyRow.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="EndAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="EraseCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Glyph.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GlyphFactory.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="HomeAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="InsertAtCaretCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyActionFactory.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LeftArrowAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiByteCharacter.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NewCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Note.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NoteConverter.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NotepadForm.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NoteWrapper.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RightArrowAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Row.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollBarController.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectFontCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleByteCharacter.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SizeCalculator.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Subject.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UpArrowAction.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="WriteAtEndCommand.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
