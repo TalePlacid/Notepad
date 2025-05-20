@@ -17,6 +17,8 @@
 #include "KeyActionFactory.h"
 #include "NoteWrapper.h"
 #include "ScrollBarController.h"
+#include "ScrollBarActionFactory.h"
+#include "ScrollBarAction.h"
 #include <imm.h>
 #include <fstream>
 #include <sstream>
@@ -37,6 +39,8 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_WM_KILLFOCUS()
 	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_ERASE, OnCommandRequested)
 	ON_WM_KEYDOWN()
+	ON_WM_VSCROLL()
+	ON_WM_HSCROLL()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -127,9 +131,18 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 void NotepadForm::OnPaint() {
 	CPaintDC dc(this);
 	CFont* oldFont = NULL;
-
-	Long height = 0;
+	
+	Long y = 0;
 	Long interval = 20;
+
+	SCROLLINFO verticalScrollInfo = {};
+	verticalScrollInfo.cbSize = sizeof(SCROLLINFO);
+	verticalScrollInfo.fMask = SIF_POS;
+	if (this->GetScrollInfo(SB_VERT, &verticalScrollInfo))
+	{
+		y -= verticalScrollInfo.nPos;
+	}
+	
 
 	if (this->font != NULL)
 	{
@@ -137,11 +150,20 @@ void NotepadForm::OnPaint() {
 		interval = this->sizeCalculator->GetRowHeight();
 	}
 
+	Long x = 0;
+	SCROLLINFO horizontalScrollInfo = {};
+	horizontalScrollInfo.cbSize = sizeof(SCROLLINFO);
+	horizontalScrollInfo.fMask = SIF_POS;
+	if (this->GetScrollInfo(SB_HORZ, &horizontalScrollInfo))
+	{
+		x -= horizontalScrollInfo.nPos;
+	}
+
 	Long i = 0;
 	while (i < this->note->GetLength())
 	{
-		dc.TextOut(0, height, this->note->GetAt(i)->MakeString().c_str());
-		height += interval;
+		dc.TextOut(x, y, this->note->GetAt(i)->MakeString().c_str());
+		y += interval;
 		i++;
 	}
 
@@ -277,6 +299,26 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	{
 		keyAction->Perform();
 		delete keyAction;
+	}
+}
+
+void NotepadForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+	ScrollBarActionFactory scrollBarActionFactory;
+	ScrollBarAction* scrollBarAction = scrollBarActionFactory.Create(this, SB_VERT, nSBCode, nPos);
+	if (scrollBarAction != NULL)
+	{
+		scrollBarAction->Perform();
+		delete scrollBarAction;
+	}
+}
+
+void NotepadForm::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+	ScrollBarActionFactory scrollBarActionFactory;
+	ScrollBarAction* scrollBarAction = scrollBarActionFactory.Create(this, SB_HORZ, nSBCode, nPos);
+	if (scrollBarAction != NULL)
+	{
+		scrollBarAction->Perform();
+		delete scrollBarAction;
 	}
 }
 

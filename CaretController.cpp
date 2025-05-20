@@ -71,8 +71,16 @@ void CaretController::Update(Subject *subject, string interest) {
 		Long rowIndex = ((NotepadForm*)(this->parent))->note->GetCurrent();
 		Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
 
-		Long caretWidth = 1;
 		Long x = 0;
+		SCROLLINFO scrollInfo = {};
+		scrollInfo.cbSize = sizeof(SCROLLINFO);
+		scrollInfo.fMask = SIF_POS;
+		if (GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo))
+		{
+			x -= scrollInfo.nPos;
+		}
+
+		Long caretWidth = 1;
 		Long width = 0;
 		CString character;
 		Long i = 0;
@@ -91,6 +99,13 @@ void CaretController::Update(Subject *subject, string interest) {
 		}
 
 		Long y = (((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight() + ((NotepadForm*)(this->parent))->sizeCalculator->GetIntervalHeight()) * rowIndex;
+
+		scrollInfo.cbSize = sizeof(SCROLLINFO);
+		scrollInfo.fMask = SIF_POS;
+		if (GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo))
+		{
+			y -= scrollInfo.nPos;
+		}
 
 		this->caret = new Caret(this->parent, x, y, caretWidth, ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight());
 	}

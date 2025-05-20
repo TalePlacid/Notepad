@@ -1,16 +1,15 @@
 #ifndef _KEYACTION_H //guard
 #define _KEYACTION_H
+#include "Action.h"
 
 class CWnd;
 
-class KeyAction {
+class KeyAction : public Action {
 public:
 	KeyAction(CWnd* parent);
 	virtual ~KeyAction() = 0;
 
 	virtual void Perform() = 0;
-protected:
-	CWnd* parent;
 };
 
 #endif // !_KEYDOWNACTION_H

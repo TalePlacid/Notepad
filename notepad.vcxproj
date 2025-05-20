@@ -127,6 +127,7 @@
     <ResourceCompile Include="notepad250410.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="AutoWrapCommand.h" />
     <ClInclude Include="BackspaceAction.h" />
@@ -150,6 +151,11 @@
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
     <ClInclude Include="HomeAction.h" />
+    <ClInclude Include="HScrollBarDragAction.h" />
+    <ClInclude Include="HScrollBarLeftClickAction.h" />
+    <ClInclude Include="HScrollBarPageLeftAction.h" />
+    <ClInclude Include="HScrollBarPageRightAction.h" />
+    <ClInclude Include="HScrollBarRightClickAction.h" />
     <ClInclude Include="InsertAtCaretCommand.h" />
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
@@ -166,15 +172,23 @@
     <ClInclude Include="RightArrowAction.h" />
     <ClInclude Include="Row.h" />
     <ClInclude Include="SaveCommand.h" />
+    <ClInclude Include="ScrollBarAction.h" />
+    <ClInclude Include="ScrollBarActionFactory.h" />
     <ClInclude Include="ScrollBarController.h" />
     <ClInclude Include="SelectFontCommand.h" />
     <ClInclude Include="SingleByteCharacter.h" />
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="UpArrowAction.h" />
+    <ClInclude Include="VScrollBarDownClickAction.h" />
+    <ClInclude Include="VScrollBarDragAction.h" />
+    <ClInclude Include="VScrollBarPageDownAction.h" />
+    <ClInclude Include="VScrollBarPageUpAction.h" />
+    <ClInclude Include="VScrollBarUpClickAction.h" />
     <ClInclude Include="WriteAtEndCommand.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Action.cpp" />
     <ClCompile Include="AutoWrapCommand.cpp" />
     <ClCompile Include="BackspaceAction.cpp" />
     <ClCompile Include="Caret.cpp" />
@@ -197,6 +211,11 @@
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
     <ClCompile Include="HomeAction.cpp" />
+    <ClCompile Include="HScrollBarDragAction.cpp" />
+    <ClCompile Include="HScrollBarLeftClickAction.cpp" />
+    <ClCompile Include="HScrollBarPageLeftAction.cpp" />
+    <ClCompile Include="HScrollBarPageRightAction.cpp" />
+    <ClCompile Include="HScrollBarRightClickAction.cpp" />
     <ClCompile Include="InsertAtCaretCommand.cpp" />
     <ClCompile Include="KeyAction.cpp" />
     <ClCompile Include="KeyActionFactory.cpp" />
@@ -212,12 +231,19 @@
     <ClCompile Include="RightArrowAction.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SaveCommand.cpp" />
+    <ClCompile Include="ScrollBarAction.cpp" />
+    <ClCompile Include="ScrollBarActionFactory.cpp" />
     <ClCompile Include="ScrollBarController.cpp" />
     <ClCompile Include="SelectFontCommand.cpp" />
     <ClCompile Include="SingleByteCharacter.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
+    <ClCompile Include="VScrollBarDownClickAction.cpp" />
+    <ClCompile Include="VScrollBarDragAction.cpp" />
+    <ClCompile Include="VScrollBarPageDownAction.cpp" />
+    <ClCompile Include="VScrollBarPageUpAction.cpp" />
+    <ClCompile Include="VScrollBarUpClickAction.cpp" />
     <ClCompile Include="WriteAtEndCommand.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

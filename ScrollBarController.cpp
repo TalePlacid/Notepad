@@ -53,7 +53,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		if (maxWidth > clientAreaWidth)
 		{
 			this->parent->ModifyStyle(0, WS_HSCROLL);
-			SCROLLINFO horizontalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, 0, maxWidth, sizeCalculator->GetRowHeight(), 0, 0 };
+			SCROLLINFO horizontalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, 0, maxWidth, clientAreaWidth, 0, 0 };
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &horizontalScrollInfo, TRUE);
 		}
 		else
@@ -64,7 +64,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		if (totalHeight > clientAreaHeight)
 		{
 			this->parent->ModifyStyle(0, WS_VSCROLL);
-			SCROLLINFO verticalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, 0, totalHeight, 1, 0, 0 };
+			SCROLLINFO verticalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, 0, totalHeight, clientAreaHeight, 0, 0};
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &verticalScrollInfo, TRUE);
 		}
 		else
