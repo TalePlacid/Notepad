@@ -5,3 +5,4 @@ Release/
 *.pdb
 *.ipch
 .vs/
+*.txt

@@ -14,12 +14,10 @@ public:
 
 	Long GetMultiByteWidth() const;
 	Long GetRowHeight() const;
-	Long GetIntervalHeight() const;
 private:
 	Long(*singleByteWidths);
 	Long multiByteWidth;
 	Long rowHeight;
-	Long intervalHeight;
 };
 
 inline Long SizeCalculator::GetMultiByteWidth() const {
@@ -28,10 +26,6 @@ inline Long SizeCalculator::GetMultiByteWidth() const {
 
 inline Long SizeCalculator::GetRowHeight() const {
 	return this->rowHeight;
-}
-
-inline Long SizeCalculator::GetIntervalHeight() const {
-	return this->intervalHeight;
 }
 
 #endif // !_SIZECALCULATOR_H

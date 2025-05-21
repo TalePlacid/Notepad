@@ -34,6 +34,7 @@ protected:
 	Long capacity;
 	Long length;
 	Long current;
+	Long range;
 };
 
 inline Long Composite::GetCapacity() const {

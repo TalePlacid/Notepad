@@ -42,7 +42,7 @@ Caret* CaretController::Create() {
 		caretWidth = width;
 	}
 
-	Long y = (((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight() + ((NotepadForm*)(this->parent))->sizeCalculator->GetIntervalHeight()) * (rowIndex+1);
+	Long y = ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight() * (rowIndex+1);
 
 	this->caret = new Caret(this->parent, x, y, caretWidth, ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight());
 
@@ -98,7 +98,7 @@ void CaretController::Update(Subject *subject, string interest) {
 			caretWidth = width;
 		}
 
-		Long y = (((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight() + ((NotepadForm*)(this->parent))->sizeCalculator->GetIntervalHeight()) * rowIndex;
+		Long y = ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight() * rowIndex;
 
 		scrollInfo.cbSize = sizeof(SCROLLINFO);
 		scrollInfo.fMask = SIF_POS;

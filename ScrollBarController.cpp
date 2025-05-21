@@ -48,7 +48,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			i++;
 		}
 
-		Long totalHeight = (note->GetLength() * sizeCalculator->GetRowHeight()) + ((note->GetLength() - 1) * sizeCalculator->GetIntervalHeight());
+		Long totalHeight = note->GetLength() * sizeCalculator->GetRowHeight();
 
 		if (maxWidth > clientAreaWidth)
 		{

@@ -7,6 +7,7 @@ Composite::Composite(Long capacity)
 	this->capacity = capacity;
 	this->length = 0;
 	this->current = -1;
+	this->range = -1;
 }
 
 Composite::~Composite() {
@@ -32,6 +33,7 @@ Composite::Composite(const Composite& source)
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;
+	this->range = source.range;
 }
 
 Composite& Composite::operator=(const Composite& source) {
@@ -58,6 +60,7 @@ Composite& Composite::operator=(const Composite& source) {
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;
+	this->range = source.range;
 
 	return *this;
 }
