@@ -5,6 +5,8 @@
 
 typedef signed long int Long;
 
+class TextOutVisitor;
+
 class Composite : public Glyph {
 public:
 	Composite(Long capacity = 128);
@@ -24,6 +26,8 @@ public:
 	virtual Long Last();
 	virtual Long Move(Long index);
 
+	virtual void Accept(TextOutVisitor& textOutVisitor);
+
 	virtual Glyph* operator[](Long index);
 
 	virtual Long GetCapacity() const;
@@ -34,7 +38,6 @@ protected:
 	Long capacity;
 	Long length;
 	Long current;
-	Long range;
 };
 
 inline Long Composite::GetCapacity() const {

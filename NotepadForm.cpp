@@ -19,6 +19,7 @@
 #include "ScrollBarController.h"
 #include "ScrollBarActionFactory.h"
 #include "ScrollBarAction.h"
+#include "TextOutVisitor.h"
 #include <imm.h>
 #include <fstream>
 #include <sstream>
@@ -79,7 +80,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->isCompositing = FALSE;
 	this->menu.LoadMenu(MAKEINTRESOURCE(IDR_MENU_MAIN));
 	this->SetMenu(&(this->menu));
-	
+
 	this->Notify("CreateScrollBars");
 
 	return 0;
@@ -130,49 +131,10 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 
 void NotepadForm::OnPaint() {
 	CPaintDC dc(this);
-	CFont* oldFont = NULL;
-	
-	Long y = 0;
-	Long interval = 20;
+	TextOutVisitor textOutVisitor(this, &dc);
+	this->note->Accept(textOutVisitor);
 
-	SCROLLINFO verticalScrollInfo = {};
-	verticalScrollInfo.cbSize = sizeof(SCROLLINFO);
-	verticalScrollInfo.fMask = SIF_POS;
-	if (this->GetScrollInfo(SB_VERT, &verticalScrollInfo))
-	{
-		y -= verticalScrollInfo.nPos;
-	}
-	
-
-	if (this->font != NULL)
-	{
-		oldFont = dc.SelectObject(this->font->GetCFont());
-		interval = this->sizeCalculator->GetRowHeight();
-	}
-
-	Long x = 0;
-	SCROLLINFO horizontalScrollInfo = {};
-	horizontalScrollInfo.cbSize = sizeof(SCROLLINFO);
-	horizontalScrollInfo.fMask = SIF_POS;
-	if (this->GetScrollInfo(SB_HORZ, &horizontalScrollInfo))
-	{
-		x -= horizontalScrollInfo.nPos;
-	}
-
-	Long i = 0;
-	while (i < this->note->GetLength())
-	{
-		dc.TextOut(x, y, this->note->GetAt(i)->MakeString().c_str());
-		y += interval;
-		i++;
-	}
-
-	if (this->font != NULL)
-	{
-		dc.SelectObject(oldFont);
-	}
-
-	this->Notify("caretChanged");
+	this->Notify("ChangeCaret");
 }
 
 LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
@@ -269,7 +231,7 @@ LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnSetFocus(CWnd* pOldWnd) {
-	this->Notify("caretChanged");
+	this->Notify("ChangeCaret");
 }
 
 void NotepadForm::OnKillFocus(CWnd* pNewWnd) {

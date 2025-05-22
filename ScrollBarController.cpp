@@ -13,6 +13,7 @@ ScrollBarController::ScrollBarController(CWnd* parent) {
 ScrollBarController::~ScrollBarController() {
 
 }
+
 void ScrollBarController::Update(Subject* subject, string interest) {
 	if (interest == "CreateScrollBars")
 	{
@@ -71,5 +72,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		{
 			this->parent->ModifyStyle(WS_VSCROLL, 0);
 		}
+
+		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
 }

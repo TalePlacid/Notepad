@@ -63,6 +63,7 @@ void SelectFontCommand::Execute() {
 
 		((NotepadForm*)(this->parent))->sizeCalculator = new SizeCalculator(this->parent);
 
+		((NotepadForm*)(this->parent))->Notify("CreateScrollBars");
 		this->parent->Invalidate();
 	}
 }

@@ -179,6 +179,7 @@
     <ClInclude Include="SingleByteCharacter.h" />
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="Subject.h" />
+    <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="UpArrowAction.h" />
     <ClInclude Include="VScrollBarDownClickAction.h" />
     <ClInclude Include="VScrollBarDragAction.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="SingleByteCharacter.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="TextOutVisitor.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
     <ClCompile Include="VScrollBarDownClickAction.cpp" />
     <ClCompile Include="VScrollBarDragAction.cpp" />

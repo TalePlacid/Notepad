@@ -6,6 +6,7 @@
 typedef signed long int Long;
 
 class Glyph;
+class TextOutVisitor;
 
 class Row : public Composite {
 public:
@@ -16,6 +17,7 @@ public:
 
 	virtual string MakeString();
 	virtual Glyph* Clone();
+	virtual void Accept(TextOutVisitor& textOutVisitor);
 };
 
 #endif // !_ROW_H

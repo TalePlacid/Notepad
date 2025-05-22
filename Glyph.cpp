@@ -3,7 +3,7 @@
 #pragma warning(disable:4996)
 
 Glyph::Glyph() {
-
+	this->isSelected = false;
 }
 
 Glyph::~Glyph() {
@@ -11,10 +11,12 @@ Glyph::~Glyph() {
 }
 
 Glyph::Glyph(const Glyph& source) {
-
+	this->isSelected = source.isSelected;
 }
 
 Glyph& Glyph::operator=(const Glyph& source) {
+	this->isSelected = source.isSelected;
+
 	return *this;
 }
 
@@ -58,22 +60,14 @@ Long Glyph::Move(Long index) {
 	return -1;
 }
 
-Glyph* Glyph::operator[](Long index) {
-	return 0;
-}
-
-Long Glyph::GetCapacity() const {
-	return 0;
-}
-
-Long Glyph::GetLength() const {
-	return 0;
-}
-
-Long Glyph::GetCurrent() const {
-	return -1;
-}
-
 bool Glyph::IsDummyRow() {
 	return false;
+}
+
+void Glyph::Accept(TextOutVisitor& textOutVisitor) {
+
+}
+
+Glyph* Glyph::operator[](Long index) {
+	return 0;
 }

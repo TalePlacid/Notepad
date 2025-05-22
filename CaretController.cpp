@@ -60,7 +60,7 @@ Caret* CaretController::Destroy() {
 }
 
 void CaretController::Update(Subject *subject, string interest) {
-	if (interest == "caretChanged")
+	if (interest == "ChangeCaret")
 	{
 		if (this->caret != NULL)
 		{

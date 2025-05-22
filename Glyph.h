@@ -5,6 +5,8 @@ using namespace std;
 
 typedef signed long int Long;
 
+class TextOutVisitor;
+
 class Glyph {
 public:
 	Glyph();
@@ -25,12 +27,32 @@ public:
 	virtual Long Last();
 	virtual Long Move(Long index);
 	virtual bool IsDummyRow();
+	virtual void Accept(TextOutVisitor& textOutVisitor);
 
 	virtual Glyph* operator[](Long index);
 
 	virtual Long GetCapacity() const;
 	virtual Long GetLength() const;
 	virtual Long GetCurrent() const;
+	virtual bool IsSelected() const;
+protected:
+	bool isSelected;
 };
+
+inline Long Glyph::GetCapacity() const {
+	return 0;
+}
+
+inline Long Glyph::GetLength() const {
+	return 0;
+}
+
+inline Long Glyph::GetCurrent() const {
+	return -1;
+}
+
+inline bool Glyph::IsSelected() const {
+	return this->isSelected;
+}
 
 #endif // !_GLYPH_H

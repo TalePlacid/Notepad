@@ -1,4 +1,5 @@
 #include "Row.h"
+#include "TextOutVisitor.h"
 
 #pragma warning(disable:4996)
 
@@ -35,6 +36,11 @@ string Row::MakeString() {
 
 Glyph* Row::Clone() {
 	return new Row(*this);
+}
+
+void Row::Accept(TextOutVisitor& textOutVisitor) {
+	Composite::Accept(textOutVisitor);
+	textOutVisitor.VisitRow(this);
 }
 
 #if 0
