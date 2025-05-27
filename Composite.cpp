@@ -165,13 +165,25 @@ Long Composite::Move(Long index) {
 	return this->current;
 }
 
-void Composite::Accept(TextOutVisitor& textOutvisitor) {
+void Composite::Accept(Visitor& visitor) {
 	Long i = 0;
 	while (i < this->length)
 	{
-		this->glyphs[i]->Accept(textOutvisitor);
+		this->glyphs[i]->Accept(visitor);
 		i++;
 	}
+}
+
+bool Composite::Select(bool isSelecting) {
+	Long i = 0;
+	while (i < this->length)
+	{
+		this->glyphs[i]->Select(isSelecting);
+		i++;
+	}
+	this->isSelected = isSelecting;
+
+	return this->isSelected;
 }
 
 Glyph* Composite::operator[](Long index) {

@@ -64,8 +64,14 @@ bool Glyph::IsDummyRow() {
 	return false;
 }
 
-void Glyph::Accept(TextOutVisitor& textOutVisitor) {
+void Glyph::Accept(Visitor& visitor) {
 
+}
+
+bool Glyph::Select(bool isSelecting) {
+	this->isSelected = isSelecting;
+
+	return this->isSelected;
 }
 
 Glyph* Glyph::operator[](Long index) {

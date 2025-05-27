@@ -132,6 +132,7 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 void NotepadForm::OnPaint() {
 	CPaintDC dc(this);
 	TextOutVisitor textOutVisitor(this, &dc);
+
 	this->note->Accept(textOutVisitor);
 
 	this->Notify("ChangeCaret");

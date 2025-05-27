@@ -38,9 +38,9 @@ Glyph* Row::Clone() {
 	return new Row(*this);
 }
 
-void Row::Accept(TextOutVisitor& textOutVisitor) {
-	Composite::Accept(textOutVisitor);
-	textOutVisitor.VisitRow(this);
+void Row::Accept(Visitor& visitor) {
+	Composite::Accept(visitor);
+	visitor.VisitRow(this);
 }
 
 #if 0

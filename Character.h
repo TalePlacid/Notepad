@@ -2,7 +2,7 @@
 #define _CHARACTER_H
 #include "Glyph.h"
 
-class TextOutVisitor;
+class Visitor;
 
 class Character : public Glyph {
 public:
@@ -11,7 +11,7 @@ public:
 	Character(const Character& source);
 	Character& operator=(const Character& source);
 
-	virtual void Accept(TextOutVisitor& textOutVisitor);
+	virtual void Accept(Visitor& visitor);
 };
 
 #endif // !_CHARACTER_H

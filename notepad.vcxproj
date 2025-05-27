@@ -176,11 +176,13 @@
     <ClInclude Include="ScrollBarActionFactory.h" />
     <ClInclude Include="ScrollBarController.h" />
     <ClInclude Include="SelectFontCommand.h" />
+    <ClInclude Include="SelectionVisitor.h" />
     <ClInclude Include="SingleByteCharacter.h" />
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="UpArrowAction.h" />
+    <ClInclude Include="Visitor.h" />
     <ClInclude Include="VScrollBarDownClickAction.h" />
     <ClInclude Include="VScrollBarDragAction.h" />
     <ClInclude Include="VScrollBarPageDownAction.h" />
@@ -236,11 +238,13 @@
     <ClCompile Include="ScrollBarActionFactory.cpp" />
     <ClCompile Include="ScrollBarController.cpp" />
     <ClCompile Include="SelectFontCommand.cpp" />
+    <ClCompile Include="SelectionVisitor.cpp" />
     <ClCompile Include="SingleByteCharacter.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
+    <ClCompile Include="Visitor.cpp" />
     <ClCompile Include="VScrollBarDownClickAction.cpp" />
     <ClCompile Include="VScrollBarDragAction.cpp" />
     <ClCompile Include="VScrollBarPageDownAction.cpp" />

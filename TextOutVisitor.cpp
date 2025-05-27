@@ -3,12 +3,14 @@
 #include "SizeCalculator.h"
 #include "Font.h"
 #include "Glyph.h"
+#include "SelectionVisitor.h"
 
 #pragma warning(disable:4996)
 
-TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc) {
-	this->parent = parent;
+TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
+	:Visitor(parent){
 	this->dc = dc;
+	this->selectionVisitor = new SelectionVisitor(parent, dc);
 	this->initialX = 0;
 	this->initialY = 0;
 
@@ -32,7 +34,10 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc) {
 }
 
 TextOutVisitor::~TextOutVisitor() {
-
+	if (this->selectionVisitor != NULL)
+	{
+		delete this->selectionVisitor;
+	}
 }
 
 void TextOutVisitor::VisitRow(Glyph* row) {
@@ -49,13 +54,7 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 		oldFont = dc->SelectObject(notepadForm->font->GetCFont());
 	}
 
-	COLORREF defaultBkColor;
-	COLORREF defaultTextColor;
-	if (character->IsSelected())
-	{
-		defaultBkColor = dc->SetBkColor(RGB(0, 0, 255));
-		defaultTextColor = dc->SetTextColor(RGB(255, 255, 255));
-	}
+	this->selectionVisitor->VisitCharacter(character);
 
 	CString content(character->MakeString().c_str());
 	dc->TextOut(this->x, this->y, content);
@@ -64,11 +63,5 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 	if (notepadForm->font != NULL)
 	{
 		dc->SelectObject(oldFont);
-	}
-
-	if (character->IsSelected())
-	{
-		dc->SetBkColor(defaultBkColor);
-		dc->SetTextColor(defaultTextColor);
 	}
 }

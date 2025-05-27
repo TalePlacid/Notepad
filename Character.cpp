@@ -22,6 +22,6 @@ Character& Character::operator=(const Character& source) {
 	return *this;
 }
 
-void Character::Accept(TextOutVisitor& textOutVisitor) {
-	textOutVisitor.VisitCharacter(this);
+void Character::Accept(Visitor& visitor) {
+	visitor.VisitCharacter(this);
 }

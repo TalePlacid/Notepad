@@ -1,13 +1,14 @@
 #ifndef _TEXTOUTVISITOR_H //guard
 #define _TEXTOUTVISITOR_H
 #include <afxwin.h>
+#include "Visitor.h"
 
 typedef signed long int Long;
 
 class CWnd;
 class Glyph;
 
-class TextOutVisitor {
+class TextOutVisitor : public Visitor {
 public:
 	TextOutVisitor(CWnd* parent, CDC* dc);
 	virtual ~TextOutVisitor();
@@ -15,8 +16,8 @@ public:
 	virtual void VisitRow(Glyph* row);
 	virtual void VisitCharacter(Glyph* character);
 private:
-	CWnd* parent;
 	CDC* dc;
+	Visitor* selectionVisitor;
 	Long initialX;
 	Long initialY;
 	Long x;

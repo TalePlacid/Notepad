@@ -5,7 +5,7 @@ using namespace std;
 
 typedef signed long int Long;
 
-class TextOutVisitor;
+class Visitor;
 
 class Glyph {
 public:
@@ -27,7 +27,8 @@ public:
 	virtual Long Last();
 	virtual Long Move(Long index);
 	virtual bool IsDummyRow();
-	virtual void Accept(TextOutVisitor& textOutVisitor);
+	virtual void Accept(Visitor& visitor);
+	virtual bool Select(bool isSelecting);
 
 	virtual Glyph* operator[](Long index);
 
