@@ -27,6 +27,7 @@ public:
 	virtual Long Last();
 	virtual Long Move(Long index);
 	virtual bool IsDummyRow();
+	virtual bool IsWordCharacter();
 	virtual void Accept(Visitor& visitor);
 	virtual bool Select(bool isSelecting);
 

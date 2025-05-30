@@ -181,9 +181,8 @@ bool Composite::Select(bool isSelecting) {
 		this->glyphs[i]->Select(isSelecting);
 		i++;
 	}
-	this->isSelected = isSelecting;
 
-	return this->isSelected;
+	return isSelecting;
 }
 
 Glyph* Composite::operator[](Long index) {

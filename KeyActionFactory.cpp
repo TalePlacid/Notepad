@@ -10,6 +10,16 @@
 #include "CtrlHomeAction.h"
 #include "CtrlEndAction.h"
 #include "BackspaceAction.h"
+#include "ShiftLeftAction.h"
+#include "ShiftRightAction.h"
+#include "ShiftUpAction.h"
+#include "ShiftDownAction.h"
+#include "ShiftHomeAction.h"
+#include "ShiftEndAction.h"
+#include "CtrlShiftLeftAction.h"
+#include "CtrlShiftHomeAction.h"
+#include "CtrlShiftEndAction.h"
+#include "CtrlShiftRightAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
 
@@ -25,12 +35,24 @@ KeyActionFactory::~KeyActionFactory() {
 
 KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 	KeyAction* keyAction = NULL;
+
+	int onCtrlKey = GetKeyState(VK_CONTROL) & 0x8000;
+	int onShiftKey = GetKeyState(VK_SHIFT) & 0x8000;
+
 	switch (nChar)
 	{
 	case VK_LEFT:
-		if (GetKeyState(VK_CONTROL) & 0x8000)
+		if (onCtrlKey && onShiftKey)
+		{
+			keyAction = new CtrlShiftLeftAction(parent);
+		}
+		else if	(onCtrlKey)
 		{
 			keyAction = new CtrlLeftAction(parent);
+		}
+		else if (onShiftKey)
+		{
+			keyAction = new ShiftLeftAction(parent);
 		}
 		else
 		{
@@ -38,9 +60,17 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		}
 		break;
 	case VK_RIGHT:
-		if (GetKeyState(VK_CONTROL) & 0x8000)
+		if (onCtrlKey && onShiftKey)
+		{
+			keyAction = new CtrlShiftRightAction(parent);
+		}
+		else if (onCtrlKey)
 		{
 			keyAction = new CtrlRightAction(parent);
+		}
+		else if (onShiftKey)
+		{
+			keyAction = new ShiftRightAction(parent);
 		}
 		else
 		{
@@ -48,15 +78,37 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		}
 		break;
 	case VK_UP:
-		keyAction = new UpArrowAction(parent);
+		if (onShiftKey)
+		{
+			keyAction = new ShiftUpAction(parent);
+		}
+		else
+		{
+			keyAction = new UpArrowAction(parent);
+		}
 		break;
 	case VK_DOWN:
-		keyAction = new DownArrowAction(parent);
+		if (onShiftKey)
+		{
+			keyAction = new ShiftDownAction(parent);
+		}
+		else
+		{
+			keyAction = new DownArrowAction(parent);
+		}
 		break;
 	case VK_HOME:
-		if (GetKeyState(VK_CONTROL) & 0x8000)
+		if (onCtrlKey && onShiftKey)
+		{
+			keyAction = new CtrlShiftHomeAction(parent);
+		}
+		else if(onCtrlKey)
 		{
 			keyAction = new CtrlHomeAction(parent);
+		}
+		else if (onShiftKey)
+		{
+			keyAction = new ShiftHomeAction(parent);
 		}
 		else
 		{
@@ -64,9 +116,17 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		}
 		break;
 	case VK_END:
-		if (GetKeyState(VK_CONTROL) & 0x8000)
+		if (onCtrlKey && onShiftKey)
+		{
+			keyAction = new CtrlShiftEndAction(parent);
+		}
+		else if (onCtrlKey)
 		{
 			keyAction = new CtrlEndAction(parent);
+		}
+		else if (onShiftKey)
+		{
+			keyAction = new ShiftEndAction(parent);
 		}
 		else
 		{
@@ -77,16 +137,13 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		keyAction = new BackspaceAction(parent);
 		break;
 	case 'T':
-		if (GetKeyState(VK_CONTROL) & 0x8000)
+		if (onCtrlKey && onShiftKey)
 		{
-			if (GetKeyState(VK_SHIFT) &0x8000)
-			{
-				keyAction = new CtrlShiftTAction(parent);
-			}
-			else
-			{
-				keyAction = new CtrlTAction(parent);
-			}
+			keyAction = new CtrlShiftTAction(parent);
+		}
+		else if (onCtrlKey)
+		{
+			keyAction = new CtrlTAction(parent);
 		}
 		break;
 	default:

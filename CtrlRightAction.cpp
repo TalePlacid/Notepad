@@ -32,20 +32,18 @@ void CtrlRightAction::Perform() {
 	else
 	{
 		Glyph* character = row->GetAt(i);
-		CString content = CString(character->MakeString().c_str());
-		WordState state = GetState(content);
+		BOOL isWordCharacter = character->IsWordCharacter();
 		BOOL inBoundary = FALSE;
-		if (state == BOUNDARY)
+		if (!isWordCharacter)
 		{
 			inBoundary = TRUE;
 		}
 
-		while (i < row->GetLength() && (!inBoundary || state != VOCABLE))
+		while (i < row->GetLength() && (!inBoundary || !isWordCharacter))
 		{
 			character = row->GetAt(i);
-			content = CString(character->MakeString().c_str());
-			state = GetState(content);
-			if (state == BOUNDARY)
+			isWordCharacter = character->IsWordCharacter();
+			if (!isWordCharacter)
 			{
 				inBoundary = TRUE;
 			}

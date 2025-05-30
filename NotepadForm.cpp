@@ -370,24 +370,3 @@ BOOL NotepadApp::InitInstance() {
 }
 
 NotepadApp notepadApp;
-
-WordState GetState(CString content) {
-	WordState wordState;
-
-	if (content[0] & 0x80)
-	{
-		wordState = VOCABLE;
-	}
-	else if ((content[0] >= 97 && content[0] <= 122) || (content[0] >= 65 && content[0] <= 90)
-		|| (content[0] >= 48 && content[0] <= 57) || (content[0] == '_') || (content[0] == '\'') || (content[0] == '\"'))
-		// 알파벳 소문자, 대문자, 숫자
-	{
-		wordState = VOCABLE;
-	}
-	else
-	{
-		wordState = BOUNDARY;
-	}
-
-	return wordState;
-}

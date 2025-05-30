@@ -14,6 +14,7 @@ public:
 
 	virtual Glyph* Clone();
 	virtual string MakeString();
+	virtual bool IsWordCharacter();
 
 	bool IsEqual(const SingleByteCharacter& other);
 	bool IsEqual(const char content);

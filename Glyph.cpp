@@ -64,6 +64,10 @@ bool Glyph::IsDummyRow() {
 	return false;
 }
 
+bool Glyph::IsWordCharacter() {
+	return false;
+}
+
 void Glyph::Accept(Visitor& visitor) {
 
 }

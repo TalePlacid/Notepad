@@ -1,7 +1,7 @@
 #include <afxwin.h>
 #include "CtrlTAction.h"
 #include "NotepadForm.h"
-#include "NoteWrapper.h"
+#include "Glyph.h"
 
 #pragma warning(disable:4996)
 
@@ -15,9 +15,7 @@ CtrlTAction::~CtrlTAction() {
 }
 
 void CtrlTAction::Perform() {
-	NoteWrapper noteWrapper(this->parent);
-
-	noteWrapper.InsertDummyRows();
+	((NotepadForm*)(this->parent))->note->Select(FALSE);
 
 	this->parent->Invalidate();
 }

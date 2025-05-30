@@ -3,8 +3,6 @@
 #include <afxwin.h>
 #include "Subject.h"
 
-enum WordState{VOCABLE = 0, BOUNDARY = 1};
-
 class Glyph;
 class CaretController;
 class Font;
@@ -57,7 +55,5 @@ inline BOOL NotepadForm::IsCompositing() const {
 inline CString NotepadForm::GetPath() const {
 	return const_cast<CString&>(this->path);
 }
-
-WordState GetState(CString content);
 
 #endif // !_NOTEPADFORM_H

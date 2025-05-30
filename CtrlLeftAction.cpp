@@ -32,20 +32,20 @@ void CtrlLeftAction::Perform() {
 	else
 	{
 		Glyph* character = row->GetAt(i);
-		WordState state = GetState(CString(character->MakeString().c_str()));
-		BOOL inVocable = FALSE;
-		if (state == VOCABLE)
+		BOOL isWordCharacter = character->IsWordCharacter();
+		BOOL inWord = FALSE;
+		if (isWordCharacter)
 		{
-			inVocable = TRUE;
+			inWord = TRUE;
 		}
 
-		while (i >= 0 && (!inVocable || state != BOUNDARY))
+		while (i >= 0 && (!inWord || isWordCharacter))
 		{
 			character = row->GetAt(i);
-			state = GetState(CString(character->MakeString().c_str()));
-			if (state == VOCABLE)
+			isWordCharacter = character->IsWordCharacter();
+			if (isWordCharacter)
 			{
-				inVocable = TRUE;
+				inWord = TRUE;
 			}
 
 			row->Previous();

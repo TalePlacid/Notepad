@@ -47,6 +47,19 @@ string SingleByteCharacter::MakeString() {
 	return str;
 }
 
+bool SingleByteCharacter::IsWordCharacter() {
+	bool ret = false;
+
+	if ((this->content >= 97 && this->content <= 122) || (this->content >= 65 && this->content <= 90)
+		|| (this->content >= 48 && this->content <= 57) || (this->content == '_') || 
+		(this->content == '\'') || (this->content == '\"')) // 알파벳 소문자, 대문자, 숫자
+	{
+		ret = true;
+	}
+
+	return ret;
+}
+
 bool SingleByteCharacter::IsEqual(const SingleByteCharacter& other) {
 	bool ret = false;
 
