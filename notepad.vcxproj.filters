@@ -236,6 +236,15 @@
     <ClInclude Include="CtrlShiftRightAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="MakeSelectedStringVisitor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipboardController.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlCAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -446,6 +455,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CtrlShiftRightAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MakeSelectedStringVisitor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipboardController.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlCAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

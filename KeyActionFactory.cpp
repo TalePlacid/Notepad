@@ -20,6 +20,7 @@
 #include "CtrlShiftHomeAction.h"
 #include "CtrlShiftEndAction.h"
 #include "CtrlShiftRightAction.h"
+#include "CtrlCAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
 
@@ -144,6 +145,12 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		else if (onCtrlKey)
 		{
 			keyAction = new CtrlTAction(parent);
+		}
+		break;
+	case 'C':
+		if (onCtrlKey)
+		{
+			keyAction = new CtrlCAction(parent);
 		}
 		break;
 	default:

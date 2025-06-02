@@ -20,6 +20,7 @@
 #include "ScrollBarActionFactory.h"
 #include "ScrollBarAction.h"
 #include "TextOutVisitor.h"
+#include "ClipboardController.h"
 #include <imm.h>
 #include <fstream>
 #include <sstream>
@@ -53,6 +54,7 @@ NotepadForm::NotepadForm() {
 	this->sizeCalculator = NULL;
 	this->caretController = NULL;
 	this->scrollBarController = NULL;
+	this->clipboardController = NULL;
 
 	TCHAR buffer[256];
 	GetCurrentDirectory(256, buffer);
@@ -61,7 +63,30 @@ NotepadForm::NotepadForm() {
 }
 
 NotepadForm::~NotepadForm() {
+	if (this->note != NULL)
+	{
+		delete this->note;
+	}
 
+	if (this->sizeCalculator != NULL)
+	{
+		delete this->sizeCalculator;
+	}
+
+	if (this->caretController != NULL)
+	{
+		delete this->caretController;
+	}
+
+	if (this->scrollBarController != NULL)
+	{
+		delete this->scrollBarController;
+	}
+
+	if (this->clipboardController != NULL)
+	{
+		delete this->clipboardController;
+	}
 }
 
 int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
@@ -76,6 +101,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	
 	this->scrollBarController = new ScrollBarController(this);
 	this->Register(this->scrollBarController);
+
+	this->clipboardController = new ClipboardController(this);
 
 	this->isCompositing = FALSE;
 	this->menu.LoadMenu(MAKEINTRESOURCE(IDR_MENU_MAIN));

@@ -134,9 +134,11 @@
     <ClInclude Include="Caret.h" />
     <ClInclude Include="CaretController.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="ClipboardController.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandFactory.h" />
     <ClInclude Include="Composite.h" />
+    <ClInclude Include="CtrlCAction.h" />
     <ClInclude Include="CtrlEndAction.h" />
     <ClInclude Include="CtrlHomeAction.h" />
     <ClInclude Include="CtrlLeftAction.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
+    <ClInclude Include="MakeSelectedStringVisitor.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="NewCommand.h" />
     <ClInclude Include="Note.h" />
@@ -207,9 +210,11 @@
     <ClCompile Include="Caret.cpp" />
     <ClCompile Include="CaretController.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="ClipboardController.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandFactory.cpp" />
     <ClCompile Include="Composite.cpp" />
+    <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
     <ClCompile Include="CtrlHomeAction.cpp" />
     <ClCompile Include="CtrlLeftAction.cpp" />
@@ -237,6 +242,7 @@
     <ClCompile Include="KeyAction.cpp" />
     <ClCompile Include="KeyActionFactory.cpp" />
     <ClCompile Include="LeftArrowAction.cpp" />
+    <ClCompile Include="MakeSelectedStringVisitor.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />

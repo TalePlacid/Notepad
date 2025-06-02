@@ -8,6 +8,7 @@ class CaretController;
 class Font;
 class SizeCalculator;
 class ScrollBarController;
+class ClipboardController;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
@@ -23,6 +24,7 @@ public:
 	Font* font;
 	CMenu menu;
 	ScrollBarController* scrollBarController;
+	ClipboardController* clipboardController;
 public:
 	BOOL IsCompositing() const;
 	CString GetPath() const;
