@@ -19,5 +19,6 @@ void HomeAction::Perform() {
 	Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
 	row->First();
 
+	((NotepadForm*)(this->parent))->Notify("Unselect");
 	this->parent->Invalidate();
 }

@@ -32,5 +32,6 @@ void RightArrowAction::Perform() {
 		}
 	}
 
+	((NotepadForm*)(this->parent))->Notify("Unselect");
 	this->parent->Invalidate();
 }

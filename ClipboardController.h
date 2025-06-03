@@ -8,7 +8,8 @@ public:
 	~ClipboardController();
 
 	BOOL Copy();
-	
+	BOOL Paste();
+
 	CString& GetContent() const;
 private:
 	CWnd* parent;

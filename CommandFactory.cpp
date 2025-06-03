@@ -6,6 +6,7 @@
 #include "NewCommand.h"
 #include "EraseCommand.h"
 #include "AutoWrapCommand.h"
+#include "PasteCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -42,6 +43,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID) {
 		break;
 	case ID_COMMAND_ERASE:
 		command = new EraseCommand(parent);
+		break;
+	case ID_COMMAND_PASTE:
+		command = new PasteCommand(parent);
 		break;
 	default:
 		break;

@@ -49,3 +49,17 @@ BOOL ClipboardController::Copy() {
 
 	return isOpened;
 }
+
+BOOL ClipboardController::Paste() {
+	BOOL isOpened = OpenClipboard(NULL);
+	if (isOpened)
+	{
+		HANDLE hMem = GetClipboardData(CF_TEXT);
+		LPVOID lpMem = GlobalLock((HGLOBAL)hMem);
+		this->content = CString((LPCTSTR)lpMem);
+		GlobalUnlock((HGLOBAL)hMem);
+		CloseClipboard();
+	}
+
+	return isOpened;
+}

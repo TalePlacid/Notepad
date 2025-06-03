@@ -149,6 +149,7 @@
     <ClInclude Include="CtrlShiftRightAction.h" />
     <ClInclude Include="CtrlShiftTAction.h" />
     <ClInclude Include="CtrlTAction.h" />
+    <ClInclude Include="CtrlVAction.h" />
     <ClInclude Include="DownArrowAction.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
+    <ClInclude Include="PasteCommand.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RightArrowAction.h" />
     <ClInclude Include="Row.h" />
@@ -225,6 +227,7 @@
     <ClCompile Include="CtrlShiftRightAction.cpp" />
     <ClCompile Include="CtrlShiftTAction.cpp" />
     <ClCompile Include="CtrlTAction.cpp" />
+    <ClCompile Include="CtrlVAction.cpp" />
     <ClCompile Include="DownArrowAction.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EndAction.cpp" />
@@ -251,6 +254,7 @@
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
+    <ClCompile Include="PasteCommand.cpp" />
     <ClCompile Include="RightArrowAction.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SaveCommand.cpp" />

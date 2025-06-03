@@ -58,5 +58,6 @@ void CtrlLeftAction::Perform() {
 		}
 	}
 
+	((NotepadForm*)(this->parent))->Notify("Unselect");
 	this->parent->Invalidate();
 }

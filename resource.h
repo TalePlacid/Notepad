@@ -37,6 +37,7 @@
 #define ID_MENU_ZOOMDEFAULT             40053
 #define ID_MENU_AUTOWRAP                40054
 #define ID_COMMAND_ERASE                50001
+#define ID_COMMAND_PASTE				50002
 
 // Next default values for new objects
 // 

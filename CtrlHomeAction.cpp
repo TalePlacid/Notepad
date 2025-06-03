@@ -20,5 +20,6 @@ void CtrlHomeAction::Perform() {
 
 	row->First();
 
+	((NotepadForm*)(this->parent))->Notify("Unselect");
 	this->parent->Invalidate();
 }

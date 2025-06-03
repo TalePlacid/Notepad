@@ -96,6 +96,13 @@ Long Note::Previous() {
 	return this->current;
 }
 
+void Note::Update(Subject* subject, string interest) {
+	if (interest == "Unselect")
+	{
+		this->Select(false);
+	}
+}
+
 #if 0
 
 #include <iostream>

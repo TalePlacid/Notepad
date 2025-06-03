@@ -57,6 +57,7 @@ void UpArrowAction::Perform() {
 			previousRow->Last();
 		}
 
+		((NotepadForm*)(this->parent))->Notify("Unselect");
 		this->parent->Invalidate();
 	}
 }

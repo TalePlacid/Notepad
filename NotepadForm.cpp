@@ -21,6 +21,7 @@
 #include "ScrollBarAction.h"
 #include "TextOutVisitor.h"
 #include "ClipboardController.h"
+#include "Observer.h"
 #include <imm.h>
 #include <fstream>
 #include <sstream>
@@ -39,7 +40,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_ERASE, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_PASTE, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -93,6 +94,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CFrameWnd::OnCreate(lpCreateStruct);
 	CString str = this->Load(this->path);
 	this->note = new Note((LPCTSTR)str);
+	this->Register(dynamic_cast<Observer*>(this->note));
+
 	//NoteConverter noteConverter;
 	//this->note = noteConverter.ConvertToNote((LPCTSTR)str);
 	this->sizeCalculator = new SizeCalculator(this);
@@ -139,6 +142,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 
 		this->Notify("CreateScrollBars");
+		this->Notify("Unselect");
 		this->Invalidate();
 	}
 }
@@ -213,6 +217,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 			}
 		}
 
+		this->Notify("Unselect");
 		this->Invalidate();
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
@@ -247,6 +252,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 		delete command;
 	}
 
+	this->Notify("Unselect");
 	this->Invalidate();
 	
 	return DefWindowProc(WM_IME_CHAR, wParam, lParam);
@@ -267,6 +273,8 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 	{
 		this->caretController->Destroy();
 	}
+
+	this->Notify("Unselect");
 }
 
 void NotepadForm::OnCommandRequested(UINT nID) {

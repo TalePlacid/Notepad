@@ -1,6 +1,7 @@
 #include <afxwin.h>
 #include "CtrlShiftTAction.h"
-#include "NoteWrapper.h"
+#include "Glyph.h"
+#include "NotepadForm.h"
 
 #pragma warning(disable:4996)
 
@@ -14,9 +15,7 @@ CtrlShiftTAction::~CtrlShiftTAction() {
 }
 
 void CtrlShiftTAction::Perform() {
-	NoteWrapper noteWrapper(this->parent);
-
-	noteWrapper.DeleteDummyRows();
+	((NotepadForm*)(this->parent))->note->Select(FALSE);
 
 	this->parent->Invalidate();
 }

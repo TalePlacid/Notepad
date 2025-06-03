@@ -21,6 +21,7 @@
 #include "CtrlShiftEndAction.h"
 #include "CtrlShiftRightAction.h"
 #include "CtrlCAction.h"
+#include "CtrlVAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
 
@@ -151,6 +152,12 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		if (onCtrlKey)
 		{
 			keyAction = new CtrlCAction(parent);
+		}
+		break;
+	case 'V':
+		if (onCtrlKey)
+		{
+			keyAction = new CtrlVAction(parent);
 		}
 		break;
 	default:
