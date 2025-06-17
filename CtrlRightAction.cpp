@@ -15,22 +15,14 @@ CtrlRightAction::~CtrlRightAction() {
 }
 
 void CtrlRightAction::Perform() {
-	Long rowIndex = ((NotepadForm*)(this->parent))->note->GetCurrent();
-	Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
 
 	Long columnIndex = row->GetCurrent();
-	Long i = columnIndex + 1;
-	if (i >= row->GetLength())
+	if (columnIndex < row->GetLength())
 	{
-		if (rowIndex < ((NotepadForm*)(this->parent))->note->GetLength() - 1)
-		{
-			rowIndex = ((NotepadForm*)(this->parent))->note->Next();
-			Glyph* nextRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
-			nextRow->First();
-		}
-	}
-	else
-	{
+		Long i = columnIndex;
 		Glyph* character = row->GetAt(i);
 		BOOL isWordCharacter = character->IsWordCharacter();
 		BOOL inBoundary = FALSE;
@@ -56,7 +48,16 @@ void CtrlRightAction::Perform() {
 			row->Previous();
 		}
 	}
+	else
+	{
+		if (rowIndex < note->GetLength() - 1)
+		{
+			rowIndex = note->Next();
+			Glyph* nextRow = note->GetAt(rowIndex);
+			nextRow->First();
+		}
+	}
 
-	((NotepadForm*)(this->parent))->Notify("Unselect");
+	note->Select(false);
 	this->parent->Invalidate();
 }

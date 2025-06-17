@@ -19,6 +19,6 @@ void EndAction::Perform() {
 	Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
 	row->Last();
 
-	((NotepadForm*)(this->parent))->Notify("Unselect");
+	((NotepadForm*)(this->parent))->note->Select(false);
 	this->parent->Invalidate();
 }

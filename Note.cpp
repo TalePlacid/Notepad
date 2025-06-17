@@ -6,9 +6,6 @@
 
 Note::Note(Long capacity)
 	: Composite(capacity){
-	GlyphFactory glyphFactory;
-	char character = '\r';
-	this->Add(glyphFactory.Create(&character));
 }
 
 Note::Note(string str, Long capapcity)
@@ -45,6 +42,10 @@ Note::Note(string str, Long capapcity)
 		}
 		i++;
 	}
+
+	this->First();
+	Glyph *row = this->GetAt(this->current);
+	row->First();
 }
 
 Note::~Note() {
@@ -72,27 +73,31 @@ string Note::MakeString() {
 	Long i = 0;
 	while (i < this->length)
 	{
-		str += this->glyphs[i]->MakeString() + '\n';
+		str += this->glyphs[i]->MakeString() + string("\r\n");
 		i++;
 	}
-	str.pop_back();
+
+	for (Long i = 1; i <= 2; i++)
+	{
+		str.pop_back();
+	}
 
 	return str;
 }
 
-Long Note::First() {
-	this->current = 0;
+Long Note::Next() {
+	(this->current)++;
+	if (this->current > this->length - 1)
+	{
+		this->current = this->length - 1;
+	}
 
 	return this->current;
 }
 
-Long Note::Previous() {
-	(this->current)--;
-	if (this->current < 0)
-	{
-		this->current = 0;
-	}
-	
+Long Note::Last() {
+	this->current = this->length - 1;
+
 	return this->current;
 }
 

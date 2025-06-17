@@ -28,27 +28,31 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 void EraseCommand::Execute() {
 	if (!((NotepadForm*)(this->parent))->IsCompositing())
 	{
-		Long rowIndex = ((NotepadForm*)(this->parent))->note->GetCurrent();
-		Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
 
 		Long columnIndex = row->GetCurrent();
-		if (columnIndex > -1)
+		if (columnIndex > 0)
 		{
-			row->Remove(columnIndex);
+			row->Remove(columnIndex - 1);
 		}
-		else if (rowIndex > 0)
+		else
 		{
-			Glyph* previousRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex - 1);
-			Long previousCurrent = previousRow->Last();
-			Long i = 0;
-			while (i < row->GetLength())
+			if (rowIndex > 0)
 			{
-				previousRow->Add(row->GetAt(i)->Clone());
-				i++;
-			}
+				Glyph* previousRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex - 1);
+				Long previousCurrent = previousRow->Last();
+				Long i = 0;
+				while (i < row->GetLength())
+				{
+					previousRow->Add(row->GetAt(i)->Clone());
+					i++;
+				}
 
-			((NotepadForm*)(this->parent))->note->Remove(rowIndex);
-			previousRow->Move(previousCurrent);
+				((NotepadForm*)(this->parent))->note->Remove(rowIndex);
+				previousRow->Move(previousCurrent);
+			}
 		}
 	}
 }

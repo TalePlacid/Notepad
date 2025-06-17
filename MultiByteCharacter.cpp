@@ -136,6 +136,10 @@ bool MultiByteCharacter::operator!=(const char(*content)) {
 	return ret;
 }
 
+MultiByteCharacter::operator char*() const {
+	return const_cast<char*>(this->content);
+}
+
 #if 0
 
 #include <iostream>

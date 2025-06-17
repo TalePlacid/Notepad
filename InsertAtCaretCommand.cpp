@@ -43,26 +43,27 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 void InsertAtCaretCommand::Execute() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
-	Long rowIndex = ((NotepadForm*)(this->parent))->note->GetCurrent();
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
 
-	Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
+	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
-		row->Remove(columnIndex);
+		row->Remove(columnIndex - 1);
 	}
 
 	if (this->character[0] != '\r')
 	{
-		row->Add(row->GetCurrent() + 1, glyph);
+		row->Add(row->GetCurrent(), glyph);
 	}
 	else
 	{
-		rowIndex = ((NotepadForm*)(this->parent))->note->Add(rowIndex + 1, glyph);
-		Glyph* newRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
+		rowIndex = note->Add(rowIndex + 1, glyph);
+		Glyph* newRow = note->GetAt(rowIndex);
 
-		Long i = columnIndex + 1;
+		Long i = columnIndex;
 		while (i < row->GetLength())
 		{
 			newRow->Add(row->GetAt(i)->Clone());
@@ -70,7 +71,7 @@ void InsertAtCaretCommand::Execute() {
 		}
 
 		i = row->GetLength() - 1;
-		while (i > columnIndex)
+		while (i >= columnIndex)
 		{
 			row->Remove(i);
 			i--;

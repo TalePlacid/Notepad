@@ -34,7 +34,8 @@ void WriteAtEndCommand::Execute() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
 
-	Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(((NotepadForm*)(this->parent))->note->GetCurrent());
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Glyph* row = note->GetAt(note->GetCurrent());
 	
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
@@ -47,7 +48,7 @@ void WriteAtEndCommand::Execute() {
 	}
 	else
 	{
-		((NotepadForm*)(this->parent))->note->Add(glyph);
+		note->Add(glyph);
 	}
 }
 

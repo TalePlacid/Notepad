@@ -148,6 +148,10 @@ bool SingleByteCharacter::operator!=(const char content) {
 	return ret;
 }
 
+SingleByteCharacter::operator char*() const {
+	return const_cast<char*>(&(this->content));
+}
+
 #if 0
 
 #include <iostream>

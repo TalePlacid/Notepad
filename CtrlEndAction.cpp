@@ -20,6 +20,6 @@ void CtrlEndAction::Perform() {
 
 	row->Last();
 
-	((NotepadForm*)(this->parent))->Notify("Unselect");
+	((NotepadForm*)(this->parent))->note->Select(false);
 	this->parent->Invalidate();
 }

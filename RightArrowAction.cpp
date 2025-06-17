@@ -15,23 +15,24 @@ RightArrowAction::~RightArrowAction() {
 }
 
 void RightArrowAction::Perform() {
-	Long rowIndex = ((NotepadForm*)(this->parent))->note->GetCurrent();
-	Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
 
-	if (row->GetCurrent() < row->GetLength() - 1)
+	if (row->GetCurrent() < row->GetLength())
 	{
 		row->Next();
 	}
 	else
 	{
-		if (((NotepadForm*)(this->parent))->note->GetCurrent() < ((NotepadForm*)(this->parent))->note->GetLength() - 1)
+		if (note->GetCurrent() < note->GetLength() - 1)
 		{
-			rowIndex = ((NotepadForm*)(this->parent))->note->Next();
-			Glyph* nextRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
+			rowIndex = note->Next();
+			Glyph* nextRow = note->GetAt(rowIndex);
 			nextRow->First();
 		}
 	}
 
-	((NotepadForm*)(this->parent))->Notify("Unselect");
+	((NotepadForm*)(this->parent))->note->Select(false);
 	this->parent->Invalidate();
 }

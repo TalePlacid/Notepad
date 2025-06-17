@@ -26,6 +26,8 @@ public:
 	bool operator!=(const SingleByteCharacter& other);
 	bool operator!=(const char content);
 
+	virtual operator char*() const;
+
 	char GetContent() const;
 private:
 	char content;

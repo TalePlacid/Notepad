@@ -9,6 +9,7 @@ class Font;
 class SizeCalculator;
 class ScrollBarController;
 class ClipboardController;
+class PagingBuffer;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
@@ -25,6 +26,7 @@ public:
 	CMenu menu;
 	ScrollBarController* scrollBarController;
 	ClipboardController* clipboardController;
+	PagingBuffer* pagingBuffer;
 public:
 	BOOL IsCompositing() const;
 	CString GetPath() const;

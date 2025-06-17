@@ -176,7 +176,9 @@
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
+    <ClInclude Include="PagingBuffer.h" />
     <ClInclude Include="PasteCommand.h" />
+    <ClInclude Include="Position.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RightArrowAction.h" />
     <ClInclude Include="Row.h" />
@@ -254,7 +256,9 @@
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
+    <ClCompile Include="PagingBuffer.cpp" />
     <ClCompile Include="PasteCommand.cpp" />
+    <ClCompile Include="Position.cpp" />
     <ClCompile Include="RightArrowAction.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SaveCommand.cpp" />

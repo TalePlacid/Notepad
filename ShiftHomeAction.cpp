@@ -24,7 +24,7 @@ void ShiftHomeAction::Perform() {
 
 	Glyph* character;
 	Long i = 0;
-	while (i <= columnIndex)
+	while (i < columnIndex)
 	{
 		character = row->GetAt(i);
 		if (character->IsSelected())

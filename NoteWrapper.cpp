@@ -41,8 +41,8 @@ void NoteWrapper::InsertDummyRows() {
 		j = 0;
 		while (j < row->GetLength() && widthSum <= clientAreaWidth)
 		{
-			CString character(row->GetAt(j)->MakeString().c_str());
-			widthSum += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>((LPCTSTR)(character)));
+			TCHAR(*character) = (char*)(*(row->GetAt(j)));
+			widthSum += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>(character));
 			j++;
 		}
 

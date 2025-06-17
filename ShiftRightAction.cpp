@@ -21,12 +21,12 @@ void ShiftRightAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 
 	Glyph* character = NULL;
-	if (columnIndex > -1)
+	if (columnIndex > 0)
 	{
-		character = row->GetAt(columnIndex);
+		character = row->GetAt(columnIndex - 1);
 	}
 
-	if (columnIndex < row->GetLength() - 1)
+	if (columnIndex < row->GetLength())
 	{
 		columnIndex = row->Next();
 	}
@@ -41,9 +41,9 @@ void ShiftRightAction::Perform() {
 	}
 
 	Glyph* movedCharacter = NULL;
-	if (columnIndex > -1)
+	if (columnIndex > 0)
 	{
-		movedCharacter = row->GetAt(columnIndex);
+		movedCharacter = row->GetAt(columnIndex - 1);
 	}
 
 	if ((movedCharacter != NULL) && (character != movedCharacter))

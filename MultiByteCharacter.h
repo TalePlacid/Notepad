@@ -25,6 +25,8 @@ public:
 	bool operator!=(const MultiByteCharacter& other);
 	bool operator!=(const char(*content));
 
+	virtual operator char*() const;
+
 	char* GetContent() const;
 private:
 	char content[2];

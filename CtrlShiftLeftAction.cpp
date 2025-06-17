@@ -20,18 +20,9 @@ void CtrlShiftLeftAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	if (columnIndex < 0)
+	if (columnIndex > 0)
 	{
-		if (rowIndex > 0)
-		{
-			rowIndex = note->Previous();
-			row = note->GetAt(rowIndex);
-			row->Last();
-		}
-	}
-	else
-	{
-		Glyph* character = row->GetAt(columnIndex);
+		Glyph* character = row->GetAt(columnIndex - 1);
 		BOOL isWordCharacter = character->IsWordCharacter();
 		BOOL inWord = FALSE;
 		if (isWordCharacter)
@@ -39,9 +30,9 @@ void CtrlShiftLeftAction::Perform() {
 			inWord = TRUE;
 		}
 
-		while ((columnIndex > -1) && (!inWord || isWordCharacter))
+		while ((columnIndex > 0) && (!inWord || isWordCharacter))
 		{
-			character = row->GetAt(columnIndex);
+			character = row->GetAt(columnIndex - 1);
 			isWordCharacter = character->IsWordCharacter();
 			if (isWordCharacter)
 			{
@@ -60,10 +51,10 @@ void CtrlShiftLeftAction::Perform() {
 			columnIndex = row->Previous();
 		}
 
-		if (columnIndex > -1)
+		if (columnIndex > 0)
 		{
 			columnIndex = row->Next();
-			character = row->GetAt(columnIndex);
+			character = row->GetAt(columnIndex - 1);
 			if (character->IsSelected())
 			{
 				character->Select(FALSE);
@@ -72,6 +63,15 @@ void CtrlShiftLeftAction::Perform() {
 			{
 				character->Select(TRUE);
 			}
+		}
+	}
+	else
+	{
+		if (rowIndex > 0)
+		{
+			rowIndex = note->Previous();
+			row = note->GetAt(rowIndex);
+			row->Last();
 		}
 	}
 	

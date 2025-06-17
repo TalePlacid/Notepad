@@ -9,7 +9,7 @@ class Visitor;
 
 class Composite : public Glyph {
 public:
-	Composite(Long capacity = 128);
+	Composite(Long capacity = 256);
 	virtual ~Composite() = 0;
 	Composite(const Composite& source);
 	Composite& operator=(const Composite& source);

@@ -21,6 +21,7 @@
 #include "ScrollBarAction.h"
 #include "TextOutVisitor.h"
 #include "ClipboardController.h"
+#include "PagingBuffer.h"
 #include "Observer.h"
 #include <imm.h>
 #include <fstream>
@@ -56,6 +57,7 @@ NotepadForm::NotepadForm() {
 	this->caretController = NULL;
 	this->scrollBarController = NULL;
 	this->clipboardController = NULL;
+	this->pagingBuffer = NULL;
 
 	TCHAR buffer[256];
 	GetCurrentDirectory(256, buffer);
@@ -64,41 +66,18 @@ NotepadForm::NotepadForm() {
 }
 
 NotepadForm::~NotepadForm() {
-	if (this->note != NULL)
-	{
-		delete this->note;
-	}
-
-	if (this->sizeCalculator != NULL)
-	{
-		delete this->sizeCalculator;
-	}
-
-	if (this->caretController != NULL)
-	{
-		delete this->caretController;
-	}
-
-	if (this->scrollBarController != NULL)
-	{
-		delete this->scrollBarController;
-	}
-
-	if (this->clipboardController != NULL)
-	{
-		delete this->clipboardController;
-	}
 }
 
 int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CFrameWnd::OnCreate(lpCreateStruct);
-	CString str = this->Load(this->path);
-	this->note = new Note((LPCTSTR)str);
-	this->Register(dynamic_cast<Observer*>(this->note));
 
-	//NoteConverter noteConverter;
-	//this->note = noteConverter.ConvertToNote((LPCTSTR)str);
 	this->sizeCalculator = new SizeCalculator(this);
+
+#if 0
+	this->pagingBuffer = new PagingBuffer(this);
+	this->pagingBuffer->Load();
+#endif
+	this->note = new Note((LPCTSTR)(this->Load(this->path)));
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
 	
@@ -140,9 +119,17 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			command->Execute();
 			delete command;
 		}
+		this->note->Select(false);
 
+		NoteWrapper noteWrapper(this);
+		noteWrapper.DeleteDummyRows();
+
+		UINT isChecked = this->menu.GetMenuState(ID_MENU_AUTOWRAP, MF_BYCOMMAND);
+		if (isChecked == MF_CHECKED)
+		{
+			noteWrapper.InsertDummyRows();
+		}
 		this->Notify("CreateScrollBars");
-		this->Notify("Unselect");
 		this->Invalidate();
 	}
 }
@@ -217,7 +204,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 			}
 		}
 
-		this->Notify("Unselect");
+		this->note->Select(false);
 		this->Invalidate();
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
@@ -252,7 +239,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 		delete command;
 	}
 
-	this->Notify("Unselect");
+	this->note->Select(false);
 	this->Invalidate();
 	
 	return DefWindowProc(WM_IME_CHAR, wParam, lParam);
@@ -274,7 +261,10 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 		this->caretController->Destroy();
 	}
 
-	this->Notify("Unselect");
+	if (this->note != NULL)
+	{
+		this->note->Select(false);
+	}
 }
 
 void NotepadForm::OnCommandRequested(UINT nID) {
@@ -333,12 +323,33 @@ void NotepadForm::OnClose() {
 			this->Save(path);
 		}
 		delete this->note;
+		this->note = NULL;
 	}
 
 	if (this->caretController != NULL)
 	{
 		delete this->caretController;
 		this->caretController = NULL;
+	}
+
+	if (this->sizeCalculator != NULL)
+	{
+		delete this->sizeCalculator;
+	}
+
+	if (this->scrollBarController != NULL)
+	{
+		delete this->scrollBarController;
+	}
+
+	if (this->clipboardController != NULL)
+	{
+		delete this->clipboardController;
+	}
+
+	if (this->pagingBuffer != NULL)
+	{
+		delete this->pagingBuffer;
 	}
 
 	CFrameWnd::OnClose();
@@ -365,7 +376,7 @@ CString NotepadForm::Load(CString path) {
 
 void NotepadForm::Save(CString path) {
 	ofstream ofs;
-	ofs.open(path);
+	ofs.open(path, ios::out | ios::binary);
 	if (ofs.is_open())
 	{
 		NoteWrapper noteWrapper(this);

@@ -128,16 +128,16 @@ Long Composite::Remove(Long index) {
 }
 
 Long Composite::First() {
-	this->current = -1;
+	this->current = 0;
 
 	return this->current;
 }
 
 Long Composite::Previous() {
 	(this->current)--;
-	if (this->current < -1)
+	if (this->current < 0)
 	{
-		this->current = -1;
+		this->current = 0;
 	}
 
 	return this->current;
@@ -145,16 +145,16 @@ Long Composite::Previous() {
 
 Long Composite::Next() {
 	(this->current)++;
-	if (this->current >= this->length)
+	if (this->current > this->length)
 	{
-		this->current = this->length - 1;
+		this->current = this->length;
 	}
 
 	return this->current;
 }
 
 Long Composite::Last() {
-	this->current = this->length - 1;
+	this->current = this->length;
 
 	return this->current;
 }

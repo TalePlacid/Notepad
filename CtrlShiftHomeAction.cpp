@@ -48,7 +48,7 @@ void CtrlShiftHomeAction::Perform() {
 	}
 
 	i = 0;
-	while (i <= columnIndex)
+	while (i < columnIndex)
 	{
 		character = originalRow->GetAt(i);
 		if (character->IsSelected())

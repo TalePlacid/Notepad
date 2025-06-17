@@ -32,6 +32,7 @@ public:
 	virtual bool Select(bool isSelecting);
 
 	virtual Glyph* operator[](Long index);
+	virtual operator char*() const;
 
 	virtual Long GetCapacity() const;
 	virtual Long GetLength() const;

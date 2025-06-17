@@ -251,6 +251,12 @@
     <ClInclude Include="PasteCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Position.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PagingBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -476,6 +482,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PasteCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Position.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PagingBuffer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

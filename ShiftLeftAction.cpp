@@ -21,9 +21,9 @@ void ShiftLeftAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 	
 	Glyph* character = NULL;
-	if (columnIndex > -1)
+	if (columnIndex > 0)
 	{
-		character = row->GetAt(columnIndex);
+		character = row->GetAt(columnIndex - 1);
 	}
 
 	Long previousIndex = columnIndex;

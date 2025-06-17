@@ -10,7 +10,7 @@ class Visitor;
 
 class Row : public Composite {
 public:
-	Row(Long capacity = 128);
+	Row(Long capacity = 512);
 	virtual ~Row();
 	Row(const Row& source);
 	Row& operator=(const Row& source);

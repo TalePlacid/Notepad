@@ -81,3 +81,7 @@ bool Glyph::Select(bool isSelecting) {
 Glyph* Glyph::operator[](Long index) {
 	return 0;
 }
+
+Glyph::operator char*() const{
+	return 0;
+}

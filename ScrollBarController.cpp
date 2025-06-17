@@ -36,8 +36,8 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			j = 0;
 			while (j < row->GetLength())
 			{
-				CString character(row->GetAt(j)->MakeString().c_str());
-				width += sizeCalculator->GetCharacterWidth(const_cast<char*>((LPCTSTR)character));
+				TCHAR(*character) = (char*)(*(row->GetAt(j)));
+				width += sizeCalculator->GetCharacterWidth(const_cast<char*>(character));
 				j++;
 			}
 
@@ -51,10 +51,14 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 
 		Long totalHeight = note->GetLength() * sizeCalculator->GetRowHeight();
 
+		Long originalVScrollBarPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+		Long originalHScrollBarPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+
 		if (maxWidth > clientAreaWidth)
 		{
 			this->parent->ModifyStyle(0, WS_HSCROLL);
-			SCROLLINFO horizontalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, 0, maxWidth, clientAreaWidth, 0, 0 };
+			SCROLLINFO horizontalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, originalHScrollBarPos,
+				maxWidth, clientAreaWidth, 0, 0 };
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &horizontalScrollInfo, TRUE);
 		}
 		else
@@ -65,7 +69,8 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		if (totalHeight > clientAreaHeight)
 		{
 			this->parent->ModifyStyle(0, WS_VSCROLL);
-			SCROLLINFO verticalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, 0, totalHeight, clientAreaHeight, 0, 0};
+			SCROLLINFO verticalScrollInfo = { sizeof(SCROLLINFO), SIF_ALL, originalVScrollBarPos,
+				totalHeight, clientAreaHeight, 0, 0};
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &verticalScrollInfo, TRUE);
 		}
 		else

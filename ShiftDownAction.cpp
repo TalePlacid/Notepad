@@ -25,13 +25,14 @@ void ShiftDownAction::Perform() {
 
 		Long originalWidth = 0;
 		Glyph* character;
+		TCHAR(*content);
 		Long i = 0;
-		while (i <= columnIndex)
+		while (i < columnIndex)
 		{
 			character = row->GetAt(i);
-			CString content(character->MakeString().c_str());
+			content = (char*)(*character);
 			originalWidth += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(
-				const_cast<char*>((LPCTSTR)content));
+				const_cast<char*>(content));
 			i++;
 		}
 
@@ -43,9 +44,9 @@ void ShiftDownAction::Perform() {
 		while ((i < nextRow->GetLength())&&(width < originalWidth))
 		{
 			character = nextRow->GetAt(i);
-			CString content(character->MakeString().c_str());
+			content = (char*)(*character);
 			width += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(
-				const_cast<char*>((LPCTSTR)content));
+				const_cast<char*>(content));
 			i++;
 		}
 
@@ -59,7 +60,7 @@ void ShiftDownAction::Perform() {
 			nextColumnIndex = nextRow->Last();
 		}
 
-		i = columnIndex + 1;
+		i = columnIndex;
 		while (i < row->GetLength())
 		{
 			character = row->GetAt(i);
@@ -75,7 +76,7 @@ void ShiftDownAction::Perform() {
 		}
 
 		i = 0;
-		while (i <= nextColumnIndex)
+		while (i < nextColumnIndex)
 		{
 			character = nextRow->GetAt(i);
 			if (character->IsSelected())

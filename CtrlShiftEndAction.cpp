@@ -25,7 +25,7 @@ void CtrlShiftEndAction::Perform() {
 	row->Last();
 
 	Glyph* character;
-	Long i = columnIndex + 1;
+	Long i = columnIndex;
 	while (i < originalRow->GetLength())
 	{
 		character = originalRow->GetAt(i);

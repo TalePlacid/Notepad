@@ -51,9 +51,13 @@ Long SizeCalculator::GetCharacterWidth(char(*character)) {
 	{
 		width = this->multiByteWidth;
 	}
-	else
+	else if (character[0] != '\t')
 	{
 		width = this->singleByteWidths[character[0] - 32];
+	}
+	else
+	{
+		width = this->singleByteWidths[0] * 8;
 	}
 
 	return width;

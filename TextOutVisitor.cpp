@@ -55,10 +55,11 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 	}
 
 	this->selectionVisitor->VisitCharacter(character);
+	
+	dc->TextOut(this->x, this->y, CString(character->MakeString().c_str()));
 
-	CString content(character->MakeString().c_str());
-	dc->TextOut(this->x, this->y, content);
-	this->x += notepadForm->sizeCalculator->GetCharacterWidth(const_cast<char*>((LPCTSTR)content));
+	TCHAR(*content) = (char*)(*character);
+	this->x += notepadForm->sizeCalculator->GetCharacterWidth(const_cast<char*>(content));
 
 	if (notepadForm->font != NULL)
 	{

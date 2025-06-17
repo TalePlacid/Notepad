@@ -24,14 +24,14 @@ Caret* CaretController::Create() {
 
 	Long x = 0;
 	Long width = 0;
-	CString character;
+	TCHAR(*character);
 	Long caretWidth = 1;
 
 	Long i = 0;
-	while (i <= row->GetCurrent())
+	while (i < row->GetCurrent())
 	{
-		character = CString(row->GetAt(i)->MakeString().c_str());
-		width = ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>((LPCTSTR)character));
+		character = (char*)(*(row->GetAt(i)));
+		width = ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>(character));
 		x += width;
 		i++;
 	}
@@ -82,12 +82,12 @@ void CaretController::Update(Subject *subject, string interest) {
 
 		Long caretWidth = 1;
 		Long width = 0;
-		CString character;
+		TCHAR(*character);
 		Long i = 0;
-		while (i <= row->GetCurrent())
+		while (i < row->GetCurrent())
 		{
-			character = CString(row->GetAt(i)->MakeString().c_str());
-			width = ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>((LPCTSTR)character));
+			character = (char*)(*(row->GetAt(i)));
+			width = ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>(character));
 			x += width;
 			i++;
 		}

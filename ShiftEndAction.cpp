@@ -23,8 +23,8 @@ void ShiftEndAction::Perform() {
 	Long lastIndex = row->Last();
 
 	Glyph* character;
-	Long i = columnIndex + 1;
-	while (i <= lastIndex)
+	Long i = columnIndex;
+	while (i < lastIndex)
 	{
 		character = row->GetAt(i);
 		if (character->IsSelected())
