@@ -45,6 +45,7 @@ protected:
 	void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	virtual BOOL OnEraseBkgnd(CDC *pDC);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:

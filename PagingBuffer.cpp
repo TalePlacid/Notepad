@@ -76,7 +76,7 @@ void PagingBuffer::Load() {
 	TCHAR character[2];
 	Long i = this->startOffset;
 	size_t flag = fread(character, 1, 1, this->file);
-	while (i <= current && flag > 0 && !feof(this->file))
+	while (i < current && flag > 0 && !feof(this->file))
 	{
 		if (character[0] != '\n')
 		{

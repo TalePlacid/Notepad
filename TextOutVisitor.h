@@ -22,6 +22,8 @@ private:
 	Long initialY;
 	Long x;
 	Long y;
+	Long row;
+	Long column;
 };
 
 #endif // !_TEXTOUTVISITOR_H

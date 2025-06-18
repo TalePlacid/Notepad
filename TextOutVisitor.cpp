@@ -4,6 +4,8 @@
 #include "Font.h"
 #include "Glyph.h"
 #include "SelectionVisitor.h"
+#include "PagingBuffer.h"
+#include "Position.h"
 
 #pragma warning(disable:4996)
 
@@ -31,6 +33,9 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
 
 	this->x = this->initialX;
 	this->y = this->initialY;
+
+	this->row = 0;
+	this->column = 0;
 }
 
 TextOutVisitor::~TextOutVisitor() {
@@ -43,26 +48,34 @@ TextOutVisitor::~TextOutVisitor() {
 void TextOutVisitor::VisitRow(Glyph* row) {
 	this->x = initialX;
 	this->y += ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight();
+	(this->row)++;
 }
 
 void TextOutVisitor::VisitCharacter(Glyph* character) {
-	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-
-	CFont* oldFont = NULL;
-	if (notepadForm->font != NULL)
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Position current(this->row, this->column);
+	if (current >= pagingBuffer->GetStart() && current <= pagingBuffer->GetEnd())
 	{
-		oldFont = dc->SelectObject(notepadForm->font->GetCFont());
+		NotepadForm* notepadForm = (NotepadForm*)(this->parent);
+
+		CFont* oldFont = NULL;
+		if (notepadForm->font != NULL)
+		{
+			oldFont = dc->SelectObject(notepadForm->font->GetCFont());
+		}
+
+		this->selectionVisitor->VisitCharacter(character);
+
+		dc->TextOut(this->x, this->y, CString(character->MakeString().c_str()));
+
+		TCHAR(*content) = (char*)(*character);
+		this->x += notepadForm->sizeCalculator->GetCharacterWidth(const_cast<char*>(content));
+
+		if (notepadForm->font != NULL)
+		{
+			dc->SelectObject(oldFont);
+		}
 	}
 
-	this->selectionVisitor->VisitCharacter(character);
-	
-	dc->TextOut(this->x, this->y, CString(character->MakeString().c_str()));
-
-	TCHAR(*content) = (char*)(*character);
-	this->x += notepadForm->sizeCalculator->GetCharacterWidth(const_cast<char*>(content));
-
-	if (notepadForm->font != NULL)
-	{
-		dc->SelectObject(oldFont);
-	}
+	(this->column)++;
 }

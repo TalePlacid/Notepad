@@ -21,6 +21,9 @@ public:
 	Position& Last();
 	Position& Move(Position index);
 
+	Position& GetStart() const;
+	Position& GetEnd() const;
+
 	bool IsOnView();
 private:
 	CWnd* parent;
@@ -33,5 +36,13 @@ private:
 	Position end;
 	bool isDirty;
 };
+
+inline Position& PagingBuffer::GetStart() const {
+	return const_cast<Position&>(this->start);
+}
+
+inline Position& PagingBuffer::GetEnd() const {
+	return const_cast<Position&>(this->end);
+}
 
 #endif // !_PAGINGBUFFER_H

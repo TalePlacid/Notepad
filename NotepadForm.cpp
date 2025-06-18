@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
+	ON_WM_ERASEBKGND()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -73,11 +74,9 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->sizeCalculator = new SizeCalculator(this);
 
-#if 0
 	this->pagingBuffer = new PagingBuffer(this);
 	this->pagingBuffer->Load();
-#endif
-	this->note = new Note((LPCTSTR)(this->Load(this->path)));
+
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
 	
@@ -149,9 +148,27 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 
 void NotepadForm::OnPaint() {
 	CPaintDC dc(this);
-	TextOutVisitor textOutVisitor(this, &dc);
 
+	RECT rect;
+	this->GetClientRect(&rect);
+	Long width = rect.right - rect.left;
+	Long height = rect.bottom - rect.top;
+
+	CDC memDC;
+	memDC.CreateCompatibleDC(&dc);
+
+	CBitmap bitMap;
+	bitMap.CreateCompatibleBitmap(&dc, width, height);
+
+	CBitmap* oldBitMap = memDC.SelectObject(&bitMap);
+
+	memDC.FillSolidRect(&rect, RGB(255, 255, 255));
+	TextOutVisitor textOutVisitor(this, &memDC);
 	this->note->Accept(textOutVisitor);
+
+	dc.BitBlt(0, 0, width, height, &memDC, 0, 0, SRCCOPY);
+
+	memDC.SelectObject(oldBitMap);
 
 	this->Notify("ChangeCaret");
 }
@@ -308,6 +325,10 @@ void NotepadForm::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 		scrollBarAction->Perform();
 		delete scrollBarAction;
 	}
+}
+
+BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
+	return TRUE;
 }
 
 void NotepadForm::OnClose() {
