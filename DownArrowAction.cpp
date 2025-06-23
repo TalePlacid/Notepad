@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "SizeCalculator.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -35,6 +36,8 @@ void DownArrowAction::Perform() {
 	}
 
 	rowIndex = note->Next();
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->NextRow();
 	Glyph* nextRow = note->GetAt(rowIndex);
 	Long nextRowWidth = 0;
 
@@ -50,10 +53,17 @@ void DownArrowAction::Perform() {
 	if (i < nextRow->GetLength() - 1)
 	{
 		nextRow->Move(i);
+		pagingBuffer->Move(i);
 	}
 	else
 	{
 		nextRow->Last();
+		pagingBuffer->Last();
+	}
+
+	if (!pagingBuffer->IsOnView())
+	{
+		pagingBuffer->Load();
 	}
 
 	((NotepadForm*)(this->parent))->note->Select(false);

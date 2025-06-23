@@ -14,12 +14,19 @@ public:
 
 	void Load();
 	void Save();
+	Long CountRow();
 
 	Position& First();
 	Position& Previous();
 	Position& Next();
 	Position& Last();
-	Position& Move(Position index);
+	Position& Move(Long index);
+
+	Position& FirstRow();
+	Position& PreviousRow();
+	Position& NextRow();
+	Position& LastRow();
+	Position& MoveRow(Long index);
 
 	Position& GetStart() const;
 	Position& GetEnd() const;
