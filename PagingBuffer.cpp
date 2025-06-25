@@ -54,13 +54,12 @@ void PagingBuffer::Load() {
 		while (character[0] != '\n' && result == 0)
 		{
 			result = fseek(this->file, -2, SEEK_CUR);
-			offset -= 2;
 			fread(character, 1, 1, this->file);
 		}
 
-		if (character[0] == '\n')
+		if (result == 0)
 		{
-			this->startOffset = offset;
+			this->startOffset = ftell(this->file);
 		}
 		else
 		{
@@ -71,9 +70,6 @@ void PagingBuffer::Load() {
 	{
 		this->startOffset = 0;
 	}
-
-	fseek(this->file, 0, SEEK_END);
-	Long lastOffset = ftell(this->file);
 
 	//2. 파일에서 페이지 크기만큼 읽는다.
 	TCHAR(*contents) = new TCHAR[this->pageSize + 1];
@@ -139,7 +135,8 @@ void PagingBuffer::Load() {
 	Long rowIndex = note->Move(this->current.GetRow());
 	Glyph* row = note->GetAt(rowIndex);
 	row->Move(this->current.GetColumn());
-
+	
+#if 0
 	//6. 화면에 표시되는 줄 수를 구한다.
 	RECT rect;
 	GetClientRect(this->parent->GetSafeHwnd(), &rect);
@@ -198,7 +195,6 @@ void PagingBuffer::Load() {
 
 	fseek(this->file, current, SEEK_SET);
 
-#if 0
 	//6. 수직 스크롤바의 정보를 읽는다.
 	SCROLLINFO scrollInfo = {};
 	scrollInfo.cbSize = sizeof(SCROLLINFO);
@@ -226,6 +222,8 @@ void PagingBuffer::Load() {
 	row = note->GetAt(endRow);
 	this->end = this->end.Move(endRow, row->GetLength() - 1);
 #endif
+	fseek(this->file, current, SEEK_SET);
+
 	if (contents != NULL)
 	{
 		delete[] contents;
