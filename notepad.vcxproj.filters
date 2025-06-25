@@ -257,6 +257,12 @@
     <ClInclude Include="PagingBuffer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="PageUpAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PageDownAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -488,6 +494,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PagingBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PageUpAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PageDownAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

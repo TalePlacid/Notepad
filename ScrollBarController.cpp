@@ -15,6 +15,22 @@ ScrollBarController::~ScrollBarController() {
 
 }
 
+Long ScrollBarController::PageDown() {
+	SCROLLINFO scrollInfo = {};
+	scrollInfo.cbSize = sizeof(SCROLLINFO);
+	scrollInfo.fMask = SIF_ALL;
+	BOOL hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+
+	Long nPos = -1;
+	if (hasScrollBar)
+	{
+		nPos = scrollInfo.nPos + scrollInfo.nPage;
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
+	}
+
+	return nPos;
+}
+
 void ScrollBarController::Update(Subject* subject, string interest) {
 	if (interest == "CreateScrollBars")
 	{
@@ -28,12 +44,12 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		SCROLLINFO scrollInfo = {};
 		scrollInfo.cbSize = sizeof(SCROLLINFO);
 		scrollInfo.fMask = SIF_ALL;
-		BOOL hasScrollbar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+		BOOL hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
 
 		//3. 수직 스크롤바가 없으면,
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		if (!hasScrollbar)
+		if (!hasScrollBar)
 		{
 			//3.1. 페이징버퍼에서 줄 수를 읽는다.
 			Long rowCount = pagingBuffer->CountRow();
@@ -75,10 +91,10 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		}
 
 		//7. 수평 스크롤바 정보를 읽는다.
-		hasScrollbar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
+		hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
 
 		Long maxWidth = 0;
-		if (hasScrollbar)
+		if (hasScrollBar)
 		{
 			maxWidth = scrollInfo.nMax;
 		}
@@ -120,7 +136,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		else //10. 최대 너비가 화면 너비보다 크면,
 		{
 			//10.1. 수평 스크롤바가 없으면,
-			if (!hasScrollbar)
+			if (!hasScrollBar)
 			{
 				//10.1.1. 수평 스크롤바를 만든다.
 				this->parent->ModifyStyle(0, WS_HSCROLL);

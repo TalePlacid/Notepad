@@ -341,7 +341,7 @@ void NotepadForm::OnClose() {
 		
 		if (path == this->path)
 		{
-			this->Save(path);
+			//this->Save(path);
 		}
 		delete this->note;
 		this->note = NULL;

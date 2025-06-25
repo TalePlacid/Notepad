@@ -153,9 +153,8 @@ void PagingBuffer::Load() {
 	{
 		startRow = 0;
 	}
-	this->start.Move(startRow, 0);
+	this->start = this->start.Move(startRow, 0);
 	
-	//8. 끝 위치를 구한다.
 	count = 0;
 	Long countNeed = this->current.GetRow() - startRow;
 	int result = fseek(this->file, -1, SEEK_CUR);
@@ -174,19 +173,16 @@ void PagingBuffer::Load() {
 	Long startOffset = ftell(this->file);
 	if (result != 0)
 	{
+		fseek(this->file, 0, SEEK_SET);
 		startOffset = 0;
 	}
 
+	//8. 끝 위치를 구한다.
 	i = startOffset;
 	count = 0;
 	flag = fread(character, 1, 1, this->file);
-	while (count < rowCount && i <= this->endOffset && flag > 0 && !feof(this->file))
+	while (count < rowCount && i < this->endOffset && flag > 0 && !feof(this->file))
 	{
-		if (character[0] == '\r' || character[0] & 0x80)
-		{
-			flag = fread(character + 1, 1, 1, this->file);
-		}
-
 		if (character[0] == '\r')
 		{
 			count++;
@@ -200,17 +196,18 @@ void PagingBuffer::Load() {
 	row = note->GetAt(endRow);
 	this->end = this->end.Move(endRow, row->GetLength());
 
+	fseek(this->file, current, SEEK_SET);
 
 #if 0
 	//6. 수직 스크롤바의 정보를 읽는다.
 	SCROLLINFO scrollInfo = {};
 	scrollInfo.cbSize = sizeof(SCROLLINFO);
 	scrollInfo.fMask = SIF_ALL;
-	BOOL hasScrollbar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+	BOOL hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
 
 	//7. 시작 위치를 구한다.
 	Long startRowHeight = 0;
-	if (hasScrollbar)
+	if (hasScrollBar)
 	{
 		startRowHeight = scrollInfo.nPos;
 	}
@@ -339,6 +336,52 @@ Position& PagingBuffer::NextRow() {
 	{
 		fseek(this->file, current, SEEK_SET);
 	}
+
+	return this->current;
+}
+
+Position& PagingBuffer::MoveRow(Long index) {
+	Long current = ftell(this->file);
+
+	TCHAR character[2];
+	int result;
+	Long need;
+	Long count = 0;
+	if (index < this->current.GetRow())
+	{
+		need = this->current.GetRow() - index + 1;
+		result = fseek(this->file, -1, SEEK_CUR);
+		while (count < need && result == 0)
+		{
+			fread(character, 1, 1, this->file);
+			if (character[0] == '\n')
+			{
+				count++;
+			}
+			result = fseek(this->file, -2, SEEK_CUR);
+		}
+
+		if (result == 0)
+		{
+			fseek(this->file, 2, SEEK_CUR);
+		}
+	}
+	else if (index > this->current.GetRow())
+	{
+		need = index - this->current.GetRow();
+		size_t flag = fread(character, 1, 1, this->file);
+		while (count < need && flag > 0 && !feof(this->file))
+		{
+			if (character[0] == '\n')
+			{
+				count++;
+			}
+
+			flag = fread(character, 1, 1, this->file);
+		}
+	}
+
+	this->current = this->current.Move(index, this->current.GetColumn());
 
 	return this->current;
 }

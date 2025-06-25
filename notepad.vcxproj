@@ -176,6 +176,8 @@
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
+    <ClInclude Include="PageDownAction.h" />
+    <ClInclude Include="PageUpAction.h" />
     <ClInclude Include="PagingBuffer.h" />
     <ClInclude Include="PasteCommand.h" />
     <ClInclude Include="Position.h" />
@@ -256,6 +258,8 @@
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
+    <ClCompile Include="PageDownAction.cpp" />
+    <ClCompile Include="PageUpAction.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />
     <ClCompile Include="PasteCommand.cpp" />
     <ClCompile Include="Position.cpp" />
