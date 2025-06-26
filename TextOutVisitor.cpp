@@ -13,29 +13,30 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
 	:Visitor(parent){
 	this->dc = dc;
 	this->selectionVisitor = new SelectionVisitor(parent, dc);
-	this->initialX = 0;
-	this->initialY = 0;
+	
+	//1. 클라이언트 영역 사이즈를 구한다.
+	RECT clientArea;
+	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 
-	SCROLLINFO scrollInfo = {};
-	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_POS;
-	if (GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo))
-	{
-		this->initialX -= scrollInfo.nPos;
-	}
+	//2. 디스크파일 기준 뷰영역을 구한다.
+	RECT absoluteArea = clientArea;
+	absoluteArea.left += GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	absoluteArea.right += GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	absoluteArea.top += GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	absoluteArea.bottom += GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
 
-	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_POS;
-	if (GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo))
-	{
-		this->initialY -= scrollInfo.nPos;
-	}
+	//3. Note기준으로 환산한다.
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long startRow = pagingBuffer->GetStart().GetRow();
+	Long startRowHeight = startRow * sizeCalculator->GetRowHeight();
 
-	this->x = this->initialX;
-	this->y = this->initialY;
+	this->paintingArea = absoluteArea;
+	this->paintingArea.top -= startRowHeight;
+	this->paintingArea.bottom -= startRowHeight;
 
-	this->row = 0;
-	this->column = 0;
+	this->x = 0;
+	this->y = 0;
 }
 
 TextOutVisitor::~TextOutVisitor() {
@@ -46,35 +47,33 @@ TextOutVisitor::~TextOutVisitor() {
 }
 
 void TextOutVisitor::VisitRow(Glyph* row) {
-	this->x = initialX;
+	this->x = 0;
 	this->y += ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight();
-	(this->row)++;
 }
 
 void TextOutVisitor::VisitCharacter(Glyph* character) {
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Position current(this->row, this->column);
-	if (current >= pagingBuffer->GetStart() && current <= pagingBuffer->GetEnd())
+	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
+
+	CFont* oldFont = NULL;
+	if (notepadForm->font != NULL)
 	{
-		NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-
-		CFont* oldFont = NULL;
-		if (notepadForm->font != NULL)
-		{
-			oldFont = dc->SelectObject(notepadForm->font->GetCFont());
-		}
-
-		this->selectionVisitor->VisitCharacter(character);
-
-		dc->TextOut(this->x, this->y, CString(character->MakeString().c_str()));
-
-		this->x += notepadForm->sizeCalculator->GetCharacterWidth((char*)(*character));
-
-		if (notepadForm->font != NULL)
-		{
-			dc->SelectObject(oldFont);
-		}
+		oldFont = dc->SelectObject(notepadForm->font->GetCFont());
 	}
 
-	(this->column)++;
+	if (this->x >= this->paintingArea.left && this->x <= this->paintingArea.right
+		&& this->y >= this->paintingArea.top && this->y <= this->paintingArea.bottom)
+	{
+		this->selectionVisitor->VisitCharacter(character);
+
+		Long painterX = this->x - this->paintingArea.left;
+		Long painterY = this->y - this->paintingArea.top;
+		dc->TextOut(painterX, painterY, CString(character->MakeString().c_str()));
+	}
+
+	this->x += notepadForm->sizeCalculator->GetCharacterWidth((char*)(*character));
+
+	if (notepadForm->font != NULL)
+	{
+		dc->SelectObject(oldFont);
+	}
 }

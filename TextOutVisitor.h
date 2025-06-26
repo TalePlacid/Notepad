@@ -5,7 +5,6 @@
 
 typedef signed long int Long;
 
-class CWnd;
 class Glyph;
 
 class TextOutVisitor : public Visitor {
@@ -18,12 +17,9 @@ public:
 private:
 	CDC* dc;
 	Visitor* selectionVisitor;
-	Long initialX;
-	Long initialY;
+	RECT paintingArea;
 	Long x;
 	Long y;
-	Long row;
-	Long column;
 };
 
 #endif // !_TEXTOUTVISITOR_H

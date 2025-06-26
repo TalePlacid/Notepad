@@ -40,12 +40,13 @@ PagingBuffer::~PagingBuffer() {
 }
 
 void PagingBuffer::Load() {
+
+#if 0
 	//1. 페이지 크기의 절반만큼 앞으로 이동한다.
 	Long currentOffset = ftell(this->file);
 	
 	TCHAR character[2];
 	Long startOffset = 0;
-	this->start = this->start.Move(0, 0);
 	Long offset = currentOffset - (this->pageSize / 2 - 1);
 	if (offset >= 0)
 	{
@@ -64,7 +65,6 @@ void PagingBuffer::Load() {
 	}
 
 	//2. 파일에서 페이지 크기만큼 읽는다.
-	this->start = this->start.Move(0, 0);
 	TCHAR(*contents) = new TCHAR[this->pageSize + 1];
 	Long endOffset;
 	fseek(this->file, startOffset, SEEK_SET);
@@ -155,7 +155,7 @@ void PagingBuffer::Load() {
 	Long rowIndex = note->Move(this->current.GetRow());
 	Glyph* row = note->GetAt(rowIndex);
 	row->Move(this->current.GetColumn());
-
+#endif
 #if 0
 	//6. 화면에 표시되는 줄 수를 구한다.
 	RECT rect;
@@ -242,10 +242,13 @@ void PagingBuffer::Load() {
 	row = note->GetAt(endRow);
 	this->end = this->end.Move(endRow, row->GetLength() - 1);
 #endif
+#if 0
 	if (contents != NULL)
 	{
 		delete[] contents;
 	}
+#endif
+
 }
 
 Long PagingBuffer::CountRow() {
