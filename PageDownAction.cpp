@@ -45,9 +45,16 @@ void PageDownAction::Perform() {
 		}
 
 		Long downRowIndex = rowIndex + rowCount;
-		downRowIndex = note->Move(downRowIndex);
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		pagingBuffer->MoveRow(downRowIndex);
+
+		if (!pagingBuffer->IsOnView())
+		{
+			downRowIndex -= note->GetLength();
+			pagingBuffer->Load();
+			note = ((NotepadForm*)(this->parent))->note;
+		}
+		downRowIndex = note->Move(downRowIndex);
 
 		Long previousWidth = 0;
 		Long widthSum = 0;
@@ -67,8 +74,7 @@ void PageDownAction::Perform() {
 			i--;
 		}
 
-		pagingBuffer->Move(i);
-		pagingBuffer->Load();
+		Position a = pagingBuffer->Move(i);
 		((NotepadForm*)(this->parent))->scrollBarController->PageDown();
 
 		((NotepadForm*)(this->parent))->note->Select(false);

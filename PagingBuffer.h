@@ -36,8 +36,6 @@ private:
 	CWnd* parent;
 	Long pageSize;
 	FILE* file;
-	Long startOffset;
-	Long endOffset;
 	Position current;
 	Position start;
 	Position end;

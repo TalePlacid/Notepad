@@ -25,8 +25,6 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 		fseek(this->file, 0, SEEK_SET);
 	}
 
-	this->startOffset = 0;
-	this->endOffset = 0;
 	this->isDirty = false;
 }
 
@@ -43,10 +41,12 @@ PagingBuffer::~PagingBuffer() {
 
 void PagingBuffer::Load() {
 	//1. 페이지 크기의 절반만큼 앞으로 이동한다.
-	Long current = ftell(this->file);
+	Long currentOffset = ftell(this->file);
 	
 	TCHAR character[2];
-	Long offset = current - (this->pageSize / 2 - 1);
+	Long startOffset = 0;
+	this->start = this->start.Move(0, 0);
+	Long offset = currentOffset - (this->pageSize / 2 - 1);
 	if (offset >= 0)
 	{
 		int result = fseek(this->file, offset, SEEK_SET);
@@ -59,38 +59,32 @@ void PagingBuffer::Load() {
 
 		if (result == 0)
 		{
-			this->startOffset = ftell(this->file);
+			startOffset = ftell(this->file);
 		}
-		else
-		{
-			this->startOffset = 0;
-		}
-	}
-	else
-	{
-		this->startOffset = 0;
 	}
 
 	//2. 파일에서 페이지 크기만큼 읽는다.
+	this->start = this->start.Move(0, 0);
 	TCHAR(*contents) = new TCHAR[this->pageSize + 1];
-	fseek(this->file, this->startOffset, SEEK_SET);
+	Long endOffset;
+	fseek(this->file, startOffset, SEEK_SET);
 	Long count = fread(contents, 1, this->pageSize, this->file);
 	Long i = count - 1;
 	while (i >= 0 && contents[i] != '\n')
 	{
 		i--;
 	}
+	contents[i + 1] = '\0';
 
 	if (i >= 0)
 	{
-		this->endOffset = this->startOffset + i;
+		endOffset = startOffset + i;
 	}
 	else
 	{
-		this->endOffset = this->startOffset;
+		endOffset = startOffset;
 	}
-	contents[i + 1] = '\0';
-
+	
 	NoteConverter noteConverter;
 	if (((NotepadForm*)(this->parent))->note != NULL)
 	{
@@ -101,11 +95,11 @@ void PagingBuffer::Load() {
 	((NotepadForm*)(this->parent))->note = noteConverter.ConvertToNote(contents);
 
 	//4. 현재 위치를 구한다.
-	fseek(this->file, this->startOffset, SEEK_SET);
+	fseek(this->file, startOffset, SEEK_SET);
 	this->current = this->current.Move(0, 0);
-	i = this->startOffset;
+	i = startOffset;
 	size_t flag = fread(character, 1, 1, this->file);
-	while (i < current && flag > 0 && !feof(this->file))
+	while (i < currentOffset && flag > 0 && !feof(this->file))
 	{
 		if (character[0] != '\n')
 		{
@@ -129,13 +123,39 @@ void PagingBuffer::Load() {
 		flag = fread(&character, 1, 1, this->file);
 	}
 
+	//5. 끝 위치를 구한다.
+	this->end = this->current;
+	while (i < endOffset && flag > 0 && !feof(this->file))
+	{
+		if (character[0] != '\n')
+		{
+			if (character[0] == '\r' || character[0] & 0x80)
+			{
+				i++;
+				flag = fread(character + 1, 1, 1, this->file);
+			}
+
+			if (character[0] != '\r')
+			{
+				this->end = this->end.Right();
+			}
+			else
+			{
+				this->end = this->end.Down();
+				this->end = this->end.Move(this->end.GetRow(), 0);
+			}
+		}
+		i++;
+		flag = fread(&character, 1, 1, this->file);
+	}
+
 	//5. 노트에서 현재 위치로 이동한다.
-	fseek(this->file, current, SEEK_SET);
+	fseek(this->file, currentOffset, SEEK_SET);
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->Move(this->current.GetRow());
 	Glyph* row = note->GetAt(rowIndex);
 	row->Move(this->current.GetColumn());
-	
+
 #if 0
 	//6. 화면에 표시되는 줄 수를 구한다.
 	RECT rect;
@@ -222,8 +242,6 @@ void PagingBuffer::Load() {
 	row = note->GetAt(endRow);
 	this->end = this->end.Move(endRow, row->GetLength() - 1);
 #endif
-	fseek(this->file, current, SEEK_SET);
-
 	if (contents != NULL)
 	{
 		delete[] contents;
@@ -294,7 +312,7 @@ Position& PagingBuffer::Move(Long index) {
 	TCHAR character[2];
 	Long i = 0;
 	size_t flag = fread(character, 1, 1, this->file);
-	while (i <= index && flag > 0 && !feof(this->file))
+	while (i < index && flag > 0 && !feof(this->file))
 	{
 		if (character[0] & 0x80 || character[0] == '\r')
 		{
