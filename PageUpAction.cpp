@@ -75,12 +75,12 @@ void PageUpAction::Perform() {
 			row->Last();
 			pagingBuffer->Last();
 		}
-
-		if (!pagingBuffer->IsOnView())
+#if 0
+		if (!pagingBuffer->IsOnPage())
 		{
 			pagingBuffer->Load();
 		}
-
+#endif
 		note->Select(false);
 		this->parent->Invalidate();
 	}

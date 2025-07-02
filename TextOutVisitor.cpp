@@ -20,16 +20,23 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
 
 	//2. 디스크파일 기준 뷰영역을 구한다.
 	RECT absoluteArea = clientArea;
-	absoluteArea.left += GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
-	absoluteArea.right += GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
-	absoluteArea.top += GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
-	absoluteArea.bottom += GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	Long nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	absoluteArea.left += nPos;
+	absoluteArea.right += nPos;
+	nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	absoluteArea.top += nPos;
+	absoluteArea.bottom += nPos;
 
 	//3. Note기준으로 환산한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Long startRow = pagingBuffer->GetStart().GetRow();
-	Long startRowHeight = startRow * sizeCalculator->GetRowHeight();
+	Long startOffset = pagingBuffer->GetStartOffset();
+	Long startRowIndex = pagingBuffer->CountRow(startOffset);
+	if (startRowIndex < 0)
+	{
+		startRowIndex = 0;
+	}
+	Long startRowHeight = startRowIndex * sizeCalculator->GetRowHeight();
 
 	this->paintingArea = absoluteArea;
 	this->paintingArea.top -= startRowHeight;
@@ -60,8 +67,12 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 		oldFont = dc->SelectObject(notepadForm->font->GetCFont());
 	}
 
-	if (this->x >= this->paintingArea.left && this->x <= this->paintingArea.right
-		&& this->y >= this->paintingArea.top && this->y <= this->paintingArea.bottom)
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+
+	if (this->x >= this->paintingArea.left - sizeCalculator->GetMaxCharacterWidth() 
+		&& this->x <= this->paintingArea.right
+		&& this->y >= this->paintingArea.top - sizeCalculator->GetRowHeight()
+		&& this->y <= this->paintingArea.bottom)
 	{
 		this->selectionVisitor->VisitCharacter(character);
 

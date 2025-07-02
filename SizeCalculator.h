@@ -11,13 +11,15 @@ public:
 	~SizeCalculator();
 
 	Long GetCharacterWidth(char(*character));
-
+	
 	Long GetMultiByteWidth() const;
 	Long GetRowHeight() const;
+	Long GetMaxCharacterWidth() const;
 private:
 	Long(*singleByteWidths);
 	Long multiByteWidth;
 	Long rowHeight;
+	Long maxCharacterWidth;
 };
 
 inline Long SizeCalculator::GetMultiByteWidth() const {
@@ -26,6 +28,10 @@ inline Long SizeCalculator::GetMultiByteWidth() const {
 
 inline Long SizeCalculator::GetRowHeight() const {
 	return this->rowHeight;
+}
+
+inline Long SizeCalculator::GetMaxCharacterWidth() const {
+	return this->maxCharacterWidth;
 }
 
 #endif // !_SIZECALCULATOR_H

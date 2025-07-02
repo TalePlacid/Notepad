@@ -61,11 +61,12 @@ void DownArrowAction::Perform() {
 		pagingBuffer->Last();
 	}
 
-	if (!pagingBuffer->IsOnView())
+# if 0
+	if (!pagingBuffer->IsOnPage())
 	{
 		pagingBuffer->Load();
 	}
-
+#endif
 	((NotepadForm*)(this->parent))->note->Select(false);
 	this->parent->Invalidate();
 }

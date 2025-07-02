@@ -17,7 +17,7 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 	GetCurrentDirectory(256, directory);
 	CString fileName = CString(directory) + CString("\\Note.tmp");
 
-	this->file = fopen((LPCTSTR)fileName, "w+");
+	this->file = fopen((LPCTSTR)fileName, "w+b");
 	if (this->file != NULL)
 	{
 		CString contents(notepadForm->Load(notepadForm->GetPath()));
@@ -40,165 +40,167 @@ PagingBuffer::~PagingBuffer() {
 }
 
 void PagingBuffer::Load() {
-
-#if 0
-	//1. 페이지 크기의 절반만큼 앞으로 이동한다.
+	//1. 현재 포인터 위치를 구한다.
 	Long currentOffset = ftell(this->file);
-	
+
+	//2. 적재할 줄 수를 구한다.
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	RECT rect;
+	GetClientRect(this->parent->GetSafeHwnd(), &rect);
+	Long clientAreaHeight = rect.bottom - rect.top;
+	Long rowCount = clientAreaHeight / sizeCalculator->GetRowHeight();
+	Long loadingRowCount = rowCount * 4;
+
+	//3. 시작위치를 구한다.
 	TCHAR character[2];
-	Long startOffset = 0;
-	Long offset = currentOffset - (this->pageSize / 2 - 1);
-	if (offset >= 0)
+	Long newLineNeeded = loadingRowCount / 10 * 2 + 1;
+	Long newLineCount = 0;
+	Long i = currentOffset - 1;
+	while (newLineCount < newLineNeeded && i >= 0)
 	{
-		int result = fseek(this->file, offset, SEEK_SET);
+		int ret = fseek(this->file, i, SEEK_SET);
 		fread(character, 1, 1, this->file);
-		while (character[0] != '\n' && result == 0)
+
+		if (character[0] == '\n')
 		{
-			result = fseek(this->file, -2, SEEK_CUR);
+			newLineCount++;
+		}
+
+		i--;
+	}
+
+	this->startOffset = 0;
+	if (newLineCount >= newLineNeeded)
+	{
+		this->startOffset = i;
+	}
+	this->start = this->start.Move(0, 0);
+
+	//4. 현재 좌표를 구한다.
+	newLineNeeded = loadingRowCount;
+	newLineCount = 0;
+	this->current = this->start;
+	i = this->startOffset;
+	fseek(this->file, i, SEEK_SET);
+	while (i < currentOffset)
+	{
+		fread(character, 1, 1, this->file);
+
+		if (character[0] == '\r' || character[0] & 0x80)
+		{
+			i++;
+			fread(character + 1, 1, 1, this->file);
+		}
+
+		if (character[0] != '\r')
+		{
+			this->current = this->current.Right();
+		}
+		else
+		{
+			this->current = this->current.Down();
+			this->current = this->current.Move(this->current.GetRow(), 0);
+			newLineCount++;
+		}
+
+		i++;
+	}
+
+	//5. 끝 위치를 구한다.
+	Position previous;
+	fseek(this->file, currentOffset, SEEK_SET);
+	this->end = this->current;
+	size_t flag = fread(character, 1, 1, this->file);
+	i = currentOffset + 1;
+	Long pageLimit = this->startOffset + this->pageSize;
+	while (newLineCount < newLineNeeded && flag > 0 && !feof(this->file) && i < pageLimit)
+	{
+		if (character[0] == '\r' || character[0] & 0x80)
+		{
+			flag = fread(character + 1, 1, 1, this->file);
+			i++;
+		}
+
+		if (character[0] != '\r')
+		{
+			this->end = this->end.Right();
+		}
+		else
+		{
+			previous = this->end;
+			this->end = this->end.Down();
+			this->end = this->end.Move(this->end.GetRow(), 0);
+			newLineCount++;
+		}
+		
+		fread(character, 1, 1, this->file);
+		i++;
+	}
+
+	if (newLineCount >= newLineNeeded)
+	{
+		this->endOffset = i - 3;
+		this->end = previous;
+	}
+	else if (i > pageLimit)
+	{
+		Long j = pageLimit - 1;
+		fseek(this->file, j, SEEK_SET);
+		fread(character, 1, 1, this->file);
+		while (j >= currentOffset && character[0] != '\r')
+		{
+			j--;
+			fseek(this->file, j, SEEK_SET);
 			fread(character, 1, 1, this->file);
 		}
 
-		if (result == 0)
-		{
-			startOffset = ftell(this->file);
-		}
+		this->endOffset = j;
+		this->end = previous;
+	}
+	else if (feof(this->file))
+	{
+		fseek(this->file, 0, SEEK_END);
+		this->endOffset = ftell(this->file);
 	}
 
-	//2. 파일에서 페이지 크기만큼 읽는다.
-	TCHAR(*contents) = new TCHAR[this->pageSize + 1];
-	Long endOffset;
-	fseek(this->file, startOffset, SEEK_SET);
-	Long count = fread(contents, 1, this->pageSize, this->file);
-	Long i = count - 1;
-	while (i >= 0 && contents[i] != '\n')
-	{
-		i--;
-	}
-	contents[i + 1] = '\0';
+	//6. 페이지를 읽는다.
+	fseek(this->file, this->startOffset, SEEK_SET);
+	TCHAR(*contents) = new TCHAR[this->pageSize];
+	Long contentsSize = this->endOffset - this->startOffset;
+	Long count = fread(contents, 1, contentsSize, this->file);
+	contents[count] = '\0';
 
-	if (i >= 0)
-	{
-		endOffset = startOffset + i;
-	}
-	else
-	{
-		endOffset = startOffset;
-	}
-	
-	NoteConverter noteConverter;
+	//7. 노트로 변환한다.
 	if (((NotepadForm*)(this->parent))->note != NULL)
 	{
 		delete ((NotepadForm*)(this->parent))->note;
 	}
-	
-	//3. 노트에 적재한다.
+
+	NoteConverter noteConverter;
 	((NotepadForm*)(this->parent))->note = noteConverter.ConvertToNote(contents);
 
-	//4. 현재 위치를 구한다.
-	fseek(this->file, startOffset, SEEK_SET);
-	this->current = this->current.Move(0, 0);
-	i = startOffset;
-	size_t flag = fread(character, 1, 1, this->file);
-	while (i < currentOffset && flag > 0 && !feof(this->file))
-	{
-		if (character[0] != '\n')
-		{
-			if (character[0] == '\r' || character[0] & 0x80)
-			{
-				i++;    
-				flag = fread(character + 1, 1, 1, this->file);
-			}
-
-			if (character[0] != '\r')
-			{
-				this->current = this->current.Right();
-			}
-			else
-			{
-				this->current = this->current.Down();
-				this->current = this->current.Move(this->current.GetRow(), 0);
-			}
-		}
-		i++;
-		flag = fread(&character, 1, 1, this->file);
-	}
-
-	//5. 끝 위치를 구한다.
-	this->end = this->current;
-	while (i < endOffset && flag > 0 && !feof(this->file))
-	{
-		if (character[0] != '\n')
-		{
-			if (character[0] == '\r' || character[0] & 0x80)
-			{
-				i++;
-				flag = fread(character + 1, 1, 1, this->file);
-			}
-
-			if (character[0] != '\r')
-			{
-				this->end = this->end.Right();
-			}
-			else
-			{
-				this->end = this->end.Down();
-				this->end = this->end.Move(this->end.GetRow(), 0);
-			}
-		}
-		i++;
-		flag = fread(&character, 1, 1, this->file);
-	}
-
-	//5. 노트에서 현재 위치로 이동한다.
+	//8. 노트에서 현재 위치로 이동한다.
 	fseek(this->file, currentOffset, SEEK_SET);
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->Move(this->current.GetRow());
 	Glyph* row = note->GetAt(rowIndex);
 	row->Move(this->current.GetColumn());
-#endif
-#if 0
-	//6. 화면에 표시되는 줄 수를 구한다.
-	RECT rect;
-	GetClientRect(this->parent->GetSafeHwnd(), &rect);
-	Long clientAreaHeight = rect.bottom - rect.top;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowCount = clientAreaHeight / sizeCalculator->GetRowHeight();
 
-	//7. 시작 위치를 구한다.
-	Long startRow = this->current.GetRow() - (rowCount / 2 - 1);
-	if (startRow < 0)
+	if (contents != NULL)
 	{
-		startRow = 0;
+		delete[] contents;
 	}
-	this->start = this->start.Move(startRow, 0);
-	
-	count = 0;
-	Long countNeed = this->current.GetRow() - startRow;
-	int result = fseek(this->file, -1, SEEK_CUR);
-	flag = fread(character, 1, 1, this->file);
-	while (count < countNeed && result == 0 && flag > 0)
-	{
-		if (character[0] == '\n')
-		{
-			count++;
-		}
+}
 
-		result = fseek(this->file, -2, SEEK_CUR);
-		flag = fread(character, 1, 1, this->file);
-	}
+Long PagingBuffer::CountRow(Long offset) {
+	Long current = ftell(this->file);
 
-	Long startOffset = ftell(this->file);
-	if (result != 0)
-	{
-		fseek(this->file, 0, SEEK_SET);
-		startOffset = 0;
-	}
-
-	//8. 끝 위치를 구한다.
-	i = startOffset;
-	count = 0;
-	flag = fread(character, 1, 1, this->file);
-	while (count < rowCount && i < this->endOffset && flag > 0 && !feof(this->file))
+	Long count = 0;
+	TCHAR character[2];
+	fseek(this->file, 0, SEEK_SET);
+	Long i = 0;
+	size_t flag = fread(character, 1, 1, this->file);
+	while (i < offset && flag > 0 && !feof(this->file))
 	{
 		if (character[0] == '\r')
 		{
@@ -206,70 +208,6 @@ void PagingBuffer::Load() {
 		}
 
 		i++;
-		flag = fread(character, 1, 1, this->file);
-	}
-
-	Long endRow = startRow + count - 1;
-	row = note->GetAt(endRow);
-	this->end = this->end.Move(endRow, row->GetLength());
-
-	fseek(this->file, current, SEEK_SET);
-
-	//6. 수직 스크롤바의 정보를 읽는다.
-	SCROLLINFO scrollInfo = {};
-	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_ALL;
-	BOOL hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
-
-	//7. 시작 위치를 구한다.
-	Long startRowHeight = 0;
-	if (hasScrollBar)
-	{
-		startRowHeight = scrollInfo.nPos;
-	}
-
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long startRow = startRowHeight / sizeCalculator->GetRowHeight();
-	this->start = this->start.Move(startRow, 0);
-
-	//8. 끝 위치를 구한다.
-	RECT rect;
-	GetClientRect(this->parent->GetSafeHwnd(), &rect);
-	Long clientAreaHeight = rect.bottom - rect.top;
-	Long rowCount = clientAreaHeight / ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight();
-
-	Long endRow = startRow + rowCount;
-	row = note->GetAt(endRow);
-	this->end = this->end.Move(endRow, row->GetLength() - 1);
-#endif
-#if 0
-	if (contents != NULL)
-	{
-		delete[] contents;
-	}
-#endif
-
-}
-
-Long PagingBuffer::CountRow() {
-	Long current = ftell(this->file);
-
-	Long count = 0;
-	TCHAR character[2];
-	fseek(this->file, 0, SEEK_SET);
-	size_t flag = fread(character, 1, 1, this->file);
-	while (flag > 0 && !feof(this->file))
-	{
-		if (character[0] == '\r' || character[0] & 0x80)
-		{
-			flag = fread(character + 1, 1, 1, this->file);
-		}
-
-		if (character[0] == '\r')
-		{
-			count++;
-		}
-
 		size_t flag = fread(character, 1, 1, this->file);
 	}
 
@@ -360,30 +298,39 @@ Position& PagingBuffer::NextRow() {
 }
 
 Position& PagingBuffer::MoveRow(Long index) {
-	Long current = ftell(this->file);
+	Long currentOffset = ftell(this->file);
 
 	TCHAR character[2];
-	int result;
 	Long need;
+	Long i;
 	Long count = 0;
 	if (index < this->current.GetRow())
 	{
 		need = this->current.GetRow() - index + 1;
-		result = fseek(this->file, -1, SEEK_CUR);
-		while (count < need && result == 0)
+		i = currentOffset - 1;
+		while (count < need && i >= 0)
 		{
+			fseek(this->file, i, SEEK_CUR);
 			fread(character, 1, 1, this->file);
+
 			if (character[0] == '\n')
 			{
 				count++;
 			}
-			result = fseek(this->file, -2, SEEK_CUR);
+			
+			i--;
 		}
 
-		if (result == 0)
+		if (count >= need)
 		{
-			fseek(this->file, 2, SEEK_CUR);
+			currentOffset = i + 1;
 		}
+		else
+		{
+			currentOffset = 0;
+		}
+
+		fseek(this->file, currentOffset, SEEK_SET);
 	}
 	else if (index > this->current.GetRow())
 	{
@@ -398,20 +345,25 @@ Position& PagingBuffer::MoveRow(Long index) {
 
 			flag = fread(character, 1, 1, this->file);
 		}
+
+		if (count >= need && !feof(this->file))
+		{
+			fseek(this->file, -1, SEEK_CUR);
+		}
 	}
 
-	this->current = this->current.Move(index, this->current.GetColumn());
+	this->current = this->current.Move(index, 0);
 
 	return this->current;
 }
 
-bool PagingBuffer::IsOnView() {
-	bool ret = false;
+Long PagingBuffer::GetFileEnd() const {
+	Long current = ftell(this->file);
 
-	if (this->current >= this->start && this->current <= this->end)
-	{
-		ret = true;
-	}
+	fseek(this->file, 0, SEEK_END);
+	Long fileEnd = ftell(this->file);
 
-	return ret;
+	fseek(this->file, current, SEEK_SET);
+
+	return fileEnd;
 }

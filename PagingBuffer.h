@@ -9,12 +9,12 @@ class CWnd;
 
 class PagingBuffer {
 public:
-	PagingBuffer(CWnd* parent, Long pageSize = 65536);
+	PagingBuffer(CWnd* parent, Long pageSize = 2097152);
 	~PagingBuffer();
 
 	void Load();
 	void Save();
-	Long CountRow();
+	Long CountRow(Long offset);
 
 	Position& First();
 	Position& Previous();
@@ -28,26 +28,44 @@ public:
 	Position& LastRow();
 	Position& MoveRow(Long index);
 
+	Long GetFileEnd() const;
+	Long GetStartOffset() const;
+	Long GetEndOffset() const;
 	Position& GetStart() const;
+	Position& GetCurrent() const;
 	Position& GetEnd() const;
 
-	bool IsOnView();
 private:
 	CWnd* parent;
 	Long pageSize;
 	FILE* file;
+	Long startOffset;
+	Long endOffset;
 	Position current;
 	Position start;
 	Position end;
 	bool isDirty;
 };
 
+inline Long PagingBuffer::GetStartOffset() const {
+	return this->startOffset;
+}
+
+inline Long PagingBuffer::GetEndOffset() const {
+	return this->endOffset;
+}
+
 inline Position& PagingBuffer::GetStart() const {
 	return const_cast<Position&>(this->start);
+}
+
+inline Position& PagingBuffer::GetCurrent() const {
+	return const_cast<Position&>(this->current);
 }
 
 inline Position& PagingBuffer::GetEnd() const {
 	return const_cast<Position&>(this->end);
 }
+
 
 #endif // !_PAGINGBUFFER_H

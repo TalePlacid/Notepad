@@ -9,6 +9,7 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	CFont* oldFont = NULL;
 	char character;
 	this->singleByteWidths = new Long[95];
+	Long maxCharacterWidth = 0;
 
 	if (((NotepadForm*)parent)->font != NULL)
 	{
@@ -19,9 +20,19 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	{
 		character = i + 32;
 		this->singleByteWidths[i] = cdc->GetTextExtent(CString(character)).cx;
+		if (this->singleByteWidths[i] > maxCharacterWidth)
+		{
+			maxCharacterWidth = this->singleByteWidths[i];
+		}
 	}
 
 	this->multiByteWidth = cdc->GetTextExtent(CString("°¡")).cx;
+	if (this->multiByteWidth > maxCharacterWidth)
+	{
+		maxCharacterWidth = this->multiByteWidth;
+	}
+
+	this->maxCharacterWidth = maxCharacterWidth;
 
 	TEXTMETRIC tm;
 	HDC hdc = cdc->GetSafeHdc();

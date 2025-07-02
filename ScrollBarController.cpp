@@ -24,7 +24,9 @@ Long ScrollBarController::PageDown() {
 	Long nPos = -1;
 	if (hasScrollBar)
 	{
-		nPos = scrollInfo.nPos + scrollInfo.nPage;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		Long rowHeight = sizeCalculator->GetRowHeight();
+		nPos = (scrollInfo.nPos + scrollInfo.nPage) / rowHeight * rowHeight;
 		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
 	}
 
@@ -49,10 +51,11 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		//3. 수직 스크롤바가 없으면,
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Long scrollBarSize;
 		if (!hasScrollBar)
 		{
 			//3.1. 페이징버퍼에서 줄 수를 읽는다.
-			Long rowCount = pagingBuffer->CountRow();
+			Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEnd());
 
 			//3.2. 메모의 전체 높이를 구한다.
 			Long totalHeight = rowCount * sizeCalculator->GetRowHeight();
@@ -64,33 +67,22 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 
 				scrollInfo.nMin = 0;
 				scrollInfo.nMax = totalHeight;
-				scrollInfo.nPage = clientAreaHeight;
+				scrollBarSize = GetSystemMetrics(SM_CYHSCROLL);
+				scrollInfo.nPage = clientAreaHeight - scrollBarSize;
 				scrollInfo.nPos = 0;
 				SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
 			}
 		}
-
-		//4. 페이징 버퍼에서 시작 줄과 끝 줄의 위치을 읽는다.
-		Long startRow = pagingBuffer->GetStart().GetRow();
-		Long endRow = pagingBuffer->GetEnd().GetRow();
-
-		//5. 끝 줄까지의 높이가 화면 높이보다 작거나 같으면,
-		Long endRowHeight = endRow * sizeCalculator->GetRowHeight();
-		if (endRowHeight <= clientAreaHeight)
+		else //4. 수직 스크롤 바가 있으면,
 		{
-			//5.1. 수직 스크롤바를 지운다.
-			this->parent->ModifyStyle(WS_VSCROLL, 0);
-		}
-		else //6. 끝 줄까지의 높이가 화면 높이보다 크면,
-		{
-			//6.1. 수직 스크롤바 정보를 갱신한다.
-			Long startRowHeight = startRow * sizeCalculator->GetRowHeight();
-			scrollInfo.nPage = clientAreaHeight;
-			scrollInfo.nPos = startRowHeight;
-			SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+			//4.1. 페이지크기가 파일크기보다 크거나 같으면, 스크롤바를 없앤다.
+			if (pagingBuffer->GetEndOffset() >= pagingBuffer->GetFileEnd())
+			{
+				this->parent->ModifyStyle(WS_VSCROLL, 0);
+			}
 		}
 
-		//7. 수평 스크롤바 정보를 읽는다.
+		//5. 수평 스크롤바 정보를 읽는다.
 		hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
 
 		Long maxWidth = 0;
@@ -99,7 +91,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			maxWidth = scrollInfo.nMax;
 		}
 
-		//8. 노트에서 첫줄부터 끝줄까지 순회한다.
+		//6. 노트에서 첫줄부터 끝줄까지 순회한다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Glyph* row;
 		Glyph* character;
@@ -108,7 +100,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		Long i = 0;
 		while (i < note->GetLength())
 		{
-			//8.1. 제일 긴 줄의 너비를 구한다.
+			//6.1. 제일 긴 줄의 너비를 구한다.
 			row = note->GetAt(i);
 			width = 0;
 			j = 0;
@@ -127,30 +119,31 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			i++;
 		}
 
-		//9. 최대 너비가 화면 너비보다 작거나 같으면,
+		//7. 최대 너비가 화면 너비보다 작거나 같으면,
 		if (maxWidth <= clientAreaWidth)
 		{
-			//9.1. 수평 스크롤바를 지운다.
+			//7.1. 수평 스크롤바를 지운다.
 			this->parent->ModifyStyle(WS_HSCROLL, 0);
 		}
-		else //10. 최대 너비가 화면 너비보다 크면,
+		else //8. 최대 너비가 화면 너비보다 크면,
 		{
-			//10.1. 수평 스크롤바가 없으면,
+			//8.1. 수평 스크롤바가 없으면,
 			if (!hasScrollBar)
 			{
-				//10.1.1. 수평 스크롤바를 만든다.
+				//8.1.1. 수평 스크롤바를 만든다.
 				this->parent->ModifyStyle(0, WS_HSCROLL);
 				scrollInfo.nMin = 0;
-				scrollInfo.nPage = clientAreaWidth;
+				scrollBarSize = GetSystemMetrics(SM_CXVSCROLL);
+				scrollInfo.nPage = clientAreaWidth - scrollBarSize;
 				scrollInfo.nPos = 0;
 			}
 
-			//10.2. 수평 스크롤바 정보를 갱신한다.
+			//8.2. 수평 스크롤바 정보를 갱신한다.
 			scrollInfo.nMax = maxWidth;
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 		}
 
-		//11. 원도우를 갱신한다.
+		//9. 원도우를 갱신한다.
 		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
 }
