@@ -310,7 +310,7 @@ Position& PagingBuffer::MoveRow(Long index) {
 		i = currentOffset - 1;
 		while (count < need && i >= 0)
 		{
-			fseek(this->file, i, SEEK_CUR);
+			fseek(this->file, i, SEEK_SET);
 			fread(character, 1, 1, this->file);
 
 			if (character[0] == '\n')
@@ -322,7 +322,7 @@ Position& PagingBuffer::MoveRow(Long index) {
 		}
 
 		if (count >= need)
-		{
+		{  
 			currentOffset = i + 1;
 		}
 		else

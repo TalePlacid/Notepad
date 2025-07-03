@@ -15,6 +15,22 @@ ScrollBarController::~ScrollBarController() {
 
 }
 
+Long ScrollBarController::PageUp() {
+	SCROLLINFO scrollInfo = {};
+	scrollInfo.cbSize = sizeof(SCROLLINFO);
+	scrollInfo.fMask = SIF_ALL;
+	BOOL hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+
+	Long nPos = -1;
+	if (hasScrollBar)
+	{
+		nPos = scrollInfo.nPos - scrollInfo.nPage;
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
+	}
+
+	return nPos;
+}
+
 Long ScrollBarController::PageDown() {
 	SCROLLINFO scrollInfo = {};
 	scrollInfo.cbSize = sizeof(SCROLLINFO);
@@ -24,9 +40,7 @@ Long ScrollBarController::PageDown() {
 	Long nPos = -1;
 	if (hasScrollBar)
 	{
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long rowHeight = sizeCalculator->GetRowHeight();
-		nPos = (scrollInfo.nPos + scrollInfo.nPage) / rowHeight * rowHeight;
+		nPos = scrollInfo.nPos + scrollInfo.nPage;
 		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
 	}
 

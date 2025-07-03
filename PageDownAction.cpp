@@ -48,8 +48,8 @@ void PageDownAction::Perform() {
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Position current = pagingBuffer->MoveRow(downRowIndex);
 
-		Long validUnderRow = pagingBuffer->GetEnd().GetRow() / 10 * 8;
-		if (current.GetRow() > validUnderRow)
+		Long validBelowRow = pagingBuffer->GetEnd().GetRow() / 10 * 8;
+		if (current.GetRow() > validBelowRow)
 		{
 			pagingBuffer->Load();
 			note = ((NotepadForm*)(this->parent))->note;
@@ -61,19 +61,19 @@ void PageDownAction::Perform() {
 		Long widthSum = 0;
 		Glyph* row = note->GetAt(downRowIndex);
 		i = 0;
-		while (widthSum <= rowWidth && i < row->GetLength())
+		while (widthSum < rowWidth && i < row->GetLength())
 		{
 			character = row->GetAt(i);
 			previousWidth = widthSum;
 			widthSum += sizeCalculator->GetCharacterWidth((char*)(*character));
 			i++;
 		}
-		i--;
-
-		if (widthSum - rowWidth < rowWidth - previousWidth)
+		
+		if (widthSum - rowWidth > rowWidth - previousWidth)
 		{
 			i--;
 		}
+
 
 		pagingBuffer->Move(i);
 		row->Move(i);

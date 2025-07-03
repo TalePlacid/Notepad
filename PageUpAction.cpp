@@ -4,6 +4,7 @@
 #include "PagingBuffer.h"
 #include "Glyph.h"
 #include "SizeCalculator.h"
+#include "ScrollBarController.h"
 
 #pragma warning(disable:4996)
 
@@ -22,65 +23,62 @@ void PageUpAction::Perform() {
 	scrollInfo.fMask = SIF_ALL;
 	BOOL hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
 
-	if (hasScrollBar)
+	if (hasScrollBar && scrollInfo.nPos > scrollInfo.nMin)
 	{
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Long rowCount = scrollInfo.nPage / sizeCalculator->GetRowHeight();
 		
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
-		Glyph* currentRow = note->GetAt(rowIndex);
-		Long columnIndex = currentRow->GetCurrent();
+		Glyph* originalRow = note->GetAt(rowIndex);
+		Long columnIndex = originalRow->GetCurrent();
 
-		Long upRowIndex = rowIndex - rowCount;
-		upRowIndex = note->Move(upRowIndex);
-
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		pagingBuffer->MoveRow(upRowIndex);
-
-		Glyph* row = note->GetAt(upRowIndex);
-		Long rowWidth = 0;
+		Long originalRowWidth = 0;
 		Glyph* character;
 		Long i = 0;
 		while (i < columnIndex)
 		{
-			character = currentRow->GetAt(i);
-			rowWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
+			character = originalRow->GetAt(i);
+			originalRowWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
 			i++;
 		}
 
-		Long previousSum = 0;
+		Long upRowIndex = rowIndex - rowCount;
+		
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Position current = pagingBuffer->MoveRow(upRowIndex);
+
+		Long validAboveRow = pagingBuffer->GetEnd().GetRow() / 10 * 2;
+		if (current.GetRow() < validAboveRow)
+		{
+			pagingBuffer->Load();
+			note = ((NotepadForm*)(this->parent))->note;
+			upRowIndex = pagingBuffer->GetCurrent().GetRow();
+		}
+
+		upRowIndex = note->Move(upRowIndex);
+		Glyph* row = note->GetAt(upRowIndex);
+
+		Long previousWidth = 0;
 		Long widthSum = 0;
 		i = 0;
-		while (i < row->GetLength() && widthSum <= rowWidth)
+		while (i < row->GetLength() && widthSum < originalRowWidth)
 		{
 			character = row->GetAt(i);
-			previousSum = widthSum;
+			previousWidth = widthSum;
 			widthSum += sizeCalculator->GetCharacterWidth((char*)(*character));
 			i++;
 		}
 
-		if (i < row->GetLength())
+		if (widthSum - originalRowWidth > originalRowWidth - previousWidth)
 		{
-			if (widthSum - rowWidth > rowWidth - previousSum)
-			{
-				i--;
-			}
+			i--;
+		}
 
-			columnIndex = row->Move(i);
-			pagingBuffer->Move(i);
-		}
-		else
-		{
-			row->Last();
-			pagingBuffer->Last();
-		}
-#if 0
-		if (!pagingBuffer->IsOnPage())
-		{
-			pagingBuffer->Load();
-		}
-#endif
+		pagingBuffer->Move(i);
+		row->Move(i);
+		((NotepadForm*)(this->parent))->scrollBarController->PageUp();
+
 		note->Select(false);
 		this->parent->Invalidate();
 	}

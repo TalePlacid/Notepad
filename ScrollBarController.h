@@ -12,6 +12,7 @@ public:
 	ScrollBarController(CWnd* parent);
 	virtual ~ScrollBarController();
 
+	Long PageUp();
 	Long PageDown();
 
 	virtual void Update(Subject* subject, string interest);
