@@ -19,17 +19,21 @@ HScrollBarDragAction::~HScrollBarDragAction() {
 }
 
 void HScrollBarDragAction::Perform() {
-	//1. 드래그 위치로 스크롤바의 현재 위치를 설정한다.
+	//1. 기존 스크롤바 위치를 읽는다.
+	Long originalPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+
+	//2. 드래그 위치로 스크롤바의 현재 위치를 설정한다.
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, this->nPos, TRUE);
 
-	//2. 화면 너비를 구한다.
+	//3. 화면 너비를 구한다.
 	RECT rect;
 	GetClientRect(this->parent->GetSafeHwnd(), &rect);
 	Long clientAreaWidth = rect.right - rect.left;
 	
 	Caret* caret = ((NotepadForm*)(this->parent))->caretController->GetCaret();
+	Long x = caret->GetX() + (originalPos - this->nPos);
 
-	if (caret->GetX() < 0 || caret->GetX() > clientAreaWidth)
+	if (x < 0 || x > clientAreaWidth)
 	{
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
@@ -37,27 +41,35 @@ void HScrollBarDragAction::Perform() {
 		Long columnIndex = row->GetCurrent();
 
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long widthLimit = 0;
-		if (caret->GetX() < 0)
-		{
-			widthLimit = this->nPos;
-		}
-		else if (caret->GetX() > clientAreaWidth)
-		{
-			widthLimit = this->nPos + clientAreaWidth;
-		}
-
+		
 		Glyph* character;
 		Long width = 0;
 		Long i = 0;
-		while (i < row->GetLength() && width <= widthLimit)
+		if (x < 0)
 		{
-			character = row->GetAt(i);
-			width += sizeCalculator->GetCharacterWidth((char*)(*character));
-			i++;
+			while (i < row->GetLength() && width <= this->nPos)
+			{
+				character = row->GetAt(i);
+				width += sizeCalculator->GetCharacterWidth((char*)(*character));
+				i++;
+			}
+		}
+		else if (x > clientAreaWidth)
+		{
+			while (i < row->GetLength() && width < this->nPos + clientAreaWidth)
+			{
+				character = row->GetAt(i);
+				width += sizeCalculator->GetCharacterWidth((char*)(*character));
+				i++;
+			}
+
+			if (i < row->GetLength())
+			{
+				i--;
+			}
 		}
 
-		row->Move(i - 1);
+		row->Move(i);
 	}
 
 	this->parent->Invalidate();
