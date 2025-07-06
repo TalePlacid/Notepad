@@ -2,6 +2,8 @@
 #define _HSCROLLBARDRAGACTION_H
 #include "ScrollBarAction.h"
 
+typedef signed long int Long;
+
 class Cwnd;
 
 class HScrollBarDragAction : public ScrollBarAction {

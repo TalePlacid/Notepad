@@ -48,6 +48,10 @@ bool MultiByteCharacter::IsWordCharacter() {
 	return true;
 }
 
+bool MultiByteCharacter::IsMultiByteCharacter() {
+	return true;
+}
+
 bool MultiByteCharacter::IsEqual(const MultiByteCharacter& source) {
 	bool ret = false;
 

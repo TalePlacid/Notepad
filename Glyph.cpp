@@ -68,6 +68,10 @@ bool Glyph::IsWordCharacter() {
 	return false;
 }
 
+bool Glyph::IsMultiByteCharacter() {
+	return false;
+}
+
 void Glyph::Accept(Visitor& visitor) {
 
 }

@@ -67,6 +67,13 @@ NotepadForm::NotepadForm() {
 }
 
 NotepadForm::~NotepadForm() {
+
+}
+
+BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
+	cs.style &= ~WS_HSCROLL;
+
+	return CFrameWnd::PreCreateWindow(cs);
 }
 
 int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {

@@ -31,6 +31,7 @@ public:
 	BOOL IsCompositing() const;
 	CString GetPath() const;
 protected:
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void OnSize(UINT nType, int cx, int cy);

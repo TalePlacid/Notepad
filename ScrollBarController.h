@@ -16,8 +16,21 @@ public:
 	Long PageDown();
 
 	virtual void Update(Subject* subject, string interest);
+
+	BOOL HasVSCrollBar() const;
+	BOOL HasHScrollBar() const;
 private:
 	CWnd* parent;
+	BOOL hasVScrollBar;
+	BOOL hasHScrollBar;
 };
+
+inline BOOL ScrollBarController::HasVSCrollBar() const {
+	return this->hasVScrollBar;
+}
+
+inline BOOL ScrollBarController::HasHScrollBar() const {
+	return this->hasHScrollBar;
+}
 
 #endif // !_SCROLLBARCONTROLLER_H
