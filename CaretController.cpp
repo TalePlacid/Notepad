@@ -119,8 +119,9 @@ void CaretController::Update(Subject *subject, string interest) {
 
 		//6. 캐럿 너비를 구한다.
 		Long caretWidth = 1;
-		if (columnIndex < row->GetLength() && character != NULL)
+		if (columnIndex < row->GetLength())
 		{
+			character = row->GetAt(columnIndex);
 			if (character->IsMultiByteCharacter())
 			{
 				caretWidth = sizeCalculator->GetMultiByteWidth();
