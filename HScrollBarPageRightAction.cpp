@@ -5,6 +5,7 @@
 #include "SizeCalculator.h"
 #include "Caret.h"
 #include "CaretController.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -51,6 +52,7 @@ void HScrollBarPageRightAction::Perform() {
 		}
 
 		row->Move(i);
+		((NotepadForm*)(this->parent))->pagingBuffer->Move(i);
 	}
 
 

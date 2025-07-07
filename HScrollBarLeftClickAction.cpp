@@ -5,6 +5,7 @@
 #include "Caret.h"
 #include "CaretController.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -60,6 +61,7 @@ void HScrollBarLeftClickAction::Perform() {
 		}
 
 		row->Move(i);
+		((NotepadForm*)(this->parent))->pagingBuffer->Move(i);
 	}
 
 	this->parent->Invalidate();
