@@ -53,7 +53,7 @@ void PagingBuffer::Load() {
 
 	//3. 시작위치를 구한다.
 	TCHAR character[2];
-	Long newLineNeeded = loadingRowCount / 10 * 2 + 1;
+	Long newLineNeeded = loadingRowCount / 2 + 1;
 	Long newLineCount = 0;
 	Long i = currentOffset - 1;
 	while (newLineCount < newLineNeeded && i >= 0)
@@ -231,7 +231,7 @@ bool PagingBuffer::IsAboveBottomLine() {
 bool PagingBuffer::IsBelowTopLine() {
 	bool ret = false;
 
-	Long topLine = this->end.GetRow() / 10 * 2;
+	Long topLine = this->end.GetRow() / 10 * 4;
 	if (this->current.GetRow() > topLine)
 	{
 		ret = true;
@@ -290,6 +290,38 @@ Position& PagingBuffer::Move(Long index) {
 	if (!feof(this->file) && character[0] != '\r')
 	{
 		this->current = this->current.Move(this->current.GetRow(), index);
+	}
+	else
+	{
+		fseek(this->file, current, SEEK_SET);
+	}
+
+	return this->current;
+}
+
+Position& PagingBuffer::PreviousRow() {
+	Long current = ftell(this->file);
+
+	TCHAR character[2];
+	Long count = 0;
+	Long i = current - 1;
+	while (i >= 0 && count < 2)
+	{
+		fseek(this->file, i, SEEK_SET);
+		fread(character, 1, 1, this->file);
+
+		if (character[0] == '\n')
+		{
+			count++;
+		}
+
+		i--;
+	}
+
+	if (count >= 2)
+	{
+		this->current = this->current.Up();
+		this->current = this->current.Move(this->current.GetRow(), 0);
 	}
 	else
 	{
