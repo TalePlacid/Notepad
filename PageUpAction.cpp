@@ -21,9 +21,11 @@ void PageUpAction::Perform() {
 	SCROLLINFO scrollInfo = {};
 	scrollInfo.cbSize = sizeof(SCROLLINFO);
 	scrollInfo.fMask = SIF_ALL;
-	BOOL hasScrollBar = GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+	GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
 
-	if (hasScrollBar && scrollInfo.nPos > scrollInfo.nMin)
+	ScrollBarController* scrollBarController = ((NotepadForm*)(this->parent))->scrollBarController;
+
+	if (scrollBarController->HasVSCrollBar() && scrollInfo.nPos > scrollInfo.nMin)
 	{
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Long rowCount = scrollInfo.nPage / sizeCalculator->GetRowHeight();
@@ -48,8 +50,7 @@ void PageUpAction::Perform() {
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Position current = pagingBuffer->MoveRow(upRowIndex);
 
-		Long validAboveRow = pagingBuffer->GetEnd().GetRow() / 10 * 2;
-		if (current.GetRow() < validAboveRow)
+		if (!pagingBuffer->IsBelowTopLine())
 		{
 			pagingBuffer->Load();
 			note = ((NotepadForm*)(this->parent))->note;

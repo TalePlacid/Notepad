@@ -216,6 +216,30 @@ Long PagingBuffer::CountRow(Long offset) {
 	return count;
 }
 
+bool PagingBuffer::IsAboveBottomLine() {
+	bool ret = false;
+
+	Long bottomLine = this->end.GetRow() / 10 * 8;
+	if (this->current.GetRow() < bottomLine)
+	{
+		ret = true;
+	}
+
+	return ret;
+}
+
+bool PagingBuffer::IsBelowTopLine() {
+	bool ret = false;
+
+	Long topLine = this->end.GetRow() / 10 * 2;
+	if (this->current.GetRow() > topLine)
+	{
+		ret = true;
+	}
+
+	return ret;
+}
+
 Position& PagingBuffer::Last() {
 	Long currentOffset = ftell(this->file);
 	Position current = this->current;

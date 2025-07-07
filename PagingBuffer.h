@@ -15,6 +15,8 @@ public:
 	void Load();
 	void Save();
 	Long CountRow(Long offset);
+	bool IsAboveBottomLine();
+	bool IsBelowTopLine();
 
 	Position& First();
 	Position& Previous();
