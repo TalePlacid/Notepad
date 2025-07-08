@@ -2,6 +2,7 @@
 #include "CtrlLeftAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -19,6 +20,7 @@ void CtrlLeftAction::Perform() {
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long columnIndex = row->GetCurrent();
 	if (columnIndex > 0)
 	{
@@ -41,12 +43,14 @@ void CtrlLeftAction::Perform() {
 			}
 
 			row->Previous();
+			pagingBuffer->Previous();
 			i--;
 		}
 
 		if (i >= 0)
 		{
 			row->Next();
+			pagingBuffer->Next();
 		}
 	}
 	else
@@ -54,11 +58,21 @@ void CtrlLeftAction::Perform() {
 		if (rowIndex > 0)
 		{
 			rowIndex = note->Previous();
+			pagingBuffer->PreviousRow();
+			if (!pagingBuffer->IsBelowTopLine())
+			{
+				pagingBuffer->Load();
+				note = ((NotepadForm*)(this->parent))->note;
+				rowIndex = note->GetCurrent();
+			}
+
 			Glyph* previousRow = note->GetAt(rowIndex);
 			previousRow->Last();
+			pagingBuffer->Last();
 		}
 	}
 
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	note->Select(false);
 	this->parent->Invalidate();
 }

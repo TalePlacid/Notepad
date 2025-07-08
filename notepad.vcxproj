@@ -143,6 +143,7 @@
     <ClInclude Include="CtrlHomeAction.h" />
     <ClInclude Include="CtrlLeftAction.h" />
     <ClInclude Include="CtrlRightAction.h" />
+    <ClInclude Include="CtrlRightAction_Fixed.h" />
     <ClInclude Include="CtrlShiftEndAction.h" />
     <ClInclude Include="CtrlShiftHomeAction.h" />
     <ClInclude Include="CtrlShiftLeftAction.h" />
@@ -153,7 +154,6 @@
     <ClInclude Include="DownArrowAction.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
-    <ClInclude Include="EndAction_Fixed.h" />
     <ClInclude Include="EraseCommand.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
@@ -226,6 +226,7 @@
     <ClCompile Include="CtrlHomeAction.cpp" />
     <ClCompile Include="CtrlLeftAction.cpp" />
     <ClCompile Include="CtrlRightAction.cpp" />
+    <ClCompile Include="CtrlRightAction_Fixed.cpp" />
     <ClCompile Include="CtrlShiftEndAction.cpp" />
     <ClCompile Include="CtrlShiftHomeAction.cpp" />
     <ClCompile Include="CtrlShiftLeftAction.cpp" />
@@ -236,7 +237,6 @@
     <ClCompile Include="DownArrowAction.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EndAction.cpp" />
-    <ClCompile Include="EndAction_Fixed.cpp" />
     <ClCompile Include="EraseCommand.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />

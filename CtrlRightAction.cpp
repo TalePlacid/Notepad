@@ -2,6 +2,7 @@
 #include "CtrlRightAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -19,6 +20,7 @@ void CtrlRightAction::Perform() {
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long columnIndex = row->GetCurrent();
 	if (columnIndex < row->GetLength())
 	{
@@ -40,12 +42,14 @@ void CtrlRightAction::Perform() {
 				inBoundary = TRUE;
 			}
 			row->Next();
+			pagingBuffer->Next();
 			i++;
 		}
 
 		if (i < row->GetLength())
 		{
 			row->Previous();
+			pagingBuffer->Previous();
 		}
 	}
 	else
@@ -53,11 +57,20 @@ void CtrlRightAction::Perform() {
 		if (rowIndex < note->GetLength() - 1)
 		{
 			rowIndex = note->Next();
+			pagingBuffer->NextRow();
+			if (!pagingBuffer->IsAboveBottomLine())
+			{
+				pagingBuffer->Load();
+				note = ((NotepadForm*)(this->parent))->note;
+				rowIndex = note->GetCurrent();
+			}
 			Glyph* nextRow = note->GetAt(rowIndex);
 			nextRow->First();
+			pagingBuffer->First();
 		}
 	}
 
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	note->Select(false);
 	this->parent->Invalidate();
 }

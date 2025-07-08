@@ -10,4 +10,4 @@ public:
 	virtual void Perform();
 };
 
-#endif // !_CTRLLEFTSTRATEGY_H
+#endif // !_CTRLLEFTACTION_H
