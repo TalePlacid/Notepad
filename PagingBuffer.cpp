@@ -279,7 +279,7 @@ Position& PagingBuffer::Previous() {
 		result = fseek(this->file, offset, SEEK_SET);
 	}
 
-	if (character[0] != '\0' || character[0] == '\r')
+	if (character[0] != '\0' || character[0] != '\r')
 	{
 		if (character[0] & 0x80)
 		{
