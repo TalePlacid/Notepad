@@ -205,8 +205,11 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		Long x = width - hScrollPos;
 
 		//4. 현재 위치의 y좌표를 구한다.
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetStartOffset())
+			+ pagingBuffer->GetCurrent().GetRow();
 		Long vScrollPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
-		Long y = rowIndex * sizeCalculator->GetRowHeight() - vScrollPos;
+		Long y = rowCount * sizeCalculator->GetRowHeight() - vScrollPos;
 
 		Long nPos;
 		if (x < 0 || x > clientAreaWidth)
@@ -221,15 +224,15 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			}
 			SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, nPos, TRUE);
 		}
-		else if (y < 0 || y > clientAreaHeight)
+		else if (y < 0 || y + sizeCalculator->GetRowHeight() > clientAreaHeight)
 		{
 			if (y < 0)
 			{
 				nPos = vScrollPos + y;
 			}
-			else if (y > clientAreaHeight)
+			else if (y + sizeCalculator->GetRowHeight() > clientAreaHeight)
 			{
-				nPos = vScrollPos + (y - clientAreaHeight);
+				nPos = vScrollPos + ((y + sizeCalculator->GetRowHeight()) - clientAreaHeight);
 			}
 			SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
 		}

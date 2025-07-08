@@ -10,4 +10,4 @@ public:
 	virtual void Perform();
 };
 
-#endif // !_DOWNARROWSTRATEGY_H
+#endif // !_DOWNARROWACTION_H
