@@ -220,7 +220,7 @@ bool PagingBuffer::IsAboveBottomLine() {
 	bool ret = false;
 
 	Long bottomLine = this->end.GetRow() / 10 * 8;
-	if (this->current.GetRow() < bottomLine)
+	if (this->current.GetRow() < bottomLine && this->startOffset > 0)
 	{
 		ret = true;
 	}
@@ -231,13 +231,97 @@ bool PagingBuffer::IsAboveBottomLine() {
 bool PagingBuffer::IsBelowTopLine() {
 	bool ret = false;
 
+	Long currentOffset = ftell(this->file);
+	fseek(this->file, 0, SEEK_END);
+	Long fileEnd = ftell(this->file);
+	fseek(this->file, currentOffset, SEEK_SET);
+
 	Long topLine = this->end.GetRow() / 10 * 4;
-	if (this->current.GetRow() > topLine)
+	if (this->current.GetRow() > topLine && this->endOffset < fileEnd);
 	{
 		ret = true;
 	}
 
 	return ret;
+}
+
+Position& PagingBuffer::First() {
+	Long currentOffset = ftell(this->file);
+
+	TCHAR character;
+	Long i = currentOffset - 1;
+	int result = fseek(this->file, i, SEEK_SET);
+	fread(&character, 1, 1, this->file);
+	while (i >= 0 && character == '\n' && result == 0)
+	{
+		i--;
+		result = fseek(this->file, i, SEEK_SET);
+		fread(&character, 1, 1, this->file);
+	}
+
+	this->current = this->current.Move(this->current.GetRow(), 0);
+
+	return this->current;
+}
+
+Position& PagingBuffer::Previous() {
+	Long currentOffset = ftell(this->file);
+
+	TCHAR character[2] = {'\0', '\0'};
+	Long offset = currentOffset - 1;
+	int result = fseek(this->file, offset, SEEK_SET);
+	Long i = 1;
+	while (i >= 0 && result == 0)
+	{
+		fread(character + i, 1, 1, this->file);
+		i--;
+		offset--;
+		result = fseek(this->file, offset, SEEK_SET);
+	}
+
+	if (character[0] != '\0' || character[0] == '\r')
+	{
+		if (character[0] & 0x80)
+		{
+			fseek(this->file, currentOffset - 2, SEEK_SET);
+		}
+		else
+		{
+			fseek(this->file, currentOffset - 1, SEEK_SET);
+		}
+		this->current = this->current.Left();
+	}
+	else
+	{
+		fseek(this->file, currentOffset, SEEK_SET);
+	}
+
+	return this->current;
+}
+
+Position& PagingBuffer::Next() {
+	Long currentOffset = ftell(this->file);
+
+	TCHAR character[2];
+	size_t flag = fread(character, 1, 1, this->file);
+	if (flag > 0 && !feof(this->file))
+	{
+		if (character[0] == '\r' || character[0] & 0x80)
+		{
+			flag = fread(character + 1, 1, 1, this->file);
+		}
+
+		if (character[0] != '\r')
+		{
+			this->current = this->current.Right();
+		}
+		else
+		{
+			fseek(this->file, currentOffset, SEEK_SET);
+		}
+	}
+
+	return this->current;
 }
 
 Position& PagingBuffer::Last() {
@@ -326,6 +410,7 @@ Position& PagingBuffer::PreviousRow() {
 	else
 	{
 		fseek(this->file, current, SEEK_SET);
+		this->current = this->current.Move(0, 0);
 	}
 
 	return this->current;
