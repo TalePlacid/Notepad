@@ -175,4 +175,63 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		//9. 원도우를 갱신한다.
 		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
+	else if (interest == "AdjustScrollBars")
+	{
+		//1. 화면 크기를 읽는다.
+		RECT rect;
+		GetClientRect(this->parent->GetSafeHwnd(), &rect);
+		Long clientAreaWidth = rect.right - rect.left;
+		Long clientAreaHeight = rect.bottom - rect.top;
+
+		//2. 노트에서 현재 위치를 읽는다.
+		Glyph *note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		//3. 현재 위치의 x좌표를 구한다.
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		Glyph* character;
+		Long width = 0;
+		Long i = 0;
+		while (i < columnIndex)
+		{
+			character = row->GetAt(i);
+			width += sizeCalculator->GetCharacterWidth((char*)(*character));
+			i++;
+		}
+
+		Long hScrollPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+		Long x = width - hScrollPos;
+
+		//4. 현재 위치의 y좌표를 구한다.
+		Long vScrollPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+		Long y = rowIndex * sizeCalculator->GetRowHeight() - vScrollPos;
+
+		Long nPos;
+		if (x < 0 || x > clientAreaWidth)
+		{
+			if (x < 0)
+			{
+				nPos = hScrollPos + x;
+			}
+			else if (x > clientAreaWidth)
+			{
+				nPos = hScrollPos + (x - clientAreaWidth);
+			}
+			SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, nPos, TRUE);
+		}
+		else if (y < 0 || y > clientAreaHeight)
+		{
+			if (y < 0)
+			{
+				nPos = vScrollPos + y;
+			}
+			else if (y > clientAreaHeight)
+			{
+				nPos = vScrollPos + (y - clientAreaHeight);
+			}
+			SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
+		}
+	}
 }
