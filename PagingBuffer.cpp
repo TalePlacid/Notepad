@@ -383,6 +383,14 @@ Position& PagingBuffer::Move(Long index) {
 	return this->current;
 }
 
+Position& PagingBuffer::FirstRow() {
+	fseek(this->file, 0, SEEK_SET);
+
+	this->current = this->current.Move(0, 0);
+
+	return this->current;
+}
+
 Position& PagingBuffer::PreviousRow() {
 	Long current = ftell(this->file);
 
