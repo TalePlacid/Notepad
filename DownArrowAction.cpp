@@ -19,54 +19,52 @@ DownArrowAction::~DownArrowAction() {
 void DownArrowAction::Perform() {
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
+	Glyph* originalRow = note->GetAt(rowIndex);
+	Long columnIndex = originalRow->GetCurrent();
 
 	Glyph* character;
-	TCHAR(*content);
-	Long width = 0;
+	Long originalWidth = 0;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 
 	Long i = 0;
 	while (i < columnIndex)
 	{
-		character = row->GetAt(i);
-		content = (char*)(*character);
-		width += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>(content));
+		character = originalRow->GetAt(i);
+		originalWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
 		i++;
 	}
 
 	rowIndex = note->Next();
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->NextRow();
+	if (!pagingBuffer->IsAboveBottomLine())
+	{
+		pagingBuffer->Load();
+		note = ((NotepadForm*)(this->parent))->note;
+		rowIndex = note->GetCurrent();
+	}
 	Glyph* nextRow = note->GetAt(rowIndex);
-	Long nextRowWidth = 0;
 
+	Long previousWidth = 0;
+	Long width = 0;
 	i = 0;
-	while (i < nextRow->GetLength() && nextRowWidth < width)
+	while (width < originalWidth && i < nextRow->GetLength())
 	{
 		character = nextRow->GetAt(i);
-		content = (char*)(*character);
-		nextRowWidth += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>((LPCTSTR)content));
+		previousWidth = width;
+		width += sizeCalculator->GetCharacterWidth((char*)(*character));
 		i++;
 	}
 
-	if (i < nextRow->GetLength() - 1)
+	if (width - originalWidth > originalWidth - previousWidth)
 	{
-		nextRow->Move(i);
-		pagingBuffer->Move(i);
-	}
-	else
-	{
-		nextRow->Last();
-		pagingBuffer->Last();
+		i--;
 	}
 
-# if 0
-	if (!pagingBuffer->IsOnPage())
-	{
-		pagingBuffer->Load();
-	}
-#endif
+	pagingBuffer->Move(i);
+	nextRow->Move(i);
+
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	((NotepadForm*)(this->parent))->note->Select(false);
 	this->parent->Invalidate();
 }

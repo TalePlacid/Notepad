@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "SizeCalculator.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -18,43 +19,52 @@ UpArrowAction::~UpArrowAction() {
 void UpArrowAction::Perform() {
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
+	Glyph* originalRow = note->GetAt(rowIndex);
+	Long columnIndex = originalRow->GetCurrent();
 
 	Glyph* character;
-	Long width = 0;
-	TCHAR(*content);
+	Long originalWidth = 0;
 
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long i = 0;
 	while (i < columnIndex)
 	{
-		character = row->GetAt(i);
-		content = (char*)(*character);
-		width += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>(content));
+		character = originalRow->GetAt(i);
+		originalWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
 		i++;
 	}
 
 	rowIndex = note->Previous();
-	Glyph* previousRow = note->GetAt(rowIndex);
-	Long previousRowWidth = 0;
-	i = 0;
-	while (i < previousRow->GetLength() && previousRowWidth < width)
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->PreviousRow();
+	if (!pagingBuffer->IsBelowTopLine())
 	{
-		character = previousRow->GetAt(i);
-		content = (char*)(*character);
-		previousRowWidth += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>(content));
+		pagingBuffer->Load();
+		note = ((NotepadForm*)(this->parent))->note;
+		rowIndex = note->GetCurrent();
+	}
+
+	Glyph* row = note->GetAt(rowIndex);
+	Long previousWidth = 0;
+	Long widthSum = 0;
+	i = 0;
+	while (i < row->GetLength() && widthSum < originalWidth)
+	{
+		character = row->GetAt(i);
+		previousWidth = widthSum;
+		widthSum += sizeCalculator->GetCharacterWidth((char*)(*character));
 		i++;
 	}
 
-	if (i < previousRow->GetLength() - 1)
+	if (widthSum - originalWidth > originalWidth - previousWidth)
 	{
-		previousRow->Move(i);
-	}
-	else
-	{
-		previousRow->Last();
+		i--;
 	}
 
+	pagingBuffer->Move(i);
+	row->Move(i);
+
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	((NotepadForm*)(this->parent))->note->Select(false);
 	this->parent->Invalidate();
 }

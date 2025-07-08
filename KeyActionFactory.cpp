@@ -26,7 +26,6 @@
 #include "PageDownAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
-#include "DownArrowAction_Fixed.h"
 
 #pragma warning(disable:4996)
 
@@ -99,7 +98,7 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		}
 		else
 		{
-			keyAction = new DownArrowAction_Fixed(parent);
+			keyAction = new DownArrowAction(parent);
 		}
 		break;
 	case VK_HOME:
