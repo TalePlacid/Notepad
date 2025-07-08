@@ -225,7 +225,7 @@ bool PagingBuffer::IsAboveBottomLine() {
 	fseek(this->file, currentOffset, SEEK_SET);
 
 	Long bottomLine = this->end.GetRow() / 10 * 8;
-	if (this->current.GetRow() < bottomLine && this->endOffset >= fileEnd)
+	if (this->current.GetRow() < bottomLine || this->endOffset >= fileEnd)
 	{
 		ret = true;
 	}
@@ -237,7 +237,7 @@ bool PagingBuffer::IsBelowTopLine() {
 	bool ret = false;
 
 	Long topLine = this->end.GetRow() / 10 * 4;
-	if (this->current.GetRow() > topLine && this->startOffset <= 0)
+	if (this->current.GetRow() > topLine || this->startOffset <= 0)
 	{
 		ret = true;
 	}

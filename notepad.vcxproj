@@ -153,6 +153,7 @@
     <ClInclude Include="DownArrowAction.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
+    <ClInclude Include="EndAction_Fixed.h" />
     <ClInclude Include="EraseCommand.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="DownArrowAction.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EndAction.cpp" />
+    <ClCompile Include="EndAction_Fixed.cpp" />
     <ClCompile Include="EraseCommand.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />

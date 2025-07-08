@@ -10,4 +10,4 @@ public:
 	virtual void Perform();
 };
 
-#endif // !_ENDKEYSTRATEGY_H
+#endif // !_ENDACTION_H
