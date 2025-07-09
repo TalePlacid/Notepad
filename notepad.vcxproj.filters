@@ -263,7 +263,7 @@
     <ClInclude Include="PageDownAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CtrlHomeAction_Fixed.h">
+    <ClInclude Include="CtrlEndAction_Fixed.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -505,7 +505,7 @@
     <ClCompile Include="PageDownAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CtrlHomeAction_Fixed.cpp">
+    <ClCompile Include="CtrlEndAction_Fixed.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

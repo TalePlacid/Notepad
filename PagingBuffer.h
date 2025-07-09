@@ -2,6 +2,7 @@
 #define _PAGINGBUFFER_H
 #include <cstdio>
 #include "Position.h"
+#define PAGE_MULTIPLE 4
 
 typedef signed long int Long;
 
