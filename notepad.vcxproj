@@ -150,7 +150,6 @@
     <ClInclude Include="CtrlShiftTAction.h" />
     <ClInclude Include="CtrlTAction.h" />
     <ClInclude Include="CtrlVAction.h" />
-    <ClInclude Include="CtrlEndAction_Fixed.h" />
     <ClInclude Include="DownArrowAction.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
@@ -223,7 +222,6 @@
     <ClCompile Include="Composite.cpp" />
     <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
-    <ClCompile Include="CtrlEndAction_Fixed.cpp" />
     <ClCompile Include="CtrlHomeAction.cpp" />
     <ClCompile Include="CtrlLeftAction.cpp" />
     <ClCompile Include="CtrlRightAction.cpp" />

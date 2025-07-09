@@ -26,7 +26,6 @@
 #include "PageDownAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
-#include "CtrlEndAction_Fixed.h"
 
 #pragma warning(disable:4996)
 
@@ -127,7 +126,7 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		}
 		else if (onCtrlKey)
 		{
-			keyAction = new CtrlEndAction_Fixed(parent);
+			keyAction = new CtrlEndAction(parent);
 		}
 		else if (onShiftKey)
 		{
