@@ -158,6 +158,14 @@ void NotepadForm::OnPaint() {
 
 	RECT rect;
 	this->GetClientRect(&rect);
+	if (this->GetScrollPos(SB_HORZ) > 0)
+	{
+		rect.right += this->sizeCalculator->GetMultiByteWidth();
+	}
+	if (this->GetScrollPos(SB_VERT) > 0)
+	{
+		rect.bottom += this->sizeCalculator->GetRowHeight();
+	}
 	Long width = rect.right - rect.left;
 	Long height = rect.bottom - rect.top;
 
@@ -173,7 +181,7 @@ void NotepadForm::OnPaint() {
 	TextOutVisitor textOutVisitor(this, &memDC);
 	this->note->Accept(textOutVisitor);
 
-	dc.BitBlt(0, 0, width, height, &memDC, 0, 0, SRCCOPY);
+	dc.BitBlt(0, 0, width, height, &memDC, textOutVisitor.GetXOffset(), textOutVisitor.GetYOffset(), SRCCOPY);
 
 	memDC.SelectObject(oldBitMap);
 

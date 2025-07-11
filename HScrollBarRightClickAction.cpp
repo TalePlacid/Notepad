@@ -21,7 +21,7 @@ HScrollBarRightClickAction::~HScrollBarRightClickAction() {
 void HScrollBarRightClickAction::Perform() {
 	SCROLLINFO scrollInfo = {};
 	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_POS;
+	scrollInfo.fMask = SIF_ALL;
 	GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;

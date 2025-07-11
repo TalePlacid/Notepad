@@ -13,19 +13,20 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
 	:Visitor(parent){
 	this->dc = dc;
 	this->selectionVisitor = new SelectionVisitor(parent, dc);
-	
+
+
 	//1. 클라이언트 영역 사이즈를 구한다.
 	RECT clientArea;
 	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 
 	//2. 디스크파일 기준 뷰영역을 구한다.
 	RECT absoluteArea = clientArea;
-	Long nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
-	absoluteArea.left += nPos;
-	absoluteArea.right += nPos;
-	nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
-	absoluteArea.top += nPos;
-	absoluteArea.bottom += nPos;
+	Long hPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	absoluteArea.left += hPos;
+	absoluteArea.right += hPos;
+	Long vPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	absoluteArea.top += vPos;
+	absoluteArea.bottom += vPos;
 
 	//3. Note기준으로 환산한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -41,6 +42,19 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
 	this->paintingArea = absoluteArea;
 	this->paintingArea.top -= startRowHeight;
 	this->paintingArea.bottom -= startRowHeight;
+
+	this->xOffset = 0;
+	this->yOffset = 0;
+	if (hPos > 0)
+	{
+		this->paintingArea.left -= sizeCalculator->GetMultiByteWidth();
+		this->xOffset = sizeCalculator->GetMultiByteWidth();
+	}
+	if (vPos > 0)
+	{
+		this->paintingArea.top -= sizeCalculator->GetRowHeight();
+		this->yOffset = sizeCalculator->GetRowHeight();
+	}
 
 	this->x = 0;
 	this->y = 0;
@@ -69,9 +83,9 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 
-	if (this->x >= this->paintingArea.left - sizeCalculator->GetMaxCharacterWidth() 
+	if (this->x >= this->paintingArea.left
 		&& this->x <= this->paintingArea.right
-		&& this->y >= this->paintingArea.top - sizeCalculator->GetRowHeight()
+		&& this->y >= this->paintingArea.top
 		&& this->y <= this->paintingArea.bottom)
 	{
 		this->selectionVisitor->VisitCharacter(character);

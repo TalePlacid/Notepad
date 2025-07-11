@@ -65,6 +65,9 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		scrollInfo.fMask = SIF_ALL;
 		GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
 
+		BOOL isHScrollBarCreated = FALSE;
+		BOOL isVScrollBarCreated = FALSE;
+
 		//3. 수직 스크롤바가 있으면,
 		if (this->hasVScrollBar)
 		{
@@ -97,6 +100,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 				//4.2.1. 수직 스크롤바를 만든다.
 				this->parent->ModifyStyle(0, WS_VSCROLL);
 				this->hasVScrollBar = TRUE;
+				isVScrollBarCreated = TRUE;
 
 				//4.2.2. 수직 스크롤바 정보를 갱신한다.
 				scrollInfo.nMin = 0;
@@ -104,75 +108,76 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 				scrollInfo.nPage = clientAreaHeight;
 				scrollInfo.nPos = 0;
 				SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
-
-				//4.2.3. 수평 스크롤바가 있으면, 페이지크기를 갱신한다.
-				GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
-				if (this->hasHScrollBar)
-				{
-					scrollInfo.nPage -= GetSystemMetrics(SM_CXVSCROLL);
-					SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
-				}
 			}
-
-			//5. 수평 스크롤바 정보를 읽는다.
-			GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
-
-			//6. 수평 스크롤바가 없으면,
-			if (!this->hasHScrollBar)
-			{
-				//6.1. 노트에서 첫 줄부터 끝 줄까지 반복한다.
-				Long maxWidth = 0;
-				Long width;
-				Glyph* character;
-				Glyph* row;
-				Glyph* note = ((NotepadForm*)(this->parent))->note;
-				Long i = 0;
-				while (i < note->GetLength())
-				{
-					//6.1.1. 최대너비를 구한다.
-					row = note->GetAt(i);
-					width = 0;
-					Long j = 0;
-					while (j < row->GetLength())
-					{
-						character = row->GetAt(j);
-						width += sizeCalculator->GetCharacterWidth((char*)(*character));
-						j++;
-					}
-
-					if (width > maxWidth)
-					{
-						maxWidth = width;
-					}
-					i++;
-				}
-
-				//6.2. 최대너비가 화면너비보다 크면,
-				if (maxWidth > clientAreaWidth)
-				{
-					//6.2.1. 수평 스크롤바를 만든다.
-					this->parent->ModifyStyle(0, WS_HSCROLL);
-					this->hasHScrollBar = TRUE;
-
-					//6.2.2. 수평 스크롤바의 정보를 갱신한다.
-					scrollInfo.nMin = 0;
-					scrollInfo.nMax = maxWidth;
-					scrollInfo.nPage = clientAreaWidth;
-					scrollInfo.nPos = 0;
-					SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
-
-					//6.2.3. 수직 스크롤바가 있으면, 페이지크기를 갱신한다.
-					GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
-					if (this->hasVScrollBar)
-					{
-						scrollInfo.nPage -= GetSystemMetrics(SM_CYHSCROLL);
-						SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
-					}
-				}
-			}
-
 		}
-		//9. 원도우를 갱신한다.
+		
+		//5. 수평 스크롤바 정보를 읽는다.
+		GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
+
+		//6. 수평 스크롤바가 없으면,
+		if (!this->hasHScrollBar)
+		{
+			//6.1. 노트에서 첫 줄부터 끝 줄까지 반복한다.
+			Long maxWidth = 0;
+			Long width;
+			Glyph* character;
+			Glyph* row;
+			Glyph* note = ((NotepadForm*)(this->parent))->note;
+			Long i = 0;
+			while (i < note->GetLength())
+			{
+				//6.1.1. 최대너비를 구한다.
+				row = note->GetAt(i);
+				width = 0;
+				Long j = 0;
+				while (j < row->GetLength())
+				{
+					character = row->GetAt(j);
+					width += sizeCalculator->GetCharacterWidth((char*)(*character));
+					j++;
+				}
+
+				if (width > maxWidth)
+				{
+					maxWidth = width;
+				}
+				i++;
+			}
+
+			//6.2. 최대너비가 화면너비보다 크면,
+			if (maxWidth > clientAreaWidth)
+			{
+				//6.2.1. 수평 스크롤바를 만든다.
+				this->parent->ModifyStyle(0, WS_HSCROLL);
+				this->hasHScrollBar = TRUE;
+				isHScrollBarCreated = TRUE;
+
+				//6.2.2. 수평 스크롤바의 정보를 갱신한다.
+				scrollInfo.nMin = 0;
+				scrollInfo.nMax = maxWidth;
+				scrollInfo.nPage = clientAreaWidth;
+				scrollInfo.nPos = 0;
+				SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
+			}
+		}
+
+		//9. 수직 스크롤바가 만들어졌고, 수평 스크롤바가 있으면, 페이지크기를 갱신한다.
+		if (isVScrollBarCreated && this->hasHScrollBar)
+		{
+			GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
+			scrollInfo.nPage -= GetSystemMetrics(SM_CXVSCROLL);
+			SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
+		}
+
+		//10. 수평 스크롤바가 만들어졌고, 수직 스크롤바가 있으면, 페이지 크기를 갱신한다.
+		if (isHScrollBarCreated && this->hasVScrollBar)
+		{
+			GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+			scrollInfo.nPage -= GetSystemMetrics(SM_CYHSCROLL);
+			SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+		}
+
+		//11. 원도우를 갱신한다.
 		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
 	else if (interest == "AdjustScrollBars")
