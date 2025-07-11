@@ -195,6 +195,7 @@
     <ClInclude Include="ShiftHomeAction.h" />
     <ClInclude Include="ShiftLeftAction.h" />
     <ClInclude Include="ShiftRightAction.h" />
+    <ClInclude Include="ShiftRightAction_Fixed.h" />
     <ClInclude Include="ShiftUpAction.h" />
     <ClInclude Include="SingleByteCharacter.h" />
     <ClInclude Include="SizeCalculator.h" />
@@ -276,6 +277,7 @@
     <ClCompile Include="ShiftHomeAction.cpp" />
     <ClCompile Include="ShiftLeftAction.cpp" />
     <ClCompile Include="ShiftRightAction.cpp" />
+    <ClCompile Include="ShiftRightAction_Fixed.cpp" />
     <ClCompile Include="ShiftUpAction.cpp" />
     <ClCompile Include="SingleByteCharacter.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />

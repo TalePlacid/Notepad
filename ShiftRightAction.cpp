@@ -2,6 +2,7 @@
 #include "ShiftRightAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -20,43 +21,46 @@ void ShiftRightAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	Glyph* character = NULL;
-	if (columnIndex > 0)
-	{
-		character = row->GetAt(columnIndex - 1);
-	}
-
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex < row->GetLength())
 	{
-		columnIndex = row->Next();
-	}
-	else
-	{
-		if (rowIndex < note->GetLength() - 1)
+		Glyph* character = row->GetAt(columnIndex);
+		if (!character->IsSelected())
 		{
-			rowIndex = note->Next();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->First();
-		}
-	}
-
-	Glyph* movedCharacter = NULL;
-	if (columnIndex > 0)
-	{
-		movedCharacter = row->GetAt(columnIndex - 1);
-	}
-
-	if ((movedCharacter != NULL) && (character != movedCharacter))
-	{
-		if (movedCharacter->IsSelected())
-		{
-			movedCharacter->Select(FALSE);
+			character->Select(TRUE);
+			if (pagingBuffer->GetSelectionBeginOffset() < 0)
+			{
+				pagingBuffer->MarkSelectionBegin();
+			}
 		}
 		else
 		{
-			movedCharacter->Select(TRUE);
+			character->Select(FALSE);
+			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+			{
+				pagingBuffer->UnMarkSelectionBegin();
+			}
 		}
+
+		row->Next();
+		pagingBuffer->Next();
+	}
+	else
+	{
+		rowIndex = note->Next();
+		pagingBuffer->NextRow();
+		if (!pagingBuffer->IsAboveBottomLine())
+		{
+			pagingBuffer->Load();
+			note = ((NotepadForm*)(this->parent))->note;
+			rowIndex = note->GetCurrent();
+		}
+
+		row = note->GetAt(rowIndex);
+		row->First();
+		pagingBuffer->First();
 	}
 
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }

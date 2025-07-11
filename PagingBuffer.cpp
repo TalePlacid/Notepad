@@ -26,6 +26,7 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 	}
 
 	this->isDirty = false;
+	this->selectionBeginOffset = -1;
 }
 
 PagingBuffer::~PagingBuffer() {
@@ -563,6 +564,22 @@ Position& PagingBuffer::MoveRow(Long index) {
 	this->current = this->current.Move(index, 0);
 
 	return this->current;
+}
+
+Long PagingBuffer::MarkSelectionBegin() {
+	this->selectionBeginOffset = ftell(this->file);
+
+	return this->selectionBeginOffset;
+}
+
+Long PagingBuffer::UnMarkSelectionBegin() {
+	this->selectionBeginOffset = -1;
+
+	return this->selectionBeginOffset;
+}
+
+Long PagingBuffer::GetCurrentOffset() const {
+	return ftell(this->file);
 }
 
 Long PagingBuffer::GetFileEnd() const {

@@ -31,13 +31,17 @@ public:
 	Position& LastRow();
 	Position& MoveRow(Long index);
 
+	Long MarkSelectionBegin();
+	Long UnMarkSelectionBegin();
+
 	Long GetFileEnd() const;
 	Long GetStartOffset() const;
+	Long GetCurrentOffset() const;
 	Long GetEndOffset() const;
 	Position& GetStart() const;
 	Position& GetCurrent() const;
 	Position& GetEnd() const;
-
+	Long GetSelectionBeginOffset() const;
 private:
 	CWnd* parent;
 	Long pageSize;
@@ -48,6 +52,7 @@ private:
 	Position start;
 	Position end;
 	bool isDirty;
+	Long selectionBeginOffset;
 };
 
 inline Long PagingBuffer::GetStartOffset() const {
@@ -70,5 +75,8 @@ inline Position& PagingBuffer::GetEnd() const {
 	return const_cast<Position&>(this->end);
 }
 
+inline Long PagingBuffer::GetSelectionBeginOffset() const {
+	return this->selectionBeginOffset;
+}
 
 #endif // !_PAGINGBUFFER_H
