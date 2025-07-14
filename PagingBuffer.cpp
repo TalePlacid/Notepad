@@ -572,7 +572,7 @@ Long PagingBuffer::MarkSelectionBegin() {
 	return this->selectionBeginOffset;
 }
 
-Long PagingBuffer::UnMarkSelectionBegin() {
+Long PagingBuffer::UnmarkSelectionBegin() {
 	this->selectionBeginOffset = -1;
 
 	return this->selectionBeginOffset;

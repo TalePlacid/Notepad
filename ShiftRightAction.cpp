@@ -38,7 +38,7 @@ void ShiftRightAction::Perform() {
 			character->Select(FALSE);
 			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
 			{
-				pagingBuffer->UnMarkSelectionBegin();
+				pagingBuffer->UnmarkSelectionBegin();
 			}
 		}
 

@@ -32,7 +32,7 @@ public:
 	Position& MoveRow(Long index);
 
 	Long MarkSelectionBegin();
-	Long UnMarkSelectionBegin();
+	Long UnmarkSelectionBegin();
 
 	Long GetFileEnd() const;
 	Long GetStartOffset() const;
