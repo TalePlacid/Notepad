@@ -46,11 +46,14 @@ void PagingBuffer::Load() {
 
 	//2. 적재할 줄 수를 구한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+#if 0
 	RECT rect;
 	GetClientRect(this->parent->GetSafeHwnd(), &rect);
 	Long clientAreaHeight = rect.bottom - rect.top;
 	Long rowCount = clientAreaHeight / sizeCalculator->GetRowHeight();
 	Long loadingRowCount = rowCount * PAGE_MULTIPLE;
+#endif
+	Long loadingRowCount = PAGE_ROWCOUNT * PAGE_MULTIPLE;
 
 	//3. 시작위치를 구한다.
 	TCHAR character[2];
@@ -674,6 +677,7 @@ Position& PagingBuffer::MoveRow(Long index) {
 		else
 		{
 			currentOffset = 0;
+			index = 0;
 		}
 
 		fseek(this->file, currentOffset, SEEK_SET);
@@ -695,6 +699,10 @@ Position& PagingBuffer::MoveRow(Long index) {
 		if (count >= need && !feof(this->file))
 		{
 			fseek(this->file, -1, SEEK_CUR);
+		}
+		else
+		{
+			index = this->current.GetRow() + count;
 		}
 	}
 
