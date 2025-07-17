@@ -2,7 +2,6 @@
 #define _NOTE_H
 #include "Composite.h"
 #include "Array.h"
-#include "Observer.h"
 #include <string>
 using namespace std;
 
@@ -11,7 +10,7 @@ typedef signed long int Long;
 class Glyph;
 class Subject;
 
-class Note : public Composite, public Observer {
+class Note : public Composite {
 public:
 	Note(Long capacity = 256);
 	Note(string str, Long capacity = 256);
@@ -24,7 +23,6 @@ public:
 	virtual Long Next();
 	virtual Long Last();
 
-	virtual void Update(Subject* subject, string interest);
 };
 
 #endif // !_NOTE_H
