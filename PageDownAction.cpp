@@ -93,6 +93,7 @@ void PageDownAction::Perform() {
 			((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 
 			//1.2.8. 클라이언트 영역을 갱신한다.
+			note->Select(false);
 			this->parent->Invalidate();
 		}
 	}
