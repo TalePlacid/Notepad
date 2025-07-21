@@ -92,7 +92,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			//4.1. 메모 전체 높이를 구한다.
 			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 			Long totalRowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEnd());
-			Long totalHeight = totalRowCount * sizeCalculator->GetRowHeight();
+			Long totalHeight = (totalRowCount + 1) * sizeCalculator->GetRowHeight();
 
 			//4.2 메모 전체 높이가 화면높이보다 크면,
 			if (totalHeight > clientAreaHeight)
@@ -229,7 +229,8 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			}
 			SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, nPos, TRUE);
 		}
-		else if (y < 0 || y + sizeCalculator->GetRowHeight() > clientAreaHeight)
+		
+		if (y < 0 || y + sizeCalculator->GetRowHeight() > clientAreaHeight)
 		{
 			if (y < 0)
 			{
