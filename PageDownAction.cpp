@@ -94,6 +94,7 @@ void PageDownAction::Perform() {
 
 			//1.2.8. 클라이언트 영역을 갱신한다.
 			note->Select(false);
+			pagingBuffer->UnmarkSelectionBegin();
 			this->parent->Invalidate();
 		}
 	}

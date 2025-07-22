@@ -11,9 +11,6 @@ public:
 	Caret(CWnd* parent, Long x, Long y, Long width, Long height);
 	~Caret();
 
-	BOOL Show();
-	BOOL Hide();
-
 	Long GetX() const;
 	Long GetY() const;
 	Long GetWidth() const;

@@ -16,12 +16,15 @@ EndAction::~EndAction() {
 }
 
 void EndAction::Perform() {
-	Long rowIndex = ((NotepadForm*)(this->parent))->note->GetCurrent();
-	Glyph* row = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex);
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
 	row->Last();
-	((NotepadForm*)(this->parent))->pagingBuffer->Last();
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->Last();
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	((NotepadForm*)(this->parent))->note->Select(false);
+	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
 	this->parent->Invalidate();
 }

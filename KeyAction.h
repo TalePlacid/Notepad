@@ -8,8 +8,6 @@ class KeyAction : public Action {
 public:
 	KeyAction(CWnd* parent);
 	virtual ~KeyAction() = 0;
-
-	virtual void Perform() = 0;
 };
 
 #endif // !_KEYDOWNACTION_H

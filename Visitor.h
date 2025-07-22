@@ -11,6 +11,7 @@ public:
 
 	virtual void VisitGlyph(Glyph* glyph);
 	virtual void VisitComposite(Glyph* composite);
+	virtual void VisitNote(Glyph* note);
 	virtual void VisitRow(Glyph* row);
 	virtual void VisitCharacter(Glyph* Character);
 protected:

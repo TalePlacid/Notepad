@@ -86,7 +86,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
-	
+	this->caretController->Create();
+
 	this->scrollBarController = new ScrollBarController(this);
 	this->Register(this->scrollBarController);
 
@@ -97,6 +98,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->SetMenu(&(this->menu));
 
 	this->Notify("CreateScrollBars");
+	this->Notify("AdjustScrollBars");
 
 	return 0;
 }
@@ -126,6 +128,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			delete command;
 		}
 		this->note->Select(false);
+		this->pagingBuffer->UnmarkSelectionBegin();
 
 		NoteWrapper noteWrapper(this);
 		noteWrapper.DeleteDummyRows();
@@ -135,7 +138,10 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		{
 			noteWrapper.InsertDummyRows();
 		}
+
+		this->Notify("ChangeCaret");
 		this->Notify("CreateScrollBars");
+		this->Notify("AdjustScrollBars");
 		this->Invalidate();
 	}
 }
@@ -151,6 +157,7 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 	}
 
 	this->Notify("CreateScrollBars");
+	this->Notify("AdjustScrollBars");
 }
 
 void NotepadForm::OnPaint() {
@@ -223,6 +230,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 			}
 
 			this->Notify("CreateScrollBars");
+			this->Notify("AdjustScrollBars");
 			this->isCompositing = TRUE;
 		}
 		else if (length == 0)
@@ -237,6 +245,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		}
 
 		this->note->Select(false);
+		this->pagingBuffer->UnmarkSelectionBegin();
 		this->Invalidate();
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
@@ -272,6 +281,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	}
 
 	this->note->Select(false);
+	this->pagingBuffer->UnmarkSelectionBegin();
 	this->Invalidate();
 	
 	return DefWindowProc(WM_IME_CHAR, wParam, lParam);
@@ -296,6 +306,7 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 	if (this->note != NULL)
 	{
 		this->note->Select(false);
+		this->pagingBuffer->UnmarkSelectionBegin();
 	}
 }
 
@@ -309,6 +320,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		delete command;
 	}
 	this->Notify("CreateScrollBars");
+	this->Notify("AdjustScrollBars");
 	this->Invalidate();
 }
 

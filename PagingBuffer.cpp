@@ -181,7 +181,7 @@ void PagingBuffer::Load() {
 	}
 
 	NoteConverter noteConverter;
-	((NotepadForm*)(this->parent))->note = noteConverter.ConvertToNote(contents);
+	((NotepadForm*)(this->parent))->note = noteConverter.Convert(contents);
 
 	//8. 노트에서 현재 위치로 이동한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -189,58 +189,55 @@ void PagingBuffer::Load() {
 	Glyph* row = note->GetAt(rowIndex);
 	row->Move(this->current.GetColumn());
 
-	//9. 선택시작위치가 표시되어 있으면, 
+	//9. 선택시작위치가 표시되어 있으면,
 	if (this->selectionBeginOffset >= 0)
 	{
 		Long j;
-
-		//9.1 선택시작위치가 현재위치보다 위이면,
+		Position selectionBegin;
+		//9.1. 선택시작위치가 현재위치보다 위이면,
 		if (this->selectionBeginOffset < currentOffset)
 		{
+			selectionBegin = this->start;
 			//9.1.1. 선택시작위치가 시작위치보다 아래이면,
-			Position selectionStart(0, 0);
 			if (this->selectionBeginOffset > this->startOffset)
 			{
-				//9.1.1.1. 선택시작좌표를 구한다.
-				i = this->startOffset;
+				//9.1.1.1. 선택시작위치의 좌표를 구한다.
+				Long i = this->startOffset;
+				fseek(this->file, i, SEEK_SET);
 				while (i < this->selectionBeginOffset)
 				{
-					fseek(this->file, i, SEEK_SET);
 					fread(character, 1, 1, this->file);
 
 					if (character[0] == '\r' || character[0] & 0x80)
 					{
 						fread(character + 1, 1, 1, this->file);
+						i++;
 					}
 
 					if (character[0] != '\r')
 					{
-						selectionStart = selectionStart.Right();
+						selectionBegin = selectionBegin.Right();
 					}
 					else
 					{
-						selectionStart = selectionStart.Down();
-						selectionStart = selectionStart.Move(selectionStart.GetRow(), 0);
+						selectionBegin = selectionBegin.Down();
+						selectionBegin = selectionBegin.Move(selectionBegin.GetRow(), 0);
 					}
 
 					i++;
 				}
 			}
-
-			//9.1.2. 노트에서 선택시작좌표부터 현재좌표까지 선택한다.
-			i = selectionStart.GetRow();
-			if (i < this->current.GetRow())
+			
+			//9.1.2. 선택시작좌표부터 현재좌표까지 선택한다.
+			row = note->GetAt(selectionBegin.GetRow());
+			i = selectionBegin.GetColumn();
+			while (i < row->GetLength())
 			{
-				row = note->GetAt(i);
-				j = selectionStart.GetColumn();
-				while (j < row->GetLength())
-				{
-					row->GetAt(j)->Select(TRUE);
-					j++;
-				}
+				row->GetAt(i)->Select(TRUE);
+				i++;
 			}
 
-			i = selectionStart.GetRow() + 1;
+			i = selectionBegin.GetRow() + 1;
 			while (i < this->current.GetRow())
 			{
 				row = note->GetAt(i);
@@ -261,48 +258,51 @@ void PagingBuffer::Load() {
 				i++;
 			}
 		}
-		else if (this->selectionBeginOffset > currentOffset) //9.2 선택시작위치가 현재위치보다 아래이면,
+		else if (this->selectionBeginOffset > currentOffset) //9.2. 선택시작위치가 현재위치보다 아래이면,
 		{
-			//9.2.1.선택시작위치가 끝위치보다 위이면,
-			Position selectionEnd = this->end;
+			selectionBegin = this->end;
+			//9.2.1. 선택시작위치가 끝위치보다 위이면,
 			if (this->selectionBeginOffset < this->endOffset)
 			{
-				//9.2.1.1. 선택끝좌표를 구한다.
-				i = this->selectionBeginOffset;
-				while (i < this->selectionBeginOffset)
+				//9.2.1.1. 선택시작위치의 좌표를 구한다.
+				selectionBegin = this->current;
+				i = currentOffset;
+				fseek(this->file, i, SEEK_SET);
+				while (i < selectionBeginOffset)
 				{
-					fseek(this->file, i, SEEK_SET);
 					fread(character, 1, 1, this->file);
-
+					
 					if (character[0] == '\r' || character[0] & 0x80)
 					{
 						fread(character + 1, 1, 1, this->file);
+						i++;
 					}
-
+		
 					if (character[0] != '\r')
 					{
-						selectionEnd = selectionEnd.Right();
+						selectionBegin = selectionBegin.Right();
 					}
 					else
 					{
-						selectionEnd = selectionEnd.Down();
-						selectionEnd = selectionEnd.Move(selectionEnd.GetRow(), 0);
+						selectionBegin = selectionBegin.Down();
+						selectionBegin = selectionBegin.Move(selectionBegin.GetRow(), 0);
 					}
+
 					i++;
 				}
 			}
 
-			//9.2.2. 노트에서 현재좌표부터 선택끝좌표까지 선택한다.
+			//9.2.2. 현재좌표부터 선택시작좌표까지 선택한다.
 			row = note->GetAt(this->current.GetRow());
 			i = this->current.GetColumn();
-			if (i < row->GetLength())
+			while (i < row->GetLength())
 			{
 				row->GetAt(i)->Select(TRUE);
 				i++;
 			}
 
 			i = this->current.GetRow() + 1;
-			while (i < selectionEnd.GetRow())
+			while (i < selectionBegin.GetRow())
 			{
 				row = note->GetAt(i);
 				j = 0;
@@ -314,9 +314,9 @@ void PagingBuffer::Load() {
 				i++;
 			}
 
-			row = note->GetAt(selectionEnd.GetRow());
+			row = note->GetAt(selectionBegin.GetRow());
 			i = 0;
-			while (i < selectionEnd.GetColumn())
+			while (i < selectionBegin.GetColumn())
 			{
 				row->GetAt(i)->Select(TRUE);
 				i++;
@@ -393,7 +393,7 @@ Position& PagingBuffer::First() {
 	Long i = currentOffset - 1;
 	int result = fseek(this->file, i, SEEK_SET);
 	fread(&character, 1, 1, this->file);
-	while (i >= 0 && character == '\n' && result == 0)
+	while (i >= 0 && character != '\n' && result == 0)
 	{
 		i--;
 		result = fseek(this->file, i, SEEK_SET);
@@ -479,7 +479,7 @@ Position& PagingBuffer::Last() {
 		}
 
 		this->current = this->current.Right();
-		flag = fread(character + 1, 1, 1, this->file);
+		flag = fread(character, 1, 1, this->file);
 	}
 
 	if (character[0] == '\r')
@@ -647,14 +647,17 @@ Position& PagingBuffer::LastRow() {
 }
 
 Position& PagingBuffer::MoveRow(Long index) {
+	//1. 현재 위치를 읽는다.
 	Long currentOffset = ftell(this->file);
 
+	//2. 이동할 줄이 현재 줄보다 이전이면,
 	TCHAR character[2];
 	Long need;
 	Long i;
 	Long count = 0;
 	if (index < this->current.GetRow())
 	{
+		//2.1. 이동할 줄을 찾는다.
 		need = this->current.GetRow() - index + 1;
 		i = currentOffset - 1;
 		while (count < need && i >= 0)
@@ -670,20 +673,25 @@ Position& PagingBuffer::MoveRow(Long index) {
 			i--;
 		}
 
+		//2.2. 찾았으면,
 		if (count >= need)
 		{  
+			//2.2.1. 이동한다.
 			currentOffset = i + 1;
 		}
-		else
+		else //2.3. 찾지 못했으면,
 		{
+			//2.3.1. 처음 위치로 이동한다.
 			currentOffset = 0;
 			index = 0;
 		}
 
 		fseek(this->file, currentOffset, SEEK_SET);
+		this->current = this->current.Move(index, 0);
 	}
-	else if (index > this->current.GetRow())
+	else if (index > this->current.GetRow()) //3. 이동할 줄이 현재 줄보다 다음이면,
 	{
+		//3.1. 이동할 줄을 찾는다.
 		need = index - this->current.GetRow();
 		size_t flag = fread(character, 1, 1, this->file);
 		while (count < need && flag > 0 && !feof(this->file))
@@ -696,17 +704,48 @@ Position& PagingBuffer::MoveRow(Long index) {
 			flag = fread(character, 1, 1, this->file);
 		}
 
+		//3.2. 찾았으면,
 		if (count >= need && !feof(this->file))
 		{
+			//3.2.1. 이동한다.
 			fseek(this->file, -1, SEEK_CUR);
+			this->current = this->current.Move(index, 0);
 		}
-		else
+		else //3.3. 찾지 못했으면,
 		{
-			index = this->current.GetRow() + count;
+			//3.3.1. 마지막 줄의 시작으로 이동한다.
+			i = ftell(this->file) - 1;
+			fseek(this->file, i, SEEK_SET);
+			fread(character, 1, 1, this->file);
+			while (i > currentOffset && character[0] != '\n')
+			{
+				i--;
+				fseek(this->file, i, SEEK_SET);
+				fread(character, 1, 1, this->file);
+			}
+			this->current = this->current.Move(this->current.GetRow() + count, 0);
+
+			//3.3.2. 파일의 마지막으로 이동한다.
+			i = ftell(this->file);
+
+			fseek(this->file, 0, SEEK_END);
+			Long fileEnd = ftell(this->file);
+
+			fseek(this->file, i, SEEK_SET);
+			flag = fread(character, 1, 1, this->file);
+			while (i < fileEnd && flag > 0 && !feof(this->file))
+			{
+				if (character[0] & 0x80)
+				{
+					flag = fread(character + 1, 1, 1, this->file);
+					i++;
+				}
+
+				this->current = this->current.Right();
+				i++;
+			}
 		}
 	}
-
-	this->current = this->current.Move(index, 0);
 
 	return this->current;
 }

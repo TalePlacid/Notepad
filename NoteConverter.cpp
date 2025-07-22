@@ -12,7 +12,7 @@ NoteConverter::~NoteConverter() {
 
 }
 
-Glyph* NoteConverter::ConvertToNote(string str) {
+Glyph* NoteConverter::Convert(string str) {
 	GlyphFactory glyphFactory;
 	char character[2];
 

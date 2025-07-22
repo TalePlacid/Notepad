@@ -3,6 +3,7 @@
 #include <cstdio>
 #include "Position.h"
 #define PAGE_MULTIPLE 4
+#define PAGE_ROWCOUNT 54
 
 typedef signed long int Long;
 
@@ -13,7 +14,7 @@ public:
 	PagingBuffer(CWnd* parent, Long pageSize = 2097152);
 	~PagingBuffer();
 
-	void Load();
+	virtual void Load();
 	void Save();
 	Long CountRow(Long offset);
 	bool IsAboveBottomLine();
@@ -42,7 +43,7 @@ public:
 	Position& GetCurrent() const;
 	Position& GetEnd() const;
 	Long GetSelectionBeginOffset() const;
-private:
+protected:
 	CWnd* parent;
 	Long pageSize;
 	FILE* file;

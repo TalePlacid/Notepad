@@ -74,5 +74,6 @@ void CtrlLeftAction::Perform() {
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
 	this->parent->Invalidate();
 }

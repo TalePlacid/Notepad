@@ -25,7 +25,7 @@ void ShiftDownAction::Perform() {
 
 	//2. 현재 위치가 마지막 페이지의 마지막줄이 아니라면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEnd() && rowIndex < note->GetLength() - 1)
+	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEnd() || rowIndex < note->GetLength() - 1)
 	{
 		//2.1. 현재 위치까지의 너비를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -83,12 +83,6 @@ void ShiftDownAction::Perform() {
 		//2.3. 노트에서 다음 줄로 이동한다.
 		rowIndex = note->Next();
 		pagingBuffer->NextRow();
-		if (!pagingBuffer->IsAboveBottomLine())
-		{
-			pagingBuffer->Load();
-			note = ((NotepadForm*)(this->parent))->note;
-			rowIndex = note->GetCurrent();
-		}
 
 		//2.4. 줄에서 첫번째 칸으로 이동한다.
 		row = note->GetAt(rowIndex);
@@ -153,6 +147,12 @@ void ShiftDownAction::Perform() {
 			}
 
 			i++;
+		}
+
+		//2.7. 범위를 벗어났으면, 재적재한다.
+		if (!pagingBuffer->IsAboveBottomLine())
+		{
+			pagingBuffer->Load();
 		}
 
 		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");

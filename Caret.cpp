@@ -18,11 +18,3 @@ Caret::Caret(CWnd* parent, Long x, Long y, Long width, Long height) {
 Caret::~Caret() {
 	::DestroyCaret();
 }
-
-BOOL Caret::Show() {
-	return ::ShowCaret(this->parent->GetSafeHwnd());
-}
-
-BOOL Caret::Hide() {
-	return ::HideCaret(this->parent->GetSafeHwnd());
-}

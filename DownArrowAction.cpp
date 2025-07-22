@@ -65,6 +65,7 @@ void DownArrowAction::Perform() {
 	nextRow->Move(i);
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	((NotepadForm*)(this->parent))->note->Select(false);
+	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
 	this->parent->Invalidate();
 }

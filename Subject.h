@@ -13,9 +13,9 @@ public:
 	Subject(Long capacity = 32);
 	virtual ~Subject() = 0;
 
-	virtual Long Register(Observer* observer);
-	virtual Long Unregister(Observer* observer);
-	virtual void Notify(string interest);
+	Long Register(Observer* observer);
+	Long Unregister(Observer* observer);
+	void Notify(string interest);
 private:
 	Array<Observer*> observers;
 	Long capacity;

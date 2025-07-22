@@ -44,7 +44,7 @@ void OpenCommand::Execute() {
 		}
 
 		NoteConverter noteConverter;
-		((NotepadForm*)(this->parent))->note = noteConverter.ConvertToNote((LPCTSTR)note);
+		((NotepadForm*)(this->parent))->note = noteConverter.Convert((LPCTSTR)note);
 
 		this->parent->Invalidate();
 	}

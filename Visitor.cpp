@@ -19,6 +19,10 @@ void Visitor::VisitComposite(Glyph* composite) {
 
 }
 
+void Visitor::VisitNote(Glyph* note) {
+
+}
+
 void Visitor::VisitRow(Glyph* row) {
 
 }
