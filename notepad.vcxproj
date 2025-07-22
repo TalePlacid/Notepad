@@ -167,7 +167,6 @@
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
-    <ClInclude Include="MakeSelectedStringVisitor.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="NewCommand.h" />
     <ClInclude Include="Note.h" />
@@ -193,6 +192,7 @@
     <ClInclude Include="ShiftDownAction.h" />
     <ClInclude Include="ShiftEndAction.h" />
     <ClInclude Include="ShiftHomeAction.h" />
+    <ClInclude Include="ShiftHomeAction_Fixed.h" />
     <ClInclude Include="ShiftLeftAction.h" />
     <ClInclude Include="ShiftRightAction.h" />
     <ClInclude Include="ShiftUpAction.h" />
@@ -249,7 +249,6 @@
     <ClCompile Include="KeyAction.cpp" />
     <ClCompile Include="KeyActionFactory.cpp" />
     <ClCompile Include="LeftArrowAction.cpp" />
-    <ClCompile Include="MakeSelectedStringVisitor.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />
@@ -274,6 +273,7 @@
     <ClCompile Include="ShiftDownAction.cpp" />
     <ClCompile Include="ShiftEndAction.cpp" />
     <ClCompile Include="ShiftHomeAction.cpp" />
+    <ClCompile Include="ShiftHomeAction_Fixed.cpp" />
     <ClCompile Include="ShiftLeftAction.cpp" />
     <ClCompile Include="ShiftRightAction.cpp" />
     <ClCompile Include="ShiftUpAction.cpp" />

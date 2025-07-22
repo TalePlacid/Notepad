@@ -2,6 +2,7 @@
 #include "ShiftHomeAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -20,23 +21,35 @@ void ShiftHomeAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	row->First();
-
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* character;
-	Long i = 0;
-	while (i < columnIndex)
+	Long i = columnIndex - 1;
+	while (i >= 0)
 	{
 		character = row->GetAt(i);
-		if (character->IsSelected())
+		if (!character->IsSelected())
 		{
-			character->Select(FALSE);
+			character->Select(TRUE);
+			if (pagingBuffer->GetSelectionBeginOffset() < 0)
+			{
+				pagingBuffer->MarkSelectionBegin();
+			}
+			row->Previous();
+			pagingBuffer->Previous();
 		}
 		else
 		{
-			character->Select(TRUE);
+			character->Select(FALSE);
+			row->Previous();
+			pagingBuffer->Previous();
+			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+			{
+				pagingBuffer->UnmarkSelectionBegin();
+			}
 		}
-		i++;
+		i--;
 	}
 
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }

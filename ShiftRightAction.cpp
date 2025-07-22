@@ -45,20 +45,21 @@ void ShiftRightAction::Perform() {
 		row->Next();
 		pagingBuffer->Next();
 	}
-	else
+	else if (rowIndex < note->GetLength() - 1)
 	{
 		rowIndex = note->Next();
 		pagingBuffer->NextRow();
+
+		row = note->GetAt(rowIndex);
+		row->First();
+		pagingBuffer->First();
+
 		if (!pagingBuffer->IsAboveBottomLine())
 		{
 			pagingBuffer->Load();
 			note = ((NotepadForm*)(this->parent))->note;
 			rowIndex = note->GetCurrent();
 		}
-
-		row = note->GetAt(rowIndex);
-		row->First();
-		pagingBuffer->First();
 	}
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");

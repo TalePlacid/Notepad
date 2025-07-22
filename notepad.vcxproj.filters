@@ -236,9 +236,6 @@
     <ClInclude Include="CtrlShiftRightAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MakeSelectedStringVisitor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ClipboardController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -261,6 +258,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="PageDownAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ShiftHomeAction_Fixed.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -475,9 +475,6 @@
     <ClCompile Include="CtrlShiftRightAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MakeSelectedStringVisitor.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="ClipboardController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -500,6 +497,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PageDownAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ShiftHomeAction_Fixed.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

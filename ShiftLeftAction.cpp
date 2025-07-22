@@ -26,8 +26,6 @@ void ShiftLeftAction::Perform() {
 	{
 		Glyph* character = row->GetAt(columnIndex - 1);
 
-		row->Previous();
-		pagingBuffer->Previous();
 		if (character->IsSelected())
 		{
 			character->Select(FALSE);
@@ -44,20 +42,24 @@ void ShiftLeftAction::Perform() {
 				pagingBuffer->MarkSelectionBegin();
 			}
 		}
+
+		row->Previous();
+		pagingBuffer->Previous();
 	}
 	else if (rowIndex > 0)
 	{
 		rowIndex = note->Previous();
 		pagingBuffer->PreviousRow();
+		row = note->GetAt(rowIndex);
+		row->Last();
+		pagingBuffer->Last();
+
 		if (!pagingBuffer->IsBelowTopLine())
 		{
 			pagingBuffer->Load();
 			note = ((NotepadForm*)(this->parent))->note;
 			rowIndex = note->GetCurrent();
 		}
-		row = note->GetAt(rowIndex);
-		row->Last();
-		pagingBuffer->Last();
 	}
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
