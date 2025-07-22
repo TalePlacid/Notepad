@@ -762,6 +762,44 @@ Long PagingBuffer::UnmarkSelectionBegin() {
 	return this->selectionBeginOffset;
 }
 
+CString PagingBuffer::MakeSelectedString() {
+	CString selectedString("");
+	if (this->selectionBeginOffset >= 0)
+	{
+		Long currentOffset = ftell(this->file);
+
+		Long forwardOffset;
+		Long backwardOffset;
+		if (currentOffset < this->selectionBeginOffset)
+		{
+			forwardOffset = currentOffset;
+			backwardOffset = this->selectionBeginOffset;
+		}
+		else if (currentOffset > this->selectionBeginOffset)
+		{
+			forwardOffset = this->selectionBeginOffset;
+			backwardOffset = currentOffset;
+		}
+
+		Long length = backwardOffset - forwardOffset + 1;
+		TCHAR(*contents) = new TCHAR[length + 1];
+
+		fseek(this->file, forwardOffset, SEEK_SET);
+		fread(contents, 1, length, this->file);
+		contents[length] = '\0';
+
+		selectedString = CString(contents);
+
+		if (contents != NULL)
+		{
+			delete[] contents;
+		}
+		fseek(this->file, currentOffset, SEEK_SET);
+	}
+
+	return selectedString;
+}
+
 Long PagingBuffer::GetCurrentOffset() const {
 	return ftell(this->file);
 }

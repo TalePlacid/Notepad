@@ -4,7 +4,7 @@
 #include "ClipboardController.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
-#include "MakeSelectedStringVisitor.h"
+#include "PagingBuffer.h"
  
 #pragma warning(disable:4996)
 
@@ -20,9 +20,11 @@ ClipboardController::~ClipboardController() {
 BOOL ClipboardController::Copy() {
 	BOOL isOpened = FALSE;
 	
-	MakeSelectedStringVisitor makeSelectedStringVisitor(this->parent);
-	((NotepadForm*)(this->parent))->note->Accept(makeSelectedStringVisitor);
-	this->content = makeSelectedStringVisitor.GetSelectedString();
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	if (pagingBuffer->GetSelectionBeginOffset() >= 0)
+	{
+		this->content = pagingBuffer->MakeSelectedString();
+	}
 
 	if (this->content != "")
 	{

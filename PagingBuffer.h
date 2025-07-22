@@ -1,13 +1,11 @@
 #ifndef _PAGINGBUFFER_H //guard
 #define _PAGINGBUFFER_H
-#include <cstdio>
-#include "Position.h"
 #define PAGE_MULTIPLE 4
 #define PAGE_ROWCOUNT 54
+#include <cstdio>
+#include "Position.h"
 
 typedef signed long int Long;
-
-class CWnd;
 
 class PagingBuffer {
 public:
@@ -34,6 +32,8 @@ public:
 
 	Long MarkSelectionBegin();
 	Long UnmarkSelectionBegin();
+
+	CString MakeSelectedString();
 
 	Long GetFileEnd() const;
 	Long GetStartOffset() const;
