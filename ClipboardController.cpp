@@ -40,9 +40,9 @@ BOOL ClipboardController::Copy() {
 		if (isOpened)
 		{
 			EmptyClipboard();
-			HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, strlen((LPCTSTR)(this->content)));
+			HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, strlen((LPCTSTR)(this->content)) + 1);
 			LPVOID lpMem = GlobalLock(hMem);
-			memcpy(lpMem, (LPCTSTR)(this->content), strlen((LPCTSTR)(this->content)));
+			memcpy(lpMem, (LPCTSTR)(this->content), strlen((LPCTSTR)(this->content)) + 1);
 			GlobalUnlock(hMem);
 			SetClipboardData(CF_TEXT, hMem);
 			CloseClipboard();
