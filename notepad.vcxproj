@@ -131,6 +131,7 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="AutoWrapCommand.h" />
     <ClInclude Include="BackspaceAction.h" />
+    <ClInclude Include="ByteChecker.h" />
     <ClInclude Include="Caret.h" />
     <ClInclude Include="CaretController.h" />
     <ClInclude Include="Character.h" />
@@ -147,7 +148,6 @@
     <ClInclude Include="CtrlShiftHomeAction.h" />
     <ClInclude Include="CtrlShiftLeftAction.h" />
     <ClInclude Include="CtrlShiftRightAction.h" />
-    <ClInclude Include="CtrlShiftRightAction_Fixed.h" />
     <ClInclude Include="CtrlShiftTAction.h" />
     <ClInclude Include="CtrlTAction.h" />
     <ClInclude Include="CtrlVAction.h" />
@@ -213,6 +213,7 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="AutoWrapCommand.cpp" />
     <ClCompile Include="BackspaceAction.cpp" />
+    <ClCompile Include="ByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
     <ClCompile Include="CaretController.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -229,7 +230,6 @@
     <ClCompile Include="CtrlShiftHomeAction.cpp" />
     <ClCompile Include="CtrlShiftLeftAction.cpp" />
     <ClCompile Include="CtrlShiftRightAction.cpp" />
-    <ClCompile Include="CtrlShiftRightAction_Fixed.cpp" />
     <ClCompile Include="CtrlShiftTAction.cpp" />
     <ClCompile Include="CtrlTAction.cpp" />
     <ClCompile Include="CtrlVAction.cpp" />

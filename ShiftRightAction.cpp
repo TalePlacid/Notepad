@@ -32,27 +32,38 @@ void ShiftRightAction::Perform() {
 			{
 				pagingBuffer->MarkSelectionBegin();
 			}
+			row->Next();
+			pagingBuffer->Next();
 		}
 		else
 		{
 			character->Select(FALSE);
+			row->Next();
+			pagingBuffer->Next();
 			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
 			{
 				pagingBuffer->UnmarkSelectionBegin();
 			}
 		}
-
-		row->Next();
-		pagingBuffer->Next();
 	}
 	else if (rowIndex < note->GetLength() - 1)
 	{
+		if (pagingBuffer->GetSelectionBeginOffset() < 0)
+		{
+			pagingBuffer->MarkSelectionBegin();
+		}
+
 		rowIndex = note->Next();
 		pagingBuffer->NextRow();
 
 		row = note->GetAt(rowIndex);
 		row->First();
 		pagingBuffer->First();
+
+		if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+		{
+			pagingBuffer->UnmarkSelectionBegin();
+		}
 
 		if (!pagingBuffer->IsAboveBottomLine())
 		{

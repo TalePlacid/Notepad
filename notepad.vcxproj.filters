@@ -260,7 +260,7 @@
     <ClInclude Include="PageDownAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CtrlShiftRightAction_Fixed.h">
+    <ClInclude Include="ByteChecker.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -499,7 +499,7 @@
     <ClCompile Include="PageDownAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CtrlShiftRightAction_Fixed.cpp">
+    <ClCompile Include="ByteChecker.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
