@@ -5,6 +5,7 @@
 #include "Glyph.h"
 #include "NoteConverter.h"
 #include "SizeCalculator.h"
+#include "ByteChecker.h"
 
 #pragma warning(disable:4996)
 
@@ -408,33 +409,30 @@ Position& PagingBuffer::First() {
 Position& PagingBuffer::Previous() {
 	Long currentOffset = ftell(this->file);
 
-	TCHAR character[2] = {'\0', '\0'};
-	Long offset = currentOffset - 1;
-	int result = fseek(this->file, offset, SEEK_SET);
-	Long i = 1;
-	while (i >= 0 && result == 0)
+	if (currentOffset > 0)
 	{
-		fread(character + i, 1, 1, this->file);
-		i--;
-		offset--;
-		result = fseek(this->file, offset, SEEK_SET);
-	}
+		fseek(this->file, currentOffset - 1, SEEK_SET);
+		TCHAR character;
+		fread(&character, 1, 1, this->file);
 
-	if (character[0] != '\0' || character[0] != '\r')
-	{
-		if (character[0] & 0x80)
+		ByteChecker byteChecker;
+		if (!byteChecker.IsASCII(character))
 		{
 			fseek(this->file, currentOffset - 2, SEEK_SET);
+			this->current = this->current.Left();
 		}
 		else
 		{
-			fseek(this->file, currentOffset - 1, SEEK_SET);
+			if (character != '\n')
+			{
+				fseek(this->file, currentOffset - 1, SEEK_SET);
+				this->current = this->current.Left();
+			}
+			else
+			{
+				fseek(this->file, currentOffset, SEEK_SET);
+			}
 		}
-		this->current = this->current.Left();
-	}
-	else
-	{
-		fseek(this->file, currentOffset, SEEK_SET);
 	}
 
 	return this->current;
@@ -781,7 +779,7 @@ CString PagingBuffer::MakeSelectedString() {
 			backwardOffset = currentOffset;
 		}
 
-		Long length = backwardOffset - forwardOffset + 1;
+		Long length = backwardOffset - forwardOffset;
 		TCHAR(*contents) = new TCHAR[length + 1];
 
 		fseek(this->file, forwardOffset, SEEK_SET);
