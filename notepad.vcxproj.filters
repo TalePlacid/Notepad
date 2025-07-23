@@ -260,6 +260,9 @@
     <ClInclude Include="PageDownAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CtrlShiftRightAction_Fixed.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -494,6 +497,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PageDownAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlShiftRightAction_Fixed.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include "CtrlShiftRightAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -20,9 +21,11 @@ void CtrlShiftRightAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex < row->GetLength())
 	{
 		columnIndex = row->Next();
+		pagingBuffer->Next();
 		Glyph* character = row->GetAt(columnIndex - 1);
 		BOOL isWordCharacter = character->IsWordCharacter();
 		BOOL inBoundary = FALSE;
@@ -34,16 +37,27 @@ void CtrlShiftRightAction::Perform() {
 		Long i = columnIndex;
 		while ((i <= row->GetLength()) && !(inBoundary && isWordCharacter))
 		{
-			if (character->IsSelected())
+			if (!character->IsSelected())
 			{
-				character->Select(FALSE);
+				character->Select(TRUE);
+				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				{
+					pagingBuffer->MarkSelectionBegin();
+				}
+				columnIndex = row->Next();
+				pagingBuffer->Next();
 			}
 			else
 			{
-				character->Select(TRUE);
+				character->Select(FALSE);
+				columnIndex = row->Next();
+				pagingBuffer->Next();
+				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+				{
+					pagingBuffer->UnmarkSelectionBegin();
+				}
 			}
 
-			columnIndex = row->Next();
 			character = row->GetAt(columnIndex - 1);
 			isWordCharacter = character->IsWordCharacter();
 			if (!isWordCharacter)
@@ -56,6 +70,7 @@ void CtrlShiftRightAction::Perform() {
 		if (i <= row->GetLength())
 		{
 			row->Previous();
+			pagingBuffer->Previous();
 		}
 	}
 	else
@@ -63,10 +78,18 @@ void CtrlShiftRightAction::Perform() {
 		if (rowIndex < note->GetLength() - 1)
 		{
 			rowIndex = note->Next();
+			pagingBuffer->NextRow();
 			row = note->GetAt(rowIndex);
 			row->First();
+			pagingBuffer->First();
+
+			if (!pagingBuffer->IsAboveBottomLine())
+			{
+				pagingBuffer->Load();
+			}
 		}
 	}
 
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }
