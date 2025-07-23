@@ -2,6 +2,7 @@
 #include "CtrlShiftLeftAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -20,6 +21,7 @@ void CtrlShiftLeftAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex > 0)
 	{
 		Glyph* character = row->GetAt(columnIndex - 1);
@@ -39,29 +41,48 @@ void CtrlShiftLeftAction::Perform() {
 				inWord = TRUE;
 			}
 
-			if (character->IsSelected())
+			if (!character->IsSelected())
 			{
-				character->Select(FALSE);
+				character->Select(TRUE);
+				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				{
+					pagingBuffer->MarkSelectionBegin();
+				}
+				columnIndex = row->Previous();
+				pagingBuffer->Previous();
 			}
 			else
 			{
-				character->Select(TRUE);
+				character->Select(FALSE);
+				columnIndex = row->Previous();
+				pagingBuffer->Previous();
+				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+				{
+					pagingBuffer->UnmarkSelectionBegin();
+				}
 			}
-
-			columnIndex = row->Previous();
 		}
 
 		if (columnIndex > 0)
 		{
 			columnIndex = row->Next();
+			pagingBuffer->Next();
 			character = row->GetAt(columnIndex - 1);
-			if (character->IsSelected())
+			if (!character->IsSelected())
 			{
-				character->Select(FALSE);
+				character->Select(TRUE);
+				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				{
+					pagingBuffer->MarkSelectionBegin();
+				}
 			}
 			else
 			{
-				character->Select(TRUE);
+				character->Select(FALSE);
+				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+				{
+					pagingBuffer->UnmarkSelectionBegin();
+				}
 			}
 		}
 	}
@@ -70,10 +91,18 @@ void CtrlShiftLeftAction::Perform() {
 		if (rowIndex > 0)
 		{
 			rowIndex = note->Previous();
+			pagingBuffer->PreviousRow();
 			row = note->GetAt(rowIndex);
 			row->Last();
+			pagingBuffer->Last();
+
+			if (!pagingBuffer->IsBelowTopLine())
+			{
+				pagingBuffer->Load();
+			}
 		}
 	}
-	
+
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }
