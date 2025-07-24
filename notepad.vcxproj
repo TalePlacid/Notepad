@@ -145,8 +145,8 @@
     <ClInclude Include="CtrlLeftAction.h" />
     <ClInclude Include="CtrlRightAction.h" />
     <ClInclude Include="CtrlShiftEndAction.h" />
+    <ClInclude Include="CtrlShiftEndAction_Fixed.h" />
     <ClInclude Include="CtrlShiftHomeAction.h" />
-    <ClInclude Include="CtrlShiftHomeAction_Fixed.h" />
     <ClInclude Include="CtrlShiftLeftAction.h" />
     <ClInclude Include="CtrlShiftRightAction.h" />
     <ClInclude Include="CtrlShiftTAction.h" />
@@ -228,8 +228,8 @@
     <ClCompile Include="CtrlLeftAction.cpp" />
     <ClCompile Include="CtrlRightAction.cpp" />
     <ClCompile Include="CtrlShiftEndAction.cpp" />
+    <ClCompile Include="CtrlShiftEndAction_Fixed.cpp" />
     <ClCompile Include="CtrlShiftHomeAction.cpp" />
-    <ClCompile Include="CtrlShiftHomeAction_Fixed.cpp" />
     <ClCompile Include="CtrlShiftLeftAction.cpp" />
     <ClCompile Include="CtrlShiftRightAction.cpp" />
     <ClCompile Include="CtrlShiftTAction.cpp" />
