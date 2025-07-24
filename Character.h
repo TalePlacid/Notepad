@@ -6,7 +6,7 @@ class Visitor;
 
 class Character : public Glyph {
 public:
-	Character(bool isDirty = false);
+	Character(bool isDirty = true);
 	virtual ~Character() = 0;
 	Character(const Character& source);
 	Character& operator=(const Character& source);

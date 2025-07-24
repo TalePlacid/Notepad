@@ -8,7 +8,7 @@ class Glyph;
 
 class DummyRow : public Row {
 public:
-	DummyRow(Long capacity = 128, bool isDirty = false);
+	DummyRow(Long capacity = 128, bool isDirty = true);
 	virtual ~DummyRow();
 	DummyRow(const DummyRow& source);
 	DummyRow& operator=(const DummyRow& source);

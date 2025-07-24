@@ -9,7 +9,7 @@ class Visitor;
 
 class Glyph {
 public:
-	Glyph(bool isDirty = false);
+	Glyph(bool isDirty = true);
 	virtual ~Glyph() = 0;
 	Glyph(const Glyph& source);
 	Glyph& operator=(const Glyph& source);

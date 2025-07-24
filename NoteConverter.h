@@ -10,7 +10,7 @@ public:
 	NoteConverter();
 	virtual ~NoteConverter();
 
-	Glyph* Convert(string str);
+	Glyph* Convert(string str, bool isDirty = true);
 };
 
 #endif // !_NOTECONVERTER_H
