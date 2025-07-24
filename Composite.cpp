@@ -2,8 +2,8 @@
 
 #pragma warning(disable:4996)
 
-Composite::Composite(Long capacity)
-	:glyphs(capacity) {
+Composite::Composite(Long capacity, bool isDirty)
+	:glyphs(capacity), Glyph(isDirty) {
 	this->capacity = capacity;
 	this->length = 0;
 	this->current = -1;

@@ -2,8 +2,8 @@
 
 #pragma warning(disable:4996)
 
-DummyRow::DummyRow(Long capacity)
-	:Row(capacity) {
+DummyRow::DummyRow(Long capacity, bool isDirty)
+	:Row(capacity, isDirty) {
 
 }
 

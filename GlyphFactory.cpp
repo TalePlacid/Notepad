@@ -15,7 +15,7 @@ GlyphFactory::~GlyphFactory(){
 
 }
 
-Glyph* GlyphFactory::Create(char(*content)) {
+Glyph* GlyphFactory::Create(char(*content), bool isDirty) {
 	Glyph* glyph = 0;
 
 	if (content[0] == '\0')
@@ -24,19 +24,19 @@ Glyph* GlyphFactory::Create(char(*content)) {
 	}
 	else if (content[0] == '\r')
 	{
-		glyph = new Row;
+		glyph = new Row(isDirty);
 	}
 	else if (content[0] == '\n')
 	{
-		glyph = new DummyRow;
+		glyph = new DummyRow(isDirty);
 	}
 	else if (content[0] & 0x80)
 	{
-		glyph = new MultiByteCharacter(content);
+		glyph = new MultiByteCharacter(content, isDirty);
 	}
 	else
 	{
-		glyph = new SingleByteCharacter(content[0]);
+		glyph = new SingleByteCharacter(content[0], isDirty);
 	}
 
 

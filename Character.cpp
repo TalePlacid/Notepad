@@ -3,7 +3,8 @@
 
 #pragma warning(disable:4996)
 
-Character::Character() {
+Character::Character(bool isDirty)
+	:Glyph(isDirty) {
 
 }
 

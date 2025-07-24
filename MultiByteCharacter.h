@@ -5,7 +5,7 @@
 class MultiByteCharacter : public Character {
 public:
 	MultiByteCharacter();
-	MultiByteCharacter(char(*content));
+	MultiByteCharacter(char(*content), bool isDirty = false);
 	virtual ~MultiByteCharacter();
 	MultiByteCharacter(const MultiByteCharacter& source);
 	MultiByteCharacter& operator=(const MultiByteCharacter& source);

@@ -2,8 +2,9 @@
 
 #pragma warning(disable:4996)
 
-Glyph::Glyph() {
+Glyph::Glyph(bool isDirty) {
 	this->isSelected = false;
+	this->isDirty = isDirty;
 }
 
 Glyph::~Glyph() {
@@ -12,10 +13,12 @@ Glyph::~Glyph() {
 
 Glyph::Glyph(const Glyph& source) {
 	this->isSelected = source.isSelected;
+	this->isDirty = source.isDirty;
 }
 
 Glyph& Glyph::operator=(const Glyph& source) {
 	this->isSelected = source.isSelected;
+	this->isDirty = source.isDirty;
 
 	return *this;
 }

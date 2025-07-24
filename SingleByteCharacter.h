@@ -6,7 +6,7 @@ using namespace std;
 
 class SingleByteCharacter : public Character {
 public:
-	SingleByteCharacter(char content = ' ');
+	SingleByteCharacter(char content = ' ', bool isDirty = false);
 	virtual ~SingleByteCharacter();
 	SingleByteCharacter(const SingleByteCharacter& source);
 	SingleByteCharacter& operator=(const SingleByteCharacter& source);

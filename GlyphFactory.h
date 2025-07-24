@@ -10,7 +10,7 @@ public:
 	GlyphFactory();
 	virtual ~GlyphFactory();
 
-	virtual Glyph* Create(char(*content));
+	virtual Glyph* Create(char(*content), bool isDirty = false);
 };
 
 #endif // !_GLYPHFACTORY_H
