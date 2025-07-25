@@ -13,7 +13,8 @@ public:
 	~PagingBuffer();
 
 	virtual void Load();
-	void Save();
+	Long Add(char(*character));
+	Long Remove();
 	Long CountRow(Long offset);
 	bool IsAboveBottomLine();
 	bool IsBelowTopLine();
@@ -34,6 +35,7 @@ public:
 	Long UnmarkSelectionBegin();
 
 	CString MakeSelectedString();
+	bool MarkAsDirty();
 
 	Long GetFileEnd() const;
 	Long GetStartOffset() const;

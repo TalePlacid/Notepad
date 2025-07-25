@@ -37,10 +37,15 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		BOOL isVScrollBarCreated = FALSE;
 
 		//3. 수직 스크롤바가 있으면,
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		if (this->hasVScrollBar)
 		{
+			//3.1. 페이징버퍼에서 전체높이를 구한다.
+			Long totalHeight = (pagingBuffer->CountRow(pagingBuffer->GetFileEnd()) + 1)
+				* sizeCalculator->GetRowHeight();
+
 			//3.1. 수직 스크롤바의 최대높이가 화면높이보다 작으면,
-			if (scrollInfo.nMax <= clientAreaHeight)
+			if (totalHeight <= clientAreaHeight)
 			{
 				//3.1.1. 수직 스크롤바의 지운다.
 				this->parent->ModifyStyle(WS_VSCROLL, 0);
@@ -54,11 +59,15 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 					SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 				}
 			}
+			else if (totalHeight > scrollInfo.nMax)
+			{
+				scrollInfo.nMax = totalHeight;
+				SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+			}
 		}
 		else //4. 수직 스크롤바가 없으면,
 		{
 			//4.1. 메모 전체 높이를 구한다.
-			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 			Long totalRowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEnd());
 			Long totalHeight = (totalRowCount + 1) * sizeCalculator->GetRowHeight();
 

@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "GlyphFactory.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -49,24 +50,33 @@ void InsertAtCaretCommand::Execute() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
+		pagingBuffer->Remove();
 	}
 
 	if (this->character[0] != '\r')
 	{
 		row->Add(row->GetCurrent(), glyph);
+		pagingBuffer->Add((char*)(*glyph));
 	}
 	else
 	{
 		rowIndex = note->Add(rowIndex + 1, glyph);
-		Glyph* newRow = note->GetAt(rowIndex);
+		TCHAR contents[2];
+		contents[0] = '\r';
+		contents[1] = '\n';
+		Long ret = pagingBuffer->Add(contents);
 
+		Glyph* clone;
+		Glyph* newRow = note->GetAt(rowIndex);
 		Long i = columnIndex;
 		while (i < row->GetLength())
 		{
-			newRow->Add(row->GetAt(i)->Clone());
+			clone = row->GetAt(i)->Clone();
+			newRow->Add(clone);
 			i++;
 		}
 

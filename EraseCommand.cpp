@@ -2,6 +2,7 @@
 #include "EraseCommand.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -32,10 +33,12 @@ void EraseCommand::Execute() {
 		Long rowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(rowIndex);
 
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Long columnIndex = row->GetCurrent();
 		if (columnIndex > 0)
 		{
 			row->Remove(columnIndex - 1);
+			pagingBuffer->Remove();
 		}
 		else
 		{
@@ -51,6 +54,7 @@ void EraseCommand::Execute() {
 				}
 
 				((NotepadForm*)(this->parent))->note->Remove(rowIndex);
+				pagingBuffer->Remove();
 				previousRow->Move(previousCurrent);
 			}
 		}

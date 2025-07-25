@@ -2,6 +2,7 @@
 #include "GlyphFactory.h"
 #include "Glyph.h"
 #include "NotepadForm.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -37,19 +38,28 @@ void WriteAtEndCommand::Execute() {
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Glyph* row = note->GetAt(note->GetCurrent());
 	
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
-		row->Remove(row->GetLength()-1);
+		row->Remove();
+		pagingBuffer->Remove();
 	}
 
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
+		pagingBuffer->Add((char*)(*glyph));
 	}
 	else
 	{
 		note->Add(glyph);
+		TCHAR contents[2];
+		contents[0] = '\r';
+		contents[1] = '\n';
+		pagingBuffer->Add(contents);
 	}
+
+	pagingBuffer->MarkAsDirty();
 }
 
 void WriteAtEndCommand::Unexecute() {

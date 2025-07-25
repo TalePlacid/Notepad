@@ -6,7 +6,7 @@ Composite::Composite(Long capacity, bool isDirty)
 	:glyphs(capacity), Glyph(isDirty) {
 	this->capacity = capacity;
 	this->length = 0;
-	this->current = -1;
+	this->current = 0;
 }
 
 Composite::~Composite() {

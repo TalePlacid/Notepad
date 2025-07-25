@@ -113,13 +113,13 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		Long columnIndex = row->GetCurrent();
 
 		Command* command;
-		if (rowIndex != this->note->GetLength() - 1 || columnIndex != row->GetLength() - 1)
+		if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
 		{
-			command = new InsertAtCaretCommand(this, &character);
+			command = new WriteAtEndCommand(this, &character);
 		}
 		else
 		{
-			command = new WriteAtEndCommand(this, &character);
+			command = new InsertAtCaretCommand(this, &character);
 		}
 
 		if (command != NULL)
@@ -214,13 +214,13 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 			Glyph* row = this->note->GetAt(rowIndex);
 			Long columnIndex = row->GetCurrent();
 
-			if (rowIndex != this->note->GetLength() - 1 || columnIndex != row->GetLength() - 1)
+			if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
 			{
-				command = new InsertAtCaretCommand(this, character);
+				command = new WriteAtEndCommand(this, character);
 			}
 			else
 			{
-				command = new WriteAtEndCommand(this, character);
+				command = new InsertAtCaretCommand(this, character);
 			}
 
 			if (command != NULL)
@@ -265,13 +265,13 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	Long columnIndex = row->GetCurrent();
 
 	Command* command;
-	if (rowIndex != this->note->GetLength() - 1 || columnIndex != row->GetLength() - 1)
+	if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
 	{
-		command = new InsertAtCaretCommand(this, character);
+		command = new WriteAtEndCommand(this, character);
 	}
 	else
 	{
-		command = new WriteAtEndCommand(this, character);
+		command = new InsertAtCaretCommand(this, character);
 	}
 
 	if (command != NULL)
@@ -368,7 +368,7 @@ void NotepadForm::OnClose() {
 		
 		if (path == this->path)
 		{
-			//this->Save(path);
+			this->Save(path);
 		}
 		delete this->note;
 		this->note = NULL;

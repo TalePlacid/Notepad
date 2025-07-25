@@ -1,5 +1,7 @@
 #include <afxwin.h>
 #include <WinBase.h>
+#include <io.h>
+#include <fcntl.h>
 #include "PagingBuffer.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
@@ -182,7 +184,8 @@ void PagingBuffer::Load() {
 	}
 
 	NoteConverter noteConverter;
-	((NotepadForm*)(this->parent))->note = noteConverter.Convert(contents);
+	((NotepadForm*)(this->parent))->note = noteConverter.Convert(contents, false);
+	this->isDirty = false;
 
 	//8. 노트에서 현재 위치로 이동한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -332,6 +335,159 @@ void PagingBuffer::Load() {
 	{
 		delete[] contents;
 	}
+}
+
+Long PagingBuffer::Add(char(*character)) {
+	Long currentOffset = ftell(this->file);
+
+	Long characterLength = 1;
+	ByteChecker byteChecker;
+	if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
+	{
+		characterLength = 2;
+	}
+
+	fseek(this->file, 0, SEEK_END);
+	Long fileEndOffset = ftell(this->file);
+	Long remainLength = fileEndOffset - currentOffset;
+	TCHAR(*contents) = NULL;
+	if (remainLength > 0)
+	{
+		contents = new TCHAR[remainLength];
+		fseek(this->file, currentOffset, SEEK_SET);
+		fread(contents, 1, remainLength, this->file);
+	}
+
+	fseek(this->file, currentOffset, SEEK_SET);
+	fwrite(character, 1, characterLength, this->file);
+	fflush(this->file);
+	if (remainLength > 0)
+	{
+		fwrite(contents, 1, remainLength, this->file);
+		fflush(this->file);
+	}
+
+	if (contents != NULL)
+	{
+		delete[] contents;
+	}
+
+	fseek(this->file, currentOffset + characterLength, SEEK_SET);
+	
+	if (character[0] != '\r')
+	{
+		this->current = this->current.Right();
+	}
+	else
+	{
+		this->current = this->current.Down();
+		this->current = this->current.Move(this->current.GetRow(), 0);
+	}
+
+	return ftell(this->file);
+}
+
+Long PagingBuffer::Remove() {
+	Long currentOffset = ftell(this->file);
+
+	Long ret = 0;
+	if (currentOffset > 0)
+	{
+		fseek(this->file, 0, SEEK_END);
+		Long fileEndOffset = ftell(this->file);
+
+		fseek(this->file, currentOffset, SEEK_SET);
+		Long contentsLength = fileEndOffset - currentOffset;
+		TCHAR(*contents) = NULL;
+		if (contentsLength > 0)
+		{
+			contents = new TCHAR[contentsLength];
+			fread(contents, 1, contentsLength, this->file);
+		}
+		
+		ByteChecker byteChecker;
+		TCHAR character[2];
+		fseek(this->file, currentOffset - 1, SEEK_SET);
+		fread(character, 1, 1, this->file);
+
+		Long characterLength = 1;
+		if (!byteChecker.IsASCII(character[0]))
+		{
+			characterLength = 2;
+		}
+
+		fseek(this->file, currentOffset - characterLength, SEEK_SET);
+		if (contentsLength > 0)
+		{
+			fwrite(contents, 1, contentsLength, this->file);
+		}
+		fclose(this->file);
+		this->file = NULL;
+
+		TCHAR directory[256];
+		GetCurrentDirectory(256, directory);
+		CString fileName = CString(directory) + CString("\\Note.tmp");
+
+		int fd;
+		_sopen_s(&fd, fileName, _O_RDWR, _SH_DENYNO, 0);
+		_chsize_s(fd, fileEndOffset - characterLength);
+		_close(fd);
+		this->file = fopen(fileName, "r+b");
+
+		if (character[0] != '\r')
+		{
+			this->current = this->current.Left();
+		}
+		else
+		{
+			this->current = this->current.Up();
+			this->current = this->current.Move(this->current.GetRow(), 0);
+
+			Long i = currentOffset - characterLength - 1;
+			fseek(this->file, i, SEEK_SET);
+			fread(character, 1, 1, this->file);
+			while (i >= 0 && character[0] != '\n')
+			{
+				i--;
+				fseek(this->file, i, SEEK_SET);
+				fread(character, 1, 1, this->file);
+			}
+
+			if (i >= 0)
+			{
+				i++;
+			}
+			else
+			{
+				i = 0;
+			}
+
+			fseek(this->file, i, SEEK_SET);
+			while (i < currentOffset - characterLength)
+			{
+				fread(character, 1, 1, this->file);
+
+				if (byteChecker.IsLeadByte(character[0]))
+				{
+					i++;
+					fread(character + 1, 1, 1, this->file);
+				}
+
+				this->current = this->current.Right();
+				i++;
+			}
+		}
+
+		if (contents != NULL)
+		{
+			delete[] contents;
+		}
+
+		fseek(this->file, currentOffset - characterLength, SEEK_SET);
+		ret = -1;
+	}
+
+	return ret;
 }
 
 Long PagingBuffer::CountRow(Long offset) {
@@ -796,6 +952,12 @@ CString PagingBuffer::MakeSelectedString() {
 	}
 
 	return selectedString;
+}
+
+bool PagingBuffer::MarkAsDirty() {
+	this->isDirty = true;
+
+	return this->isDirty;
 }
 
 Long PagingBuffer::GetCurrentOffset() const {
