@@ -57,9 +57,12 @@ void WriteAtEndCommand::Execute() {
 		contents[0] = '\r';
 		contents[1] = '\n';
 		pagingBuffer->Add(contents);
+		
+		if (!pagingBuffer->IsAboveBottomLine())
+		{
+			pagingBuffer->Load();
+		}
 	}
-
-	pagingBuffer->MarkAsDirty();
 }
 
 void WriteAtEndCommand::Unexecute() {

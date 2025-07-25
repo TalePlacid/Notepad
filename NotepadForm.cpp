@@ -364,11 +364,8 @@ void NotepadForm::OnClose() {
 		TCHAR buffer[256];
 		GetCurrentDirectory(256, buffer);
 		CString path(buffer);
-		
-		if (path == this->path)
-		{
-			this->Save(path);
-		}
+		this->Save(path);
+
 		delete this->note;
 		this->note = NULL;
 	}

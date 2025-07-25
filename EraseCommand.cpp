@@ -56,6 +56,11 @@ void EraseCommand::Execute() {
 				((NotepadForm*)(this->parent))->note->Remove(rowIndex);
 				pagingBuffer->Remove();
 				previousRow->Move(previousCurrent);
+
+				if (!pagingBuffer->IsBelowTopLine())
+				{
+					pagingBuffer->Load();
+				}
 			}
 		}
 	}

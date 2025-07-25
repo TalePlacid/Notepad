@@ -88,6 +88,11 @@ void InsertAtCaretCommand::Execute() {
 		}
 
 		newRow->First();
+
+		if (!pagingBuffer->IsAboveBottomLine())
+		{
+			pagingBuffer->Load();
+		}
 	}
 }
 
