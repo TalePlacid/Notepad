@@ -364,7 +364,6 @@ void NotepadForm::OnClose() {
 		TCHAR buffer[256];
 		GetCurrentDirectory(256, buffer);
 		CString path(buffer);
-		path += CString("\\NoName.txt");
 		
 		if (path == this->path)
 		{
@@ -423,15 +422,19 @@ CString NotepadForm::Load(CString path) {
 }
 
 void NotepadForm::Save(CString path) {
+	CString tempFile = path + CString("\\Note.tmp");
+
+	ifstream ifs;
+	ifs.open(tempFile);
+
+	CString noName = path + CString("\\NoName.txt");
+
 	ofstream ofs;
-	ofs.open(path, ios::out | ios::binary);
-	if (ofs.is_open())
+	ofs.open(noName, ios::out | ios::binary);
+	if (ifs.is_open() && ofs.is_open())
 	{
-		NoteWrapper noteWrapper(this);
-		noteWrapper.DeleteDummyRows();
-		CString str(this->note->MakeString().c_str());
-		ofs << str;
-		this->path = path;
+		ofs << ifs.rdbuf();
+		ifs.close();
 		ofs.close();
 	}
 }
