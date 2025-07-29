@@ -6,10 +6,11 @@
 
 #pragma warning(disable:4996)
 
-WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, char(*character))
+WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, char(*character), BOOL onChar)
 	:Command(parent) {
 	this->character[0] = character[0];
 	this->character[1] = character[1];
+	this->onChar = onChar;
 }
 
 WriteAtEndCommand::~WriteAtEndCommand() {
@@ -42,13 +43,15 @@ void WriteAtEndCommand::Execute() {
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove();
-		pagingBuffer->Remove();
 	}
 
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
-		pagingBuffer->Add((char*)(*glyph));
+		if (this->onChar)
+		{
+			pagingBuffer->Add((char*)(*glyph));
+		}
 	}
 	else
 	{

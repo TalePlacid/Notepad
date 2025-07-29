@@ -340,149 +340,155 @@ void PagingBuffer::Load() {
 Long PagingBuffer::Add(char(*character)) {
 	Long currentOffset = ftell(this->file);
 
-	Long characterLength = 1;
-	ByteChecker byteChecker;
-	if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
+	//1. 새 임시파일을 만든다.
+	FILE* addedFile = fopen("AddedFile.tmp", "w+b");
+
+	if (addedFile != NULL)
 	{
-		characterLength = 2;
-	}
-
-	fseek(this->file, 0, SEEK_END);
-	Long fileEndOffset = ftell(this->file);
-	Long remainLength = fileEndOffset - currentOffset;
-	TCHAR(*contents) = NULL;
-	if (remainLength > 0)
-	{
-		contents = new TCHAR[remainLength];
-		fseek(this->file, currentOffset, SEEK_SET);
-		fread(contents, 1, remainLength, this->file);
-	}
-
-	fseek(this->file, currentOffset, SEEK_SET);
-	fwrite(character, 1, characterLength, this->file);
-	fflush(this->file);
-	if (remainLength > 0)
-	{
-		fwrite(contents, 1, remainLength, this->file);
-		fflush(this->file);
-	}
-
-	if (contents != NULL)
-	{
-		delete[] contents;
-	}
-
-	fseek(this->file, currentOffset + characterLength, SEEK_SET);
-	
-	if (character[0] != '\r')
-	{
-		this->current = this->current.Right();
-	}
-	else
-	{
-		this->current = this->current.Down();
-		this->current = this->current.Move(this->current.GetRow(), 0);
-	}
-
-	return ftell(this->file);
-}
-
-Long PagingBuffer::Remove() {
-	Long currentOffset = ftell(this->file);
-
-	Long ret = 0;
-	if (currentOffset > 0)
-	{
-		fseek(this->file, 0, SEEK_END);
-		Long fileEndOffset = ftell(this->file);
-
-		fseek(this->file, currentOffset, SEEK_SET);
-		Long contentsLength = fileEndOffset - currentOffset;
-		TCHAR(*contents) = NULL;
-		if (contentsLength > 0)
-		{
-			contents = new TCHAR[contentsLength];
-			fread(contents, 1, contentsLength, this->file);
-		}
-		
-		ByteChecker byteChecker;
-		TCHAR character[2];
-		fseek(this->file, currentOffset - 1, SEEK_SET);
-		fread(character, 1, 1, this->file);
-
+		//2. 글자 크기를 구한다.
 		Long characterLength = 1;
-		if (!byteChecker.IsASCII(character[0]))
+		ByteChecker byteChecker;
+		if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
 		{
 			characterLength = 2;
 		}
 
-		fseek(this->file, currentOffset - characterLength, SEEK_SET);
-		if (contentsLength > 0)
-		{
-			fwrite(contents, 1, contentsLength, this->file);
-		}
-		fclose(this->file);
-		this->file = NULL;
+		//3. 임시파일에 문자를 추가한 전체파일을 옮겨적는다.
+		fseek(this->file, 0, SEEK_END);
+		Long fileEndOffset = ftell(this->file);
+		TCHAR(*contents) = new TCHAR[fileEndOffset + characterLength];
 
-		TCHAR directory[256];
-		GetCurrentDirectory(256, directory);
-		CString fileName = CString(directory) + CString("\\Note.tmp");
+		fseek(this->file, 0, SEEK_SET);
+		fread(contents, 1, currentOffset, this->file);
 
-		int fd;
-		_sopen_s(&fd, fileName, _O_RDWR, _SH_DENYNO, 0);
-		_chsize_s(fd, fileEndOffset - characterLength);
-		_close(fd);
-		this->file = fopen(fileName, "r+b");
+		memcpy(contents + currentOffset, character, characterLength);
+		
+		Long backwardStart = currentOffset + characterLength;
+		fseek(this->file, currentOffset, SEEK_SET);
+		fread(contents + backwardStart, 1, fileEndOffset - currentOffset, this->file);
 
-		if (character[0] != '\r')
-		{
-			this->current = this->current.Left();
-		}
-		else
-		{
-			this->current = this->current.Up();
-			this->current = this->current.Move(this->current.GetRow(), 0);
-
-			Long i = currentOffset - characterLength - 1;
-			fseek(this->file, i, SEEK_SET);
-			fread(character, 1, 1, this->file);
-			while (i >= 0 && character[0] != '\n')
-			{
-				i--;
-				fseek(this->file, i, SEEK_SET);
-				fread(character, 1, 1, this->file);
-			}
-
-			if (i >= 0)
-			{
-				i++;
-			}
-			else
-			{
-				i = 0;
-			}
-
-			fseek(this->file, i, SEEK_SET);
-			while (i < currentOffset - characterLength)
-			{
-				fread(character, 1, 1, this->file);
-
-				if (byteChecker.IsLeadByte(character[0]))
-				{
-					i++;
-					fread(character + 1, 1, 1, this->file);
-				}
-
-				this->current = this->current.Right();
-				i++;
-			}
-		}
+		fwrite(contents, 1, fileEndOffset + characterLength - 1, addedFile);
 
 		if (contents != NULL)
 		{
 			delete[] contents;
 		}
 
+		//4. 임시파일과 기존파일을 맞바꾼다.
+		fclose(addedFile);
+		fclose(this->file);
+		remove("Note.tmp");
+		rename("AddedFile.tmp", "Note.tmp");
+		this->file = fopen("Note.tmp", "r+b");
+
+		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
+		fseek(this->file, currentOffset + characterLength, SEEK_SET);
+		if (character[0] != '\r')
+		{
+			this->current = this->current.Right();
+		}
+		else
+		{
+			this->current = this->current.Down();
+			this->current = this->current.Move(this->current.GetRow(), 0);
+		}
+	}
+
+	return ftell(this->file);
+}
+
+Long PagingBuffer::Remove() {
+	Long ret = 0;
+	Long currentOffset = ftell(this->file);
+
+	//1. 새 임시파일을 만든다.
+	FILE* removedFile = fopen("RemovedFile.tmp", "w+b");
+	if (removedFile != NULL)
+	{
+		//2. 지울 문자의 길이를 구한다.
+		fseek(this->file, currentOffset - 1, SEEK_SET);
+		TCHAR character;
+		fread(&character, 1, 1, this->file);
+
+		Long characterLength = 1;
+		ByteChecker byteChecker;
+		if (!byteChecker.IsASCII(character) || character == '\n')
+		{
+			characterLength = 2;
+		}
+
+		//3. 지울 문자를 제외하고 내용을 읽는다.
+		fseek(this->file, 0, SEEK_END);
+		Long fileEnd = ftell(this->file);
+		TCHAR(*contents) = new TCHAR[fileEnd];
+
+		Long withoutCharacterOffset = currentOffset - characterLength;
+		fseek(this->file, 0, SEEK_SET);
+		fread(contents, 1, withoutCharacterOffset, this->file);
+		fseek(this->file, currentOffset, SEEK_SET);
+		fread(contents + withoutCharacterOffset, 1, fileEnd - currentOffset, this->file);
+		
+		//4. 새 파일에 내용을 쓴다.
+		fwrite(contents, 1, fileEnd - characterLength, removedFile);
+		
+		if (contents != NULL)
+		{
+			delete[] contents;
+		}
+
+		//5. 새 파일과 기존파일을 맞바꾼다.
+		fclose(removedFile);
+		fclose(this->file);
+		remove("Note.tmp");
+		rename("RemovedFile.tmp", "Note.tmp");
+		this->file = fopen("Note.tmp", "r+b");
+
+		//6. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
+		if (character != '\n')
+		{
+			this->current = this->current.Left();
+		}
+		else
+		{
+			//이전 줄 첫번째 칸으로 이동.
+			TCHAR letter[2];
+			Long i = currentOffset - 3;
+			fseek(this->file, i, SEEK_SET);
+			fread(letter, 1, 1, this->file);
+			while (i >= 0 && letter[0] != '\n')
+			{
+				i--;
+				fseek(this->file, i, SEEK_SET);
+				fread(letter, 1, 1, this->file);
+			}
+
+			if (i >= 0)
+			{
+				i++;
+				this->current = this->current.Up();
+				this->current = this->current.Move(this->current.GetRow(), 0);
+			}
+			else
+			{
+				i = 0;
+				this->current = this->current.Move(0, 0);
+			}
+			fseek(this->file, i, SEEK_SET);
+
+			//현재 칸까지 센다.
+			while (i < currentOffset - characterLength)
+			{
+				fread(letter, 1, 1, this->file);
+				if (byteChecker.IsLeadByte(letter[0]))
+				{
+					fread(letter + 1, 1, 1, this->file);
+					i++;
+				}
+
+				this->current = this->current.Right();
+				i++;
+			}
+		}
 		fseek(this->file, currentOffset - characterLength, SEEK_SET);
 		ret = -1;
 	}

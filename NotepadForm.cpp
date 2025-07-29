@@ -216,11 +216,11 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 
 			if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
 			{
-				command = new WriteAtEndCommand(this, character);
+				command = new WriteAtEndCommand(this, character, FALSE);
 			}
 			else
 			{
-				command = new InsertAtCaretCommand(this, character);
+				command = new InsertAtCaretCommand(this, character, FALSE);
 			}
 
 			if (command != NULL)
@@ -284,7 +284,8 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	this->pagingBuffer->UnmarkSelectionBegin();
 	this->Invalidate();
 	
-	return DefWindowProc(WM_IME_CHAR, wParam, lParam);
+	//DefWindowProc(WM_IME_CHAR, wParam, lParam)
+	return 0;
 }
 
 LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {

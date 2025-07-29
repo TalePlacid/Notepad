@@ -1,4 +1,3 @@
-#include <afxwin.h>
 #include "InsertAtCaretCommand.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
@@ -7,13 +6,14 @@
 
 #pragma warning(disable:4996)
 
-InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, char(*character))
+InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, char(*character), BOOL onChar)
 	:Command(parent) {
 	this->character[0] = character[0];
 	if (character[0] & 0x80)
 	{
 		this->character[1] = character[1];
 	}
+	this->onChar = onChar;
 }
 
 InsertAtCaretCommand::~InsertAtCaretCommand() {
@@ -54,13 +54,15 @@ void InsertAtCaretCommand::Execute() {
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
-		pagingBuffer->Remove();
 	}
 
 	if (this->character[0] != '\r')
 	{
 		row->Add(row->GetCurrent(), glyph);
-		pagingBuffer->Add((char*)(*glyph));
+		if (this->onChar)
+		{
+			pagingBuffer->Add((char*)(*glyph));
+		}
 	}
 	else
 	{
@@ -68,7 +70,11 @@ void InsertAtCaretCommand::Execute() {
 		TCHAR contents[2];
 		contents[0] = '\r';
 		contents[1] = '\n';
-		Long ret = pagingBuffer->Add(contents);
+
+		if (this->onChar)
+		{
+			pagingBuffer->Add(contents);
+		}
 
 		Glyph* clone;
 		Glyph* newRow = note->GetAt(rowIndex);
