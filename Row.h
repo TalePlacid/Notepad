@@ -18,6 +18,11 @@ public:
 	virtual string MakeString();
 	virtual Glyph* Clone();
 	virtual void Accept(Visitor& visitor);
+
+	virtual Long FindSelectionStart();
+	virtual Long FindSelectionEnd();
+
+	static int CompareSelection(void* one, void* other);
 };
 
 #endif // !_ROW_H

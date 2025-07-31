@@ -101,134 +101,92 @@ Long Note::Last() {
 	return this->current;
 }
 
+Long Note::FindSelectionStart() {
+	Long index = 0;
+
+	Long flag = -1;
+	while (index < this->length && flag < 0)
+	{
+		flag = this->glyphs[index]->FindSelectionStart();
+		index++;
+	}
+
+	if (index < this->length)
+	{
+		index--;
+	}
+	else
+	{
+		index = -1;
+	}
+
+	return index;
+}
+
+Long Note::FindSelectionEnd() {
+	Long index = this->length - 1;
+	Long flag = -1;
+	while (index >= 0 && flag < 0)
+	{
+		flag = this->glyphs[index]->FindSelectionEnd();
+		index--;
+	}
+
+	if (flag >= 0)
+	{
+		index++;
+	}
+
+	return index;
+}
+
 #if 0
 
 #include <iostream>
 using namespace std;
-#include "Row.h"
-#include "SingleByteCharacter.h"
-#include "MultiByteCharacter.h"
+#include "Glyph.h"
+#include "NoteConverter.h"
 
 int main(int argc, char* argv[]) {
-	/*
-		Note note(1);
-		Long index = note.Add(new Row(2));
-		Long subscript = note.GetAt(index)->Add(new SingleByteCharacter('['));
-		cout << note[index]->GetAt(subscript)->MakeString()
-			<< endl;
+	string contents("나랏말싸미\r\n듕귁에 달아\r\nOne ring\r\nFind them\r\nall.");
+	NoteConverter noteConverter;
+	Glyph* note = noteConverter.Convert(contents);
 
-		note[index]->Add(new SingleByteCharacter('1'));
-		cout << note[index]->MakeString()
-			<< endl;
+	cout << "[선택없음]" << endl
+		<< "선택시작줄 : " << note->FindSelectionStart() << endl
+		<< "선택시작칸 : " << note->GetAt(0)->FindSelectionStart() << endl
+		<< "선택끝줄 : " << note->FindSelectionStart() << endl
+		<< "선택끝칸 : " << note->GetAt(0)->FindSelectionEnd() << endl << endl;
 
-		note[index]->Add(new SingleByteCharacter(']'));
-		cout << note[index]->MakeString()
-			<< endl;
-
-		index = note.Add(new Row(2));
-		note[index]->Add(new SingleByteCharacter('\t'));
-		note[index]->Add(new MultiByteCharacter(const_cast<char*>("동")));
-		cout << note.MakeString()
-			<< endl;
-
-		subscript = note[index]->Add(new MultiByteCharacter(const_cast<char*>("해")));
-		cout << note[index]->GetAt(subscript)->MakeString()
-			<< endl;
-
-		note[index]->Add(new MultiByteCharacter(const_cast<char*>("물")));
-		cout << note[index]->MakeString()
-			<< endl << endl;
-
-		Note copy(note);
-		cout << copy.MakeString()
-			<< endl << endl;
-
-		note[index]->Add(new MultiByteCharacter(const_cast<char*>("과")));
-		copy = note;
-		cout << copy.MakeString()
-			<< endl;
-	*/
-	Note note("동해물과 백두산이\r\nLet me go\r\n<<virtual>>\r\n\t탭문자 테스트");
-	cout << note.MakeString() << ", "
-		<< endl <<endl;
-
-	GlyphFactory glyphFactory;
-	char content = ' ';
-	Glyph* glyph = glyphFactory.Create(&content);
-
-	note.First();
-	Long rowIndex = note.Next();
-	Glyph* row = note[rowIndex];
-	row->First();
-
-	Long i;
-	for (i = 1; i <= 4; i++)
-	{
-		row->Next();
-	}
-
-	Long columnIndex = row->GetCurrent();
-	columnIndex = row->Add(columnIndex + 1, glyph);
-	Glyph* character = row->GetAt(columnIndex);
-	cout << note.MakeString()
-		<< endl;
-
-	glyph = glyphFactory.Create(const_cast<char*>("남"));
-	columnIndex = row->Add(columnIndex + 1, glyph);
-	character = row->GetAt(columnIndex);
-	cout << character->MakeString()
-		<< endl;
-
-	glyph = glyphFactory.Create(const_cast<char*>("산"));
-	columnIndex = row->Add(columnIndex + 1, glyph);
-	character = row->GetAt(columnIndex);
-	cout << character->MakeString()
-		<< endl;
-
-	columnIndex = row->First();
-	content = '1';
-	glyph = glyphFactory.Create(&content);
-	columnIndex = row->Add(columnIndex + 1, glyph);
-	character = row->GetAt(columnIndex);
-	cout << character->MakeString()
-		<< endl << endl;
-
-	content = '\r';
-	glyph = glyphFactory.Create(&content);
-	rowIndex = note.GetCurrent();
-	rowIndex = note.Add(rowIndex + 1, glyph);
-	
-	Glyph* nextRow = note[rowIndex];
-	i = columnIndex + 1;
+	Glyph* row = note->GetAt(1);
+	Long i = 2;
 	while (i < row->GetLength())
 	{
-		character = row->GetAt(i);
-		nextRow->Add(character->Clone());
-		row->Remove(i);
+		row->GetAt(i)->Select(true);
+		i++;
 	}
 
-	columnIndex = nextRow->First();
-	cout << note.MakeString()
-		<< endl << endl;
+	cout << "[1줄 선택]" << endl
+		<< "선택시작줄 : " << note->FindSelectionStart() << endl
+		<< "선택시작칸 : " << note->GetAt(note->FindSelectionStart())->FindSelectionStart() << endl
+		<< "선택끝줄 : " << note->FindSelectionEnd() << endl
+		<< "선택끝칸 : " << note->GetAt(note->FindSelectionEnd())->FindSelectionEnd() << endl << endl;
 
-	content = '\r';
-	glyph = glyphFactory.Create(&content);
-	rowIndex = note.GetCurrent();
-	rowIndex = note.Add(rowIndex + 1, glyph);
-	Glyph* nextNextRow = note[rowIndex];
+	note->GetAt(2)->Select(true);
 
-	i = columnIndex + 1;
-	while (i < nextRow->GetLength())
+	row = note->GetAt(3);
+	i = 0;
+	while (i < 3)
 	{
-		character = nextRow->GetAt(i);
-		nextNextRow->Add(character->Clone());
-		nextRow->Remove(i);
+		row->GetAt(i)->Select(true);
+		i++;
 	}
 
-	columnIndex = nextNextRow->First();
-
-	cout << note.MakeString()
-		<< endl << endl;
+	cout << "[여러 줄 선택]" << endl
+		<< "선택시작줄 : " << note->FindSelectionStart() << endl
+		<< "선택시작칸 : " << note->GetAt(note->FindSelectionStart())->FindSelectionStart() << endl
+		<< "선택끝줄 : " << note->FindSelectionEnd() << endl
+		<< "선택끝칸 : " << note->GetAt(note->FindSelectionEnd())->FindSelectionEnd() << endl << endl;
 
 	return 0;
 }

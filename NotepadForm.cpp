@@ -41,7 +41,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_PASTE, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_ERASERANGE, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -437,6 +437,8 @@ void NotepadForm::Save(CString path) {
 	}
 }
 
+#if 0
+
 class NotepadApp : public CWinApp {
 public:
 	NotepadApp();
@@ -465,3 +467,5 @@ BOOL NotepadApp::InitInstance() {
 }
 
 NotepadApp notepadApp;
+
+#endif

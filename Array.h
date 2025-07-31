@@ -316,7 +316,7 @@ template <typename T>
 Long Array<T>::LinearSearchUnique(void* key, int(*compare)(void*, void*)) {
 	Long index = -1;
 	Long i = 0;
-	while (i < this->length && compare(this->front + i, key) != 0)
+	while (i < this->length && compare(this->front + i, key) == 0)
 	{
 		i++;
 	}

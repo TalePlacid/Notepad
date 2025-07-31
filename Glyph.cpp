@@ -85,6 +85,22 @@ bool Glyph::Select(bool isSelecting) {
 	return this->isSelected;
 }
 
+Long Glyph::FindSelectionStart() {
+	return -1;
+}
+
+Long Glyph::FindSelectionEnd() {
+	return -1;
+}
+
+Long Glyph::TruncateAfter(Long index) {
+	return 0;
+}
+
+Long Glyph::TruncateBefore(Long index) {
+	return 0;
+}
+
 Glyph* Glyph::operator[](Long index) {
 	return 0;
 }

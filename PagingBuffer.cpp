@@ -369,6 +369,11 @@ Long PagingBuffer::Add(char(*character)) {
 
 		fwrite(contents, 1, fileEndOffset + characterLength - 1, addedFile);
 
+		if (this->selectionBeginOffset >= currentOffset)
+		{
+			this->selectionBeginOffset += characterLength;
+		}
+
 		if (contents != NULL)
 		{
 			delete[] contents;
@@ -399,13 +404,13 @@ Long PagingBuffer::Add(char(*character)) {
 
 Long PagingBuffer::Remove() {
 	Long ret = 0;
-	Long currentOffset = ftell(this->file);
 
 	//1. 새 임시파일을 만든다.
 	FILE* removedFile = fopen("RemovedFile.tmp", "w+b");
 	if (removedFile != NULL)
 	{
 		//2. 지울 문자의 길이를 구한다.
+		Long currentOffset = ftell(this->file);
 		fseek(this->file, currentOffset - 1, SEEK_SET);
 		TCHAR character;
 		fread(&character, 1, 1, this->file);
@@ -430,7 +435,12 @@ Long PagingBuffer::Remove() {
 		
 		//4. 새 파일에 내용을 쓴다.
 		fwrite(contents, 1, fileEnd - characterLength, removedFile);
-		
+
+		if (this->selectionBeginOffset >= currentOffset)
+		{
+			this->selectionBeginOffset -= characterLength;
+		}
+
 		if (contents != NULL)
 		{
 			delete[] contents;
@@ -489,7 +499,64 @@ Long PagingBuffer::Remove() {
 				i++;
 			}
 		}
+
 		fseek(this->file, currentOffset - characterLength, SEEK_SET);
+		ret = -1;
+	}
+
+	return ret;
+}
+
+Long PagingBuffer::Remove(Long toOffset) {
+	Long ret = 0;
+
+	FILE* removedFile = fopen("RemovedFile.tmp", "w+b");
+	if (removedFile != NULL) {
+		Long currentOffset = ftell(this->file);
+
+		fseek(this->file, 0, SEEK_END);
+		Long fileEndOffset = ftell(this->file);
+
+		TCHAR(*contents) = new TCHAR[fileEndOffset];
+
+		Long count = 0;
+		fseek(this->file, 0, SEEK_SET);
+		if (currentOffset < toOffset)
+		{
+			count += fread(contents, 1, currentOffset, this->file);
+			fseek(this->file, toOffset, SEEK_SET);
+			count += fread(contents + currentOffset, 1, fileEndOffset - toOffset, this->file);
+		}
+		else
+		{
+			count += fread(contents, 1, toOffset, this->file);
+			fseek(this->file, currentOffset, SEEK_SET);
+			count += fread(contents + toOffset, 1, fileEndOffset - currentOffset, this->file);
+		}
+		contents[count] = '\0';
+
+		fwrite(contents, 1, count, removedFile);
+
+		if (contents != NULL)
+		{
+			delete[] contents;
+		}
+
+		fclose(removedFile);
+		fclose(this->file);
+		remove("Note.tmp");
+		rename("removedFile.tmp", "Note.tmp");
+		this->file = fopen("Note.tmp", "r+b");
+
+		if (currentOffset < toOffset)
+		{
+			fseek(this->file, currentOffset, SEEK_SET);
+		}
+		else
+		{
+			fseek(this->file, toOffset, SEEK_SET);
+		}
+
 		ret = -1;
 	}
 

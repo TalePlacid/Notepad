@@ -43,6 +43,37 @@ void Row::Accept(Visitor& visitor) {
 	visitor.VisitRow(this);
 }
 
+Long Row::FindSelectionStart() {
+	bool isSelected = true;
+	Long index = this->glyphs.LinearSearchUnique(&isSelected, this->CompareSelection);
+
+	return index;
+}
+
+Long Row::FindSelectionEnd() {
+	Long index = this->length - 1;
+	bool isSelected = false;
+	while (index >= 0 && !isSelected)
+	{
+		isSelected = this->glyphs[index]->IsSelected();
+		index--;
+	}
+
+	if (isSelected == true)
+	{
+		index++;
+	}
+	
+	return index;
+}
+
+int Row::CompareSelection(void* one, void* other) {
+	Glyph** one_ = static_cast<Glyph**>(one);
+	bool* other_ = static_cast<bool*>(other);
+
+	return (*one_)->IsSelected() == *other_;
+}
+
 #if 0
 
 #include <iostream>

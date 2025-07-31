@@ -38,6 +38,7 @@
 #define ID_MENU_AUTOWRAP                40054
 #define ID_COMMAND_ERASE                50001
 #define ID_COMMAND_PASTE				50002
+#define ID_COMMAND_ERASERANGE			50003
 
 // Next default values for new objects
 // 

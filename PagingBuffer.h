@@ -15,6 +15,7 @@ public:
 	virtual void Load();
 	Long Add(char(*character));
 	Long Remove();
+	Long Remove(Long toOffset);
 	Long CountRow(Long offset);
 	bool IsAboveBottomLine();
 	bool IsBelowTopLine();
