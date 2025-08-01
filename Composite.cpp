@@ -127,6 +127,54 @@ Long Composite::Remove(Long index) {
 	return index;
 }
 
+Long Composite::TruncateAfter(Long index) {
+	Long count = 0;
+	while (this->length > index)
+	{
+		if (this->glyphs[index] != NULL)
+		{
+			delete this->glyphs[index];
+		}
+		this->glyphs.Delete(index);
+		(this->length)--;
+		(this->capacity)--;
+		count++;
+	}
+
+	if (this->current > index)
+	{
+		this->current = index;
+	}
+
+	return count;
+}
+
+Long Composite::TruncateBefore(Long index) {
+	Long count = 0;
+	while (count < index)
+	{
+		if (this->glyphs[0] != NULL)
+		{
+			delete this->glyphs[0];
+		}
+		this->glyphs.DeleteFromFront();
+		(this->length)--;
+		(this->capacity)--;
+		count++;
+	}
+
+	if (this->current < index)
+	{
+		this->capacity = 0;
+	}
+	else
+	{
+		this->current -= index;
+	}
+
+	return count;
+}
+
 Long Composite::First() {
 	this->current = 0;
 

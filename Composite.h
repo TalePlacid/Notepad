@@ -19,6 +19,8 @@ public:
 	virtual Glyph* GetAt(Long index);
 	virtual Long Remove();
 	virtual Long Remove(Long index);
+	virtual Long TruncateAfter(Long index);
+	virtual Long TruncateBefore(Long index);
 
 	virtual Long First();
 	virtual Long Previous();

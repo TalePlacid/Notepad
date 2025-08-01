@@ -35,6 +35,7 @@ public:
 	virtual Long FindSelectionEnd();
 	virtual Long TruncateAfter(Long index);
 	virtual Long TruncateBefore(Long index);
+	virtual Long MergeRows(Long index);
 
 	virtual Glyph* operator[](Long index);
 	virtual operator char*() const;

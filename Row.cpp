@@ -61,7 +61,7 @@ Long Row::FindSelectionEnd() {
 
 	if (isSelected == true)
 	{
-		index++;
+		index += 2;
 	}
 	
 	return index;

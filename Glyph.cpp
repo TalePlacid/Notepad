@@ -101,6 +101,10 @@ Long Glyph::TruncateBefore(Long index) {
 	return 0;
 }
 
+Long Glyph::MergeRows(Long index) {
+	return -1;
+}
+
 Glyph* Glyph::operator[](Long index) {
 	return 0;
 }

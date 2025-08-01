@@ -26,6 +26,38 @@ void EraseRangeCommand::Execute() {
 	row = note->GetAt(endRowIndex);
 	Long endColumnIndex = row->FindSelectionEnd();
 
+	//2. 선택범위를 지운다.
+	Long i;
+	if (startRowIndex < endRowIndex)
+	{
+		row = note->GetAt(startRowIndex);
+		row->TruncateAfter(startColumnIndex);
+
+		i = startRowIndex + 1;
+		while (i < endRowIndex - 1)
+		{
+			note->Remove(i);
+			i++;
+		}
+
+		row = note->GetAt(endRowIndex);
+		row->TruncateBefore(endColumnIndex);
+
+		
+	}
+	else
+	{
+		row = note->GetAt(startRowIndex);
+		i =	row->Move(endColumnIndex);
+		while (i >= startRowIndex)
+		{
+			row->Remove(i);
+			i--;
+		}
+		
+		row->Next();
+	}
+
 #if 0
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

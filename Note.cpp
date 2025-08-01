@@ -77,9 +77,12 @@ string Note::MakeString() {
 		i++;
 	}
 
-	for (Long i = 1; i <= 2; i++)
+	if (this->length > 0)
 	{
-		str.pop_back();
+		for (Long i = 1; i <= 2; i++)
+		{
+			str.pop_back();
+		}
 	}
 
 	return str;
@@ -140,7 +143,28 @@ Long Note::FindSelectionEnd() {
 	return index;
 }
 
-#if 0
+Long Note::MergeRows(Long index) {
+	Glyph* row = this->glyphs[index];
+	Glyph* nextRow = this->glyphs[index + 1];
+
+	Long i = 0;
+	while (i < nextRow->GetLength())
+	{
+		row->Add(nextRow->GetAt(i)->Clone());
+		i++;
+	}
+
+	if (this->glyphs[index+1] != NULL)
+	{
+		delete this->glyphs[index + 1];
+	}
+
+	this->glyphs.Delete(index + 1);
+	(this->length)--;
+	(this->capacity)--;
+
+	return index;
+}
 
 #include <iostream>
 using namespace std;
@@ -188,7 +212,37 @@ int main(int argc, char* argv[]) {
 		<< "선택끝줄 : " << note->FindSelectionEnd() << endl
 		<< "선택끝칸 : " << note->GetAt(note->FindSelectionEnd())->FindSelectionEnd() << endl << endl;
 
+	row = note->GetAt(2);
+	Long count = row->TruncateAfter(1);
+	cout << "[칸 이후 잘라내기]" << endl
+		<< row->MakeString() << endl
+		<< count << "칸 잘렸습니다." << endl << endl;
+
+
+	count = note->TruncateAfter(2);
+	cout << "[줄 이후 잘라내기]" << endl
+		<< note->MakeString() << endl
+		<< count << "줄 잘렸습니다." << endl << endl;
+
+	row = note->GetAt(0);
+	count = row->TruncateBefore(3);
+	cout << "[칸 이전 잘라내기]" << endl
+		<< row->MakeString() << endl
+		<< count << "칸 잘렸습니다." << endl << endl;
+
+	count = note->TruncateBefore(2);
+	cout << "[줄 이전 잘라내기]" << endl
+		<< note->MakeString() << endl
+		<< count << "줄 잘렸습니다." << endl << endl;
+
+	Glyph* refilled = noteConverter.Convert(contents);
+	refilled->MergeRows(0);
+	cout << refilled->MakeString() << endl << endl;
+
+	refilled->MergeRows(1);
+	refilled->MergeRows(1);
+	cout << refilled->MakeString() << endl << endl;
+
 	return 0;
 }
 
-#endif

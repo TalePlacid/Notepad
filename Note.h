@@ -26,6 +26,7 @@ public:
 	virtual Long FindSelectionStart();
 	virtual Long FindSelectionEnd();
 
+	virtual Long MergeRows(Long index);
 };
 
 #endif // !_NOTE_H
