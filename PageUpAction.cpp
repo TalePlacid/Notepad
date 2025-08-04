@@ -54,7 +54,12 @@ void PageUpAction::Perform() {
 			//1.2.3. 페이징 버퍼에서 이동한다.
 			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 			Position current = pagingBuffer->GetCurrent();
-			pagingBuffer->MoveRow(current.GetRow() - pageRowCount);
+			Long movingRowIndex = current.GetRow() - pageRowCount;
+			if (movingRowIndex < 0)
+			{
+				movingRowIndex = 0;
+			}
+			pagingBuffer->MoveRow(movingRowIndex);
 
 			//1.2.4. 페이지 범위에서 벗어났다면, 재적재한다.
 			if (!pagingBuffer->IsBelowTopLine())

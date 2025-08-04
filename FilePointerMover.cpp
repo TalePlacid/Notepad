@@ -271,7 +271,7 @@ Long FilePointerMover::MoveUpRows(Long count) {
 	if (newLineCount >= need)
 	{
 		//2.1. 이동한다.
-		i++;
+		i += 2;
 	}
 	else //3. 찾지 못했으면,
 	{
