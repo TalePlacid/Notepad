@@ -1,5 +1,3 @@
-#include <afxwin.h>
-#include <WinBase.h>
 #include <io.h>
 #include <fcntl.h>
 #include "PagingBuffer.h"
@@ -8,6 +6,8 @@
 #include "NoteConverter.h"
 #include "SizeCalculator.h"
 #include "ByteChecker.h"
+#include "FilePointerMover.h"
+#include "PositionMover.h"
 
 #pragma warning(disable:4996)
 
@@ -617,361 +617,124 @@ bool PagingBuffer::IsBelowTopLine() {
 }
 
 Position& PagingBuffer::First() {
-	Long currentOffset = ftell(this->file);
+	FilePointerMover filePointerMover(this);
+	filePointerMover.First();
 
-	TCHAR character;
-	Long i = currentOffset - 1;
-	int result = fseek(this->file, i, SEEK_SET);
-	fread(&character, 1, 1, this->file);
-	while (i >= 0 && character != '\n' && result == 0)
-	{
-		i--;
-		result = fseek(this->file, i, SEEK_SET);
-		fread(&character, 1, 1, this->file);
-	}
-
-	this->current = this->current.Move(this->current.GetRow(), 0);
+	PositionMover positionMover(this);
+	this->current = positionMover.First();
 
 	return this->current;
 }
 
 Position& PagingBuffer::Previous() {
-	Long currentOffset = ftell(this->file);
+	Long oldCurrentOffset = ftell(this->file);
+	
+	FilePointerMover filePointMover(this);
+	filePointMover.Previous();
 
-	if (currentOffset > 0)
-	{
-		fseek(this->file, currentOffset - 1, SEEK_SET);
-		TCHAR character;
-		fread(&character, 1, 1, this->file);
-
-		ByteChecker byteChecker;
-		if (!byteChecker.IsASCII(character))
-		{
-			fseek(this->file, currentOffset - 2, SEEK_SET);
-			this->current = this->current.Left();
-		}
-		else
-		{
-			if (character != '\n')
-			{
-				fseek(this->file, currentOffset - 1, SEEK_SET);
-				this->current = this->current.Left();
-			}
-			else
-			{
-				fseek(this->file, currentOffset, SEEK_SET);
-			}
-		}
-	}
+	PositionMover positionMover(this);
+	this->current = positionMover.Previous(oldCurrentOffset);
 
 	return this->current;
 }
 
 Position& PagingBuffer::Next() {
-	Long currentOffset = ftell(this->file);
+	Long oldCurrentOffset = ftell(this->file);
 
-	TCHAR character[2];
-	size_t flag = fread(character, 1, 1, this->file);
-	if (flag > 0 && !feof(this->file))
-	{
-		if (character[0] == '\r' || character[0] & 0x80)
-		{
-			flag = fread(character + 1, 1, 1, this->file);
-		}
+	FilePointerMover filePointerMover(this);
+	filePointerMover.Next();
 
-		if (character[0] != '\r')
-		{
-			this->current = this->current.Right();
-		}
-		else
-		{
-			fseek(this->file, currentOffset, SEEK_SET);
-		}
-	}
+	PositionMover positionMover(this);
+	this->current = positionMover.Next(oldCurrentOffset);
 
 	return this->current;
 }
 
 Position& PagingBuffer::Last() {
-	Long currentOffset = ftell(this->file);
-	Position current = this->current;
+	Long oldCurrentOffset = ftell(this->file);
 
-	TCHAR character[2];
-	size_t flag = fread(character, 1, 1, this->file);
-	while (character[0] != '\r' && flag > 0 && !feof(this->file))
-	{
-		if (character[0] & 0x80)
-		{
-			flag = fread(character + 1, 1, 1, this->file);
-		}
+	FilePointerMover filePointerMover(this);
+	filePointerMover.Last();
 
-		this->current = this->current.Right();
-		flag = fread(character, 1, 1, this->file);
-	}
-
-	if (character[0] == '\r')
-	{
-		fseek(this->file, -1, SEEK_CUR);
-	}
+	PositionMover positionMover(this);
+	this->current = positionMover.Last(oldCurrentOffset);
 
 	return this->current;
 }
 
 Position& PagingBuffer::Move(Long index) {
-	Long current = ftell(this->file);
+	FilePointerMover filePointerMover(this);
+	filePointerMover.Move(index);
 
-	TCHAR character[2];
-	Long i = current - 1;
-	int result = fseek(this->file, i, SEEK_SET);
-	fread(character, 1, 1, this->file);
-	while (i >= 0 && character[0] != '\n' && result == 0)
-	{
-		i--;
-		result = fseek(this->file, i, SEEK_SET);
-		fread(character, 1, 1, this->file);
-	}
-
-	if (result != 0)
-	{
-		fseek(this->file, 0, SEEK_SET);
-	}
-
-	i = 0;
-	while (i < index)
-	{
-		fread(character, 1, 1, this->file);
-		if (character[0] & 0x80)
-		{
-			fread(character + 1, 1, 1, this->file);
-		}
-		i++;
-	}
-
-	this->current = this->current.Move(this->current.GetRow(), index);
+	PositionMover positionMover(this);
+	this->current = positionMover.Move(index);
 
 	return this->current;
 }
 
 Position& PagingBuffer::FirstRow() {
-	fseek(this->file, 0, SEEK_SET);
+	FilePointerMover filePointerMover(this);
+	filePointerMover.FirstRow();
 
-	this->current = this->current.Move(0, 0);
+	PositionMover positionMover(this);
+	this->current = positionMover.FirstRow();
 
 	return this->current;
 }
 
 Position& PagingBuffer::PreviousRow() {
-	Long current = ftell(this->file);
+	Long oldCurrentOffset = ftell(this->file);
 
-	TCHAR character[2];
-	Long count = 0;
-	Long i = current - 1;
-	while (i >= 0 && count < 2)
-	{
-		fseek(this->file, i, SEEK_SET);
-		fread(character, 1, 1, this->file);
+	FilePointerMover filePointerMover(this);
+	filePointerMover.PreviousRow();
 
-		if (character[0] == '\n')
-		{
-			count++;
-		}
-
-		i--;
-	}
-
-	if (count > 0)
-	{
-		this->current = this->current.Up();
-		this->current = this->current.Move(this->current.GetRow(), 0);
-	}
-	else
-	{
-		fseek(this->file, current, SEEK_SET);
-	}
+	PositionMover positionMover(this);
+	this->current = positionMover.PreviousRow(oldCurrentOffset);
 
 	return this->current;
 }
 
 Position& PagingBuffer::NextRow() {
-	Long current = ftell(this->file);
+	Long oldCurrentOffset = ftell(this->file);
 
-	TCHAR character;
-	size_t flag = fread(&character, 1, 1, this->file);
-	while (character != '\n' && flag > 0 && !feof(this->file))
-	{
-		flag = fread(&character, 1, 1, this->file);
-	}
+	FilePointerMover filePointerMover(this);
+	filePointerMover.NextRow();
 
-	if (!feof(this->file))
-	{
-		this->current = this->current.Move(this->current.GetRow() + 1, 0);
-	}
-	else
-	{
-		fseek(this->file, current, SEEK_SET);
-	}
+	PositionMover positionMover(this);
+	this->current = positionMover.NextRow(oldCurrentOffset);
 
 	return this->current;
 }
 
 Position& PagingBuffer::LastRow() {
-	//1. 파일의 끝으로 이동한다.
-	fseek(this->file, 0, SEEK_END);
-	Long fileEnd = ftell(this->file);
+	FilePointerMover filePointerMover(this);
+	filePointerMover.LastRow();
 
-	//2. 마지막줄의 맨 앞으로 이동한다.
-	TCHAR character[2];
-	Long i = fileEnd - 1;
-	int result = fseek(this->file, i, SEEK_SET);
-	fread(character, 1, 1, this->file);
-	while (i >= 0 && character[0] != '\n' && result == 0)
-	{
-		i--;
-		result = fseek(this->file, i, SEEK_SET);
-		fread(character, 1, 1, this->file);
-	}
-
-	if (result == 0) //3. 마지막 줄이 첫번째 줄이 아니면,
-	{
-		//3.1. 상단 적재되는 줄 수를 구한다.
-		RECT rect;
-		GetClientRect(this->parent->GetSafeHwnd(), &rect);
-		Long clientAreaHeight = rect.bottom - rect.top;
-		Long rowCount = clientAreaHeight / ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight();
-		Long loadingRowCount = rowCount * PAGE_MULTIPLE;
-		Long newLineNeeded = loadingRowCount / 2 - 1;
-
-		//3.2. 실제 적재되는 줄 수를 구한다.
-		Long newLineCount = 0;
-		Long offset = i;
-		fseek(this->file, offset, SEEK_SET);
-		fread(character, 1, 1, this->file);
-		while (offset >= 0 && newLineCount < newLineNeeded)
-		{
-			fseek(this->file, offset, SEEK_SET);
-			fread(character, 1, 1, this->file);
-			if (character[0] == '\n')
-			{
-				newLineCount++;
-			}
-			offset--;
-		}
-
-		//3.3. 마지막 줄의 첫번째 위치로 이동한다.
-		fseek(this->file, i + 1, SEEK_SET);
-		this->current = this->current.Move(newLineCount, 0);
-	}
-	else //4. 마지막 줄이 첫번째 줄이라면,
-	{
-		//4.1. 파일의 시작 위치로 이동한다.
-		fseek(this->file, 0, SEEK_SET);
-		this->current = this->current.Move(0, 0);
-	}
-
-	Long checkCurrentOffset = ftell(this->file);
+	PositionMover positionMover(this);
+	this->current = positionMover.LastRow();
 
 	return this->current;
 }
 
 Position& PagingBuffer::MoveRow(Long index) {
 	//1. 현재 위치를 읽는다.
-	Long currentOffset = ftell(this->file);
+	Long oldCurrentOffset = ftell(this->file);
 
-	//2. 이동할 줄이 현재 줄보다 이전이면,
-	TCHAR character[2];
-	Long need;
-	Long i;
-	Long count = 0;
-	if (index < this->current.GetRow())
+	//2. 이동할 줄이 현재 줄보다 아래이면,
+	FilePointerMover filePointerMover(this);
+	PositionMover positionMover(this);
+	Long difference = index - this->current.GetRow();
+	if (difference > 0)
 	{
-		//2.1. 이동할 줄을 찾는다.
-		need = this->current.GetRow() - index + 1;
-		i = currentOffset - 1;
-		while (count < need && i >= 0)
-		{
-			fseek(this->file, i, SEEK_SET);
-			fread(character, 1, 1, this->file);
-
-			if (character[0] == '\n')
-			{
-				count++;
-			}
-			
-			i--;
-		}
-
-		//2.2. 찾았으면,
-		if (count >= need)
-		{  
-			//2.2.1. 이동한다.
-			currentOffset = i + 1;
-		}
-		else //2.3. 찾지 못했으면,
-		{
-			//2.3.1. 처음 위치로 이동한다.
-			currentOffset = 0;
-			index = 0;
-		}
-
-		fseek(this->file, currentOffset, SEEK_SET);
-		this->current = this->current.Move(index, 0);
+		//2.1. 차이만큼 아랫줄로 이동한다.
+		filePointerMover.MoveDownRows(difference);
+		this->current = positionMover.MoveDownRows(oldCurrentOffset, difference);
 	}
-	else if (index > this->current.GetRow()) //3. 이동할 줄이 현재 줄보다 다음이면,
+	else if (difference < 0) //3. 이동할 줄이 현재 줄보다 위이면,
 	{
-		//3.1. 이동할 줄을 찾는다.
-		need = index - this->current.GetRow();
-		size_t flag = fread(character, 1, 1, this->file);
-		while (count < need && flag > 0 && !feof(this->file))
-		{
-			if (character[0] == '\n')
-			{
-				count++;
-			}
-
-			flag = fread(character, 1, 1, this->file);
-		}
-
-		//3.2. 찾았으면,
-		if (count >= need && !feof(this->file))
-		{
-			//3.2.1. 이동한다.
-			fseek(this->file, -1, SEEK_CUR);
-			this->current = this->current.Move(index, 0);
-		}
-		else //3.3. 찾지 못했으면,
-		{
-			//3.3.1. 마지막 줄의 시작으로 이동한다.
-			i = ftell(this->file) - 1;
-			fseek(this->file, i, SEEK_SET);
-			fread(character, 1, 1, this->file);
-			while (i > currentOffset && character[0] != '\n')
-			{
-				i--;
-				fseek(this->file, i, SEEK_SET);
-				fread(character, 1, 1, this->file);
-			}
-			this->current = this->current.Move(this->current.GetRow() + count, 0);
-
-			//3.3.2. 파일의 마지막으로 이동한다.
-			i = ftell(this->file);
-
-			fseek(this->file, 0, SEEK_END);
-			Long fileEnd = ftell(this->file);
-
-			fseek(this->file, i, SEEK_SET);
-			flag = fread(character, 1, 1, this->file);
-			while (i < fileEnd && flag > 0 && !feof(this->file))
-			{
-				if (character[0] & 0x80)
-				{
-					flag = fread(character + 1, 1, 1, this->file);
-					i++;
-				}
-
-				this->current = this->current.Right();
-				i++;
-			}
-		}
+		//3.1. 차이만큼 윗줄로 이동한다.
+		filePointerMover.MoveUpRows(-difference);
+		this->current = positionMover.MoveUpRows(oldCurrentOffset, -difference);
 	}
 
 	return this->current;

@@ -437,8 +437,6 @@ void NotepadForm::Save(CString path) {
 	}
 }
 
-#if 0
-
 class NotepadApp : public CWinApp {
 public:
 	NotepadApp();
@@ -467,5 +465,3 @@ BOOL NotepadApp::InitInstance() {
 }
 
 NotepadApp notepadApp;
-
-#endif

@@ -33,134 +33,55 @@ void EraseRangeCommand::Execute() {
 		row = note->GetAt(startRowIndex);
 		row->TruncateAfter(startColumnIndex);
 
-		i = startRowIndex + 1;
-		while (i < endRowIndex - 1)
+		while (endRowIndex - 1 > startRowIndex)
 		{
-			note->Remove(i);
-			i++;
+			note->Remove(startRowIndex + 1);
+			endRowIndex--;
 		}
 
 		row = note->GetAt(endRowIndex);
 		row->TruncateBefore(endColumnIndex);
 
-		
+		note->MergeRows(startRowIndex);
 	}
 	else
 	{
 		row = note->GetAt(startRowIndex);
-		i =	row->Move(endColumnIndex);
-		while (i >= startRowIndex)
+		while (endColumnIndex - 1 >= startColumnIndex)
 		{
-			row->Remove(i);
-			i--;
+			row->Remove(startColumnIndex);
+			endColumnIndex--;
 		}
-		
-		row->Next();
 	}
+	note->Move(startRowIndex);
+	row = note->GetAt(startRowIndex);
+	row->Move(startColumnIndex);
 
-#if 0
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	Long i;
-	Long j;
+	//3. 페이징버퍼에서 지운다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-	if (pagingBuffer->GetCurrentOffset() > selectionBeginOffset)
+	pagingBuffer->Remove(pagingBuffer->GetSelectionBeginOffset());
+	pagingBuffer->UnmarkSelectionBegin();
+
+	if (currentOffset > selectionBeginOffset)
 	{
-		i = columnIndex - 1;
-		while (i >= 0 && pagingBuffer->GetCurrentOffset() > selectionBeginOffset)
-		{
-			row->Remove(i);
-			pagingBuffer->Remove();
-			i--;
-		}
-
-		Glyph* previousRow;
-		Long previousRowLength;
-		Long j;
-		i = rowIndex - 1;
-		while (i > 0 && pagingBuffer->GetCurrentOffset() > selectionBeginOffset)
-		{
-			previousRow = note->GetAt(i);
-			previousRowLength = previousRow->GetLength();
-			j = 0;
-			while (j < row->GetLength())
-			{
-				previousRow->Add(row->GetAt(j)->Clone());
-				j++;
-			}
-
-			note->Remove(i + 1);
-			pagingBuffer->Remove();
-			
-			j = previousRowLength - 1;
-			while (j >= 0 && pagingBuffer->GetCurrentOffset() > selectionBeginOffset)
-			{
-				previousRow->Remove(j);
-				pagingBuffer->Remove();
-				j--;
-			}
-
-			row = previousRow;
-			i--;
-		}
-
-		while (pagingBuffer->GetCurrentOffset() > selectionBeginOffset)
-		{
-			pagingBuffer->Remove();
-		}
-
 		if (!pagingBuffer->IsBelowTopLine())
 		{
 			pagingBuffer->Load();
 		}
 	}
-	else if (pagingBuffer->GetCurrentOffset() < selectionBeginOffset)
+	else if (currentOffset < selectionBeginOffset)
 	{
-		while (row->GetLength() > columnIndex && pagingBuffer->GetCurrentOffset() < selectionBeginOffset)
-		{
-			row->Remove(columnIndex);
-			pagingBuffer->Next();
-			pagingBuffer->Remove();
-		}
-
-		while (note->GetLength() - 1 > rowIndex && pagingBuffer->GetCurrentOffset() < selectionBeginOffset)
-		{
-			Glyph* nextRow = note->GetAt(rowIndex + 1);
-			Long rowLength = row->GetLength();
-			i = 0;
-			while (i < nextRow->GetLength())
-			{
-				row->Add(nextRow->GetAt(i)->Clone());
-				i++;
-			}
-
-			note->Remove(rowIndex + 1);
-			pagingBuffer->NextRow();
-			pagingBuffer->Remove();
-
-			while (row->GetLength() > columnIndex && pagingBuffer->GetCurrentOffset() < selectionBeginOffset)
-			{
-				row->Remove(columnIndex);
-				pagingBuffer->Next();
-				pagingBuffer->Remove();
-			}
-		}
-
-		while (pagingBuffer->GetCurrentOffset() < selectionBeginOffset)
-		{
-			pagingBuffer->Next();
-			pagingBuffer->Remove();
-		}
-
 		if (!pagingBuffer->IsAboveBottomLine())
 		{
 			pagingBuffer->Load();
 		}
 	}
 
-#endif
+	//4. 스크롤바 위치를 조정한다.
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
+
+	//5. 클라이언트 영역을 갱신한다.
+	this->parent->Invalidate();
 }

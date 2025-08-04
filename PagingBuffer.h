@@ -2,8 +2,9 @@
 #define _PAGINGBUFFER_H
 #define PAGE_MULTIPLE 4
 #define PAGE_ROWCOUNT 54
+#include <afxwin.h>
 #include <cstdio>
-#include "Position.h"
+#include "Position.h" 
 
 typedef signed long int Long;
 
@@ -38,6 +39,8 @@ public:
 	CString MakeSelectedString();
 	bool MarkAsDirty();
 
+	CWnd* GetParent() const;
+	FILE* GetFile() const;
 	Long GetFileEnd() const;
 	Long GetStartOffset() const;
 	Long GetCurrentOffset() const;
@@ -58,6 +61,14 @@ protected:
 	bool isDirty;
 	Long selectionBeginOffset;
 };
+
+inline CWnd* PagingBuffer::GetParent() const {
+	return const_cast<CWnd*>(this->parent);
+}
+
+inline FILE* PagingBuffer::GetFile() const{
+	return const_cast<FILE*>(this->file);
+}
 
 inline Long PagingBuffer::GetStartOffset() const {
 	return this->startOffset;

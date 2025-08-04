@@ -105,7 +105,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -156,6 +156,7 @@
     <ClInclude Include="EndAction.h" />
     <ClInclude Include="EraseCommand.h" />
     <ClInclude Include="EraseRangeCommand.h" />
+    <ClInclude Include="FilePointerMover.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="PagingBuffer.h" />
     <ClInclude Include="PasteCommand.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="PositionMover.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RightArrowAction.h" />
     <ClInclude Include="Row.h" />
@@ -239,6 +241,7 @@
     <ClCompile Include="EndAction.cpp" />
     <ClCompile Include="EraseCommand.cpp" />
     <ClCompile Include="EraseRangeCommand.cpp" />
+    <ClCompile Include="FilePointerMover.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
@@ -265,6 +268,7 @@
     <ClCompile Include="PagingBuffer.cpp" />
     <ClCompile Include="PasteCommand.cpp" />
     <ClCompile Include="Position.cpp" />
+    <ClCompile Include="PositionMover.cpp" />
     <ClCompile Include="RightArrowAction.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SaveCommand.cpp" />

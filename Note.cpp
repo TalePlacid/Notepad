@@ -166,6 +166,8 @@ Long Note::MergeRows(Long index) {
 	return index;
 }
 
+#if 0
+
 #include <iostream>
 using namespace std;
 #include "Glyph.h"
@@ -246,3 +248,4 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
+#endif
