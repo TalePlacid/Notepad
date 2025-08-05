@@ -21,7 +21,7 @@ void CtrlEndAction::Perform() {
 	pagingBuffer->LastRow();
 	pagingBuffer->Last();
 	//2. 페이징 버퍼의 현재 페이지가 파일의 마지막 페이지가 아니면,
-	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEnd())
+	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEndOffset())
 	{
 		//1.1. 페이징 버퍼에서 마지막 페이지를 적재한다.
 		pagingBuffer->Load();

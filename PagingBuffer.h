@@ -41,7 +41,7 @@ public:
 
 	CWnd* GetParent() const;
 	FILE* GetFile() const;
-	Long GetFileEnd() const;
+	Long GetFileEndOffset() const;
 	Long GetStartOffset() const;
 	Long GetCurrentOffset() const;
 	Long GetEndOffset() const;

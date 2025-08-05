@@ -112,7 +112,7 @@ void CtrlShiftEndAction::Perform() {
 	}
 
 	//4. 마지막 페이지가 아니라면, 마지막 페이지로 이동한다.
-	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEnd())
+	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEndOffset())
 	{
 		pagingBuffer->LastRow();
 		pagingBuffer->Last();

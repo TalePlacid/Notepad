@@ -22,6 +22,9 @@ public:
 	Long LastRow();
 	Long MoveUpRows(Long count);
 	Long MoveDownRows(Long count);
+
+	Long MoveToFileEnd();
+	Long MoveToOffset(Long offset);
 private:
 	PagingBuffer* pagingBuffer;
 };

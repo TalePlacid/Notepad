@@ -29,7 +29,7 @@ void PageUpAction::Perform() {
 		GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
 
 		//1.2. 현재 위치가 스크롤바의 최소보다 크면,
-		if (scrollInfo.nPos > scrollInfo.nMin)
+		if (scrollInfo.nPos > 0)
 		{
 			//1.2.1. 현재 줄의 너비를 구한다.
 			Glyph* note = ((NotepadForm*)(this->parent))->note;

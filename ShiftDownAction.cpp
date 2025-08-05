@@ -25,7 +25,7 @@ void ShiftDownAction::Perform() {
 
 	//2. 현재 위치가 마지막 페이지의 마지막줄이 아니라면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEnd() || rowIndex < note->GetLength() - 1)
+	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEndOffset() || rowIndex < note->GetLength() - 1)
 	{
 		//2.1. 현재 위치까지의 너비를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;

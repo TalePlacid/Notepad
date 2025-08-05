@@ -41,7 +41,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		if (this->hasVScrollBar)
 		{
 			//3.1. 페이징버퍼에서 전체높이를 구한다.
-			Long totalHeight = (pagingBuffer->CountRow(pagingBuffer->GetFileEnd()) + 1)
+			Long totalHeight = (pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset()) + 1)
 				* sizeCalculator->GetRowHeight();
 
 			//3.1. 수직 스크롤바의 최대높이가 화면높이보다 작으면,
@@ -68,7 +68,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		else //4. 수직 스크롤바가 없으면,
 		{
 			//4.1. 메모 전체 높이를 구한다.
-			Long totalRowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEnd());
+			Long totalRowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
 			Long totalHeight = (totalRowCount + 1) * sizeCalculator->GetRowHeight();
 
 			//4.2 메모 전체 높이가 화면높이보다 크면,

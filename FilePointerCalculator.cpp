@@ -1,22 +1,23 @@
-#include "FilePointerMover.h"
+#include "FilePointerCalculator.h"
 #include "PagingBuffer.h"
 #include "ByteChecker.h"
 
 #pragma warning(disable:4996)
 
-FilePointerMover::FilePointerMover(PagingBuffer* pagingBuffer) {
+FilePointerCalculator::FilePointerCalculator(PagingBuffer* pagingBuffer) {
 	this->pagingBuffer = pagingBuffer;
 }
 
-FilePointerMover::~FilePointerMover() {
+FilePointerCalculator::~FilePointerCalculator() {
 
 }
 
-Long FilePointerMover::First() {
+Long FilePointerCalculator::First(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
 	Long currentOffset = ftell(file);
+
 	TCHAR character;
-	Long i = currentOffset - 1;
+	Long i = offset - 1;
 	int result = fseek(file, i, SEEK_SET);
 	fread(&character, 1, 1, file);
 	while (i >= 0 && character != '\n' && result == 0)
@@ -26,84 +27,99 @@ Long FilePointerMover::First() {
 		fread(&character, 1, 1, file);
 	}
 
+	Long firstOffset = i + 1;
 	if (result != 0)
 	{
-		fseek(file, 0, SEEK_SET);
+		firstOffset = 0;
 	}
 
-	return ftell(file);
+	fseek(file, currentOffset, SEEK_SET);
+
+	return firstOffset;
 }
 
-Long FilePointerMover::Previous() {
+Long FilePointerCalculator::Previous(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
-	
 	Long currentOffset = ftell(file);
-	if (currentOffset > 0)
+
+	Long previousOffset = 0;
+	if (offset > 0)
 	{
-		fseek(file, currentOffset - 1, SEEK_SET);
 		TCHAR character;
+		fseek(file, offset - 1, SEEK_SET);
 		fread(&character, 1, 1, file);
 
 		ByteChecker byteChecker;
 		if (!byteChecker.IsASCII(character))
 		{
-			fseek(file, currentOffset - 2, SEEK_SET);
+			previousOffset = offset - 2;
 		}
 		else if (character != '\n')
 		{
-			fseek(file, currentOffset - 1, SEEK_SET);
+			previousOffset = offset - 1;
 		}
 	}
 
-	return ftell(file);
+	fseek(file, currentOffset, SEEK_SET);
+
+	return previousOffset;
 }
 
-Long FilePointerMover::Next() {
+Long FilePointerCalculator::Next(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
-	
 	Long currentOffset = ftell(file);
+
 	TCHAR character[2];
+	Long nextOffset = offset;
+	fseek(file, offset, SEEK_SET);
 	size_t flag = fread(character, 1, 1, file);
 	if (flag > 0 && !feof(file))
 	{
 		if (character[0] & 0x80)
 		{
 			flag = fread(character + 1, 1, 1, file);
+			nextOffset = offset + 2;
 		}
-		else if (character[0] == '\r')
+		else if (character[0] != '\r')
 		{
-			fseek(file, currentOffset, SEEK_SET);
+			nextOffset = offset + 1;
 		}
 	}
 
-	return ftell(file);
+	fseek(file, currentOffset, SEEK_SET);
+
+	return nextOffset;
 }
 
-Long FilePointerMover::Last() {
+Long FilePointerCalculator::Last(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
-	
 	Long currentOffset = ftell(file);
-	TCHAR character[2];
-	size_t flag = fread(character, 1, 1, file);
-	while (character[0] != '\r' && flag > 0 && !feof(file))
+
+	TCHAR character = '\0';
+	fseek(file, offset, SEEK_SET);
+	size_t flag = fread(&character, 1, 1, file);
+	while (character != '\r' && flag > 0 && !feof(file))
 	{
-		flag = fread(character, 1, 1, file);
+		flag = fread(&character, 1, 1, file);
 	}
 
-	if (character[0] == '\r')
+	Long lastOffset = ftell(file);
+	if (character == '\r')
 	{
-		fseek(file, -1, SEEK_CUR);
+		lastOffset--;
 	}
 
-	return ftell(file);
+	fseek(file, currentOffset, SEEK_SET);
+
+	return lastOffset;
 }
 
-Long FilePointerMover::Move(Long index) {
+Long FilePointerCalculator::Move(Long offset, Long index) {
 	FILE* file = this->pagingBuffer->GetFile();
-	
 	Long currentOffset = ftell(file);
+
 	TCHAR character[2];
-	Long i = currentOffset - 1;
+	Long i = offset - 1;
 	int result = fseek(file, i, SEEK_SET);
 	fread(character, 1, 1, file);
 	while (i >= 0 && character[0] != '\n' && result == 0)
@@ -129,23 +145,24 @@ Long FilePointerMover::Move(Long index) {
 		i++;
 	}
 
-	return ftell(file);
+	Long movedOffset = ftell(file);
+
+	fseek(file, currentOffset, SEEK_SET);
+
+	return movedOffset;
 }
 
-Long FilePointerMover::FirstRow() {
-	FILE* file = this->pagingBuffer->GetFile();
-	fseek(file, 0, SEEK_SET);
-
-	return ftell(file);
+Long FilePointerCalculator::FirstRow() {
+	return 0;
 }
 
-Long FilePointerMover::PreviousRow() {
+Long FilePointerCalculator::PreviousRow(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
-
 	Long currentOffset = ftell(file);
+
 	TCHAR character[2];
 	Long count = 0;
-	Long i = currentOffset - 1;
+	Long i = offset - 1;
 	while (i >= 0 && count < 2)
 	{
 		fseek(file, i, SEEK_SET);
@@ -159,22 +176,25 @@ Long FilePointerMover::PreviousRow() {
 		i--;
 	}
 
+	Long previousRowOffset = ftell(file);
 	if (count == 1)
 	{
-		fseek(file, 0, SEEK_SET);
+		previousRowOffset = 0;
 	}
 	else if (count == 0)
 	{
-		fseek(file, currentOffset, SEEK_SET);
+		previousRowOffset = offset;
 	}
 
-	return ftell(file);
+	fseek(file, currentOffset, SEEK_SET);
+
+	return previousRowOffset;
 }
 
-Long FilePointerMover::NextRow() {
+Long FilePointerCalculator::NextRow(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
-
 	Long currentOffset = ftell(file);
+	
 	TCHAR character;
 	size_t flag = fread(&character, 1, 1, file);
 	while (character != '\n' && flag > 0 && !feof(file))
@@ -182,16 +202,20 @@ Long FilePointerMover::NextRow() {
 		flag = fread(&character, 1, 1, file);
 	}
 
+	Long nextRowOffset = ftell(file);
 	if (character != '\n')
 	{
-		fseek(file, currentOffset, SEEK_SET);
+		nextRowOffset = offset;
 	}
 
-	return ftell(file);
+	fseek(file, currentOffset, SEEK_SET);
+
+	return nextRowOffset;
 }
 
-Long FilePointerMover::LastRow() {
+Long FilePointerCalculator::LastRow() {
 	FILE* file = this->pagingBuffer->GetFile();
+	Long currentOffset = ftell(file);
 
 	//1. 파일의 끝으로 이동한다.
 	fseek(file, 0, SEEK_END);
@@ -209,6 +233,7 @@ Long FilePointerMover::LastRow() {
 		fread(character, 1, 1, file);
 	}
 
+	Long lastRowOffset;
 	if (result == 0) //3. 마지막 줄이 첫번째 줄이 아니면,
 	{
 		//3.1. 상단 적재되는 줄 수를 구한다.
@@ -231,29 +256,32 @@ Long FilePointerMover::LastRow() {
 			offset--;
 		}
 
-		//3.3. 마지막 줄의 첫번째 위치로 이동한다.
-		fseek(file, i + 1, SEEK_SET);
+		//3.3. 마지막 줄의 첫번째 위치로 정한다.
+		lastRowOffset = i + 1;
 	}
 	else //4. 마지막 줄이 첫번째 줄이라면,
 	{
-		//4.1. 파일의 시작 위치로 이동한다.
-		fseek(file, 0, SEEK_SET);
+		//4.1. 파일의 시작 위치로 정한다.
+		lastRowOffset = 0;
 	}
 
-	return ftell(file);
+	fseek(file, currentOffset, SEEK_SET);
+
+	return lastRowOffset;
 }
 
-Long FilePointerMover::MoveUpRows(Long count) {
+Long FilePointerCalculator::MoveUpRows(Long offset, Long count) {
 	FILE* file = this->pagingBuffer->GetFile();
 	Long currentOffset = ftell(file);
 
 	//1. 위쪽줄로 이동한다.
+	fseek(file, offset, SEEK_SET);
 	TCHAR character;
 	Long need;
 	Long i;
 	Long newLineCount = 0;
 	need = count + 1;
-	i = currentOffset - 1;
+	i = offset - 1;
 	while (i >= 0 && newLineCount < need)
 	{
 		fseek(file, i, SEEK_SET);
@@ -268,27 +296,29 @@ Long FilePointerMover::MoveUpRows(Long count) {
 	}
 
 	//2. 찾았으면,
+	Long upRowOffset;
 	if (newLineCount >= need)
 	{
 		//2.1. 이동한다.
-		i += 2;
+		upRowOffset = i + 2;
 	}
 	else //3. 찾지 못했으면,
 	{
 		//3.1. 처음 위치로 이동한다.
-		i = 0;
+		upRowOffset = 0;
 	}
 
-	fseek(file, i, SEEK_SET);
+	fseek(file, currentOffset, SEEK_SET);
 
-	return ftell(file);
+	return upRowOffset;
 }
 
-Long FilePointerMover::MoveDownRows(Long count) {
+Long FilePointerCalculator::MoveDownRows(Long offset, Long count) {
 	FILE* file = this->pagingBuffer->GetFile();
 	Long currentOffset = ftell(file);
 
 	//1. 아랫쪽 줄로 이동한다.
+	fseek(file, offset, SEEK_SET);
 	TCHAR character;
 	Long need = count;
 	Long newLineCount = 0;
@@ -323,19 +353,21 @@ Long FilePointerMover::MoveDownRows(Long count) {
 		}
 	}
 
-	return ftell(file);
+	Long downRowOffset = ftell(file);
+
+	fseek(file, currentOffset, SEEK_SET);
+
+	return downRowOffset;
 }
 
-Long FilePointerMover::MoveToFileEnd() {
+Long FilePointerCalculator::FileEnd() {
 	FILE* file = this->pagingBuffer->GetFile();
+	Long currentOffset = ftell(file);
+
 	fseek(file, 0, SEEK_END);
+	Long fileEndOffset = ftell(file);
 
-	return ftell(file);
-}
+	fseek(file, currentOffset, SEEK_SET);
 
-Long FilePointerMover::MoveToOffset(Long offset) {
-	FILE* file = this->pagingBuffer->GetFile();
-	fseek(file, offset, SEEK_SET);
-
-	return ftell(file);
+	return fileEndOffset;
 }

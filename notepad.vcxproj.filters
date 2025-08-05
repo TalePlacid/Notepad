@@ -272,6 +272,12 @@
     <ClInclude Include="PositionMover.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="FilePointerCalculator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionCalculator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -518,6 +524,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PositionMover.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePointerCalculator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionCalculator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
