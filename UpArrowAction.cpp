@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -64,8 +65,10 @@ void UpArrowAction::Perform() {
 	pagingBuffer->Move(i);
 	row->Move(i);
 
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	((NotepadForm*)(this->parent))->note->Select(false);
-	pagingBuffer->UnmarkSelectionBegin();
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
+
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }

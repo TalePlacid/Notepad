@@ -7,6 +7,7 @@ Composite::Composite(Long capacity, bool isDirty)
 	this->capacity = capacity;
 	this->length = 0;
 	this->current = 0;
+	this->marked = -1;
 }
 
 Composite::~Composite() {
@@ -32,6 +33,7 @@ Composite::Composite(const Composite& source)
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;
+	this->marked = source.marked;
 }
 
 Composite& Composite::operator=(const Composite& source) {
@@ -58,6 +60,7 @@ Composite& Composite::operator=(const Composite& source) {
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;
+	this->marked = source.marked;
 
 	return *this;
 }
@@ -231,6 +234,18 @@ bool Composite::Select(bool isSelecting) {
 	}
 
 	return isSelecting;
+}
+
+Long Composite::Mark(Long index) {
+	this->marked = index;
+
+	return this->marked;
+}
+
+Long Composite::Unmark() {
+	this->marked = -1;
+
+	return this->marked;
 }
 
 Glyph* Composite::operator[](Long index) {

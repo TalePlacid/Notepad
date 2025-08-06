@@ -5,6 +5,7 @@
 #include "ScrollBarController.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -94,7 +95,8 @@ void PageDownAction::Perform() {
 
 			//1.2.8. 클라이언트 영역을 갱신한다.
 			note->Select(false);
-			pagingBuffer->UnmarkSelectionBegin();
+			MarkingHelper markingHelper(this->parent);
+			markingHelper.Unmark();
 			this->parent->Invalidate();
 		}
 	}

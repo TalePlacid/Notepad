@@ -23,6 +23,7 @@
 #include "ClipboardController.h"
 #include "PagingBuffer.h"
 #include "Observer.h"
+#include "MarkingHelper.h"
 #include <imm.h>
 #include <fstream>
 #include <sstream>
@@ -127,9 +128,11 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			command->Execute();
 			delete command;
 		}
-		this->note->Select(false);
-		this->pagingBuffer->UnmarkSelectionBegin();
 
+		this->note->Select(false);
+		MarkingHelper markingHelper(this);
+		markingHelper.Unmark();
+	
 		NoteWrapper noteWrapper(this);
 		noteWrapper.DeleteDummyRows();
 
@@ -245,7 +248,8 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		}
 
 		this->note->Select(false);
-		this->pagingBuffer->UnmarkSelectionBegin();
+		MarkingHelper markingHelper(this);
+		markingHelper.Unmark();
 		this->Invalidate();
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
@@ -281,7 +285,8 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	}
 
 	this->note->Select(false);
-	this->pagingBuffer->UnmarkSelectionBegin();
+	MarkingHelper markingHelper(this);
+	markingHelper.Unmark();
 	this->Invalidate();
 	
 	//DefWindowProc(WM_IME_CHAR, wParam, lParam)
@@ -307,7 +312,8 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 	if (this->note != NULL)
 	{
 		this->note->Select(false);
-		this->pagingBuffer->UnmarkSelectionBegin();
+		MarkingHelper markingHelper(this);
+		markingHelper.Unmark();
 	}
 }
 

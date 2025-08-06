@@ -170,6 +170,7 @@
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
+    <ClInclude Include="MarkingHelper.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="NewCommand.h" />
     <ClInclude Include="Note.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="KeyAction.cpp" />
     <ClCompile Include="KeyActionFactory.cpp" />
     <ClCompile Include="LeftArrowAction.cpp" />
+    <ClCompile Include="MarkingHelper.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />

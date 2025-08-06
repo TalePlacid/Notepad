@@ -105,6 +105,14 @@ Long Glyph::MergeRows(Long index) {
 	return -1;
 }
 
+Long Glyph::Mark(Long index) {
+	return -1;
+}
+
+Long Glyph::Unmark() {
+	return -1;
+}
+
 Glyph* Glyph::operator[](Long index) {
 	return 0;
 }

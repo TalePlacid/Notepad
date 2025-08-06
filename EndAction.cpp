@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -23,8 +24,10 @@ void EndAction::Perform() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Last();
 
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	note->Select(false);
-	pagingBuffer->UnmarkSelectionBegin();
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
+
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }

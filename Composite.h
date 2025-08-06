@@ -31,16 +31,21 @@ public:
 	virtual void Accept(Visitor& visitor);
 	virtual bool Select(bool isSelecting);
 
+	virtual Long Mark(Long index);
+	virtual Long Unmark();
+
 	virtual Glyph* operator[](Long index);
 
 	virtual Long GetCapacity() const;
 	virtual Long GetLength() const;
 	virtual Long GetCurrent() const;
+	virtual Long GetMarked() const;
 protected:
 	Array<Glyph*> glyphs;
 	Long capacity;
 	Long length;
 	Long current;
+	Long marked;
 };
 
 inline Long Composite::GetCapacity() const {
@@ -53,6 +58,10 @@ inline Long Composite::GetLength() const {
 
 inline Long Composite::GetCurrent() const {
 	return this->current;
+}
+
+inline Long Composite::GetMarked() const {
+	return this->marked;
 }
 
 #endif // !_COMPOSITE_H

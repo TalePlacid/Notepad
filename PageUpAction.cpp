@@ -5,6 +5,7 @@
 #include "Glyph.h"
 #include "SizeCalculator.h"
 #include "ScrollBarController.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -97,7 +98,8 @@ void PageUpAction::Perform() {
 
 			//1.2.7. 클라이언트 영역을 갱신한다.
 			note->Select(FALSE);
-			pagingBuffer->UnmarkSelectionBegin();
+			MarkingHelper markingHelper(this->parent);
+			markingHelper.Unmark();
 			this->parent->Invalidate();
 		}
 

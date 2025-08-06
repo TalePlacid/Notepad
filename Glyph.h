@@ -36,6 +36,8 @@ public:
 	virtual Long TruncateAfter(Long index);
 	virtual Long TruncateBefore(Long index);
 	virtual Long MergeRows(Long index);
+	virtual Long Mark(Long index);
+	virtual Long Unmark();
 
 	virtual Glyph* operator[](Long index);
 	virtual operator char*() const;
@@ -44,6 +46,7 @@ public:
 	virtual Long GetLength() const;
 	virtual Long GetCurrent() const;
 	virtual bool IsSelected() const;
+	virtual Long GetMarked() const;
 	virtual bool IsDirty() const;
 protected:
 	bool isSelected;
@@ -64,6 +67,10 @@ inline Long Glyph::GetCurrent() const {
 
 inline bool Glyph::IsSelected() const {
 	return this->isSelected;
+}
+
+inline Long Glyph::GetMarked() const {
+	return -1;
 }
 
 inline bool Glyph::IsDirty() const {

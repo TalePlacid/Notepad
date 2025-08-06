@@ -104,45 +104,6 @@ Long Note::Last() {
 	return this->current;
 }
 
-Long Note::FindSelectionStart() {
-	Long index = 0;
-
-	Long flag = -1;
-	while (index < this->length && flag < 0)
-	{
-		flag = this->glyphs[index]->FindSelectionStart();
-		index++;
-	}
-
-	if (index < this->length)
-	{
-		index--;
-	}
-	else
-	{
-		index = -1;
-	}
-
-	return index;
-}
-
-Long Note::FindSelectionEnd() {
-	Long index = this->length - 1;
-	Long flag = -1;
-	while (index >= 0 && flag < 0)
-	{
-		flag = this->glyphs[index]->FindSelectionEnd();
-		index--;
-	}
-
-	if (flag >= 0)
-	{
-		index++;
-	}
-
-	return index;
-}
-
 Long Note::MergeRows(Long index) {
 	Glyph* row = this->glyphs[index];
 	Glyph* nextRow = this->glyphs[index + 1];

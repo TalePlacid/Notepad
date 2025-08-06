@@ -4,6 +4,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -18,7 +19,8 @@ CtrlVAction::~CtrlVAction() {
 
 void CtrlVAction::Perform() {
 	((NotepadForm*)(this->parent))->note->Select(false);
-	((NotepadForm*)(this->parent))->pagingBuffer->UnmarkSelectionBegin();
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
 
 	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_PASTE, NULL);
 }

@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4966)
 
@@ -23,6 +24,7 @@ void CtrlShiftHomeAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. 줄에서 현재 칸부터 시작 칸까지 반복한다.
+	MarkingHelper markingHelper(this->parent);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* character;
 	Long i = columnIndex - 1;
@@ -33,9 +35,9 @@ void CtrlShiftHomeAction::Perform() {
 		if (!character->IsSelected())
 		{
 			character->Select(TRUE);
-			if (pagingBuffer->GetSelectionBeginOffset() < 0)
+			if (markingHelper.IsUnmarked())
 			{
-				pagingBuffer->MarkSelectionBegin();
+				markingHelper.Mark();
 			}
 			row->Previous();
 			pagingBuffer->Previous();
@@ -45,23 +47,23 @@ void CtrlShiftHomeAction::Perform() {
 			character->Select(FALSE);
 			row->Previous();
 			pagingBuffer->Previous();
-			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+			if (markingHelper.HasReturnedToSelectionBegin())
 			{
-				pagingBuffer->UnmarkSelectionBegin();
+				markingHelper.Unmark();
 			}
 		}
 		i--;
 	}
 
-	if (pagingBuffer->GetSelectionBeginOffset() < 0)
+	if (markingHelper.IsUnmarked())
 	{
-		pagingBuffer->MarkSelectionBegin();
+		markingHelper.Mark();
 	}
 	rowIndex = note->Previous();
 	pagingBuffer->PreviousRow();
-	if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+	if (markingHelper.HasReturnedToSelectionBegin())
 	{
-		pagingBuffer->UnmarkSelectionBegin();
+		markingHelper.Unmark();
 	}
 
 	//3. 노트에서 처음 위치까지 반복한다.
@@ -78,9 +80,9 @@ void CtrlShiftHomeAction::Perform() {
 			if (!character->IsSelected())
 			{
 				character->Select(TRUE);
-				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				if (markingHelper.IsUnmarked())
 				{
-					pagingBuffer->MarkSelectionBegin();
+					markingHelper.Mark();
 				}
 				row->Previous();
 				pagingBuffer->Previous();
@@ -90,23 +92,23 @@ void CtrlShiftHomeAction::Perform() {
 				character->Select(FALSE);
 				row->Previous();
 				pagingBuffer->Previous();
-				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+				if (markingHelper.HasReturnedToSelectionBegin())
 				{
-					pagingBuffer->UnmarkSelectionBegin();
+					markingHelper.Unmark();
 				}
 			}
 			j--;
 		}
 
-		if (pagingBuffer->GetSelectionBeginOffset() < 0)
+		if (markingHelper.IsUnmarked())
 		{
-			pagingBuffer->MarkSelectionBegin();
+			markingHelper.Mark();
 		}
 		note->Previous();
-		pagingBuffer->Previous();
-		if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+		pagingBuffer->PreviousRow();
+		if (markingHelper.HasReturnedToSelectionBegin())
 		{
-			pagingBuffer->UnmarkSelectionBegin();
+			markingHelper.Unmark();
 		}
 
 		i--;

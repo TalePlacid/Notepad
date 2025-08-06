@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -24,6 +25,7 @@ void ShiftUpAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. 첫번째 페이지의 첫번째 줄이 아니면,
+	MarkingHelper markingHelper(this->parent);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (pagingBuffer->GetStartOffset() > 0 || rowIndex > 0)
 	{
@@ -44,9 +46,9 @@ void ShiftUpAction::Perform() {
 				character->Select(TRUE);
 
 				//2.1.2.2. 페이징버퍼에서 선택시작위치가 표시되지 않았다면, 표시한다.
-				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				if (markingHelper.IsUnmarked())
 				{
-					pagingBuffer->MarkSelectionBegin();
+					markingHelper.Mark();
 				}
 
 				//2.1.2.3. 이전 칸으로 이동한다.
@@ -63,9 +65,9 @@ void ShiftUpAction::Perform() {
 				pagingBuffer->Previous();
 
 				//2.1.3.3. 페이징 버퍼의 현재 위치가 선택시작위치와 같으면, 표시를 지운다.
-				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+				if (markingHelper.HasReturnedToSelectionBegin())
 				{
-					pagingBuffer->UnmarkSelectionBegin();
+					markingHelper.Unmark();
 				}
 			}
 
@@ -110,9 +112,9 @@ void ShiftUpAction::Perform() {
 				character->Select(TRUE);
 
 				//2.5.2.2. 페이징 버퍼에서 선택시작위치가 표시되지 않았다면, 표시한다.
-				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				if (markingHelper.IsUnmarked())
 				{
-					pagingBuffer->MarkSelectionBegin();
+					markingHelper.Mark();
 				}
 
 				//2.5.2.3. 줄에서 이전 칸으로 이동한다.
@@ -129,9 +131,9 @@ void ShiftUpAction::Perform() {
 				pagingBuffer->Previous();
 
 				//2.5.3.3. 페이징버퍼의 현재위치가 선택시작위치와 같다면, 표시를 지운다.
-				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+				if (markingHelper.HasReturnedToSelectionBegin())
 				{
-					pagingBuffer->UnmarkSelectionBegin();
+					markingHelper.Unmark();
 				}
 			}
 

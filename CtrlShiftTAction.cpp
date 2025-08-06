@@ -3,6 +3,7 @@
 #include "Glyph.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -17,6 +18,7 @@ CtrlShiftTAction::~CtrlShiftTAction() {
 
 void CtrlShiftTAction::Perform() {
 	((NotepadForm*)(this->parent))->note->Select(FALSE);
-	((NotepadForm*)(this->parent))->pagingBuffer->UnmarkSelectionBegin();
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
 	this->parent->Invalidate();
 }

@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -21,6 +22,7 @@ void ShiftRightAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	MarkingHelper markingHelper(this->parent);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex < row->GetLength())
 	{
@@ -28,9 +30,9 @@ void ShiftRightAction::Perform() {
 		if (!character->IsSelected())
 		{
 			character->Select(TRUE);
-			if (pagingBuffer->GetSelectionBeginOffset() < 0)
+			if (markingHelper.IsUnmarked())
 			{
-				pagingBuffer->MarkSelectionBegin();
+				markingHelper.Mark();
 			}
 			row->Next();
 			pagingBuffer->Next();
@@ -40,17 +42,17 @@ void ShiftRightAction::Perform() {
 			character->Select(FALSE);
 			row->Next();
 			pagingBuffer->Next();
-			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+			if (markingHelper.HasReturnedToSelectionBegin())
 			{
-				pagingBuffer->UnmarkSelectionBegin();
+				markingHelper.Unmark();
 			}
 		}
 	}
 	else if (rowIndex < note->GetLength() - 1)
 	{
-		if (pagingBuffer->GetSelectionBeginOffset() < 0)
+		if (markingHelper.IsUnmarked())
 		{
-			pagingBuffer->MarkSelectionBegin();
+			markingHelper.Mark();
 		}
 
 		rowIndex = note->Next();
@@ -60,16 +62,14 @@ void ShiftRightAction::Perform() {
 		row->First();
 		pagingBuffer->First();
 
-		if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
+		if (markingHelper.HasReturnedToSelectionBegin())
 		{
-			pagingBuffer->UnmarkSelectionBegin();
+			markingHelper.Unmark();
 		}
 
 		if (!pagingBuffer->IsAboveBottomLine())
 		{
 			pagingBuffer->Load();
-			note = ((NotepadForm*)(this->parent))->note;
-			rowIndex = note->GetCurrent();
 		}
 	}
 

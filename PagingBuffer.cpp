@@ -326,6 +326,10 @@ void PagingBuffer::Load() {
 				i++;
 			}
 		}
+
+		Long markedRowIndex = note->Mark(selectionBegin.GetRow());
+		row = note->GetAt(markedRowIndex);
+		row->Mark(selectionBegin.GetColumn());
 	}
 
 	//10. 현재 위치로 이동한다.
