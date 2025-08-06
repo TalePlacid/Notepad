@@ -31,8 +31,6 @@ public:
 	virtual bool IsMultiByteCharacter();
 	virtual void Accept(Visitor& visitor);
 	virtual bool Select(bool isSelecting);
-	virtual Long FindSelectionStart();
-	virtual Long FindSelectionEnd();
 	virtual Long TruncateAfter(Long index);
 	virtual Long TruncateBefore(Long index);
 	virtual Long MergeRows(Long index);
