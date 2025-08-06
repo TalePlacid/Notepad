@@ -519,8 +519,81 @@ Long PagingBuffer::Remove(Long toOffset) {
 
 		TCHAR(*contents) = new TCHAR[fileEndOffset];
 
+		Long forwardOffset = 0;
+		Long backwardOffset = 0;
+		if (currentOffset < toOffset)
+		{
+			forwardOffset = currentOffset;
+			backwardOffset = toOffset;
+		}
+		else if (currentOffset > toOffset)
+		{
+			forwardOffset = toOffset;
+			backwardOffset = currentOffset;
+		}
+
 		Long count = 0;
 		fseek(this->file, 0, SEEK_SET);
+		count += fread(contents, 1, forwardOffset, this->file);
+		fseek(this->file, backwardOffset, SEEK_SET);
+		count += fread(contents + forwardOffset, 1, fileEndOffset - backwardOffset, this->file);
+		contents[count] = '\0';
+
+		fwrite(contents, 1, count, removedFile);
+
+		if (contents != NULL)
+		{
+			delete[] contents;
+		}
+
+		fclose(removedFile);
+		fclose(this->file);
+		remove("Note.tmp");
+		rename("removedFile.tmp", "Note.tmp");
+		this->file = fopen("Note.tmp", "r+b");
+
+		fseek(this->file, forwardOffset, SEEK_SET);
+		
+		Long forwardRemovedOffset;
+		if (this->startOffset <= forwardOffset)
+		{
+			forwardRemovedOffset = forwardOffset;
+		}
+		else
+		{
+			forwardRemovedOffset = this->startOffset;
+		}
+
+		Long backwardRemovedOffset;
+		if (this->endOffset <= backwardOffset)
+		{
+			backwardRemovedOffset = this->endOffset;
+		}
+		else
+		{
+			backwardRemovedOffset = backwardOffset;
+		}
+
+		if (this->startOffset > forwardOffset)
+		{
+			this->startOffset = forwardOffset;
+		}
+
+		this->endOffset -= backwardRemovedOffset - forwardRemovedOffset;
+
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		this->current = Position(rowIndex, columnIndex);
+		Long endIndex = note->GetLength() - 1;
+		row = note->GetAt(endIndex);
+		Long endColumn = row->GetLength();
+		this->end = Position(endIndex, endColumn);
+
+		ret = -1;
+#if 0
 		if (currentOffset < toOffset)
 		{
 			count += fread(contents, 1, currentOffset, this->file);
@@ -563,9 +636,10 @@ Long PagingBuffer::Remove(Long toOffset) {
 		Long columnIndex = row->GetCurrent();
 
 		PositionCalculator positionCalculator(this);
-		
 
 		ret = -1;
+
+#endif
 	}
 
 	return ret;

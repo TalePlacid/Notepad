@@ -266,12 +266,6 @@
     <ClInclude Include="EraseRangeCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="FilePointerMover.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionMover.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="FilePointerCalculator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -518,12 +512,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="EraseRangeCommand.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="FilePointerMover.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PositionMover.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="FilePointerCalculator.cpp">

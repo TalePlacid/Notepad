@@ -53,6 +53,7 @@ void EraseRangeCommand::Execute() {
 			endColumnIndex--;
 		}
 	}
+
 	note->Move(startRowIndex);
 	row = note->GetAt(startRowIndex);
 	row->Move(startColumnIndex);
