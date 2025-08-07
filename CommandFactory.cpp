@@ -8,6 +8,8 @@
 #include "AutoWrapCommand.h"
 #include "PasteCommand.h"
 #include "EraseRangeCommand.h"
+#include "CopyCommand.h"
+#include "CutCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -50,6 +52,12 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID) {
 		break;
 	case ID_COMMAND_ERASERANGE:
 		command = new EraseRangeCommand(parent);
+		break;
+	case ID_COMMAND_COPY:
+		command = new CopyCommand(parent);
+		break;
+	case ID_COMMAND_CUT:
+		command = new CutCommand(parent);
 		break;
 	default:
 		break;

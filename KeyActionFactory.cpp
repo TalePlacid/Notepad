@@ -24,6 +24,7 @@
 #include "CtrlVAction.h"
 #include "PageUpAction.h"
 #include "PageDownAction.h"
+#include "CtrlXAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
 
@@ -167,6 +168,12 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		break;
 	case VK_NEXT:
 		keyAction = new PageDownAction(parent);
+		break;
+	case 'X':
+		if (onCtrlKey)
+		{
+			keyAction = new CtrlXAction(parent);
+		}
 		break;
 	default:
 		break;

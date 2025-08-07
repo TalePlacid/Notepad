@@ -8,7 +8,6 @@
 #define ID_MENU_SAVE                    40005
 #define ID_MENU_SAVEAS                  40006
 #define ID_MENU_PREVIEW                 40007
-#define ID_40008                        40008
 #define ID_MENU_PRINT                   40009
 #define ID_MENU_CLOSE                   40010
 #define ID_MENU_EXIT                    40011
@@ -39,6 +38,8 @@
 #define ID_COMMAND_ERASE                50001
 #define ID_COMMAND_PASTE				50002
 #define ID_COMMAND_ERASERANGE			50003
+#define ID_COMMAND_COPY					50004
+#define ID_COMMAND_CUT					50005
 
 // Next default values for new objects
 // 

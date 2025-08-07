@@ -139,6 +139,7 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandFactory.h" />
     <ClInclude Include="Composite.h" />
+    <ClInclude Include="CopyCommand.h" />
     <ClInclude Include="CtrlCAction.h" />
     <ClInclude Include="CtrlEndAction.h" />
     <ClInclude Include="CtrlHomeAction.h" />
@@ -151,6 +152,8 @@
     <ClInclude Include="CtrlShiftTAction.h" />
     <ClInclude Include="CtrlTAction.h" />
     <ClInclude Include="CtrlVAction.h" />
+    <ClInclude Include="CtrlXAction.h" />
+    <ClInclude Include="CutCommand.h" />
     <ClInclude Include="DownArrowAction.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
@@ -225,6 +228,7 @@
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandFactory.cpp" />
     <ClCompile Include="Composite.cpp" />
+    <ClCompile Include="CopyCommand.cpp" />
     <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
     <ClCompile Include="CtrlHomeAction.cpp" />
@@ -237,6 +241,8 @@
     <ClCompile Include="CtrlShiftTAction.cpp" />
     <ClCompile Include="CtrlTAction.cpp" />
     <ClCompile Include="CtrlVAction.cpp" />
+    <ClCompile Include="CtrlXAction.cpp" />
+    <ClCompile Include="CutCommand.cpp" />
     <ClCompile Include="DownArrowAction.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EndAction.cpp" />
