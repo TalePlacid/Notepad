@@ -10,6 +10,7 @@
 #include "EraseRangeCommand.h"
 #include "CopyCommand.h"
 #include "CutCommand.h"
+#include "OpenFindingFormCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -43,6 +44,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID) {
 		break;
 	case ID_MENU_AUTOWRAP:
 		command = new AutoWrapCommand(parent);
+		break;
+	case ID_MENU_FIND:
+		command = new OpenFindingFormCommand(parent);
 		break;
 	case ID_COMMAND_ERASE:
 		command = new EraseCommand(parent);

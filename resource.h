@@ -23,8 +23,6 @@
 #define ID_MENU_CUT                     40032
 #define ID_MENU_UNDO                    40033
 #define ID_MENU_REDO                    40034
-#define ID_MENU_                        40036
-#define ID_MENU_N                       40037
 #define ID_MENU_NEWWINDOW               40038
 #define ID_MENU_FORM                    40039
 #define ID_MENU_AUTO                    40042

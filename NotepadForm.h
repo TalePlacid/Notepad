@@ -10,6 +10,7 @@ class SizeCalculator;
 class ScrollBarController;
 class ClipboardController;
 class PagingBuffer;
+class CFindReplaceDialog;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
@@ -27,6 +28,7 @@ public:
 	ScrollBarController* scrollBarController;
 	ClipboardController* clipboardController;
 	PagingBuffer* pagingBuffer;
+	BOOL hasFindReplaceForm;
 public:
 	BOOL IsCompositing() const;
 	CString GetPath() const;
@@ -47,6 +49,7 @@ protected:
 	void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	virtual BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:

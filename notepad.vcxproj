@@ -142,6 +142,7 @@
     <ClInclude Include="CopyCommand.h" />
     <ClInclude Include="CtrlCAction.h" />
     <ClInclude Include="CtrlEndAction.h" />
+    <ClInclude Include="CtrlFAction.h" />
     <ClInclude Include="CtrlHomeAction.h" />
     <ClInclude Include="CtrlLeftAction.h" />
     <ClInclude Include="CtrlRightAction.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
+    <ClInclude Include="LinkedList.h" />
     <ClInclude Include="MarkingHelper.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="NewCommand.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
+    <ClInclude Include="OpenFindingFormCommand.h" />
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageUpAction.h" />
     <ClInclude Include="PagingBuffer.h" />
@@ -231,6 +234,7 @@
     <ClCompile Include="CopyCommand.cpp" />
     <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
+    <ClCompile Include="CtrlFAction.cpp" />
     <ClCompile Include="CtrlHomeAction.cpp" />
     <ClCompile Include="CtrlLeftAction.cpp" />
     <ClCompile Include="CtrlRightAction.cpp" />
@@ -271,6 +275,7 @@
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
+    <ClCompile Include="OpenFindingFormCommand.cpp" />
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageUpAction.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />

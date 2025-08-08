@@ -25,6 +25,7 @@
 #include "PageUpAction.h"
 #include "PageDownAction.h"
 #include "CtrlXAction.h"
+#include "CtrlFAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
 
@@ -141,6 +142,24 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 	case VK_BACK:
 		keyAction = new BackspaceAction(parent);
 		break;
+	case VK_PRIOR:
+		keyAction = new PageUpAction(parent);
+		break;
+	case VK_NEXT:
+		keyAction = new PageDownAction(parent);
+		break;
+	case 'C':
+		if (onCtrlKey)
+		{
+			keyAction = new CtrlCAction(parent);
+		}
+		break;
+	case 'F':
+		if (onCtrlKey)
+		{
+			keyAction = new CtrlFAction(parent);
+		}
+		break;
 	case 'T':
 		if (onCtrlKey && onShiftKey)
 		{
@@ -151,28 +170,16 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 			keyAction = new CtrlTAction(parent);
 		}
 		break;
-	case 'C':
+	case 'X':
 		if (onCtrlKey)
 		{
-			keyAction = new CtrlCAction(parent);
+			keyAction = new CtrlXAction(parent);
 		}
 		break;
 	case 'V':
 		if (onCtrlKey)
 		{
 			keyAction = new CtrlVAction(parent);
-		}
-		break;
-	case VK_PRIOR:
-		keyAction = new PageUpAction(parent);
-		break;
-	case VK_NEXT:
-		keyAction = new PageDownAction(parent);
-		break;
-	case 'X':
-		if (onCtrlKey)
-		{
-			keyAction = new CtrlXAction(parent);
 		}
 		break;
 	default:

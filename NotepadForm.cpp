@@ -1,3 +1,7 @@
+#include <afxdlgs.h>
+#include <imm.h>
+#include <fstream>
+#include <sstream>
 #include "NotepadForm.h"
 #include "Note.h"
 #include "Glyph.h"
@@ -24,12 +28,11 @@
 #include "PagingBuffer.h"
 #include "Observer.h"
 #include "MarkingHelper.h"
-#include <imm.h>
-#include <fstream>
-#include <sstream>
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
+
+static UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
 
 BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_WM_CREATE()
@@ -47,6 +50,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
 	ON_WM_ERASEBKGND()
+	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -60,6 +64,7 @@ NotepadForm::NotepadForm() {
 	this->scrollBarController = NULL;
 	this->clipboardController = NULL;
 	this->pagingBuffer = NULL;
+	this->hasFindReplaceForm = FALSE;
 
 	TCHAR buffer[256];
 	GetCurrentDirectory(256, buffer);
@@ -363,6 +368,17 @@ void NotepadForm::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 
 BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
 	return TRUE;
+}
+
+LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
+	CFindReplaceDialog* findReplaceForm = CFindReplaceDialog::GetNotifier(lParam);
+	
+	if (findReplaceForm->IsTerminating())
+	{
+		this->hasFindReplaceForm = FALSE;
+	}
+
+	return 0;
 }
 
 void NotepadForm::OnClose() {
