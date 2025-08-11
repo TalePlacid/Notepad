@@ -28,6 +28,7 @@
 #include "PagingBuffer.h"
 #include "Observer.h"
 #include "MarkingHelper.h"
+#include "FindCommand.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -373,6 +374,16 @@ BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
 LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	CFindReplaceDialog* findReplaceForm = CFindReplaceDialog::GetNotifier(lParam);
 	
+	if (findReplaceForm->FindNext())
+	{
+		Command* command = new FindCommand(this, findReplaceForm);
+		if (command != NULL)
+		{
+			command->Execute();
+			command = NULL;
+		}
+	}
+
 	if (findReplaceForm->IsTerminating())
 	{
 		this->hasFindReplaceForm = FALSE;

@@ -131,13 +131,17 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="AutoWrapCommand.h" />
     <ClInclude Include="BackspaceAction.h" />
+    <ClInclude Include="BruteForce.h" />
     <ClInclude Include="ByteChecker.h" />
     <ClInclude Include="Caret.h" />
     <ClInclude Include="CaretController.h" />
+    <ClInclude Include="CaseInsensitiveComparer.h" />
+    <ClInclude Include="CaseSensitiveComparer.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="ClipboardController.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandFactory.h" />
+    <ClInclude Include="Comparer.h" />
     <ClInclude Include="Composite.h" />
     <ClInclude Include="CopyCommand.h" />
     <ClInclude Include="CtrlCAction.h" />
@@ -161,6 +165,7 @@
     <ClInclude Include="EraseCommand.h" />
     <ClInclude Include="EraseRangeCommand.h" />
     <ClInclude Include="FilePointerCalculator.h" />
+    <ClInclude Include="FindCommand.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
@@ -174,7 +179,6 @@
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
-    <ClInclude Include="LinkedList.h" />
     <ClInclude Include="MarkingHelper.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="NewCommand.h" />
@@ -198,6 +202,8 @@
     <ClInclude Include="ScrollBarAction.h" />
     <ClInclude Include="ScrollBarActionFactory.h" />
     <ClInclude Include="ScrollBarController.h" />
+    <ClInclude Include="SearchingAlgorithm.h" />
+    <ClInclude Include="SearchingAlgorithmFactory.h" />
     <ClInclude Include="SelectFontCommand.h" />
     <ClInclude Include="SelectionVisitor.h" />
     <ClInclude Include="ShiftDownAction.h" />
@@ -223,13 +229,17 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="AutoWrapCommand.cpp" />
     <ClCompile Include="BackspaceAction.cpp" />
+    <ClCompile Include="BruteForce.cpp" />
     <ClCompile Include="ByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
     <ClCompile Include="CaretController.cpp" />
+    <ClCompile Include="CaseInsensitiveComparer.cpp" />
+    <ClCompile Include="CaseSensitiveComparer.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="ClipboardController.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandFactory.cpp" />
+    <ClCompile Include="Comparer.cpp" />
     <ClCompile Include="Composite.cpp" />
     <ClCompile Include="CopyCommand.cpp" />
     <ClCompile Include="CtrlCAction.cpp" />
@@ -253,6 +263,7 @@
     <ClCompile Include="EraseCommand.cpp" />
     <ClCompile Include="EraseRangeCommand.cpp" />
     <ClCompile Include="FilePointerCalculator.cpp" />
+    <ClCompile Include="FindCommand.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
@@ -288,6 +299,8 @@
     <ClCompile Include="ScrollBarAction.cpp" />
     <ClCompile Include="ScrollBarActionFactory.cpp" />
     <ClCompile Include="ScrollBarController.cpp" />
+    <ClCompile Include="SearchingAlgorithm.cpp" />
+    <ClCompile Include="SearchingAlgorithmFactory.cpp" />
     <ClCompile Include="SelectFontCommand.cpp" />
     <ClCompile Include="SelectionVisitor.cpp" />
     <ClCompile Include="ShiftDownAction.cpp" />

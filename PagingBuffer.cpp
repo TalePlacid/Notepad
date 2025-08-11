@@ -360,7 +360,7 @@ Long PagingBuffer::Add(char(*character)) {
 		//3. 임시파일에 문자를 추가한 전체파일을 옮겨적는다.
 		fseek(this->file, 0, SEEK_END);
 		Long fileEndOffset = ftell(this->file);
-		TCHAR(*contents) = new TCHAR[fileEndOffset + characterLength];
+		TCHAR(*contents) = new TCHAR[fileEndOffset + characterLength + 1];
 
 		fseek(this->file, 0, SEEK_SET);
 		fread(contents, 1, currentOffset, this->file);
@@ -370,8 +370,9 @@ Long PagingBuffer::Add(char(*character)) {
 		Long backwardStart = currentOffset + characterLength;
 		fseek(this->file, currentOffset, SEEK_SET);
 		fread(contents + backwardStart, 1, fileEndOffset - currentOffset, this->file);
+		contents[fileEndOffset + characterLength] = '\0';
 
-		fwrite(contents, 1, fileEndOffset + characterLength - 1, addedFile);
+		fwrite(contents, 1, fileEndOffset + characterLength, addedFile);
 
 		if (this->selectionBeginOffset >= currentOffset)
 		{
@@ -597,53 +598,6 @@ Long PagingBuffer::Remove(Long toOffset) {
 		this->end = Position(endIndex, endColumn);
 
 		ret = -1;
-#if 0
-		if (currentOffset < toOffset)
-		{
-			count += fread(contents, 1, currentOffset, this->file);
-			fseek(this->file, toOffset, SEEK_SET);
-			count += fread(contents + currentOffset, 1, fileEndOffset - toOffset, this->file);
-		}
-		else
-		{
-			count += fread(contents, 1, toOffset, this->file);
-			fseek(this->file, currentOffset, SEEK_SET);
-			count += fread(contents + toOffset, 1, fileEndOffset - currentOffset, this->file);
-		}
-		contents[count] = '\0';
-
-		fwrite(contents, 1, count, removedFile);
-
-		if (contents != NULL)
-		{
-			delete[] contents;
-		}
-
-		fclose(removedFile);
-		fclose(this->file);
-		remove("Note.tmp");
-		rename("removedFile.tmp", "Note.tmp");
-		this->file = fopen("Note.tmp", "r+b");
-
-		if (currentOffset < toOffset)
-		{
-			fseek(this->file, currentOffset, SEEK_SET);
-		}
-		else
-		{
-			fseek(this->file, toOffset, SEEK_SET);
-		}
-
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
-
-		PositionCalculator positionCalculator(this);
-
-		ret = -1;
-
-#endif
 	}
 
 	return ret;
@@ -884,6 +838,30 @@ bool PagingBuffer::MarkAsDirty() {
 	this->isDirty = true;
 
 	return this->isDirty;
+}
+
+CString PagingBuffer::GetFullText() {
+	Long currentOffset = ftell(this->file);
+
+	fseek(this->file, 0, SEEK_END);
+	Long fileEndOffset = ftell(this->file);
+
+	TCHAR(*contents) = new TCHAR[fileEndOffset+1];
+
+	fseek(this->file, 0, SEEK_SET);
+	fread(contents, 1, fileEndOffset, this->file);
+	contents[fileEndOffset] = '\0';
+
+	CString fullText(contents);
+
+	if (contents != NULL)
+	{
+		delete[] contents;
+	}
+
+	fseek(this->file, currentOffset, SEEK_SET);
+
+	return fullText;
 }
 
 Long PagingBuffer::GetCurrentOffset() const {

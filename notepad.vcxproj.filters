@@ -284,13 +284,31 @@
     <ClInclude Include="CtrlXAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="LinkedList.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CtrlFAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="OpenFindingFormCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchingAlgorithm.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BruteForce.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Comparer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CaseSensitiveComparer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CaseInsensitiveComparer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchingAlgorithmFactory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FindCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -557,6 +575,27 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="OpenFindingFormCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchingAlgorithm.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BruteForce.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Comparer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CaseSensitiveComparer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CaseInsensitiveComparer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchingAlgorithmFactory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FindCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

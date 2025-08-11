@@ -38,6 +38,7 @@ public:
 
 	CString MakeSelectedString();
 	bool MarkAsDirty();
+	CString GetFullText();
 
 	CWnd* GetParent() const;
 	FILE* GetFile() const;
