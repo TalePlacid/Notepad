@@ -11,6 +11,7 @@ class ScrollBarController;
 class ClipboardController;
 class PagingBuffer;
 class CFindReplaceDialog;
+class SearchResultController;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
@@ -28,6 +29,7 @@ public:
 	ScrollBarController* scrollBarController;
 	ClipboardController* clipboardController;
 	PagingBuffer* pagingBuffer;
+	SearchResultController* searchResultController;
 	BOOL hasFindReplaceForm;
 public:
 	BOOL IsCompositing() const;

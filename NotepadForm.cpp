@@ -29,6 +29,7 @@
 #include "Observer.h"
 #include "MarkingHelper.h"
 #include "FindCommand.h"
+#include "SearchResultController.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -65,6 +66,7 @@ NotepadForm::NotepadForm() {
 	this->scrollBarController = NULL;
 	this->clipboardController = NULL;
 	this->pagingBuffer = NULL;
+	this->searchResultController = NULL;
 	this->hasFindReplaceForm = FALSE;
 
 	TCHAR buffer[256];
@@ -103,6 +105,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->isCompositing = FALSE;
 	this->menu.LoadMenu(MAKEINTRESOURCE(IDR_MENU_MAIN));
 	this->SetMenu(&(this->menu));
+
+	this->searchResultController = new SearchResultController;
 
 	this->Notify("CreateScrollBars");
 	this->Notify("AdjustScrollBars");
@@ -376,11 +380,14 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	
 	if (findReplaceForm->FindNext())
 	{
-		Command* command = new FindCommand(this, findReplaceForm);
-		if (command != NULL)
-		{
-			command->Execute();
-			command = NULL;
+		if (CString(this->searchResultController->GetKey().c_str()) != findReplaceForm->GetFindString())
+		{	
+			Command* command = new FindCommand(this, findReplaceForm);
+			if (command != NULL)
+			{
+				command->Execute();
+				delete command;
+			}
 		}
 	}
 
@@ -428,6 +435,11 @@ void NotepadForm::OnClose() {
 	if (this->pagingBuffer != NULL)
 	{
 		delete this->pagingBuffer;
+	}
+
+	if (this->searchResultController != NULL)
+	{
+		delete this->searchResultController;
 	}
 
 	CFrameWnd::OnClose();

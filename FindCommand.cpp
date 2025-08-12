@@ -10,6 +10,7 @@ using namespace std;
 #include "Comparer.h"
 #include "CaseSensitiveComparer.h"
 #include "CaseInsensitiveComparer.h"
+#include "SearchResultController.h"
 
 #pragma warning(disable:4996)
 
@@ -48,6 +49,8 @@ void FindCommand::Execute() {
 		searchingAlgorithm->DoAlgorithm(&offsets, &count);
 		delete searchingAlgorithm;
 	}
+
+	((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key, offsets, count);
 
 	if (offsets != NULL)
 	{

@@ -311,6 +311,12 @@
     <ClInclude Include="FindCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SearchResult.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchResultController.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -596,6 +602,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="FindCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchResult.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchResultController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
