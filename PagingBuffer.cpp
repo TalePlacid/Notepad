@@ -806,8 +806,58 @@ bool PagingBuffer::IsOnPage(Long offset) {
 	return ret;
 }
 
-Long PagingBuffer::MoveOffsetDown(Long offset) {
-	return 0;
+Long PagingBuffer::MoveOffset(Long offset) {
+	Long currentOffset = ftell(this->file);
+	Long oldCurrentOffset = -1;
+
+	FilePointerCalculator filePointerCalculator(this);
+	PositionCalculator positionCalculator(this);
+	if (currentOffset > offset)
+	{
+		while (currentOffset > offset)
+		{
+			oldCurrentOffset = currentOffset;
+			currentOffset = filePointerCalculator.PreviousRow(currentOffset);
+			fseek(this->file, currentOffset, SEEK_SET);
+			this->current = positionCalculator.PreviousRow(this->current, oldCurrentOffset);
+		}
+
+		while (currentOffset < offset)
+		{
+			oldCurrentOffset = currentOffset;
+			currentOffset = filePointerCalculator.Next(currentOffset);
+			fseek(this->file, currentOffset, SEEK_SET);
+			this->current = positionCalculator.Next(this->current, oldCurrentOffset);
+		}
+	}
+	else if (currentOffset < offset)
+	{
+		while (currentOffset < offset)
+		{
+			oldCurrentOffset = currentOffset;
+			currentOffset = filePointerCalculator.NextRow(currentOffset);
+			fseek(this->file, currentOffset, SEEK_SET);
+			this->current = positionCalculator.NextRow(this->current, oldCurrentOffset);
+		}
+
+		if (currentOffset > offset)
+		{
+			oldCurrentOffset = currentOffset;
+			currentOffset = filePointerCalculator.PreviousRow(currentOffset);
+			fseek(this->file, currentOffset, SEEK_SET);
+			this->current = positionCalculator.PreviousRow(this->current, oldCurrentOffset);
+		}
+
+		while (currentOffset < offset)
+		{
+			oldCurrentOffset = currentOffset;
+			currentOffset = filePointerCalculator.Next(currentOffset);
+			fseek(this->file, currentOffset, SEEK_SET);
+			this->current = positionCalculator.Next(this->current, oldCurrentOffset);
+		}
+	}
+
+	return ftell(this->file);
 }
 
 CString PagingBuffer::MakeSelectedString() {

@@ -12,6 +12,9 @@ using namespace std;
 #include "CaseInsensitiveComparer.h"
 #include "SearchResultController.h"
 #include "SearchResult.h"
+#include "Glyph.h"
+#include "MarkingHelper.h"
+#include "ByteChecker.h"
 
 #pragma warning(disable:4996)
 
@@ -25,6 +28,9 @@ FindCommand::~FindCommand() {
 }
 
 void FindCommand::Execute() {
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
+
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	string contents((LPCTSTR)(pagingBuffer->GetFullText()));
 	string key((LPCTSTR)(this->findingForm->GetFindString()));
@@ -59,38 +65,44 @@ void FindCommand::Execute() {
 		delete[] offsets;
 	}
 
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Glyph* row;
+	Long rowIndex;
 	Long offset = searchResultController->GetAt(0).GetOffset();
 	if (pagingBuffer->IsOnPage(offset))
 	{
-		if (pagingBuffer->GetCurrentOffset() > offset)
-		{
-			while (pagingBuffer->GetCurrentOffset() > offset)
-			{
-				pagingBuffer->PreviousRow();
-			}
-
-			Long previous = -1;
-			while (pagingBuffer->GetCurrentOffset() < offset && previous != pagingBuffer->GetCurrentOffset())
-			{
-				previous = pagingBuffer->GetCurrentOffset();
-				pagingBuffer->Next();
-			}
-
-			if (pagingBuffer->GetCurrentOffset() < offset)
-			{
-				pagingBuffer->NextRow();
-				while (pagingBuffer->GetCurrentOffset() < offset)
-				{
-					previous = pagingBuffer->GetCurrentOffset();
-					pagingBuffer->Next();
-				}
-			}
-
-
-		}
+		pagingBuffer->MoveOffset(offset);
+		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+		row = note->GetAt(rowIndex);
+		row->Move(pagingBuffer->GetCurrent().GetColumn());
 	}
 	else
 	{
 		pagingBuffer->Load();
 	}
+
+	rowIndex = note->GetCurrent();
+	row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
+	Glyph* character;
+	ByteChecker byteChecker;
+	Long i = 0;
+	while (i < key.length())
+	{
+		character = row->GetAt(columnIndex);
+		character->Select(true);
+
+		markingHelper.Mark();
+
+		if (byteChecker.IsLeadByte(key[i]))
+		{
+			i++;
+		}
+
+		columnIndex = row->Next();
+		i++;
+	}
+
+	this->parent->Invalidate();
 }
