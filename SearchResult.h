@@ -9,8 +9,14 @@ public:
 	~SearchResult();
 	SearchResult(const SearchResult& source);
 	SearchResult& operator=(const SearchResult& source);
+
+	Long GetOffset() const;
 private:
 	Long offset;
 };
+
+inline Long SearchResult::GetOffset() const {
+	return this->offset;
+}
 
 #endif // !_SEARCHRESULT_H

@@ -796,6 +796,20 @@ Long PagingBuffer::UnmarkSelectionBegin() {
 	return this->selectionBeginOffset;
 }
 
+bool PagingBuffer::IsOnPage(Long offset) {
+	bool ret = false;
+	if (ret >= this->startOffset && ret <= this->endOffset)
+	{
+		ret = true;
+	}
+
+	return ret;
+}
+
+Long PagingBuffer::MoveOffsetDown(Long offset) {
+	return 0;
+}
+
 CString PagingBuffer::MakeSelectedString() {
 	CString selectedString("");
 	if (this->selectionBeginOffset >= 0)

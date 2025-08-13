@@ -2,6 +2,7 @@
 #include <afxdlgs.h>
 #include "OpenFindingFormCommand.h"
 #include "NotepadForm.h"
+#include "message.h"
 
 #pragma warning(disable:4996)
 
@@ -21,5 +22,6 @@ void OpenFindingFormCommand::Execute() {
 		findingForm->Create(TRUE, NULL, NULL, 1, this->parent);
 
 		((NotepadForm*)(this->parent))->hasFindReplaceForm = TRUE;
+		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_CREATED, (WPARAM)findingForm, 0);
 	}
 }

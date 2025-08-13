@@ -30,6 +30,7 @@
 #include "MarkingHelper.h"
 #include "FindCommand.h"
 #include "SearchResultController.h"
+#include "message.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -53,6 +54,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_WM_HSCROLL()
 	ON_WM_ERASEBKGND()
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
+	ON_MESSAGE(WM_FINDREPLACE_CREATED, OnFindReplaceCreated)
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -205,7 +207,10 @@ void NotepadForm::OnPaint() {
 
 	memDC.SelectObject(oldBitMap);
 
-	this->Notify("ChangeCaret");
+	if (CWnd::GetFocus() == this)
+	{
+		this->Notify("ChangeCaret");
+	}
 }
 
 LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
@@ -395,6 +400,13 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	{
 		this->hasFindReplaceForm = FALSE;
 	}
+
+	return 0;
+}
+
+LRESULT NotepadForm::OnFindReplaceCreated(WPARAM wParam, LPARAM lParam) {
+	CFindReplaceDialog* findReplaceForm = (CFindReplaceDialog*)wParam;
+	findReplaceForm->SetFocus();
 
 	return 0;
 }

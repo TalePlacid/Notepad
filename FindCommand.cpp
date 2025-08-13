@@ -11,6 +11,7 @@ using namespace std;
 #include "CaseSensitiveComparer.h"
 #include "CaseInsensitiveComparer.h"
 #include "SearchResultController.h"
+#include "SearchResult.h"
 
 #pragma warning(disable:4996)
 
@@ -51,9 +52,45 @@ void FindCommand::Execute() {
 	}
 
 	((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key, offsets, count);
+	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 
 	if (offsets != NULL)
 	{
 		delete[] offsets;
+	}
+
+	Long offset = searchResultController->GetAt(0).GetOffset();
+	if (pagingBuffer->IsOnPage(offset))
+	{
+		if (pagingBuffer->GetCurrentOffset() > offset)
+		{
+			while (pagingBuffer->GetCurrentOffset() > offset)
+			{
+				pagingBuffer->PreviousRow();
+			}
+
+			Long previous = -1;
+			while (pagingBuffer->GetCurrentOffset() < offset && previous != pagingBuffer->GetCurrentOffset())
+			{
+				previous = pagingBuffer->GetCurrentOffset();
+				pagingBuffer->Next();
+			}
+
+			if (pagingBuffer->GetCurrentOffset() < offset)
+			{
+				pagingBuffer->NextRow();
+				while (pagingBuffer->GetCurrentOffset() < offset)
+				{
+					previous = pagingBuffer->GetCurrentOffset();
+					pagingBuffer->Next();
+				}
+			}
+
+
+		}
+	}
+	else
+	{
+		pagingBuffer->Load();
 	}
 }

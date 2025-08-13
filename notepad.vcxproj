@@ -180,6 +180,7 @@
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
     <ClInclude Include="MarkingHelper.h" />
+    <ClInclude Include="message.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="NewCommand.h" />
     <ClInclude Include="Note.h" />

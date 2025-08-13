@@ -317,6 +317,9 @@
     <ClInclude Include="SearchResultController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="message.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">

@@ -36,6 +36,10 @@ public:
 	Long MarkSelectionBegin();
 	Long UnmarkSelectionBegin();
 
+	bool IsOnPage(Long offset);
+	Long MoveOffsetUp(Long offset);
+	Long MoveOffsetDown(Long offset);
+
 	CString MakeSelectedString();
 	bool MarkAsDirty();
 	CString GetFullText();

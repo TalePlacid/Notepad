@@ -52,6 +52,7 @@ protected:
 	void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	virtual BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnFindReplaceCreated(WPARAM wParam, LPARAM lParam);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:

@@ -127,7 +127,6 @@ void CaretController::Update(Subject *subject, string interest) {
 				caretWidth = sizeCalculator->GetMultiByteWidth();
 			}
 		}
-
 		this->caret = new Caret(this->parent, x, y, caretWidth, ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight());
 	}
 }
