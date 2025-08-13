@@ -84,9 +84,9 @@ void FindCommand::Execute() {
 		if (nearestIndex > -1)
 		{
 			Long offset = searchResultController->GetAt(nearestIndex).GetOffset();
+			pagingBuffer->MoveOffset(offset);
 			if (pagingBuffer->IsOnPage(offset))
 			{
-				pagingBuffer->MoveOffset(offset);
 				rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
 				row = note->GetAt(rowIndex);
 				row->Move(pagingBuffer->GetCurrent().GetColumn());
@@ -94,6 +94,7 @@ void FindCommand::Execute() {
 			else
 			{
 				pagingBuffer->Load();
+				note = ((NotepadForm*)(this->parent))->note;
 			}
 
 			rowIndex = note->GetCurrent();
@@ -119,6 +120,7 @@ void FindCommand::Execute() {
 				i++;
 			}
 
+			((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 			this->parent->Invalidate();
 		}
 	}

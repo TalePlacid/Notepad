@@ -45,9 +45,10 @@ void FindNextCommand::Execute() {
 		Long rowIndex;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Long offset = searchResultController->GetAt(current).GetOffset();
+
+		pagingBuffer->MoveOffset(offset);
 		if (pagingBuffer->IsOnPage(offset))
 		{
-			pagingBuffer->MoveOffset(offset);
 			rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
 			row = note->GetAt(rowIndex);
 			row->Move(pagingBuffer->GetCurrent().GetColumn());
@@ -55,6 +56,7 @@ void FindNextCommand::Execute() {
 		else
 		{
 			pagingBuffer->Load();
+			note = ((NotepadForm*)(this->parent))->note;
 		}
 
 		rowIndex = note->GetCurrent();
@@ -79,6 +81,8 @@ void FindNextCommand::Execute() {
 			columnIndex = row->Next();
 			i++;
 		}
+
+		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 		this->parent->Invalidate();
 	}
 	else

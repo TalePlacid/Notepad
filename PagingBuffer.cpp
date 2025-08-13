@@ -798,7 +798,7 @@ Long PagingBuffer::UnmarkSelectionBegin() {
 
 bool PagingBuffer::IsOnPage(Long offset) {
 	bool ret = false;
-	if (ret >= this->startOffset && ret <= this->endOffset)
+	if (offset >= this->startOffset && offset <= this->endOffset)
 	{
 		ret = true;
 	}
