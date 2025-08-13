@@ -166,6 +166,9 @@
     <ClInclude Include="EraseRangeCommand.h" />
     <ClInclude Include="FilePointerCalculator.h" />
     <ClInclude Include="FindCommand.h" />
+    <ClInclude Include="FindNextCommand.h" />
+    <ClInclude Include="FindReplaceCommand.h" />
+    <ClInclude Include="FindReplaceCommandFactory.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
@@ -189,7 +192,7 @@
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
-    <ClInclude Include="OpenFindingFormCommand.h" />
+    <ClInclude Include="OpenFindDialogCommand.h" />
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageUpAction.h" />
     <ClInclude Include="PagingBuffer.h" />
@@ -267,6 +270,9 @@
     <ClCompile Include="EraseRangeCommand.cpp" />
     <ClCompile Include="FilePointerCalculator.cpp" />
     <ClCompile Include="FindCommand.cpp" />
+    <ClCompile Include="FindNextCommand.cpp" />
+    <ClCompile Include="FIndReplaceCommand.cpp" />
+    <ClCompile Include="FindReplaceCommandFactory.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
@@ -289,7 +295,7 @@
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
-    <ClCompile Include="OpenFindingFormCommand.cpp" />
+    <ClCompile Include="OpenFindDialogCommand.cpp" />
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageUpAction.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />

@@ -12,7 +12,14 @@ SearchResultController::SearchResultController(string key, Long capacity)
 
 SearchResultController::SearchResultController(string key, Long(*offsets), Long count)
 	:key(key){
-	this->searchResults = new SearchResult[count];
+	if (count > 0)
+	{
+		this->searchResults = new SearchResult[count];
+	}
+	else
+	{
+		this->searchResults = NULL;
+	}
 	
 	Long i = 0;
 	while (i < count)
@@ -76,6 +83,46 @@ SearchResultController& SearchResultController::operator=(const SearchResultCont
 	this->current = source.current;
 
 	return *this;
+}
+
+Long SearchResultController::FindNearestIndexAbove(Long offset) {
+	Long index = -1;
+
+	bool flag = false;
+	Long i = 0;
+	Long searchResultOffset = this->searchResults[i].GetOffset();
+	while (i < this->length && searchResultOffset < offset)
+	{
+		flag = true;
+		i++;
+		searchResultOffset = this->searchResults[i].GetOffset();
+	}
+
+	if (flag = true)
+	{
+		index = i - 1;
+	}
+
+	return index;
+}
+
+Long SearchResultController::FindNearestIndexBelow(Long offset) {
+	Long index = -1;
+
+	Long i = 0;
+	Long searchResultOffset = this->searchResults[i].GetOffset();
+	while (i < this->length && searchResultOffset < offset)
+	{
+		i++;
+		searchResultOffset = this->searchResults[i].GetOffset();
+	}
+
+	if (i < this->length)
+	{
+		index = i;
+	}
+
+	return index;
 }
 
 SearchResult& SearchResultController::GetAt(Long index) {

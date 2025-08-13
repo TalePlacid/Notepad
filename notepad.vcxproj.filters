@@ -287,7 +287,7 @@
     <ClInclude Include="CtrlFAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="OpenFindingFormCommand.h">
+    <ClInclude Include="OpenFindDialogCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SearchingAlgorithm.h">
@@ -318,6 +318,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="message.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceCommandFactory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FindNextCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -583,7 +592,7 @@
     <ClCompile Include="CtrlFAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="OpenFindingFormCommand.cpp">
+    <ClCompile Include="OpenFindDialogCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SearchingAlgorithm.cpp">
@@ -611,6 +620,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SearchResultController.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FIndReplaceCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplaceCommandFactory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FindNextCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

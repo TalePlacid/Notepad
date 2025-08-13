@@ -14,6 +14,8 @@ public:
 	SearchResultController(const SearchResultController& source);
 	SearchResultController& operator=(const SearchResultController& source);
 
+	Long FindNearestIndexAbove(Long offset);
+	Long FindNearestIndexBelow(Long offset);
 	SearchResult& GetAt(Long index);
 
 	Long Previous();

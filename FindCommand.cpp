@@ -18,9 +18,8 @@ using namespace std;
 
 #pragma warning(disable:4996)
 
-FindCommand::FindCommand(CWnd* parent, CFindReplaceDialog* findingForm)
-	:Command(parent) {
-	this->findingForm = findingForm;
+FindCommand::FindCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog)
+	:FindReplaceCommand(parent, findReplaceDialog) {
 }
 
 FindCommand::~FindCommand() {
@@ -28,15 +27,17 @@ FindCommand::~FindCommand() {
 }
 
 void FindCommand::Execute() {
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	string contents((LPCTSTR)(pagingBuffer->GetFullText()));
-	string key((LPCTSTR)(this->findingForm->GetFindString()));
+	string key((LPCTSTR)(this->findReplaceDialog->GetFindString()));
 
 	Comparer* comparer;
-	if (this->findingForm->MatchCase())
+	if (this->findReplaceDialog->MatchCase())
 	{
 		comparer = new CaseSensitiveComparer;
 	}
@@ -47,7 +48,7 @@ void FindCommand::Execute() {
 
 	SearchingAlgorithmFactory searchingAlgorithmFactory;
 	SearchingAlgorithm* searchingAlgorithm = searchingAlgorithmFactory.Create(key, contents,
-		comparer, SearchingAlgorithmFactory::BRUTE_FORCE, this->findingForm->MatchWholeWord());
+		comparer, SearchingAlgorithmFactory::BRUTE_FORCE, this->findReplaceDialog->MatchWholeWord());
 
 	Long(*offsets) = NULL;
 	Long count;
@@ -57,52 +58,80 @@ void FindCommand::Execute() {
 		delete searchingAlgorithm;
 	}
 
-	((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key, offsets, count);
-	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	Long nearestIndex = -1;
+	if (count > 0)
+	{
+		if (((NotepadForm*)(this->parent))->searchResultController != NULL)
+		{
+			delete ((NotepadForm*)(this->parent))->searchResultController;
+			((NotepadForm*)(this->parent))->searchResultController = NULL;
+		}
+
+		((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key, offsets, count);
+		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+
+		Glyph* row;
+		Long rowIndex;
+		if (this->findReplaceDialog->SearchDown())
+		{
+			nearestIndex = searchResultController->FindNearestIndexBelow(pagingBuffer->GetCurrentOffset());
+		}
+		else
+		{
+			nearestIndex = searchResultController->FindNearestIndexAbove(pagingBuffer->GetCurrentOffset());
+		}
+
+		if (nearestIndex > -1)
+		{
+			Long offset = searchResultController->GetAt(nearestIndex).GetOffset();
+			if (pagingBuffer->IsOnPage(offset))
+			{
+				pagingBuffer->MoveOffset(offset);
+				rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+				row = note->GetAt(rowIndex);
+				row->Move(pagingBuffer->GetCurrent().GetColumn());
+			}
+			else
+			{
+				pagingBuffer->Load();
+			}
+
+			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
+			Long columnIndex = row->GetCurrent();
+
+			Glyph* character;
+			ByteChecker byteChecker;
+			Long i = 0;
+			while (i < key.length())
+			{
+				character = row->GetAt(columnIndex);
+				character->Select(true);
+
+				markingHelper.Mark();
+
+				if (byteChecker.IsLeadByte(key[i]))
+				{
+					i++;
+				}
+
+				columnIndex = row->Next();
+				i++;
+			}
+
+			this->parent->Invalidate();
+		}
+	}
+
+	if (count <= 0 || nearestIndex < 0)
+	{
+		CString message;
+		message.Format("\"%s\"을(를) 찾을 수 없습니다.", key.c_str());
+		this->parent->MessageBox(message);
+	}
 
 	if (offsets != NULL)
 	{
 		delete[] offsets;
 	}
-
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Glyph* row;
-	Long rowIndex;
-	Long offset = searchResultController->GetAt(0).GetOffset();
-	if (pagingBuffer->IsOnPage(offset))
-	{
-		pagingBuffer->MoveOffset(offset);
-		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-		row = note->GetAt(rowIndex);
-		row->Move(pagingBuffer->GetCurrent().GetColumn());
-	}
-	else
-	{
-		pagingBuffer->Load();
-	}
-
-	rowIndex = note->GetCurrent();
-	row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	Glyph* character;
-	ByteChecker byteChecker;
-	Long i = 0;
-	while (i < key.length())
-	{
-		character = row->GetAt(columnIndex);
-		character->Select(true);
-
-		markingHelper.Mark();
-
-		if (byteChecker.IsLeadByte(key[i]))
-		{
-			i++;
-		}
-
-		columnIndex = row->Next();
-		i++;
-	}
-
-	this->parent->Invalidate();
 }

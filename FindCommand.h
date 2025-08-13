@@ -1,18 +1,16 @@
 #ifndef _FINDCOMMAND_H //guard
 #define _FINDCOMMAND_H
-#include "Command.h"
+#include "FindReplaceCommand.h"
 
 class CWnd;
 class CFindReplaceDialog;
 
-class FindCommand : public Command {
+class FindCommand : public FindReplaceCommand {
 public:
-	FindCommand(CWnd* parent, CFindReplaceDialog* findingForm);
+	FindCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog);
 	virtual ~FindCommand();
 
 	virtual void Execute();
-private:
-	CFindReplaceDialog* findingForm;
 };
 
 #endif // !_FINDCOMMAND_H

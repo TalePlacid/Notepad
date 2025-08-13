@@ -38,6 +38,9 @@
 #define ID_COMMAND_ERASERANGE			50003
 #define ID_COMMAND_COPY					50004
 #define ID_COMMAND_CUT					50005
+#define ID_COMMAND_FIND					50006
+#define ID_COMMAND_FINDNEXT				50007
+#define ID_COMMAND_CLOSEFINDREPLACE		50008
 
 // Next default values for new objects
 // 

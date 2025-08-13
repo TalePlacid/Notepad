@@ -28,9 +28,9 @@
 #include "PagingBuffer.h"
 #include "Observer.h"
 #include "MarkingHelper.h"
-#include "FindCommand.h"
 #include "SearchResultController.h"
 #include "message.h"
+#include "FindReplaceCommandFactory.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -381,22 +381,30 @@ BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
 }
 
 LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
-	CFindReplaceDialog* findReplaceForm = CFindReplaceDialog::GetNotifier(lParam);
+	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
 	
-	if (findReplaceForm->FindNext())
+	UINT id = 0;
+	if (findReplaceDialog->FindNext())
 	{
-		if (CString(this->searchResultController->GetKey().c_str()) != findReplaceForm->GetFindString())
+		if (CString(this->searchResultController->GetKey().c_str()) != findReplaceDialog->GetFindString())
 		{	
-			Command* command = new FindCommand(this, findReplaceForm);
-			if (command != NULL)
-			{
-				command->Execute();
-				delete command;
-			}
+			id = ID_COMMAND_FIND;
+		}
+		else
+		{
+			id = ID_COMMAND_FINDNEXT;
 		}
 	}
 
-	if (findReplaceForm->IsTerminating())
+	FindReplaceCommandFactory findReplaceCommandFactory;
+	Command* command = findReplaceCommandFactory.Create(this, findReplaceDialog, id);
+	if (command != NULL)
+	{
+		command->Execute();
+		delete command;
+	}
+
+	if (findReplaceDialog->IsTerminating())
 	{
 		this->hasFindReplaceForm = FALSE;
 	}
