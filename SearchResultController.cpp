@@ -2,20 +2,22 @@
 
 #pragma warning(disable:4996)
 
-SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, Long capacity)
+SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, bool isSearchDown, Long capacity)
 	:key(key){
 	this->isMatchWhole = isMatchWhole;
 	this->isMatchCase = isMatchCase;
+	this->isSearchDown = isSearchDown;
 	this->searchResults = new SearchResult[capacity];
 	this->capacity = capacity;
 	this->length = 0;
 	this->current = -1;
 }
 
-SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, Long(*offsets), Long count)
+SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, bool isSearchDown, Long(*offsets), Long count)
 	:key(key){
 	this->isMatchWhole = isMatchWhole;
 	this->isMatchCase = isMatchCase;
+	this->isSearchDown = isSearchDown;
 
 	if (count > 0)
 	{
@@ -60,7 +62,10 @@ SearchResultController::SearchResultController(const SearchResultController& sou
 		this->searchResults[i] = source.searchResults[i];
 		i++;
 	}
-
+	
+	this->isMatchWhole = source.isMatchWhole;
+	this->isMatchCase = source.isMatchCase;
+	this->isSearchDown = source.isSearchDown;
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;
@@ -83,6 +88,9 @@ SearchResultController& SearchResultController::operator=(const SearchResultCont
 		i++;
 	}
 
+	this->isMatchWhole = source.isMatchWhole;
+	this->isMatchCase = source.isMatchCase;
+	this->isSearchDown = source.isSearchDown;
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;

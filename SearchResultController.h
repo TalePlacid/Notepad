@@ -8,8 +8,8 @@ typedef signed long int Long;
 
 class SearchResultController {
 public:
-	SearchResultController(string key = "", bool isMatchWhole = false, bool isMatchCase = false, Long capacity = 128);
-	SearchResultController(string key, bool isMatchWhole, bool isMatchCase, Long(*offsets), Long count);
+	SearchResultController(string key = "", bool isMatchWhole = false, bool isMatchCase = false, bool isSearchDown = false, Long capacity = 128);
+	SearchResultController(string key, bool isMatchWhole, bool isMatchCase, bool isSearchDown, Long(*offsets), Long count);
 	~SearchResultController();
 	SearchResultController(const SearchResultController& source);
 	SearchResultController& operator=(const SearchResultController& source);
@@ -27,6 +27,7 @@ public:
 	string& GetKey() const;
 	bool IsMatchWhole() const;
 	bool IsMatchCase() const;
+	bool IsSearchDown() const;
 	Long GetCapacity() const;
 	Long GetLength() const;
 	Long GetCurrent() const;
@@ -35,6 +36,7 @@ private:
 	string key;
 	bool isMatchWhole;
 	bool isMatchCase;
+	bool isSearchDown;
 	Long capacity;
 	Long length;
 	Long current;
@@ -50,6 +52,10 @@ inline bool SearchResultController::IsMatchWhole() const {
 
 inline bool SearchResultController::IsMatchCase() const {
 	return this->isMatchCase;
+}
+
+inline bool SearchResultController::IsSearchDown() const {
+	return this->isSearchDown;
 }
 
 inline Long SearchResultController::GetCapacity() const {

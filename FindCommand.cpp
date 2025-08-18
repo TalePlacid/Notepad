@@ -67,7 +67,9 @@ void FindCommand::Execute() {
 			((NotepadForm*)(this->parent))->searchResultController = NULL;
 		}
 
-		((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key, this->findReplaceDialog->MatchWholeWord(), this->findReplaceDialog->MatchCase(), offsets, count);
+		((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key,
+			this->findReplaceDialog->MatchWholeWord(), this->findReplaceDialog->MatchCase(), 
+			this->findReplaceDialog->SearchDown(), offsets, count);
 		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 
 		Glyph* row;
@@ -81,9 +83,9 @@ void FindCommand::Execute() {
 			nearestIndex = searchResultController->FindNearestIndexAbove(pagingBuffer->GetCurrentOffset());
 		}
 
+		nearestIndex = searchResultController->Move(nearestIndex);
 		if (nearestIndex > -1)
 		{
-			nearestIndex = searchResultController->Move(nearestIndex);
 			Long offset = searchResultController->GetAt(nearestIndex).GetOffset();
 			pagingBuffer->MoveOffset(offset);
 			if (pagingBuffer->IsOnPage(offset))
@@ -123,10 +125,6 @@ void FindCommand::Execute() {
 
 			((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 			this->parent->Invalidate();
-		}
-		else
-		{
-			searchResultController->Move(-1);
 		}
 	}
 

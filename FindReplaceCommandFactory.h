@@ -9,23 +9,27 @@ struct FindReplaceOption {
 	CString findString;
 	BOOL isMatchWhole;
 	BOOL isMatchCase;
+	BOOL isSearchDown;
 
-	FindReplaceOption(CString findString, BOOL isMatchWhole, BOOL isMatchCase) {
+	FindReplaceOption(CString findString, BOOL isMatchWhole, BOOL isMatchCase, BOOL isSearchDown) {
 		this->findString = findString;
 		this->isMatchWhole = isMatchWhole;
 		this->isMatchCase = isMatchCase;
+		this->isSearchDown = isSearchDown;
 	}
 
 	BOOL operator==(FindReplaceOption& other) {
-		return (this->findString == other.findString) 
-			&& (this->isMatchWhole == other.isMatchWhole) 
-			&& (this->isMatchCase == other.isMatchCase);
+		return (this->findString == other.findString)
+			&& (this->isMatchWhole == other.isMatchWhole)
+			&& (this->isMatchCase == other.isMatchCase)
+			&& (this->isSearchDown == other.isSearchDown);
 	}
 
 	BOOL operator!=(FindReplaceOption& other) {
 		return (this->findString != other.findString)
 			|| (this->isMatchWhole != other.isMatchWhole)
-			|| (this->isMatchCase != other.isMatchCase);
+			|| (this->isMatchCase != other.isMatchCase)
+			|| (this->isSearchDown != other.isSearchDown);
 	}
 };
 

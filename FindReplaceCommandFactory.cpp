@@ -6,6 +6,7 @@
 #include "CloseFindReplaceCommand.h"
 #include "SearchResultController.h"
 #include "NotepadForm.h"
+#include "FindNextCommand_Fixed.h"
 
 #pragma warning(disable:4996)
 
@@ -21,10 +22,10 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	Command* command = NULL;
 
 	FindReplaceOption findReplaceOption(findReplaceDialog->GetFindString(),
-		findReplaceDialog->MatchWholeWord(), findReplaceDialog->MatchCase());
+		findReplaceDialog->MatchWholeWord(), findReplaceDialog->MatchCase(), findReplaceDialog->SearchDown());
 
 	SearchResultController* searchResultController = ((NotepadForm*)parent)->searchResultController;
-	FindReplaceOption searchedOption(CString(searchResultController->GetKey().c_str()), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase());
+	FindReplaceOption searchedOption(CString(searchResultController->GetKey().c_str()), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
 
 	if (findReplaceDialog->IsTerminating())
 	{
@@ -36,7 +37,7 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	}
 	else if (findReplaceOption == searchedOption)
 	{
-		command = new FindNextCommand(parent, findReplaceDialog);
+		command = new FindNextCommand_Fixed(parent, findReplaceDialog);
 	}
 
 	return command;
