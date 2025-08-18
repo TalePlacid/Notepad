@@ -2,6 +2,7 @@
 #include "SearchingAlgorithm.h"
 #include "Comparer.h"
 #include "BruteForce.h"
+#include "BruteForceWhole.h"
 
 #pragma warning(disable:4996)
 
@@ -20,7 +21,7 @@ SearchingAlgorithm* SearchingAlgorithmFactory::Create(string key, string content
 	case SearchingAlgorithmFactory::BRUTE_FORCE:
 		if (isWholeMatch)
 		{
-
+			searchingAlgorithm = new BruteForceWhole(key, contents, comparer);
 		}
 		else
 		{

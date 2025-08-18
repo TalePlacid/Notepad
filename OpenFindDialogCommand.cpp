@@ -30,6 +30,6 @@ void OpenFindDialogCommand::Execute() {
 		findingForm->Create(TRUE, (LPCTSTR)key, NULL, 1, this->parent);
 
 		((NotepadForm*)(this->parent))->hasFindReplaceForm = TRUE;
-		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_CREATED, (WPARAM)findingForm, 0);
+		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_FOCUS, (WPARAM)findingForm, 0);
 	}
 }

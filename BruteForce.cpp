@@ -21,7 +21,7 @@ void BruteForce::DoAlgorithm(Long* (*offsets), Long* count) {
 	Long i = 0;
 	while (i < this->contents.length())
 	{
-		if (this->comparer->Compare(this->contents[i], this->key[j]))
+		if (this->comparer->Compare(this->contents[i], this->key[j]) == true)
 		{
 			j++;
 		}

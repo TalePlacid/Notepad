@@ -1,8 +1,11 @@
+#include <afxdlgs.h>
 #include "FindReplaceCommandFactory.h"
 #include "Command.h"
 #include "FindCommand.h"
 #include "FindNextCommand.h"
-#include "resource.h"
+#include "CloseFindReplaceCommand.h"
+#include "SearchResultController.h"
+#include "NotepadForm.h"
 
 #pragma warning(disable:4996)
 
@@ -14,19 +17,26 @@ FindReplaceCommandFactory::~FindReplaceCommandFactory() {
 
 }
 
-Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* findReplaceDialog, UINT id) {
+Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* findReplaceDialog) {
 	Command* command = NULL;
 
-	switch (id)
+	FindReplaceOption findReplaceOption(findReplaceDialog->GetFindString(),
+		findReplaceDialog->MatchWholeWord(), findReplaceDialog->MatchCase());
+
+	SearchResultController* searchResultController = ((NotepadForm*)parent)->searchResultController;
+	FindReplaceOption searchedOption(CString(searchResultController->GetKey().c_str()), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase());
+
+	if (findReplaceDialog->IsTerminating())
 	{
-	case ID_COMMAND_FIND:
+		command = new CloseFindReplaceCommand(parent, findReplaceDialog);
+	}
+	else if (findReplaceOption != searchedOption)
+	{
 		command = new FindCommand(parent, findReplaceDialog);
-		break;
-	case ID_COMMAND_FINDNEXT:
+	}
+	else if (findReplaceOption == searchedOption)
+	{
 		command = new FindNextCommand(parent, findReplaceDialog);
-		break;
-	default:
-		break;
 	}
 
 	return command;

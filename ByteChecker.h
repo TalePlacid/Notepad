@@ -9,6 +9,7 @@ public:
 	bool IsASCII(char character);
 	bool IsLeadByte(char character);
 	bool IsCapital(char character);
+	bool IsWordCharacter(char character);
 };
 
 #endif // !_BYTECHECKER_H

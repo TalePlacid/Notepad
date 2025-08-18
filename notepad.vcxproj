@@ -132,6 +132,7 @@
     <ClInclude Include="AutoWrapCommand.h" />
     <ClInclude Include="BackspaceAction.h" />
     <ClInclude Include="BruteForce.h" />
+    <ClInclude Include="BruteForceWhole.h" />
     <ClInclude Include="ByteChecker.h" />
     <ClInclude Include="Caret.h" />
     <ClInclude Include="CaretController.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="CaseSensitiveComparer.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="ClipboardController.h" />
+    <ClInclude Include="CloseFindReplaceCommand.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandFactory.h" />
     <ClInclude Include="Comparer.h" />
@@ -236,6 +238,7 @@
     <ClCompile Include="AutoWrapCommand.cpp" />
     <ClCompile Include="BackspaceAction.cpp" />
     <ClCompile Include="BruteForce.cpp" />
+    <ClCompile Include="BruteForceWhole.cpp" />
     <ClCompile Include="ByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
     <ClCompile Include="CaretController.cpp" />
@@ -243,6 +246,7 @@
     <ClCompile Include="CaseSensitiveComparer.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="ClipboardController.cpp" />
+    <ClCompile Include="CloseFindReplaceCommand.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandFactory.cpp" />
     <ClCompile Include="Comparer.cpp" />

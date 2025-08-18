@@ -814,6 +814,11 @@ Long PagingBuffer::MoveOffset(Long offset) {
 	PositionCalculator positionCalculator(this);
 	if (currentOffset > offset)
 	{
+		oldCurrentOffset = currentOffset;
+		currentOffset = filePointerCalculator.First(currentOffset);
+		fseek(this->file, currentOffset, SEEK_SET);
+		this->current = positionCalculator.First(this->current);
+
 		while (currentOffset > offset)
 		{
 			oldCurrentOffset = currentOffset;
@@ -832,7 +837,7 @@ Long PagingBuffer::MoveOffset(Long offset) {
 	}
 	else if (currentOffset < offset)
 	{
-		while (currentOffset < offset)
+		while (currentOffset < offset && oldCurrentOffset != currentOffset)
 		{
 			oldCurrentOffset = currentOffset;
 			currentOffset = filePointerCalculator.NextRow(currentOffset);

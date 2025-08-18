@@ -2,16 +2,21 @@
 
 #pragma warning(disable:4996)
 
-SearchResultController::SearchResultController(string key, Long capacity)
+SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, Long capacity)
 	:key(key){
+	this->isMatchWhole = isMatchWhole;
+	this->isMatchCase = isMatchCase;
 	this->searchResults = new SearchResult[capacity];
 	this->capacity = capacity;
 	this->length = 0;
 	this->current = -1;
 }
 
-SearchResultController::SearchResultController(string key, Long(*offsets), Long count)
+SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, Long(*offsets), Long count)
 	:key(key){
+	this->isMatchWhole = isMatchWhole;
+	this->isMatchCase = isMatchCase;
+
 	if (count > 0)
 	{
 		this->searchResults = new SearchResult[count];
@@ -145,6 +150,12 @@ Long SearchResultController::Next() {
 	{
 		this->current = this->length - 1;
 	}
+
+	return this->current;
+}
+
+Long SearchResultController::Move(Long index) {
+	this->current = index;
 
 	return this->current;
 }

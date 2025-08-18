@@ -54,7 +54,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_WM_HSCROLL()
 	ON_WM_ERASEBKGND()
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
-	ON_MESSAGE(WM_FINDREPLACE_CREATED, OnFindReplaceCreated)
+	ON_MESSAGE(WM_FINDREPLACE_FOCUS, OnFindReplaceFocused)
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -383,36 +383,18 @@ BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
 LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
 	
-	UINT id = 0;
-	if (findReplaceDialog->FindNext())
-	{
-		if (CString(this->searchResultController->GetKey().c_str()) != findReplaceDialog->GetFindString())
-		{	
-			id = ID_COMMAND_FIND;
-		}
-		else
-		{
-			id = ID_COMMAND_FINDNEXT;
-		}
-	}
-
 	FindReplaceCommandFactory findReplaceCommandFactory;
-	Command* command = findReplaceCommandFactory.Create(this, findReplaceDialog, id);
+	Command* command = findReplaceCommandFactory.Create(this, findReplaceDialog);
 	if (command != NULL)
 	{
 		command->Execute();
 		delete command;
 	}
 
-	if (findReplaceDialog->IsTerminating())
-	{
-		this->hasFindReplaceForm = FALSE;
-	}
-
 	return 0;
 }
 
-LRESULT NotepadForm::OnFindReplaceCreated(WPARAM wParam, LPARAM lParam) {
+LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 	CFindReplaceDialog* findReplaceForm = (CFindReplaceDialog*)wParam;
 	findReplaceForm->SetFocus();
 
