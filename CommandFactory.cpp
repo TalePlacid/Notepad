@@ -11,6 +11,7 @@
 #include "CopyCommand.h"
 #include "CutCommand.h"
 #include "OpenFindDialogCommand.h"
+#include "OpenReplaceDialogCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -47,6 +48,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID) {
 		break;
 	case ID_MENU_FIND:
 		command = new OpenFindDialogCommand(parent);
+		break;
+	case ID_MENU_REPLACE:
+		command = new OpenReplaceDialogCommand(parent);
 		break;
 	case ID_COMMAND_ERASE:
 		command = new EraseCommand(parent);

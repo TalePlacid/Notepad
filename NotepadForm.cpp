@@ -69,7 +69,7 @@ NotepadForm::NotepadForm() {
 	this->clipboardController = NULL;
 	this->pagingBuffer = NULL;
 	this->searchResultController = NULL;
-	this->hasFindReplaceForm = FALSE;
+	this->hasFindReplaceDialog = FALSE;
 
 	TCHAR buffer[256];
 	GetCurrentDirectory(256, buffer);

@@ -149,6 +149,7 @@
     <ClInclude Include="CtrlCAction.h" />
     <ClInclude Include="CtrlEndAction.h" />
     <ClInclude Include="CtrlFAction.h" />
+    <ClInclude Include="CtrlHAction.h" />
     <ClInclude Include="CtrlHomeAction.h" />
     <ClInclude Include="CtrlLeftAction.h" />
     <ClInclude Include="CtrlRightAction.h" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
     <ClInclude Include="OpenFindDialogCommand.h" />
+    <ClInclude Include="OpenReplaceDialogCommand.h" />
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageUpAction.h" />
     <ClInclude Include="PagingBuffer.h" />
@@ -257,6 +259,7 @@
     <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
     <ClCompile Include="CtrlFAction.cpp" />
+    <ClCompile Include="CtrlHAction.cpp" />
     <ClCompile Include="CtrlHomeAction.cpp" />
     <ClCompile Include="CtrlLeftAction.cpp" />
     <ClCompile Include="CtrlRightAction.cpp" />
@@ -303,6 +306,7 @@
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
     <ClCompile Include="OpenFindDialogCommand.cpp" />
+    <ClCompile Include="OpenReplaceDialogCommand.cpp" />
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageUpAction.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />

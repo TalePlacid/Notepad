@@ -30,7 +30,7 @@ public:
 	ClipboardController* clipboardController;
 	PagingBuffer* pagingBuffer;
 	SearchResultController* searchResultController;
-	BOOL hasFindReplaceForm;
+	BOOL hasFindReplaceDialog;
 public:
 	BOOL IsCompositing() const;
 	CString GetPath() const;

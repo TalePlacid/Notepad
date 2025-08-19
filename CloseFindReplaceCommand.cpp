@@ -15,5 +15,5 @@ CloseFindReplaceCommand::~CloseFindReplaceCommand() {
 }
 
 void CloseFindReplaceCommand::Execute() {
-	((NotepadForm*)(this->parent))->hasFindReplaceForm = FALSE;
+	((NotepadForm*)(this->parent))->hasFindReplaceDialog = FALSE;
 }

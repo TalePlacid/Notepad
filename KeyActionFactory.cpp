@@ -26,6 +26,7 @@
 #include "PageDownAction.h"
 #include "CtrlXAction.h"
 #include "CtrlFAction.h"
+#include "CtrlHAction.h"
 #include "CtrlTAction.h"
 #include "CtrlShiftTAction.h"
 
@@ -158,6 +159,12 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		if (onCtrlKey)
 		{
 			keyAction = new CtrlFAction(parent);
+		}
+		break;
+	case 'H':
+		if (onCtrlKey)
+		{
+			keyAction = new CtrlHAction(parent);
 		}
 		break;
 	case 'T':
