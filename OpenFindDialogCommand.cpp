@@ -4,6 +4,7 @@
 #include "NotepadForm.h"
 #include "message.h"
 #include "SearchResultController.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -17,19 +18,24 @@ OpenFindDialogCommand::~OpenFindDialogCommand() {
 }
 
 void OpenFindDialogCommand::Execute() {
-	if (!((NotepadForm*)(this->parent))->hasFindReplaceForm)
+	if (!((NotepadForm*)(this->parent))->hasFindReplaceDialog)
 	{
 		CString key("");
-		SearchResultController *searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-		if (searchResultController != NULL)
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+		if (pagingBuffer->GetSelectionBeginOffset() >= 0)
+		{
+			key = pagingBuffer->MakeSelectedString();
+		}
+		else if (searchResultController != NULL)
 		{
 			key = CString(searchResultController->GetKey().c_str());
 		}
 
-		CFindReplaceDialog* findingForm = new CFindReplaceDialog;
-		findingForm->Create(TRUE, (LPCTSTR)key, NULL, 1, this->parent);
+		CFindReplaceDialog* findDialog = new CFindReplaceDialog;
+		findDialog->Create(TRUE, (LPCTSTR)key, NULL, 1, this->parent);
 
-		((NotepadForm*)(this->parent))->hasFindReplaceForm = TRUE;
-		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_FOCUS, (WPARAM)findingForm, 0);
+		((NotepadForm*)(this->parent))->hasFindReplaceDialog = TRUE;
+		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_FOCUS, (WPARAM)findDialog, 0);
 	}
 }
