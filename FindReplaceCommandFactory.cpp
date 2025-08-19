@@ -6,7 +6,7 @@
 #include "CloseFindReplaceCommand.h"
 #include "SearchResultController.h"
 #include "NotepadForm.h"
-#include "FindNextCommand_Fixed.h"
+#include "FindReplaceOption.h"
 
 #pragma warning(disable:4996)
 
@@ -37,7 +37,7 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	}
 	else if (findReplaceOption == searchedOption)
 	{
-		command = new FindNextCommand_Fixed(parent, findReplaceDialog);
+		command = new FindNextCommand(parent, findReplaceDialog);
 	}
 
 	return command;

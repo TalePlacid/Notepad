@@ -324,12 +324,16 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 		this->caretController->Destroy();
 	}
 
+#if 0
 	if (this->note != NULL)
 	{
 		this->note->Select(false);
 		MarkingHelper markingHelper(this);
 		markingHelper.Unmark();
 	}
+#endif
+
+	this->Invalidate();
 }
 
 void NotepadForm::OnCommandRequested(UINT nID) {

@@ -21,10 +21,10 @@ FindNextCommand::~FindNextCommand() {
 
 void FindNextCommand::Execute() {
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-	
-	Long previous = searchResultController->GetCurrent();
-	Long current;
-	if (this->findReplaceDialog->SearchDown())
+	Long current = searchResultController->GetCurrent();
+	Long previous = current;
+
+	if (searchResultController->IsSearchDown())
 	{
 		current = searchResultController->Next();
 	}
@@ -33,8 +33,8 @@ void FindNextCommand::Execute() {
 		current = searchResultController->Previous();
 	}
 
-	CString key = this->findReplaceDialog->GetFindString();
-	if (previous != current)
+	string key = searchResultController->GetKey();
+	if (current != previous)
 	{
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		note->Select(false);
@@ -66,7 +66,7 @@ void FindNextCommand::Execute() {
 		Glyph* character;
 		ByteChecker byteChecker;
 		Long i = 0;
-		while (i < key.GetLength())
+		while (i < key.length())
 		{
 			character = row->GetAt(columnIndex);
 			character->Select(true);
@@ -79,6 +79,7 @@ void FindNextCommand::Execute() {
 			}
 
 			columnIndex = row->Next();
+			pagingBuffer->Next();
 			i++;
 		}
 
@@ -88,7 +89,7 @@ void FindNextCommand::Execute() {
 	else
 	{
 		CString message;
-		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)key);
+		message.Format("\"%s\"을(를) 찾을 수 없습니다.", key.c_str());
 		this->parent->MessageBox(message);
 	}
 }

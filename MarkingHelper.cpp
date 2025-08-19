@@ -16,7 +16,10 @@ MarkingHelper::~MarkingHelper() {
 
 void MarkingHelper::Mark() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MarkSelectionBegin();
+	if (pagingBuffer->GetSelectionBeginOffset() < 0)
+	{
+		pagingBuffer->MarkSelectionBegin();
+	}
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

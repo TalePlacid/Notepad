@@ -15,6 +15,7 @@ using namespace std;
 #include "Glyph.h"
 #include "MarkingHelper.h"
 #include "ByteChecker.h"
+#include "FindReplaceOption.h"
 
 #pragma warning(disable:4996)
 
@@ -27,11 +28,6 @@ FindCommand::~FindCommand() {
 }
 
 void FindCommand::Execute() {
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	note->Select(false);
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
-
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	string contents((LPCTSTR)(pagingBuffer->GetFullText()));
 	string key((LPCTSTR)(this->findReplaceDialog->GetFindString()));
@@ -58,11 +54,15 @@ void FindCommand::Execute() {
 		delete searchingAlgorithm;
 	}
 
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long nearestIndex = -1;
 	if (count > 0)
 	{
-		if (((NotepadForm*)(this->parent))->searchResultController != NULL)
+		FindReplaceOption oldOption;
+		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+		if (searchResultController != NULL)
 		{
+			oldOption = FindReplaceOption(searchResultController->GetKey().c_str(), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
 			delete ((NotepadForm*)(this->parent))->searchResultController;
 			((NotepadForm*)(this->parent))->searchResultController = NULL;
 		}
@@ -70,7 +70,7 @@ void FindCommand::Execute() {
 		((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key,
 			this->findReplaceDialog->MatchWholeWord(), this->findReplaceDialog->MatchCase(), 
 			this->findReplaceDialog->SearchDown(), offsets, count);
-		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+		searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 
 		Glyph* row;
 		Long rowIndex;
@@ -80,8 +80,20 @@ void FindCommand::Execute() {
 		}
 		else
 		{
-			nearestIndex = searchResultController->FindNearestIndexAbove(pagingBuffer->GetCurrentOffset());
+			FindReplaceOption currentOption(searchResultController->GetKey().c_str(), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
+			if (currentOption.EqualsExceptSearchDirection(oldOption))
+			{
+				nearestIndex = searchResultController->FindNearestIndexAbove(pagingBuffer->GetSelectionBeginOffset());
+			}
+			else
+			{
+				nearestIndex = searchResultController->FindNearestIndexAbove(pagingBuffer->GetCurrentOffset());
+			}
 		}
+
+		note->Select(false);
+		MarkingHelper markingHelper(this->parent);
+		markingHelper.Unmark();
 
 		nearestIndex = searchResultController->Move(nearestIndex);
 		if (nearestIndex > -1)
@@ -120,6 +132,7 @@ void FindCommand::Execute() {
 				}
 
 				columnIndex = row->Next();
+				pagingBuffer->Next();
 				i++;
 			}
 

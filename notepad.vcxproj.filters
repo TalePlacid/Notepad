@@ -338,6 +338,9 @@
     <ClInclude Include="FindNextCommand_Fixed.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="FindReplaceOption.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -646,7 +649,7 @@
     <ClCompile Include="CloseFindReplaceCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="FindNextCommand_Fixed.cpp">
+    <ClCompile Include="FindReplaceOption.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
