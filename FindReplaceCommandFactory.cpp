@@ -9,6 +9,7 @@
 #include "SearchResultController.h"
 #include "ReplaceCommand.h"
 #include "PagingBuffer.h"
+#include "ReplaceAllCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -33,6 +34,10 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	if (findReplaceDialog->IsTerminating())
 	{
 		command = new CloseFindReplaceCommand(parent, findReplaceDialog);
+	}
+	else if (findReplaceDialog->ReplaceAll())
+	{
+		command = new ReplaceAllCommand(parent, findReplaceDialog);
 	}
 	else if (findReplaceDialog->ReplaceCurrent())
 	{

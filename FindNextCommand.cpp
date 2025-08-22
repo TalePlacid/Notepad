@@ -86,7 +86,7 @@ void FindNextCommand::Execute() {
 		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 		this->parent->Invalidate();
 	}
-	else
+	else if (!this->findReplaceDialog->ReplaceAll())
 	{
 		CString message;
 		message.Format("\"%s\"을(를) 찾을 수 없습니다.", key.c_str());

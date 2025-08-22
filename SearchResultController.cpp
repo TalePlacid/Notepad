@@ -148,6 +148,12 @@ SearchResult& SearchResultController::GetAt(Long index) {
 	return this->searchResults[index];
 }
 
+Long SearchResultController::First() {
+	this->current = 0;
+
+	return this->current;
+}
+
 Long SearchResultController::Previous() {
 	(this->current)--;
 	if (this->current < 0)

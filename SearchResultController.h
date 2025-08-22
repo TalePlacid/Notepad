@@ -19,6 +19,7 @@ public:
 	Long FindNearestIndexBelow(Long offset);
 	SearchResult& GetAt(Long index);
 
+	Long First();
 	Long Previous();
 	Long Next();
 	Long Move(Long index);
