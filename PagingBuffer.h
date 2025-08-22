@@ -15,8 +15,10 @@ public:
 
 	virtual void Load();
 	Long Add(char(*character));
+	Long Add(CString str);
 	Long Remove();
 	Long Remove(Long toOffset);
+	Long Replace(Long offset, CString str);
 	Long CountRow(Long offset);
 	bool IsAboveBottomLine();
 	bool IsBelowTopLine();

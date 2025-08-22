@@ -43,6 +43,10 @@ Long Glyph::Remove(Long index) {
 	return index;
 }
 
+Long Glyph::Replace(Long index, Glyph* glyph) {
+	return -1;
+}
+
 Long Glyph::First() {
 	return -1;
 }

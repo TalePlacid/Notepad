@@ -21,6 +21,7 @@ public:
 	virtual string MakeString() = 0;
 	virtual Long Remove();
 	virtual Long Remove(Long index);
+	virtual Long Replace(Long index, Glyph* glyph);
 	virtual Long First();
 	virtual Long Previous();
 	virtual Long Next();

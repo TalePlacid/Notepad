@@ -347,6 +347,9 @@
     <ClInclude Include="CtrlHAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ReplaceCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -662,6 +665,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CtrlHAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ReplaceCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -393,6 +393,7 @@ Long PagingBuffer::Add(char(*character)) {
 
 		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
 		fseek(this->file, currentOffset + characterLength, SEEK_SET);
+		this->endOffset += characterLength;
 		if (character[0] != '\r')
 		{
 			this->current = this->current.Right();
@@ -401,7 +402,77 @@ Long PagingBuffer::Add(char(*character)) {
 		{
 			this->current = this->current.Down();
 			this->current = this->current.Move(this->current.GetRow(), 0);
+ 		}
+	}
+
+	return ftell(this->file);
+}
+
+Long PagingBuffer::Add(CString str) {
+	FILE* addedFile = fopen("AddedFile.tmp", "w+b");
+
+	if (addedFile != NULL)
+	{
+		Long currentOffset = ftell(this->file);
+	
+		FilePointerCalculator filePointerCalculator(this);
+		Long fileEndOffset = filePointerCalculator.FileEnd();
+
+		TCHAR(*contents) = new TCHAR[fileEndOffset + str.GetLength() + 1];
+
+		fseek(this->file, 0, SEEK_SET);
+		fread(contents, 1, currentOffset, this->file);
+
+		memcpy(contents + currentOffset, str.GetBuffer(), str.GetLength());
+
+		Long backwardStart = currentOffset + str.GetLength();
+		fseek(this->file, currentOffset, SEEK_SET);
+		fread(contents + backwardStart, 1, fileEndOffset - currentOffset, this->file);
+		contents[fileEndOffset + str.GetLength()] = '\0';
+
+		fwrite(contents, 1, fileEndOffset + str.GetLength(), addedFile);
+
+		if (this->selectionBeginOffset >= currentOffset)
+		{
+			this->selectionBeginOffset += str.GetLength();
 		}
+
+		if (contents != NULL)
+		{
+			delete[] contents;
+		}
+
+		//4. 임시파일과 기존파일을 맞바꾼다.
+		fclose(addedFile);
+		fclose(this->file);
+		remove("Note.tmp");
+		rename("AddedFile.tmp", "Note.tmp");
+		this->file = fopen("Note.tmp", "r+b");
+
+		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
+		fseek(this->file, currentOffset + str.GetLength(), SEEK_SET);
+
+		ByteChecker byteChecker;
+		Long i = 0;
+		while (i < str.GetLength())
+		{
+			if (byteChecker.IsLeadByte(str.GetAt(i)) || str.GetAt(i) == '\r')
+			{
+				i++;
+			}
+
+			if (str.GetAt(i) != '\r')
+			{
+				this->current = this->current.Right();
+			}
+			else
+			{
+				this->current = this->current.Down();
+				this->current = this->current.Move(this->current.GetRow(), 0);
+			}
+			i++;
+		}
+
 	}
 
 	return ftell(this->file);
@@ -601,6 +672,40 @@ Long PagingBuffer::Remove(Long toOffset) {
 	}
 
 	return ret;
+}
+
+Long PagingBuffer::Replace(Long offset, CString str) {
+	FILE* replacedFile = fopen("replacedFile.tmp", "w+b");
+
+	if (replacedFile != NULL)
+	{
+		FilePointerCalculator filePointerCalculator(this);
+		Long fileEndOffset = filePointerCalculator.FileEnd();
+
+		TCHAR(*contents) = new TCHAR[fileEndOffset + 1];
+		
+		fseek(this->file, 0, SEEK_SET);
+		fread(contents, 1, offset, this->file);
+		
+		memcpy(contents + offset, str.GetBuffer(), str.GetLength());
+		fseek(this->file, offset + str.GetLength(), SEEK_SET);
+
+		fread(contents + (offset+str.GetLength()), 1, fileEndOffset - (offset + str.GetLength()), this->file);
+		contents[fileEndOffset] = '\0';
+
+		fwrite(contents, 1, fileEndOffset, replacedFile);
+		
+		fclose(replacedFile);
+		fclose(this->file);
+
+		remove("Note.tmp");
+		rename("replacedFile.tmp", "Note.tmp");
+		this->file = fopen("Note.tmp", "r+b");
+
+		fseek(this->file, offset + str.GetLength(), SEEK_SET);
+	}
+
+	return ftell(this->file);
 }
 
 Long PagingBuffer::CountRow(Long offset) {

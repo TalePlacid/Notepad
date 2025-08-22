@@ -21,6 +21,7 @@ public:
 	virtual Long Remove(Long index);
 	virtual Long TruncateAfter(Long index);
 	virtual Long TruncateBefore(Long index);
+	virtual Long Replace(Long index, Glyph* glyph);
 
 	virtual Long First();
 	virtual Long Previous();

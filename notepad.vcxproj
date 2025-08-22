@@ -205,6 +205,7 @@
     <ClInclude Include="PasteCommand.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="PositionCalculator.h" />
+    <ClInclude Include="ReplaceCommand.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RightArrowAction.h" />
     <ClInclude Include="Row.h" />
@@ -313,6 +314,7 @@
     <ClCompile Include="PasteCommand.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="PositionCalculator.cpp" />
+    <ClCompile Include="ReplaceCommand.cpp" />
     <ClCompile Include="RightArrowAction.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SaveCommand.cpp" />

@@ -19,3 +19,9 @@ SearchResult& SearchResult::operator=(const SearchResult& source) {
 
 	return *this;
 }
+
+SearchResult SearchResult::OffsetBy(Long difference) {
+	this->offset += difference;
+
+	return *this;
+}

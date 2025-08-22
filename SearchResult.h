@@ -10,6 +10,8 @@ public:
 	SearchResult(const SearchResult& source);
 	SearchResult& operator=(const SearchResult& source);
 
+	SearchResult OffsetBy(Long difference);
+
 	Long GetOffset() const;
 private:
 	Long offset;

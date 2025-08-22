@@ -19,15 +19,15 @@ void MarkingHelper::Mark() {
 	if (pagingBuffer->GetSelectionBeginOffset() < 0)
 	{
 		pagingBuffer->MarkSelectionBegin();
+
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		note->Mark(rowIndex);
+
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+		row->Mark(columnIndex);
 	}
-
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	note->Mark(rowIndex);
-
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-	row->Mark(columnIndex);
 }
 
 void MarkingHelper::Unmark() {

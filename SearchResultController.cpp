@@ -98,6 +98,12 @@ SearchResultController& SearchResultController::operator=(const SearchResultCont
 	return *this;
 }
 
+Long SearchResultController::Replace(Long index, SearchResult searchResult) {
+	this->searchResults[index] = searchResult;
+
+	return index;
+}
+
 Long SearchResultController::FindNearestIndexAbove(Long offset) {
 	Long index = -1;
 

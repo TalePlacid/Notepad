@@ -178,6 +178,16 @@ Long Composite::TruncateBefore(Long index) {
 	return count;
 }
 
+Long Composite::Replace(Long index, Glyph* glyph) {
+	if (this->glyphs[index] != NULL)
+	{
+		delete this->glyphs[index];
+	}
+	this->glyphs[index] = glyph;
+
+	return index;
+}
+
 Long Composite::First() {
 	this->current = 0;
 
