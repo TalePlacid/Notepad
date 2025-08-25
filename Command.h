@@ -10,7 +10,9 @@ public:
 	Command& operator=(const Command& source);
 
 	virtual void Execute() = 0;
-	virtual void Unexecute();
+	virtual void Undo();
+	virtual bool Undoable();
+
 protected:
 	CWnd* parent;
 };

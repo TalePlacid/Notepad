@@ -230,6 +230,7 @@
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TextOutVisitor.h" />
+    <ClInclude Include="UndoableCommand.h" />
     <ClInclude Include="UpArrowAction.h" />
     <ClInclude Include="Visitor.h" />
     <ClInclude Include="VScrollBarDownClickAction.h" />
@@ -339,6 +340,7 @@
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
+    <ClCompile Include="UndoableCommand.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
     <ClCompile Include="Visitor.cpp" />
     <ClCompile Include="VScrollBarDownClickAction.cpp" />

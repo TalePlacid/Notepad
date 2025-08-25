@@ -20,6 +20,10 @@ Command& Command::operator=(const Command& source) {
 	return *this;
 }
 
-void Command::Unexecute() {
+void Command::Undo() {
 
+}
+
+bool Command::Undoable() {
+	return false;
 }
