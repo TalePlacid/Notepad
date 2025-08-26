@@ -152,26 +152,29 @@ public:
 		return this->top;
 	}
 
-	Node* Pop() {
-		Node* node = 0;
-		if (this->length > 0)
+	Node Pop() {
+		Node* node = this->top;
+
+		this->top = this->top->previous;
+		if (this->top != 0)
 		{
-			node = this->top;
-
-			this->top = this->top->previous;
-			if (this->top != 0)
-			{
-				this->top->next = 0;
-			}
-			else
-			{
-				this->bottom = 0;
-			}
-
-			(this->length)--;
+			this->top->next = 0;
 		}
+		else
+		{
+			this->bottom = 0;
+		}
+		(this->length)--;
 
-		return node;
+		return *node;
+	}
+
+	Node& peek() {
+		return *(this->top);
+	}
+
+	bool IsEmpty() {
+		return this->length <= 0;
 	}
 
 	Long GetCapacity() const{
