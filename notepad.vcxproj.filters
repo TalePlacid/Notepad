@@ -359,6 +359,15 @@
     <ClInclude Include="MacroCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="History.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="HistoryBook.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DropOldestStack.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -686,6 +695,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MacroCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="History.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="HistoryBook.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -163,6 +163,7 @@
     <ClInclude Include="CtrlXAction.h" />
     <ClInclude Include="CutCommand.h" />
     <ClInclude Include="DownArrowAction.h" />
+    <ClInclude Include="DropOldestStack.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
     <ClInclude Include="EraseCommand.h" />
@@ -177,6 +178,8 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
+    <ClInclude Include="History.h" />
+    <ClInclude Include="HistoryBook.h" />
     <ClInclude Include="HomeAction.h" />
     <ClInclude Include="HScrollBarDragAction.h" />
     <ClInclude Include="HScrollBarLeftClickAction.h" />
@@ -290,6 +293,8 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
+    <ClCompile Include="History.cpp" />
+    <ClCompile Include="HistoryBook.cpp" />
     <ClCompile Include="HomeAction.cpp" />
     <ClCompile Include="HScrollBarDragAction.cpp" />
     <ClCompile Include="HScrollBarLeftClickAction.cpp" />

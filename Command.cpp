@@ -24,6 +24,10 @@ void Command::Undo() {
 
 }
 
+Command* Command::Clone() {
+	return 0;
+}
+
 bool Command::Undoable() {
 	return false;
 }

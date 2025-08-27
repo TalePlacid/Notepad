@@ -11,17 +11,17 @@ public :
 	Array(const Array<T>& source);
 	Array<T>& operator=(const Array<T>& source);
 
-	Long Store(Long index, T object);
-	Long Insert(Long index, T object);
-	Long AppendFromFront(T object);
-	Long AppendFromRear(T object);
+	Long Store(Long index, T element);
+	Long Insert(Long index, T element);
+	Long AppendFromFront(T element);
+	Long AppendFromRear(T element);
 
 	Long Delete(Long index);
 	Long DeleteFromFront();
 	Long DeleteFromRear();
 
 	void Clear();
-	Long Modify(Long index, T object);
+	Long Modify(Long index, T element);
 
 	Long LinearSearchUnique(void* key, int (*compare)(void*, void*));
 	void LinearSearchDuplicate(void* key, Long* (*indexes), Long* count, int(*compare)(void*, void*));
@@ -95,27 +95,27 @@ Array<T>& Array<T>::operator=(const Array<T>& source) {
 }
 
 template <typename T>
-Long Array<T>::Store(Long index, T object) {
-	this->front[index] = object;
+Long Array<T>::Store(Long index, T element) {
+	this->front[index] = element;
 	(this->length)++;
 
 	return index;
 }
 
 template <typename T>
-Long Array<T>::Insert(Long index, T object) {
-	T(*objects) = new T[this->capacity + 1];
+Long Array<T>::Insert(Long index, T element) {
+	T(*elements) = new T[this->capacity + 1];
 
 	Long i = 0;
 	while (i < index)
 	{
-		objects[i] = this->front[i];
+		elements[i] = this->front[i];
 		i++;
 	}
 
 	while (i < this->length)
 	{
-		objects[i + 1] = this->front[i];
+		elements[i + 1] = this->front[i];
 		i++;
 	}
 
@@ -124,24 +124,24 @@ Long Array<T>::Insert(Long index, T object) {
 		delete[] this->front;
 	}
 
-	this->front = objects;
+	this->front = elements;
 	(this->capacity)++;
 
-	this->front[index] = object;
+	this->front[index] = element;
 	(this->length)++;
 
 	return index;
 }
 
 template <typename T>
-Long Array<T>::AppendFromFront(T object) {
-	T(*objects) = new T[this->capacity + 1];
+Long Array<T>::AppendFromFront(T element) {
+	T(*elements) = new T[this->capacity + 1];
 
 	Long index = 0;
 	Long i = 0;
 	while (i < this->length)
 	{
-		objects[i + 1] = this->front[i];
+		elements[i + 1] = this->front[i];
 		i++;
 	}
 
@@ -150,23 +150,23 @@ Long Array<T>::AppendFromFront(T object) {
 		delete[] this->front;
 	}
 
-	this->front = objects;
+	this->front = elements;
 	(this->capacity)++;
 
-	this->front[index] = object;
+	this->front[index] = element;
 	(this->length)++;
 
 	return index;
 }
 
 template <typename T>
-Long Array<T>::AppendFromRear(T object) {
-	T(*objects) = new T[this->capacity + 1];
+Long Array<T>::AppendFromRear(T element) {
+	T(*elements) = new T[this->capacity + 1];
 
 	Long i = 0;
 	while (i < this->length)
 	{
-		objects[i] = this->front[i];
+		elements[i] = this->front[i];
 		i++;
 	}
 
@@ -175,11 +175,11 @@ Long Array<T>::AppendFromRear(T object) {
 		delete[] this->front;
 	}
 
-	this->front = objects;
+	this->front = elements;
 	(this->capacity)++;
 
 	Long index = this->capacity - 1;
-	this->front[index] = object;
+	this->front[index] = element;
 	(this->length)++;
 
 	return index;
@@ -187,23 +187,23 @@ Long Array<T>::AppendFromRear(T object) {
 
 template <typename T>
 Long Array<T>::Delete(Long index) {
-	T(*objects) = 0;
+	T(*elements) = 0;
 	if (this->capacity > 1)
 	{
-		objects = new T[this->capacity - 1];
+		elements = new T[this->capacity - 1];
 	}
 
 	Long i = 0;
 	while (i < index)
 	{
-		objects[i] = this->front[i];
+		elements[i] = this->front[i];
 		i++;
 	}
 
 	i = index + 1;
 	while (i < this->length)
 	{
-		objects[i - 1] = this->front[i];
+		elements[i - 1] = this->front[i];
 		i++;
 	}
 
@@ -215,7 +215,7 @@ Long Array<T>::Delete(Long index) {
 
 	if (this->capacity > 1)
 	{
-		this->front = objects;
+		this->front = elements;
 	}
 
 	(this->length)--;
@@ -228,16 +228,16 @@ Long Array<T>::Delete(Long index) {
 
 template <typename T>
 Long Array<T>::DeleteFromFront() {
-	T(*objects) = 0;
+	T(*elements) = 0;
 	if (this->capacity > 1)
 	{
-		objects = new T[this->capacity - 1];
+		elements = new T[this->capacity - 1];
 	}
 
 	Long i = 1;
 	while (i < this->length)
 	{
-		objects[i - 1] = this->front[i];
+		elements[i - 1] = this->front[i];
 		i++;
 	}
 
@@ -249,7 +249,7 @@ Long Array<T>::DeleteFromFront() {
 
 	if (this->capacity > 1)
 	{
-		this->front = objects;
+		this->front = elements;
 	}
 
 	(this->length)--;
@@ -262,16 +262,16 @@ Long Array<T>::DeleteFromFront() {
 
 template <typename T>
 Long Array<T>::DeleteFromRear() {
-	T(*objects) = 0;
+	T(*elements) = 0;
 	if (this->capacity > 1)
 	{
-		objects = new T[this->capacity - 1];
+		elements = new T[this->capacity - 1];
 	}
 
 	Long i = 0;
 	while (i < this->length - 1)
 	{
-		objects[i] = this->front[i];
+		elements[i] = this->front[i];
 		i++;
 	}
 
@@ -283,7 +283,7 @@ Long Array<T>::DeleteFromRear() {
 
 	if (this->capacity > 1)
 	{
-		this->front = objects;
+		this->front = elements;
 	}
 
 	(this->length)--;
@@ -306,8 +306,8 @@ void Array<T>::Clear() {
 }
 
 template <typename T>
-Long Array<T>::Modify(Long index, T object) {
-	this->front[index] = object;
+Long Array<T>::Modify(Long index, T element) {
+	this->front[index] = element;
 
 	return index;
 }
@@ -418,7 +418,7 @@ void Array<T>::BinarySearchDuplicate(void* key, Long* (*indexes), Long* count, i
 
 template <typename T>
 void Array<T>::SelectionSort(int (*compare)(void*, void*)) {
-	T object;
+	T element;
 	Long minIndex;
 	Long i = 0;
 	Long j;
@@ -435,16 +435,16 @@ void Array<T>::SelectionSort(int (*compare)(void*, void*)) {
 			}
 			j++;
 		}
-		object = this->front[i];
+		element = this->front[i];
 		this->front[i] = this->front[minIndex];
-		this->front[minIndex] = object;
+		this->front[minIndex] = element;
 		i++;
 	}
 }
 
 template <typename T>
 void Array<T>::BubbleSort(int (*compare)(void*, void*)) {
-	T object;
+	T element;
 	Long i = 0;
 	Long j;
 	Long flag = 0;
@@ -457,9 +457,9 @@ void Array<T>::BubbleSort(int (*compare)(void*, void*)) {
 		{
 			if (compare(this->front + j, this->front + j + 1) > 0)
 			{
-				object = this->front[j];
+				element = this->front[j];
 				this->front[j] = this->front[j + 1];
-				this->front[j + 1] = object;
+				this->front[j + 1] = element;
 				flag = 0;
 			}
 			j++;
@@ -470,20 +470,20 @@ void Array<T>::BubbleSort(int (*compare)(void*, void*)) {
 
 template <typename T>
 void Array<T>::InsertSort(int (*compare)(void*, void*)) {
-	T object;
+	T element;
 	Long i = 1;
 	Long j;
 
 	while (i < this->length)
 	{
-		object = this->front[i];
+		element = this->front[i];
 		j = i - 1;
-		while (j >= 0 && compare(this->front + j, &object) > 0)
+		while (j >= 0 && compare(this->front + j, &element) > 0)
 		{
 			this->front[j + 1] = this->front[j];
 			j--;
 		}
-		this->front[j + 1] = object;
+		this->front[j + 1] = element;
 		i++;
 	}
 }

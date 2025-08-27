@@ -11,6 +11,8 @@ class MacroCommand : public Command {
 public:
 	MacroCommand(CWnd* parent, Long capacity = 64);
 	virtual ~MacroCommand();
+	MacroCommand(const MacroCommand& source);
+	MacroCommand& operator=(const MacroCommand& source);
 
 	virtual void Execute();
 	virtual void Undo();

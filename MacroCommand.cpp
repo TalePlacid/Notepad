@@ -21,6 +21,45 @@ MacroCommand::~MacroCommand() {
 	}
 }
 
+MacroCommand::MacroCommand(const MacroCommand& source)
+	:commands(source.commands) {
+	Long i = 0;
+	while (i < source.length)
+	{
+		this->commands[i] = const_cast<MacroCommand&>(source).commands[i]->Clone();
+		i++;
+	}
+
+	this->capacity = source.capacity;
+	this->length = source.length;
+}
+
+MacroCommand& MacroCommand::operator=(const MacroCommand& source) {
+	Long i = 0;
+	while (i < this->length)
+	{
+		if (this->commands[i] != NULL)
+		{
+			delete this->commands[i];
+		}
+		i++;
+	}
+
+	this->commands = source.commands;
+
+	i = 0;
+	while (i < source.length)
+	{
+		this->commands[i] = const_cast<MacroCommand&>(source).commands[i]->Clone();
+		i++;
+	}
+
+	this->capacity = source.capacity;
+	this->length = source.length;
+
+	return *this;
+}
+
 void MacroCommand::Execute() {
 	Long i = 0;
 	while (i < this->length)

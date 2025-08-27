@@ -39,7 +39,7 @@
 #define ID_COMMAND_COPY					50004
 #define ID_COMMAND_CUT					50005
 
-// Next default values for new objects
+// Next default values for new elements
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

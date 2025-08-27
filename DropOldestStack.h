@@ -10,21 +10,26 @@ public:
 	class Node {
 		friend class DropOldestStack;
 	public:
-		Node(T object) {
+		Node() {
 			this->previous = 0;
-			this->object = object;
 			this->next = 0;
 		}
 
-		Node(Node* previous, T object) {
+		Node(T element) {
+			this->previous = 0;
+			this->element = element;
+			this->next = 0;
+		}
+
+		Node(Node* previous, T element) {
 			this->previous = previous;
-			this->object = object;
+			this->element = element;
 			this->next = 0;
 		}
 
-		Node(T object, Node* next) {
+		Node(T element, Node* next) {
 			this->previous = 0;
-			this->object = object;
+			this->element = element;
 			this->next = next;
 		}
 
@@ -32,12 +37,26 @@ public:
 
 		}
 
-		T& GetObject() const {
-			return const_cast<T&>(this->object);
+		Node(const Node& source) {
+			this->previous = source.previous;
+			this->element = source.element;
+			this->next = source.next;
+		}
+
+		Node& operator=(const Node& source) {
+			this->previous = source.previous;
+			this->element = source.element;
+			this->next = source.next;
+
+			return *this;
+		}
+
+		T& GetElement() const {
+			return const_cast<T&>(this->element);
 		}
 	private:
 		Node* previous;
-		T object;
+		T element;
 		Node* next;
 	};
 
@@ -60,20 +79,20 @@ public:
 		}
 	}
 
-	DropOldestStack(DropOldestStack& source) {
+	DropOldestStack(const DropOldestStack& source) {
 		Node* node = 0;
 		Node* sourceCurrent = source.bottom;
 		while (sourceCurrent != 0)
 		{
 			if (sourceCurrent != source.bottom)
 			{
-				node = new Node(this->top, sourceCurrent->GetObject());
+				node = new Node(this->top, sourceCurrent->GetElement());
 				this->top->next = node;
 				this->top = node;
 			}
 			else
 			{
-				node = new Node(sourceCurrent->GetObject());
+				node = new Node(sourceCurrent->GetElement());
 				this->bottom = node;
 				this->top = node;
 			}
@@ -84,7 +103,7 @@ public:
 		this->length = source.length;
 	}
 
-	DropOldestStack& operator=(DropOldestStack& source) {
+	DropOldestStack& operator=(const DropOldestStack& source) {
 		Node* previous = 0;
 		Node* current = this->bottom;
 		while (current != 0)
@@ -93,20 +112,20 @@ public:
 			current = current->next;
 			delete previous;
 		}
-		
+
 		Node* node = 0;
 		Node* sourceCurrent = source.bottom;
 		while (sourceCurrent != 0)
 		{
 			if (sourceCurrent != source.bottom)
 			{
-				node = new Node(this->top, sourceCurrent->GetObject());
+				node = new Node(this->top, sourceCurrent->GetElement());
 				this->top->next = node;
 				this->top = node;
 			}
 			else
 			{
-				node = new Node(sourceCurrent->GetObject());
+				node = new Node(sourceCurrent->GetElement());
 				this->bottom = node;
 				this->top = node;
 			}
@@ -119,19 +138,19 @@ public:
 		return *this;
 	}
 
-	Node* Push(T object) {
+	Node* Push(T element) {
 		Node* node = 0;
 		if (this->length < this->capacity)
 		{
 			if (this->bottom != 0)
 			{
-				node = new Node(this->top, object);
+				node = new Node(this->top, element);
 				this->top->next = node;
 				this->top = node;
 			}
 			else
 			{
-				node = new Node(object);
+				node = new Node(element);
 				this->bottom = node;
 				this->top = node;
 			}
@@ -140,10 +159,10 @@ public:
 		}
 		else
 		{
-			node = new Node(this->top, object);
+			node = new Node(this->top, element);
 			this->top->next = node;
 			this->top = node;
-			
+
 			node = this->bottom;
 			this->bottom = this->bottom->next;
 			delete node;
@@ -169,7 +188,7 @@ public:
 		return *node;
 	}
 
-	Node& peek() {
+	Node& Peek() {
 		return *(this->top);
 	}
 
@@ -177,7 +196,15 @@ public:
 		return this->length <= 0;
 	}
 
-	Long GetCapacity() const{
+	Node* GetTop() const{
+		return const_cast<Node*>(this->top);
+	}
+
+	Node* GetBottom() const {
+		return const_cast<Node*>(this->bottom);
+	}
+
+	Long GetCapacity() const {
 		return this->capacity;
 	}
 
