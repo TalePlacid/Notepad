@@ -12,7 +12,7 @@ public:
 	virtual void Execute() = 0;
 	virtual void Undo();
 	virtual Command* Clone();
-	virtual bool Undoable();
+	virtual bool IsUndoable();
 
 protected:
 	CWnd* parent;

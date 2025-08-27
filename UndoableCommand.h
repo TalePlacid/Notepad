@@ -10,6 +10,7 @@ public:
 	virtual ~UndoableCommand() = 0;
 
 	virtual void Undo() = 0;
+	virtual Command* Clone() = 0;
 	virtual bool IsUndoable();
 };
 

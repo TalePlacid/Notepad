@@ -32,6 +32,11 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 
 History* HistoryBook::Push(History history) {
 	DropOldestStack<History>::Node* node = this->histories.Push(history);
+	this->top = &node->GetElement();
+	if (this->length < this->capacity)
+	{
+		(this->length)++;
+	}
 
 	return &node->GetElement();
 }
@@ -39,6 +44,17 @@ History* HistoryBook::Push(History history) {
 History HistoryBook::Pop() {
 	DropOldestStack<History>::Node node = this->histories.Pop();
 	
+	DropOldestStack<History>::Node* link = this->histories.GetTop();
+	if (link != 0)
+	{
+		this->top = &link->GetElement();
+	}
+	else
+	{
+		this->top = 0;
+	}
+	(this->length)--;
+
 	return node.GetElement();
 }
 

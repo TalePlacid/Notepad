@@ -7,7 +7,7 @@
 #pragma warning(disable:4996)
 
 WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, char(*character), BOOL onChar)
-	:Command(parent) {
+	:UndoableCommand(parent) {
 	this->character[0] = character[0];
 	this->character[1] = character[1];
 	this->onChar = onChar;
@@ -18,13 +18,13 @@ WriteAtEndCommand::~WriteAtEndCommand() {
 }
 
 WriteAtEndCommand::WriteAtEndCommand(const WriteAtEndCommand& source)
-	:Command(parent) {
+	:UndoableCommand(source.parent) {
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
 }
 
 WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source) {
-	Command::operator=(source);
+	UndoableCommand::operator=(source);
 
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
@@ -68,6 +68,25 @@ void WriteAtEndCommand::Execute() {
 	}
 }
 
-void WriteAtEndCommand::Unexecute() {
+void WriteAtEndCommand::Undo() {
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetLength() - 1;
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetLength();
 
+	if (columnIndex > 0)
+	{
+		row->Remove();
+	}
+	else
+	{
+		note->Remove();
+	}
+
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->Remove();
+}
+
+Command* WriteAtEndCommand::Clone() {
+	return new WriteAtEndCommand(*this);
 }

@@ -12,6 +12,7 @@ class ClipboardController;
 class PagingBuffer;
 class CFindReplaceDialog;
 class SearchResultController;
+class HistoryBook;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
@@ -30,6 +31,8 @@ public:
 	ClipboardController* clipboardController;
 	PagingBuffer* pagingBuffer;
 	SearchResultController* searchResultController;
+	HistoryBook* historyBook;
+
 	BOOL hasFindReplaceDialog;
 public:
 	BOOL IsCompositing() const;

@@ -28,6 +28,6 @@ Command* Command::Clone() {
 	return 0;
 }
 
-bool Command::Undoable() {
+bool Command::IsUndoable() {
 	return false;
 }

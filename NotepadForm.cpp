@@ -31,6 +31,7 @@
 #include "SearchResultController.h"
 #include "message.h"
 #include "FindReplaceCommandFactory.h"
+#include "HistoryBook.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -69,6 +70,7 @@ NotepadForm::NotepadForm() {
 	this->clipboardController = NULL;
 	this->pagingBuffer = NULL;
 	this->searchResultController = NULL;
+	this->historyBook = NULL;
 	this->hasFindReplaceDialog = FALSE;
 
 	TCHAR buffer[256];
@@ -109,6 +111,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->SetMenu(&(this->menu));
 
 	this->searchResultController = new SearchResultController;
+	this->historyBook = new HistoryBook;
 
 	this->Notify("CreateScrollBars");
 	this->Notify("AdjustScrollBars");
@@ -138,6 +141,12 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		if (command != NULL)
 		{
 			command->Execute();
+			History history(this, 1);
+			if (command->IsUndoable())
+			{
+				history.Add(command->Clone());
+				this->historyBook->Push(history);
+			}
 			delete command;
 		}
 
