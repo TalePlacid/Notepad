@@ -9,7 +9,7 @@
 
 EraseCommand::EraseCommand(CWnd* parent)
 	:UndoableCommand(parent) {
-
+	this->offset = -1;
 }
 
 EraseCommand::~EraseCommand() {
@@ -20,6 +20,7 @@ EraseCommand::EraseCommand(const EraseCommand& source)
 	:UndoableCommand(source) {
 	this->character[0] = source.character[0];
 	this->character[1] = source.character[1];
+	this->offset = source.offset;
 }
 
 EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
@@ -27,6 +28,7 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 
 	this->character[0] = source.character[0];
 	this->character[1] = source.character[1];
+	this->offset = source.offset;
 
 	return *this;
 }
@@ -34,11 +36,11 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 void EraseCommand::Execute() {
 	if (!((NotepadForm*)(this->parent))->IsCompositing())
 	{
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(rowIndex);
 
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Long columnIndex = row->GetCurrent();
 		if (columnIndex > 0)
 		{
@@ -75,6 +77,7 @@ void EraseCommand::Execute() {
 				}
 			}
 		}
+		this->offset = pagingBuffer->GetCurrentOffset();
 	}
 }
 
@@ -82,10 +85,17 @@ void EraseCommand::Undo() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->offset);
+	if (!pagingBuffer->IsOnPage(this->offset))
+	{
+		pagingBuffer->Load();
+	}
+
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
+	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
+	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
 
 	if (character[0] != '\r')
 	{
@@ -96,7 +106,6 @@ void EraseCommand::Undo() {
 		note->Add(rowIndex + 1, glyph);
 	}
 
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Add(character);
 }
 

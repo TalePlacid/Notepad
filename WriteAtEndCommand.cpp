@@ -11,7 +11,7 @@ WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, char(*character), BOOL onChar
 	this->character[0] = character[0];
 	this->character[1] = character[1];
 	this->onChar = onChar;
-	this->offset = 0;
+	this->offset = -1;
 }
 
 WriteAtEndCommand::~WriteAtEndCommand() {
@@ -45,7 +45,6 @@ void WriteAtEndCommand::Execute() {
 	Glyph* row = note->GetAt(note->GetCurrent());
 	
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	this->offset = pagingBuffer->GetCurrentOffset();
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove();
@@ -72,6 +71,7 @@ void WriteAtEndCommand::Execute() {
 			pagingBuffer->Load();
 		}
 	}
+	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 void WriteAtEndCommand::Undo() {

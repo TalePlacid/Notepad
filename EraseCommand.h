@@ -18,6 +18,7 @@ public:
 	Command* Clone();
 private:
 	char character[2];
+	Long offset;
 };
 
 
