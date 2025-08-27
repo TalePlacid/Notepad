@@ -7,7 +7,7 @@
 #pragma warning(disable:4996)
 
 InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, char(*character), BOOL onChar)
-	:Command(parent) {
+	:UndoableCommand(parent) {
 	this->character[0] = character[0];
 	if (character[0] & 0x80)
 	{
@@ -21,7 +21,7 @@ InsertAtCaretCommand::~InsertAtCaretCommand() {
 }
 
 InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
-	:Command(source) {
+	:UndoableCommand(source) {
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	if (this->character[0] & 0x80)
 	{
@@ -30,7 +30,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 }
 
 InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand& source){
-	Command::operator=(source);
+	UndoableCommand::operator=(source);
 
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	if (this->character[0] & 0x80)
@@ -102,3 +102,14 @@ void InsertAtCaretCommand::Execute() {
 	}
 }
 
+void InsertAtCaretCommand::Undo() {
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex;
+
+}
+
+Command* InsertAtCaretCommand::Clone() {
+	return new InsertAtCaretCommand(*this);
+}

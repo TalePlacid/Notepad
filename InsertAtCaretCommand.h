@@ -1,11 +1,11 @@
 #ifndef _INSERTATCARETCOMMAND_H //guard
 #define _INSERTATCARETCOMMAND_H
 #include <afxwin.h>
-#include "Command.h"
+#include "UndoableCommand.h"
 
 typedef signed long int Long;
 
-class InsertAtCaretCommand : public Command {
+class InsertAtCaretCommand : public UndoableCommand {
 public:
 	InsertAtCaretCommand(CWnd* parent, char(*character), BOOL onChar = TRUE);
 	virtual ~InsertAtCaretCommand();
@@ -13,6 +13,8 @@ public:
 	InsertAtCaretCommand& operator=(const InsertAtCaretCommand& source);
 
 	virtual void Execute();
+	virtual void Undo();
+	virtual Command* Clone();
 private:
 	char character[2];
 	UINT onChar;

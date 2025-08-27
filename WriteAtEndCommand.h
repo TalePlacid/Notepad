@@ -18,6 +18,7 @@ public:
 private:
 	char character[2];
 	BOOL onChar;
+	Long offset;
 };
 
 
