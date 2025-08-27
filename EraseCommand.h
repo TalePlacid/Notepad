@@ -1,12 +1,12 @@
 #ifndef _ERASECOMMAND_H //guard
 #define _ERASECOMMAND_H
-#include "Command.h"
+#include "UndoableCommand.h"
 
 typedef signed long int Long;
 
 class CWnd;
 
-class EraseCommand : public Command {
+class EraseCommand : public UndoableCommand {
 public:
 	EraseCommand(CWnd* parent);
 	virtual ~EraseCommand();
@@ -14,6 +14,10 @@ public:
 	EraseCommand& operator=(const EraseCommand& source);
 
 	virtual void Execute();
+	virtual void Undo();
+	Command* Clone();
+private:
+	char character[2];
 };
 
 

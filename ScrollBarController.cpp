@@ -169,6 +169,7 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 		Glyph *note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(rowIndex);
+
 		Long columnIndex = row->GetCurrent();
 
 		//3. 현재 위치의 x좌표를 구한다.

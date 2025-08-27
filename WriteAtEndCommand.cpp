@@ -21,6 +21,7 @@ WriteAtEndCommand::WriteAtEndCommand(const WriteAtEndCommand& source)
 	:UndoableCommand(source.parent) {
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
+	this->onChar = source.onChar;
 }
 
 WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source) {
@@ -28,7 +29,7 @@ WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source)
 
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
-
+	this->onChar = source.onChar;
 	return *this;
 }
 
@@ -83,8 +84,11 @@ void WriteAtEndCommand::Undo() {
 		note->Remove();
 	}
 
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->Remove();
+	if (onChar)
+	{
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		pagingBuffer->Remove();
+	}
 }
 
 Command* WriteAtEndCommand::Clone() {

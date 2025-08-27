@@ -305,6 +305,12 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	if (command != NULL)
 	{
 		command->Execute();
+		History history(this, 1);
+		if (command->IsUndoable())
+		{
+			history.Add(command->Clone());
+			this->historyBook->Push(history);
+		}
 		delete command;
 	}
 
@@ -352,6 +358,12 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 	if (command != NULL)
 	{
 		command->Execute();
+		History history(this, 1);
+		if (command->IsUndoable())
+		{
+			history.Add(command->Clone());
+			this->historyBook->Push(history);
+		}
 		delete command;
 	}
 	this->Notify("CreateScrollBars");
