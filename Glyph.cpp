@@ -101,6 +101,10 @@ Long Glyph::MergeRows(Long index) {
 	return -1;
 }
 
+Long Glyph::SplitRows(Long rowIndex, Long columnIndex) {
+	return -1;
+}
+
 Long Glyph::Mark(Long index) {
 	return -1;
 }

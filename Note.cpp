@@ -127,6 +127,43 @@ Long Note::MergeRows(Long index) {
 	return index;
 }
 
+Long Note::SplitRows(Long rowIndex, Long columnIndex) {
+	GlyphFactory glyphFactory;
+	char contents[2];
+	contents[0] = '\r';
+	contents[1] = '\n';
+	Glyph* newRow = glyphFactory.Create(contents);
+
+	Long index = -1;
+	if (rowIndex < this->length)
+	{
+		index = this->glyphs.Insert(rowIndex + 1, newRow);
+		(this->capacity)++;
+	}
+	else if (rowIndex < this->capacity)
+	{
+		index = this->glyphs.Store(this->length, newRow);
+	}
+	else
+	{
+		index = this->glyphs.AppendFromRear(newRow);
+		(this->capacity)++;
+	}
+	(this->length)++;
+
+	Glyph* row = this->glyphs[rowIndex];
+	Long i = columnIndex;
+	while (i < row->GetLength())
+	{
+		newRow->Add(row->GetAt(i)->Clone());
+		i++;
+	}
+
+	row->TruncateAfter(columnIndex);
+
+	return index;
+}
+
 #if 0
 
 #include <iostream>
