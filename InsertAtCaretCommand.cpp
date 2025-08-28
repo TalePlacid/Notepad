@@ -14,6 +14,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, char(*character), BOOL 
 		this->character[1] = character[1];
 	}
 	this->onChar = onChar;
+	this->offset = -1;
 }
 
 InsertAtCaretCommand::~InsertAtCaretCommand() {
@@ -27,6 +28,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 	{
 		this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
 	}
+	this->offset = source.offset;
 }
 
 InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand& source){
@@ -37,6 +39,7 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 	{
 		this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
 	}
+	this->offset = source.offset;
 
 	return *this;
 }
@@ -61,54 +64,65 @@ void InsertAtCaretCommand::Execute() {
 		row->Add(row->GetCurrent(), glyph);
 		if (this->onChar)
 		{
-			pagingBuffer->Add((char*)(*glyph));
+			pagingBuffer->Add(this->character);
 		}
 	}
 	else
 	{
-		rowIndex = note->Add(rowIndex + 1, glyph);
-		TCHAR contents[2];
-		contents[0] = '\r';
-		contents[1] = '\n';
+		this->character[0] = '\r';
+		this->character[1] = '\n';
 
 		if (this->onChar)
 		{
-			pagingBuffer->Add(contents);
+			pagingBuffer->Add(this->character);
 		}
 
-		Glyph* clone;
-		Glyph* newRow = note->GetAt(rowIndex);
-		Long i = columnIndex;
-		while (i < row->GetLength())
-		{
-			clone = row->GetAt(i)->Clone();
-			newRow->Add(clone);
-			i++;
-		}
-
-		i = row->GetLength() - 1;
-		while (i >= columnIndex)
-		{
-			row->Remove(i);
-			i--;
-		}
-
-		newRow->First();
+		rowIndex = note->SplitRows(rowIndex, columnIndex);
+		rowIndex = note->Move(rowIndex);
+		row = note->GetAt(rowIndex);
+		row->First();
 
 		if (!pagingBuffer->IsAboveBottomLine())
 		{
 			pagingBuffer->Load();
 		}
 	}
+	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 void InsertAtCaretCommand::Undo() {
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->offset);
+	if (!pagingBuffer->IsOnPage(this->offset))
+	{
+		pagingBuffer->Load();
+	}
 
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	if (columnIndex > 0)
+	{
+		row->Remove(columnIndex - 1);
+	}
+	else
+	{
+		if (rowIndex > 0)
+		{
+			Glyph* previousRow = note->GetAt(rowIndex - 1);
+			Long  previousLastIndex = previousRow->GetLength();
+			rowIndex = note->MergeRows(rowIndex - 1);
+			rowIndex = note->Move(rowIndex);
+			row = note->GetAt(rowIndex);
+			row->Move(previousLastIndex);
+		}
+	}
+
+	pagingBuffer->Remove();
 }
+
 
 Command* InsertAtCaretCommand::Clone() {
 	return new InsertAtCaretCommand(*this);

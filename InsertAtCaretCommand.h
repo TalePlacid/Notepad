@@ -18,6 +18,7 @@ public:
 private:
 	char character[2];
 	UINT onChar;
+	Long offset;
 };
 
 #endif // !_INSERTATCARETCOMMAND_H
