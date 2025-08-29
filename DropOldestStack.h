@@ -172,7 +172,7 @@ public:
 	}
 
 	Node Pop() {
-		Node* node = this->top;
+		Node* link = this->top;
 
 		this->top = this->top->previous;
 		if (this->top != 0)
@@ -185,7 +185,13 @@ public:
 		}
 		(this->length)--;
 
-		return *node;
+		Node node = *link;
+		if (link != NULL)
+		{
+			delete link;
+		}
+
+		return node;
 	}
 
 	Node& Peek() {

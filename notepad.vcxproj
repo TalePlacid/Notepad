@@ -181,6 +181,7 @@
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
     <ClInclude Include="History.h" />
+    <ClInclude Include="HistoryBinder.h" />
     <ClInclude Include="HistoryBook.h" />
     <ClInclude Include="HomeAction.h" />
     <ClInclude Include="HScrollBarDragAction.h" />
@@ -299,6 +300,7 @@
     <ClCompile Include="GlyphFactory.cpp" />
     <ClCompile Include="History.cpp" />
     <ClCompile Include="HistoryBook.cpp" />
+    <ClCompile Include="HistroyBinder.cpp" />
     <ClCompile Include="HomeAction.cpp" />
     <ClCompile Include="HScrollBarDragAction.cpp" />
     <ClCompile Include="HScrollBarLeftClickAction.cpp" />

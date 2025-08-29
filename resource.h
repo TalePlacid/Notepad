@@ -38,6 +38,8 @@
 #define ID_COMMAND_ERASERANGE			50003
 #define ID_COMMAND_COPY					50004
 #define ID_COMMAND_CUT					50005
+#define ID_COMMAND_WRITEATEND			50006
+#define ID_COMMAND_INSERTATCARET		50007
 
 // Next default values for new elements
 // 

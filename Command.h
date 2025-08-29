@@ -13,7 +13,7 @@ public:
 	virtual void Undo();
 	virtual Command* Clone();
 	virtual bool IsUndoable();
-
+	virtual UINT GetId();
 protected:
 	CWnd* parent;
 };

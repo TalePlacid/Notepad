@@ -44,7 +44,7 @@ Date::Date(char(*date)) {
 	int second;
 	struct tm date_ = { 0, };
 
-	sscanf(date, "%4d%2d%2d %02d:%02d:%02d", &year, &month, &day, &hour, &minute, &second);
+	sscanf(date, "%4d-%2d-%2d %02d:%02d:%02d", &year, &month, &day, &hour, &minute, &second);
 
 	date_.tm_year = year - 1900;
 	date_.tm_mon = month - 1;
@@ -108,6 +108,25 @@ Date Date::Today() {
 	return today;
 }
 
+Date Date::Now() {
+	time_t timer;
+	struct tm* now_;
+	Date now;
+
+	time(&timer);
+	now_ = localtime(&timer);
+
+	now.year = now_->tm_year + 1900;
+	now.month = static_cast<Month>(now_->tm_mon + 1);
+	now.day = now_->tm_mday;
+	now.weekday = static_cast<Weekday>(now_->tm_wday);
+	now.hour = now_->tm_hour;
+	now.minute = now_->tm_min;
+	now.second = now_->tm_sec;
+
+	return now;
+}
+
 Date Date::Yesterday() {
 	struct tm yesterday_ = { 0, };
 	Date yesterday;
@@ -131,6 +150,8 @@ Date Date::Yesterday() {
 
 	return yesterday;
 }
+
+
 
 Date Date::Tomorrow() {
 	struct tm tomorrow_ = { 0, };
@@ -202,6 +223,30 @@ Date Date::NextDate(int days) {
 	nextDate.second = nextDate_.tm_sec;
 
 	return nextDate;
+}
+
+Date Date::AddSeconds(int seconds) {
+	struct tm date = { 0, };
+	Date date_;
+
+	date.tm_year = this->year;
+	date.tm_mon = this->month;
+	date.tm_mday = this->day;
+	date.tm_hour = this->hour;
+	date.tm_min = this->minute;
+	date.tm_sec = this->second + seconds;
+
+	mktime(&date);
+
+	date_.year = date.tm_year;
+	date_.month = static_cast<Month>(date.tm_mon);
+	date_.day = date.tm_mday;
+	date_.weekday = static_cast<Weekday>(date.tm_wday);
+	date_.hour = date.tm_hour;
+	date_.minute = date.tm_min;
+	date_.second = date.tm_sec;
+
+	return date_;
 }
 
 bool Date::IsEqual(const Date& other) {

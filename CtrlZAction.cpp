@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "HistoryBook.h"
 #include "History.h"
+#include "HistoryBinder.h"
 
 #pragma warning(disable:4996)
 
@@ -17,6 +18,13 @@ CtrlZAction::~CtrlZAction() {
 
 void CtrlZAction::Perform() {
 	HistoryBook* historyBook = ((NotepadForm*)(this->parent))->historyBook;
+	HistoryBinder* historyBinder = ((NotepadForm*)(this->parent))->historyBinder;
+	if (historyBinder->GetLength() > 0)
+	{
+		History history = historyBinder->Commit();
+		historyBook->Push(history);
+	}
+
 	if (!historyBook->IsEmpty())
 	{
 		History history = historyBook->Pop();

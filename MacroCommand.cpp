@@ -6,7 +6,7 @@
 MacroCommand::MacroCommand(CWnd* parent, Long capacity)
 	:Command(parent), commands(capacity) {
 	this->capacity = capacity;
-	this->length = length;
+	this->length = 0;
 }
 
 MacroCommand::~MacroCommand() {
@@ -70,11 +70,11 @@ void MacroCommand::Execute() {
 }
 
 void MacroCommand::Undo() {
-	Long i = 0;
-	while (i < this->length)
+	Long i = this->length - 1;
+	while (i >= 0)
 	{
 		this->commands[i]->Undo();
-		i++;
+		i--;
 	}
 }
 
@@ -92,4 +92,12 @@ Long MacroCommand::Add(Command* command) {
 	(this->length)++;
 
 	return index;
+}
+
+Command* MacroCommand::GetAt(Long index) {
+	return this->commands.GetAt(index);
+}
+
+Command* MacroCommand::operator[](Long index) {
+	return this->commands[index];
 }

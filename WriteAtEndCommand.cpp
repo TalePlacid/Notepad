@@ -3,6 +3,7 @@
 #include "Glyph.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -109,4 +110,8 @@ void WriteAtEndCommand::Undo() {
 
 Command* WriteAtEndCommand::Clone() {
 	return new WriteAtEndCommand(*this);
+}
+
+UINT WriteAtEndCommand::GetId() {
+	return ID_COMMAND_WRITEATEND;
 }

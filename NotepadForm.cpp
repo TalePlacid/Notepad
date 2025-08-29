@@ -32,6 +32,7 @@
 #include "message.h"
 #include "FindReplaceCommandFactory.h"
 #include "HistoryBook.h"
+#include "HistoryBinder.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -71,6 +72,7 @@ NotepadForm::NotepadForm() {
 	this->pagingBuffer = NULL;
 	this->searchResultController = NULL;
 	this->historyBook = NULL;
+	this->historyBinder = NULL;
 	this->hasFindReplaceDialog = FALSE;
 
 	TCHAR buffer[256];
@@ -112,6 +114,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->searchResultController = new SearchResultController;
 	this->historyBook = new HistoryBook;
+	this->historyBinder = new HistoryBinder;
 
 	this->Notify("CreateScrollBars");
 	this->Notify("AdjustScrollBars");
@@ -141,11 +144,18 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		if (command != NULL)
 		{
 			command->Execute();
-			History history(this, 1);
 			if (command->IsUndoable())
 			{
-				history.Add(command->Clone());
-				this->historyBook->Push(history);
+				if (this->historyBinder->IsBindable(command))
+				{
+					this->historyBinder->Bind(command);
+				}
+				else
+				{
+					History history = this->historyBinder->Commit();
+					this->historyBinder->Bind(command);
+					this->historyBook->Push(history);
+				}
 			}
 			delete command;
 		}
@@ -305,11 +315,18 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	if (command != NULL)
 	{
 		command->Execute();
-		History history(this, 1);
 		if (command->IsUndoable())
 		{
-			history.Add(command->Clone());
-			this->historyBook->Push(history);
+			if (this->historyBinder->IsBindable(command))
+			{
+				this->historyBinder->Bind(command);
+			}
+			else
+			{
+				History history = this->historyBinder->Commit();
+				this->historyBinder->Bind(command);
+				this->historyBook->Push(history);
+			}
 		}
 		delete command;
 	}
@@ -358,11 +375,18 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 	if (command != NULL)
 	{
 		command->Execute();
-		History history(this, 1);
 		if (command->IsUndoable())
 		{
-			history.Add(command->Clone());
-			this->historyBook->Push(history);
+			if (this->historyBinder->IsBindable(command))
+			{
+				this->historyBinder->Bind(command);
+			}
+			else
+			{
+				History history = this->historyBinder->Commit();
+				this->historyBinder->Bind(command);
+				this->historyBook->Push(history);
+			}
 		}
 		delete command;
 	}
@@ -467,6 +491,11 @@ void NotepadForm::OnClose() {
 	if (this->searchResultController != NULL)
 	{
 		delete this->searchResultController;
+	}
+
+	if (this->historyBinder != NULL)
+	{
+		delete this->historyBinder;
 	}
 
 	CFrameWnd::OnClose();

@@ -15,10 +15,12 @@ public:
 	Date& operator=(const Date& source);
 
 	static Date Today();
+	static Date Now();
 	Date Yesterday();
 	Date Tomorrow();
 	Date PreviousDate(int days);
 	Date NextDate(int days);
+	Date AddSeconds(int seconds);
 
 	bool IsEqual(const Date& other);
 	bool IsNotEqual(const Date& other);

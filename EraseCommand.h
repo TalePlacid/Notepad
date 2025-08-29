@@ -1,10 +1,9 @@
 #ifndef _ERASECOMMAND_H //guard
 #define _ERASECOMMAND_H
+#include <afxwin.h>
 #include "UndoableCommand.h"
 
 typedef signed long int Long;
-
-class CWnd;
 
 class EraseCommand : public UndoableCommand {
 public:
@@ -15,7 +14,8 @@ public:
 
 	virtual void Execute();
 	virtual void Undo();
-	Command* Clone();
+	virtual Command* Clone();
+	virtual UINT GetId();
 private:
 	char character[2];
 	Long offset;

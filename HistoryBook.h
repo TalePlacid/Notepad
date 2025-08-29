@@ -19,9 +19,11 @@ public:
 	bool IsEmpty();
 private:
 	DropOldestStack<History> histories;
+	DropOldestStack<History> undoneHistories;
 	History* top;
 	Long capacity;
-	Long length;
+	Long historyLength;
+	Long undoneHistoryLength;
 };
 
 #endif // !_HISTORYBOOK_H

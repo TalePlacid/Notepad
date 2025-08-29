@@ -1,9 +1,9 @@
-#include <afxwin.h>
 #include "EraseCommand.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "GlyphFactory.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -111,4 +111,8 @@ void EraseCommand::Undo() {
 
 Command* EraseCommand::Clone() {
 	return new EraseCommand(*this);
+}
+
+UINT EraseCommand::GetId() {
+	return ID_COMMAND_ERASE;
 }

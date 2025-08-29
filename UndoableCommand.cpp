@@ -1,4 +1,3 @@
-#include <afxwin.h>
 #include "UndoableCommand.h"
 
 #pragma warning(disable:4996)

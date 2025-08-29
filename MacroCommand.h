@@ -17,11 +17,24 @@ public:
 	virtual void Execute();
 	virtual void Undo();
 	Long Add(Command* command);
+	Command* GetAt(Long index);
 
+	Long GetCapacity() const;
+	Long GetLength() const;
+
+	Command* operator[](Long index);
 protected:
 	Array<Command*> commands;
 	Long capacity;
 	Long length;
 };
+
+inline Long MacroCommand::GetCapacity() const {
+	return this->capacity;
+}
+
+inline Long MacroCommand::GetLength() const {
+	return this->length;
+}
 
 #endif // !_MACROCOMMAND_H

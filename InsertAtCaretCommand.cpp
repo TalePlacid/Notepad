@@ -3,6 +3,7 @@
 #include "Glyph.h"
 #include "GlyphFactory.h"
 #include "PagingBuffer.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -123,7 +124,10 @@ void InsertAtCaretCommand::Undo() {
 	pagingBuffer->Remove();
 }
 
-
 Command* InsertAtCaretCommand::Clone() {
 	return new InsertAtCaretCommand(*this);
+}
+
+UINT InsertAtCaretCommand::GetId() {
+	return ID_COMMAND_INSERTATCARET;
 }

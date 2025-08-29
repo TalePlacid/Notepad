@@ -31,3 +31,7 @@ Command* Command::Clone() {
 bool Command::IsUndoable() {
 	return false;
 }
+
+UINT Command::GetId() {
+	return 0;
+}

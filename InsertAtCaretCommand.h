@@ -15,6 +15,7 @@ public:
 	virtual void Execute();
 	virtual void Undo();
 	virtual Command* Clone();
+	virtual UINT GetId();
 private:
 	char character[2];
 	UINT onChar;
