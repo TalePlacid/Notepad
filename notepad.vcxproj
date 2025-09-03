@@ -161,6 +161,7 @@
     <ClInclude Include="CtrlTAction.h" />
     <ClInclude Include="CtrlVAction.h" />
     <ClInclude Include="CtrlXAction.h" />
+    <ClInclude Include="CtrlYAction.h" />
     <ClInclude Include="CtrlZAction.h" />
     <ClInclude Include="CutCommand.h" />
     <ClInclude Include="Date.h" />
@@ -281,6 +282,7 @@
     <ClCompile Include="CtrlTAction.cpp" />
     <ClCompile Include="CtrlVAction.cpp" />
     <ClCompile Include="CtrlXAction.cpp" />
+    <ClCompile Include="CtrlYAction.cpp" />
     <ClCompile Include="CtrlZAction.cpp" />
     <ClCompile Include="CutCommand.cpp" />
     <ClCompile Include="Date.cpp" />

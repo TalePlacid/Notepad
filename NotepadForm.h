@@ -32,7 +32,8 @@ public:
 	ClipboardController* clipboardController;
 	PagingBuffer* pagingBuffer;
 	SearchResultController* searchResultController;
-	HistoryBook* historyBook;
+	HistoryBook* undoHistoryBook;
+	HistoryBook* redoHistoryBook;
 	HistoryBinder* historyBinder;
 	BOOL hasFindReplaceDialog;
 public:

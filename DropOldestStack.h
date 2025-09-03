@@ -241,6 +241,8 @@ typename DropOldestStack<T>::Node* DropOldestStack<T>::Clear() {
 	this->bottom = 0;
 	this->top = 0;
 	this->length = 0;
+
+	return this->top;
 }
 
 template <typename T>

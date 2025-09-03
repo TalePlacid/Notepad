@@ -17,6 +17,7 @@ public:
 	History* Push(History history);
 	History Pop();
 	bool IsEmpty();
+	History* Clear();
 private:
 	DropOldestStack<History> histories;
 	Long capacity;

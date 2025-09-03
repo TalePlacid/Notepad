@@ -71,7 +71,8 @@ NotepadForm::NotepadForm() {
 	this->clipboardController = NULL;
 	this->pagingBuffer = NULL;
 	this->searchResultController = NULL;
-	this->historyBook = NULL;
+	this->undoHistoryBook = NULL;
+	this->redoHistoryBook = NULL;
 	this->historyBinder = NULL;
 	this->hasFindReplaceDialog = FALSE;
 
@@ -113,7 +114,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->SetMenu(&(this->menu));
 
 	this->searchResultController = new SearchResultController;
-	this->historyBook = new HistoryBook;
+	this->undoHistoryBook = new HistoryBook;
+	this->redoHistoryBook = new HistoryBook;
 	this->historyBinder = new HistoryBinder;
 
 	this->Notify("CreateScrollBars");
@@ -154,7 +156,8 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 				{
 					History history = this->historyBinder->Commit();
 					this->historyBinder->Bind(command);
-					this->historyBook->Push(history);
+					this->undoHistoryBook->Push(history);
+					this->redoHistoryBook->Clear();
 				}
 			}
 			delete command;
@@ -320,7 +323,8 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 			{
 				History history = this->historyBinder->Commit();
 				this->historyBinder->Bind(command);
-				this->historyBook->Push(history);
+				this->undoHistoryBook->Push(history);
+				this->redoHistoryBook->Clear();
 			}
 		}
 		delete command;
@@ -380,7 +384,8 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 			{
 				History history = this->historyBinder->Commit();
 				this->historyBinder->Bind(command);
-				this->historyBook->Push(history);
+				this->undoHistoryBook->Push(history);
+				this->redoHistoryBook->Clear();
 			}
 		}
 		delete command;
@@ -486,6 +491,16 @@ void NotepadForm::OnClose() {
 	if (this->searchResultController != NULL)
 	{
 		delete this->searchResultController;
+	}
+
+	if (this->undoHistoryBook != NULL)
+	{
+		delete this->undoHistoryBook;
+	}
+
+	if (this->redoHistoryBook != NULL)
+	{
+		delete this->redoHistoryBook;
 	}
 
 	if (this->historyBinder != NULL)

@@ -42,10 +42,27 @@ void WriteAtEndCommand::Execute() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
 
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Glyph* row = note->GetAt(note->GetCurrent());
-	
+	Glyph* note;
+	Glyph* row;
+	Long rowIndex;
+
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	if (this->offset >= 0)
+	{
+		pagingBuffer->MoveOffset(this->offset);
+		if (!pagingBuffer->IsOnPage(this->offset))
+		{
+			pagingBuffer->Load();
+		}
+		note = ((NotepadForm*)(this->parent))->note;
+		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+		row = note->GetAt(rowIndex);
+		row->Move(pagingBuffer->GetCurrent().GetColumn());
+	}
+	
+	note = ((NotepadForm*)(this->parent))->note;
+	row = note->GetAt(note->GetCurrent());
+	
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove();
@@ -106,6 +123,8 @@ void WriteAtEndCommand::Undo() {
 		pagingBuffer->Last();
 		pagingBuffer->Remove();
 	}
+
+	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 Command* WriteAtEndCommand::Clone() {

@@ -17,18 +17,19 @@ CtrlZAction::~CtrlZAction() {
 }
 
 void CtrlZAction::Perform() {
-	HistoryBook* historyBook = ((NotepadForm*)(this->parent))->historyBook;
+	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 	HistoryBinder* historyBinder = ((NotepadForm*)(this->parent))->historyBinder;
 	if (historyBinder->GetLength() > 0)
 	{
 		History history = historyBinder->Commit();
-		historyBook->Push(history);
+		undoHistoryBook->Push(history);
 	}
 
-	if (!historyBook->IsEmpty())
+	if (!undoHistoryBook->IsEmpty())
 	{
-		History history = historyBook->Pop();
+		History history = undoHistoryBook->Pop();
 		history.Undo();
+		((NotepadForm*)(this->parent))->redoHistoryBook->Push(history);
 	}
 
 	((NotepadForm*)(this->parent))->Notify("CreateScrollBars");

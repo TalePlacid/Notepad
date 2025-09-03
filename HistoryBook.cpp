@@ -47,3 +47,16 @@ History HistoryBook::Pop() {
 bool HistoryBook::IsEmpty() {
 	return this->length <= 0;
 }
+
+History* HistoryBook::Clear() {
+	History* history = NULL;
+	DropOldestStack<History>::Node* node = this->histories.Clear();
+	if (node != NULL)
+	{
+		history = &node->GetElement();
+	}
+
+	this->length = 0;
+
+	return history;
+}
