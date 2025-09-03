@@ -243,13 +243,14 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		TCHAR character[256];
 		Command* command = NULL;
 		Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
+		
+		Long rowIndex = this->note->GetCurrent();
+		Glyph* row = this->note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+		
 		if (length > 0)
 		{
 			character[length] = '\0';
-	
-			Long rowIndex = this->note->GetCurrent();
-			Glyph* row = this->note->GetAt(rowIndex);
-			Long columnIndex = row->GetCurrent();
 
 			if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
 			{
@@ -264,8 +265,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 			{
 				command->Execute();
 				delete command;
-			}
-
+			}			
 			this->Notify("CreateScrollBars");
 			this->Notify("AdjustScrollBars");
 			this->isCompositing = TRUE;
@@ -273,12 +273,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		else if (length == 0)
 		{
 			this->isCompositing = FALSE;
-			command = new EraseCommand(this);
-			if (command != NULL)
-			{
-				command->Execute();
-				delete command;
-			}
+			row->Remove(columnIndex - 1);
 		}
 
 		this->note->Select(false);

@@ -4,11 +4,9 @@
 #pragma warning(disable:4996)
 
 HistoryBook::HistoryBook(Long capacity)
-	:histories(capacity), undoneHistories(capacity) {
-	this->top = 0;
+	:histories(capacity) {
 	this->capacity = capacity;
-	this->historyLength = 0;
-	this->undoneHistoryLength = 0;
+	this->length = 0;
 }
 
 HistoryBook::~HistoryBook() {
@@ -16,29 +14,24 @@ HistoryBook::~HistoryBook() {
 }
 
 HistoryBook::HistoryBook(const HistoryBook& source)
-	:histories(source.histories), undoneHistories(source.undoneHistories) {
-	this->top = &this->histories.GetTop()->GetElement();
+	:histories(source.histories) {
 	this->capacity = source.capacity;
-	this->historyLength = source.historyLength;
-
-
+	this->length = source.length;
 }
 
 HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 	this->histories = source.histories;
-	this->top = &this->histories.GetTop()->GetElement();
 	this->capacity = source.capacity;
-	this->historyLength = source.historyLength;
+	this->length = source.length;
 
 	return *this;
 }
 
 History* HistoryBook::Push(History history) {
 	DropOldestStack<History>::Node* node = this->histories.Push(history);
-	this->top = &node->GetElement();
-	if (this->historyLength < this->capacity)
+	if (this->length < this->capacity)
 	{
-		(this->historyLength)++;
+		(this->length)++;
 	}
 
 	return &node->GetElement();
@@ -46,21 +39,11 @@ History* HistoryBook::Push(History history) {
 
 History HistoryBook::Pop() {
 	DropOldestStack<History>::Node node = this->histories.Pop();
-	
-	DropOldestStack<History>::Node* link = this->histories.GetTop();
-	if (link != 0)
-	{
-		this->top = &link->GetElement();
-	}
-	else
-	{
-		this->top = 0;
-	}
-	(this->historyLength)--;
+	(this->length)--;
 
 	return node.GetElement();
 }
 
 bool HistoryBook::IsEmpty() {
-	return this->historyLength <= 0;
+	return this->length <= 0;
 }
