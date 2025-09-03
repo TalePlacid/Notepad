@@ -16,13 +16,16 @@ BackspaceAction::~BackspaceAction() {
 }
 
 void BackspaceAction::Perform() {
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (pagingBuffer->GetSelectionBeginOffset() < 0)
+	if (!((NotepadForm*)(this->parent))->IsCompositing())
 	{
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_ERASE, 0);
-	}
-	else
-	{
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_ERASERANGE, 0);
-	}
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		if (pagingBuffer->GetSelectionBeginOffset() < 0)
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_ERASE, 0);
+		}
+		else
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_ERASERANGE, 0);
+		}
+	}	
 }

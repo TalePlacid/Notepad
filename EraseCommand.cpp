@@ -34,51 +34,50 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 }
 
 void EraseCommand::Execute() {
-	if (!((NotepadForm*)(this->parent))->IsCompositing())
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+
+	Long columnIndex = row->GetCurrent();
+	if (columnIndex > 0)
 	{
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-
-		Long columnIndex = row->GetCurrent();
-		if (columnIndex > 0)
+		Glyph* letter = row->GetAt(columnIndex - 1);
+		this->character[0] = letter->MakeString()[0];
+		if (letter->IsMultiByteCharacter())
 		{
-			Glyph* letter = row->GetAt(columnIndex - 1);
-			this->character[0] = letter->MakeString()[0];
-			if (letter->IsMultiByteCharacter())
-			{
-				this->character[1] = letter->MakeString()[1];
-			}
-
-			row->Remove(columnIndex - 1);
-			pagingBuffer->Remove();
+			this->character[1] = letter->MakeString()[1];
 		}
-		else
-		{
-			if (rowIndex > 0)
-			{
-				this->character[0] = '\r';
-				this->character[1] = '\n';
 
-				Glyph* previousRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex - 1);
-				Long previousCurrent = previousRow->Last();
-				rowIndex = note->MergeRows(rowIndex - 1);
-				rowIndex = note->Move(rowIndex);
-				row = note->GetAt(rowIndex);
-				row->Move(previousCurrent);
-
-				pagingBuffer->Remove();
-				previousRow->Move(previousCurrent);
-
-				if (!pagingBuffer->IsBelowTopLine())
-				{
-					pagingBuffer->Load();
-				}
-			}
-		}
-		this->offset = pagingBuffer->GetCurrentOffset();
+		row->Remove(columnIndex - 1);
+		pagingBuffer->Remove();
 	}
+	else
+	{
+		if (rowIndex > 0)
+		{
+			this->character[0] = '\r';
+			this->character[1] = '\n';
+
+			Glyph* previousRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex - 1);
+			Long previousCurrent = previousRow->Last();
+			rowIndex = note->MergeRows(rowIndex - 1);
+			rowIndex = note->Move(rowIndex);
+			row = note->GetAt(rowIndex);
+			row->Move(previousCurrent);
+
+			pagingBuffer->Remove();
+			previousRow->Move(previousCurrent);
+
+			if (!pagingBuffer->IsBelowTopLine())
+			{
+				pagingBuffer->Load();
+			}
+		}
+	}
+	this->offset = pagingBuffer->GetCurrentOffset();
+	TRACE("ERASE offset : %ld\n", this->offset);
+	
 }
 
 void EraseCommand::Undo() {
