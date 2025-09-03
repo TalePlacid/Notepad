@@ -75,9 +75,7 @@ void EraseCommand::Execute() {
 			}
 		}
 	}
-	this->offset = pagingBuffer->GetCurrentOffset();
-	TRACE("ERASE offset : %ld\n", this->offset);
-	
+	this->offset = pagingBuffer->GetCurrentOffset();	
 }
 
 void EraseCommand::Undo() {

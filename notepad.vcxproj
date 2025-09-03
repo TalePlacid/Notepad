@@ -300,7 +300,7 @@
     <ClCompile Include="GlyphFactory.cpp" />
     <ClCompile Include="History.cpp" />
     <ClCompile Include="HistoryBook.cpp" />
-    <ClCompile Include="HistroyBinder.cpp" />
+    <ClCompile Include="HistoryBinder.cpp" />
     <ClCompile Include="HomeAction.cpp" />
     <ClCompile Include="HScrollBarDragAction.cpp" />
     <ClCompile Include="HScrollBarLeftClickAction.cpp" />
