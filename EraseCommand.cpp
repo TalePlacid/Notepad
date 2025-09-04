@@ -34,12 +34,30 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 }
 
 void EraseCommand::Execute() {
+	Glyph* note;
+	Glyph* row;
+	Long rowIndex;
+	Long columnIndex;
+	
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
+	if (this->offset >= 0)
+	{
+		pagingBuffer->MoveOffset(this->offset);
+		if (!pagingBuffer->IsOnPage(this->offset))
+		{
+			pagingBuffer->Load();
+		}
+		note = ((NotepadForm*)(this->parent))->note;
+		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+		row = note->GetAt(rowIndex);
+		row->Move(pagingBuffer->GetCurrent().GetColumn());
+	}
 
-	Long columnIndex = row->GetCurrent();
+	note = ((NotepadForm*)(this->parent))->note;
+	rowIndex = note->GetCurrent();
+	row = note->GetAt(rowIndex);
+
+	columnIndex = row->GetCurrent();
 	if (columnIndex > 0)
 	{
 		Glyph* letter = row->GetAt(columnIndex - 1);
@@ -104,6 +122,8 @@ void EraseCommand::Undo() {
 	}
 
 	pagingBuffer->Add(character);
+
+	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 Command* EraseCommand::Clone() {
