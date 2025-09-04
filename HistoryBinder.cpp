@@ -38,7 +38,7 @@ bool HistoryBinder::IsBindable(Command* command) {
 		Command* previous = this->history[index];
 		if (command->GetId() == previous->GetId() &&
 			(this->bindingStartTime == Date(const_cast<char*>("1900-01-01 00:00:00")) 
-				|| Date::Now() <= this->bindingStartTime.AddSeconds(1)))
+				|| Date::Now() <= this->bindingStartTime.AddSeconds(600)))
 		{
 			isBindable = true;
 		}

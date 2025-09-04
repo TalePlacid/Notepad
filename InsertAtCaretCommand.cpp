@@ -29,6 +29,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 	{
 		this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
 	}
+	this->onChar = source.onChar;
 	this->offset = source.offset;
 }
 
@@ -40,6 +41,7 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 	{
 		this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
 	}
+	this->onChar = source.onChar;
 	this->offset = source.offset;
 
 	return *this;
@@ -48,13 +50,31 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 void InsertAtCaretCommand::Execute() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
 
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
+	Glyph* note;
+	Glyph* row;
+	Long rowIndex;
+	Long columnIndex;
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	if (this->offset >= 0)
+	{
+		pagingBuffer->MoveOffset(this->offset);
+		if (!pagingBuffer->IsOnPage(this->offset))
+		{
+			pagingBuffer->Load();
+		}
+		note = ((NotepadForm*)(this->parent))->note;
+		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+		row = note->GetAt(rowIndex);
+		row->Move(pagingBuffer->GetCurrent().GetColumn());
+	}
+
+	note = ((NotepadForm*)(this->parent))->note;
+	rowIndex = note->GetCurrent();
+	row = note->GetAt(rowIndex);
+	columnIndex = row->GetCurrent();
+
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
@@ -89,6 +109,7 @@ void InsertAtCaretCommand::Execute() {
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
+	TRACE("Redo : %ld\n", this->offset);
 }
 
 void InsertAtCaretCommand::Undo() {
@@ -122,6 +143,9 @@ void InsertAtCaretCommand::Undo() {
 	}
 
 	pagingBuffer->Remove();
+
+	this->offset = pagingBuffer->GetCurrentOffset();
+	TRACE("Undo : %ld\n", this->offset);
 }
 
 Command* InsertAtCaretCommand::Clone() {
