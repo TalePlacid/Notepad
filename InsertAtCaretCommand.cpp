@@ -109,7 +109,6 @@ void InsertAtCaretCommand::Execute() {
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
-	TRACE("Redo : %ld\n", this->offset);
 }
 
 void InsertAtCaretCommand::Undo() {
@@ -145,7 +144,6 @@ void InsertAtCaretCommand::Undo() {
 	pagingBuffer->Remove();
 
 	this->offset = pagingBuffer->GetCurrentOffset();
-	TRACE("Undo : %ld\n", this->offset);
 }
 
 Command* InsertAtCaretCommand::Clone() {
