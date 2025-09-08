@@ -36,7 +36,7 @@ PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
 
 void PasteCommand::Execute() {
 	BOOL isPasted = ((NotepadForm*)(this->parent))->clipboardController->Paste();
-	if (isPasted)
+	if (isPasted || this->offset >= 0)
 	{
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
@@ -48,6 +48,18 @@ void PasteCommand::Execute() {
 		{
 			this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
 			this->offset = pagingBuffer->GetCurrentOffset();
+		}
+		else
+		{
+			pagingBuffer->MoveOffset(this->offset);
+			if (!pagingBuffer->IsOnPage(this->offset))
+			{
+				pagingBuffer->Load();
+				note = ((NotepadForm*)(this->parent))->note;
+			}
+			rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+			row = note->GetAt(rowIndex);
+			columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
 		}
 
 		TCHAR letters[2];
