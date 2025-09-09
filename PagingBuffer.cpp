@@ -374,7 +374,7 @@ Long PagingBuffer::Add(char(*character)) {
 
 		fwrite(contents, 1, fileEndOffset + characterLength, addedFile);
 
-		if (this->selectionBeginOffset >= currentOffset)
+		if (this->selectionBeginOffset > currentOffset)
 		{
 			this->selectionBeginOffset += characterLength;
 		}
@@ -432,7 +432,7 @@ Long PagingBuffer::Add(CString str) {
 
 		fwrite(contents, 1, fileEndOffset + str.GetLength(), addedFile);
 
-		if (this->selectionBeginOffset >= currentOffset)
+		if (this->selectionBeginOffset > currentOffset)
 		{
 			this->selectionBeginOffset += str.GetLength();
 		}
