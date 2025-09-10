@@ -1,10 +1,10 @@
 #ifndef _HISTORYBOOK_H //guard
 #define _HISTORYBOOK_H
 #include "DropOldestStack.h"
-#include "History.h"
 
 typedef signed long int Long;
 
+class Command;
 class CWnd;
 
 class HistoryBook {
@@ -14,12 +14,12 @@ public:
 	HistoryBook(const HistoryBook& source);
 	HistoryBook& operator=(const HistoryBook& source);
 
-	History* Push(History history);
-	History Pop();
+	Command** Push(Command* history);
+	Command* Pop();
 	bool IsEmpty();
-	History* Clear();
+	Command** Clear();
 private:
-	DropOldestStack<History> histories;
+	DropOldestStack<Command*> histories;
 	Long capacity;
 	Long length;
 };

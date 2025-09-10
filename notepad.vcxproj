@@ -181,7 +181,6 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
-    <ClInclude Include="History.h" />
     <ClInclude Include="HistoryBinder.h" />
     <ClInclude Include="HistoryBook.h" />
     <ClInclude Include="HomeAction.h" />
@@ -300,7 +299,6 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
-    <ClCompile Include="History.cpp" />
     <ClCompile Include="HistoryBook.cpp" />
     <ClCompile Include="HistoryBinder.cpp" />
     <ClCompile Include="HomeAction.cpp" />

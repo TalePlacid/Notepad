@@ -51,8 +51,16 @@ public:
 			return *this;
 		}
 
+		Node* GetPrevious() const {
+			return const_cast<Node*>(this->previous);
+		}
+
 		T& GetElement() const {
 			return const_cast<T&>(this->element);
+		}
+
+		Node* GetNext() const {
+			return const_cast<Node*>(this->next);
 		}
 	private:
 		Node* previous;
