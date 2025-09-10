@@ -19,7 +19,7 @@ ReplaceCommand::ReplaceCommand(CWnd* parent, CFindReplaceDialog* findReplaceDial
 ReplaceCommand::~ReplaceCommand() {
 
 }
-
+ 
 void ReplaceCommand::Execute() {
 	//1. 노트에서 교체한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;

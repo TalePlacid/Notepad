@@ -1,8 +1,8 @@
 #ifndef _REPLACECOMMAND_H //guard
 #define _REPLACECOMMAND_H
+#include <afxwin.h>
 #include "FindReplaceCommand.h"
 
-class CWnd;
 class CFindReplaceDialog;
 
 class ReplaceCommand : public FindReplaceCommand {
@@ -11,6 +11,9 @@ public:
 	virtual ~ReplaceCommand();
 
 	virtual void Execute();
+	virtual void Unexecute();
+	virtual Command* Clone();
+	virtual UINT GetId();
 };
 
 #endif // !_REPLACECOMMAND_H
