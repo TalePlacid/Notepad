@@ -1,10 +1,10 @@
-#include "Date.h"
+#include "DateTime.h"
 #include <ctime>
 #include <cstdio>
 
 #pragma warning(disable:4996)
 
-Date::Date() {
+DateTime::DateTime() {
 	this->year = 1900;
 	this->month = JAN;
 	this->day = 1;
@@ -14,7 +14,7 @@ Date::Date() {
 	this->second = 0;
 }
 
-Date::Date(int year, Month month, int day, int hour, int minute, int second) {
+DateTime::DateTime(int year, Month month, int day, int hour, int minute, int second) {
 	struct tm date = { 0, };
 
 	date.tm_year = year - 1900;
@@ -35,7 +35,7 @@ Date::Date(int year, Month month, int day, int hour, int minute, int second) {
 	this->second = date.tm_sec;
 }
 
-Date::Date(char(*date)) {
+DateTime::DateTime(char(*date)) {
 	int year;
 	int month;
 	int day;
@@ -63,7 +63,7 @@ Date::Date(char(*date)) {
 	this->second = date_.tm_sec;
 }
 
-Date::Date(const Date& source) {
+DateTime::DateTime(const DateTime& source) {
 	this->year = source.year;
 	this->month = source.month;
 	this->day = source.day;
@@ -73,11 +73,11 @@ Date::Date(const Date& source) {
 	this->second = source.second;
 }
 
-Date::~Date() {
+DateTime::~DateTime() {
 
 }
 
-Date& Date::operator=(const Date& source) {
+DateTime& DateTime::operator=(const DateTime& source) {
 	this->year = source.year;
 	this->month = source.month;
 	this->day = source.day;
@@ -89,10 +89,10 @@ Date& Date::operator=(const Date& source) {
 	return *this;
 }
 
-Date Date::Today() {
+DateTime DateTime::Today() {
 	time_t timer;
 	struct tm* today_;
-	Date today;
+	DateTime today;
 
 	time(&timer);
 	today_ = localtime(&timer);
@@ -108,10 +108,10 @@ Date Date::Today() {
 	return today;
 }
 
-Date Date::Now() {
+DateTime DateTime::Now() {
 	time_t timer;
 	struct tm* now_;
-	Date now;
+	DateTime now;
 
 	time(&timer);
 	now_ = localtime(&timer);
@@ -127,9 +127,9 @@ Date Date::Now() {
 	return now;
 }
 
-Date Date::Yesterday() {
+DateTime DateTime::Yesterday() {
 	struct tm yesterday_ = { 0, };
-	Date yesterday;
+	DateTime yesterday;
 
 	yesterday_.tm_year = this->year - 1900;
 	yesterday_.tm_mon = this->month - 1;
@@ -153,9 +153,9 @@ Date Date::Yesterday() {
 
 
 
-Date Date::Tomorrow() {
+DateTime DateTime::Tomorrow() {
 	struct tm tomorrow_ = { 0, };
-	Date tomorrow;
+	DateTime tomorrow;
 
 	tomorrow_.tm_year = this->year - 1900;
 	tomorrow_.tm_mon = this->month - 1;
@@ -177,57 +177,57 @@ Date Date::Tomorrow() {
 	return tomorrow;
 }
 
-Date Date::PreviousDate(int days) {
-	struct tm previousDate_ = { 0, };
-	Date previousDate;
+DateTime DateTime::PreviousDateTime(int days) {
+	struct tm previousDateTime_ = { 0, };
+	DateTime previousDateTime;
 
-	previousDate_.tm_year = this->year - 1900;
-	previousDate_.tm_mon = this->month - 1;
-	previousDate_.tm_mday = this->day - days;
-	previousDate_.tm_hour = this->hour;
-	previousDate_.tm_min = this->minute;
-	previousDate_.tm_sec = this->second;
+	previousDateTime_.tm_year = this->year - 1900;
+	previousDateTime_.tm_mon = this->month - 1;
+	previousDateTime_.tm_mday = this->day - days;
+	previousDateTime_.tm_hour = this->hour;
+	previousDateTime_.tm_min = this->minute;
+	previousDateTime_.tm_sec = this->second;
 
-	mktime(&previousDate_);
+	mktime(&previousDateTime_);
 
-	previousDate.year = previousDate_.tm_year + 1900;
-	previousDate.month = static_cast<Month>(previousDate_.tm_mon + 1);
-	previousDate.day = previousDate_.tm_mday;
-	previousDate.weekday = static_cast<Weekday>(previousDate_.tm_wday);
-	previousDate.hour = previousDate_.tm_hour;
-	previousDate.minute = previousDate_.tm_min;
-	previousDate.second = previousDate_.tm_sec;
+	previousDateTime.year = previousDateTime_.tm_year + 1900;
+	previousDateTime.month = static_cast<Month>(previousDateTime_.tm_mon + 1);
+	previousDateTime.day = previousDateTime_.tm_mday;
+	previousDateTime.weekday = static_cast<Weekday>(previousDateTime_.tm_wday);
+	previousDateTime.hour = previousDateTime_.tm_hour;
+	previousDateTime.minute = previousDateTime_.tm_min;
+	previousDateTime.second = previousDateTime_.tm_sec;
 
-	return previousDate;
+	return previousDateTime;
 }
 
-Date Date::NextDate(int days) {
-	struct tm nextDate_ = { 0, };
-	Date nextDate;
+DateTime DateTime::NextDateTime(int days) {
+	struct tm nextDateTime_ = { 0, };
+	DateTime nextDateTime;
 
-	nextDate_.tm_year = this->year - 1900;
-	nextDate_.tm_mon = this->month - 1;
-	nextDate_.tm_mday = this->day + days;
-	nextDate_.tm_hour = this->hour;
-	nextDate_.tm_min = this->minute;
-	nextDate_.tm_sec = this->second;
+	nextDateTime_.tm_year = this->year - 1900;
+	nextDateTime_.tm_mon = this->month - 1;
+	nextDateTime_.tm_mday = this->day + days;
+	nextDateTime_.tm_hour = this->hour;
+	nextDateTime_.tm_min = this->minute;
+	nextDateTime_.tm_sec = this->second;
 
-	mktime(&nextDate_);
+	mktime(&nextDateTime_);
 
-	nextDate.year = nextDate_.tm_year + 1900;
-	nextDate.month = static_cast<Month>(nextDate_.tm_mon + 1);
-	nextDate.day = nextDate_.tm_mday;
-	nextDate.weekday = static_cast<Weekday>(nextDate_.tm_wday);
-	nextDate.hour = nextDate_.tm_hour;
-	nextDate.minute = nextDate_.tm_min;
-	nextDate.second = nextDate_.tm_sec;
+	nextDateTime.year = nextDateTime_.tm_year + 1900;
+	nextDateTime.month = static_cast<Month>(nextDateTime_.tm_mon + 1);
+	nextDateTime.day = nextDateTime_.tm_mday;
+	nextDateTime.weekday = static_cast<Weekday>(nextDateTime_.tm_wday);
+	nextDateTime.hour = nextDateTime_.tm_hour;
+	nextDateTime.minute = nextDateTime_.tm_min;
+	nextDateTime.second = nextDateTime_.tm_sec;
 
-	return nextDate;
+	return nextDateTime;
 }
 
-Date Date::AddSeconds(int seconds) {
+DateTime DateTime::AddSeconds(int seconds) {
 	struct tm date = { 0, };
-	Date date_;
+	DateTime date_;
 
 	date.tm_year = this->year;
 	date.tm_mon = this->month;
@@ -249,7 +249,7 @@ Date Date::AddSeconds(int seconds) {
 	return date_;
 }
 
-bool Date::IsEqual(const Date& other) {
+bool DateTime::IsEqual(const DateTime& other) {
 	bool ret = false;
 
 	if ((this->year == other.year)&&(this->month == other.month)&&(this->day == other.day)
@@ -261,7 +261,7 @@ bool Date::IsEqual(const Date& other) {
 	return ret;
 }
 
-bool Date::IsNotEqual(const Date& other) {
+bool DateTime::IsNotEqual(const DateTime& other) {
 	bool ret = false;
 
 	if ((this->year != other.year)||(this->month != other.month)||(this->day != other.day)
@@ -273,7 +273,7 @@ bool Date::IsNotEqual(const Date& other) {
 	return ret;
 }
 
-bool Date::IsLesserThan(const Date& other) {
+bool DateTime::IsLesserThan(const DateTime& other) {
 	bool ret = false;
 
 	if (this->year < other.year)
@@ -307,7 +307,7 @@ bool Date::IsLesserThan(const Date& other) {
 	return ret;
 }
 
-bool Date::IsGreaterThan(const Date& other) {
+bool DateTime::IsGreaterThan(const DateTime& other) {
 	bool ret = false;
 
 	if (this->year > other.year)
@@ -341,7 +341,7 @@ bool Date::IsGreaterThan(const Date& other) {
 	return ret;
 }
 
-Date& Date::operator--() {
+DateTime& DateTime::operator--() {
 	struct tm yesterday = { 0, };
 
 	yesterday.tm_year = this->year - 1900;
@@ -364,9 +364,9 @@ Date& Date::operator--() {
 	return *this;
 }
 
-Date Date::operator--(int) {
+DateTime DateTime::operator--(int) {
 	struct tm yesterday_ = { 0, };
-	Date yesterday(*this);
+	DateTime yesterday(*this);
 
 	yesterday_.tm_year = this->year - 1900;
 	yesterday_.tm_mon = this->month - 1;
@@ -388,31 +388,31 @@ Date Date::operator--(int) {
 	return yesterday;
 }
 
-Date Date::operator-(int days) {
-	struct tm previousDate_ = { 0, };
-	Date previousDate;
+DateTime DateTime::operator-(int days) {
+	struct tm previousDateTime_ = { 0, };
+	DateTime previousDateTime;
 
-	previousDate_.tm_year = this->year - 1900;
-	previousDate_.tm_mon = this->month - 1;
-	previousDate_.tm_mday = this->day - days;
-	previousDate_.tm_hour = this->hour;
-	previousDate_.tm_min = this->minute;
-	previousDate_.tm_sec = this->second;
+	previousDateTime_.tm_year = this->year - 1900;
+	previousDateTime_.tm_mon = this->month - 1;
+	previousDateTime_.tm_mday = this->day - days;
+	previousDateTime_.tm_hour = this->hour;
+	previousDateTime_.tm_min = this->minute;
+	previousDateTime_.tm_sec = this->second;
 
-	mktime(&previousDate_);
+	mktime(&previousDateTime_);
 
-	previousDate.year = previousDate_.tm_year + 1900;
-	previousDate.month = static_cast<Month>(previousDate_.tm_mon + 1);
-	previousDate.day = previousDate_.tm_mday;
-	previousDate.weekday = static_cast<Weekday>(previousDate_.tm_wday);
-	previousDate.hour = previousDate_.tm_hour;
-	previousDate.minute = previousDate_.tm_min;
-	previousDate.second = previousDate_.tm_sec;
+	previousDateTime.year = previousDateTime_.tm_year + 1900;
+	previousDateTime.month = static_cast<Month>(previousDateTime_.tm_mon + 1);
+	previousDateTime.day = previousDateTime_.tm_mday;
+	previousDateTime.weekday = static_cast<Weekday>(previousDateTime_.tm_wday);
+	previousDateTime.hour = previousDateTime_.tm_hour;
+	previousDateTime.minute = previousDateTime_.tm_min;
+	previousDateTime.second = previousDateTime_.tm_sec;
 
-	return previousDate;
+	return previousDateTime;
 }
 
-Date& Date::operator++() {
+DateTime& DateTime::operator++() {
 	struct tm tomorrow = { 0, };
 
 	tomorrow.tm_year = this->year - 1900;
@@ -435,9 +435,9 @@ Date& Date::operator++() {
 	return *this;
 }
 
-Date Date::operator++(int) {
+DateTime DateTime::operator++(int) {
 	struct tm tomorrow_ = { 0, };
-	Date tomorrow(*this);
+	DateTime tomorrow(*this);
 
 	tomorrow_.tm_year = this->year - 1900;
 	tomorrow_.tm_mon = this->month - 1;
@@ -459,31 +459,31 @@ Date Date::operator++(int) {
 	return tomorrow;
 }
 
-Date Date::operator+(int days) {
-	struct tm nextDate_ = { 0, };
-	Date nextDate;
+DateTime DateTime::operator+(int days) {
+	struct tm nextDateTime_ = { 0, };
+	DateTime nextDateTime;
 
-	nextDate_.tm_year = this->year - 1900;
-	nextDate_.tm_mon = this->month - 1;
-	nextDate_.tm_mday = this->day + days;
-	nextDate_.tm_hour = this->hour;
-	nextDate_.tm_min = this->minute;
-	nextDate_.tm_sec = this->second;
+	nextDateTime_.tm_year = this->year - 1900;
+	nextDateTime_.tm_mon = this->month - 1;
+	nextDateTime_.tm_mday = this->day + days;
+	nextDateTime_.tm_hour = this->hour;
+	nextDateTime_.tm_min = this->minute;
+	nextDateTime_.tm_sec = this->second;
 
-	mktime(&nextDate_);
+	mktime(&nextDateTime_);
 
-	nextDate.year = nextDate_.tm_year + 1900;
-	nextDate.month = static_cast<Month>(nextDate_.tm_mon + 1);
-	nextDate.day = nextDate_.tm_mday;
-	nextDate.weekday = static_cast<Weekday>(nextDate_.tm_wday);
-	nextDate.hour = nextDate_.tm_hour;
-	nextDate.minute = nextDate_.tm_min;
-	nextDate.second = nextDate_.tm_sec;
+	nextDateTime.year = nextDateTime_.tm_year + 1900;
+	nextDateTime.month = static_cast<Month>(nextDateTime_.tm_mon + 1);
+	nextDateTime.day = nextDateTime_.tm_mday;
+	nextDateTime.weekday = static_cast<Weekday>(nextDateTime_.tm_wday);
+	nextDateTime.hour = nextDateTime_.tm_hour;
+	nextDateTime.minute = nextDateTime_.tm_min;
+	nextDateTime.second = nextDateTime_.tm_sec;
 
-	return nextDate;
+	return nextDateTime;
 }
 
-bool Date::operator==(const Date& other) {
+bool DateTime::operator==(const DateTime& other) {
 	bool ret = false;
 
 	if ((this->year == other.year) && (this->month == other.month) && (this->day == other.day)
@@ -495,7 +495,7 @@ bool Date::operator==(const Date& other) {
 	return ret;
 }
 
-bool Date::operator!=(const Date& other) {
+bool DateTime::operator!=(const DateTime& other) {
 	bool ret = false;
 
 	if ((this->year != other.year) || (this->month != other.month) || (this->day != other.day)
@@ -507,7 +507,7 @@ bool Date::operator!=(const Date& other) {
 	return ret;
 }
 
-bool Date::operator<(const Date& other) {
+bool DateTime::operator<(const DateTime& other) {
 	bool ret = false;
 
 	if (this->year < other.year)
@@ -541,7 +541,7 @@ bool Date::operator<(const Date& other) {
 	return ret;
 }
 
-bool Date::operator<=(const Date& other) {
+bool DateTime::operator<=(const DateTime& other) {
 	bool ret = false;
 
 	if (this->year < other.year)
@@ -574,7 +574,7 @@ bool Date::operator<=(const Date& other) {
 	return ret;
 }
 
-bool Date::operator>(const Date& other) {
+bool DateTime::operator>(const DateTime& other) {
 	bool ret = false;
 
 	if (this->year > other.year)
@@ -608,7 +608,7 @@ bool Date::operator>(const Date& other) {
 	return ret;
 }
 
-bool Date::operator>=(const Date& other) {
+bool DateTime::operator>=(const DateTime& other) {
 	bool ret = false;
 
 	if (this->year > other.year)
@@ -650,7 +650,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 	
-	Date today = Date::Today();
+	DateTime today = DateTime::Today();
 	cout << today.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << today.GetMonth()
@@ -658,7 +658,7 @@ int main(int argc, char* argv[]) {
 		<< setw(2) << setfill('0') << today.GetDay()
 		<< endl;
 
-	Date yesterday = today.Yesterday();
+	DateTime yesterday = today.Yesterday();
 	cout << yesterday.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << yesterday.GetMonth()
@@ -666,7 +666,7 @@ int main(int argc, char* argv[]) {
 		<< setw(2) << setfill('0') << yesterday.GetDay()
 		<< endl;
 
-	Date tomorrow = today.Tomorrow();
+	DateTime tomorrow = today.Tomorrow();
 	cout << tomorrow.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << tomorrow.GetMonth()
@@ -674,23 +674,23 @@ int main(int argc, char* argv[]) {
 		<< setw(2) << setfill('0') << tomorrow.GetDay()
 		<< endl;
 
-	Date previosDate = tomorrow.PreviousDate(2);
-	cout << previosDate.GetYear()
+	DateTime previosDateTime = tomorrow.PreviousDateTime(2);
+	cout << previosDateTime.GetYear()
 		<< "-"
-		<< setw(2) << setfill('0') << previosDate.GetMonth()
+		<< setw(2) << setfill('0') << previosDateTime.GetMonth()
 		<< "-"
-		<< setw(2) << setfill('0') << previosDate.GetDay()
+		<< setw(2) << setfill('0') << previosDateTime.GetDay()
 		<< endl;
 
-	Date nextDate = today.NextDate(2);
-	cout << nextDate.GetYear()
+	DateTime nextDateTime = today.NextDateTime(2);
+	cout << nextDateTime.GetYear()
 		<< "-"
-		<< setw(2) << setfill('0') << nextDate.GetMonth()
+		<< setw(2) << setfill('0') << nextDateTime.GetMonth()
 		<< "-"
-		<< setw(2) << setfill('0') << nextDate.GetDay()
+		<< setw(2) << setfill('0') << nextDateTime.GetDay()
 		<< endl;
 
-	bool ret = yesterday.IsEqual(previosDate);
+	bool ret = yesterday.IsEqual(previosDateTime);
 	if (ret == true)
 	{
 		cout << "참입니다."
@@ -711,14 +711,14 @@ int main(int argc, char* argv[]) {
 			<< endl;
 	}
 
-	ret = nextDate.IsGreaterThan(today);
+	ret = nextDateTime.IsGreaterThan(today);
 	if (ret == true)
 	{
 		cout << "참입니다."
 			<< endl;
 	}
 
-	Date birthday(1993, JUN, 9);
+	DateTime birthday(1993, JUN, 9);
 	cout << birthday.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << birthday.GetMonth()
@@ -726,7 +726,7 @@ int main(int argc, char* argv[]) {
 		<< setw(2) << setfill('0') << birthday.GetDay()
 		<< endl;
 
-	Date twoDaysBefore = --birthday - 1;
+	DateTime twoDaysBefore = --birthday - 1;
 	cout << twoDaysBefore.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << twoDaysBefore.GetMonth()
@@ -734,7 +734,7 @@ int main(int argc, char* argv[]) {
 		<< setw(2) << setfill('0') << twoDaysBefore.GetDay()
 		<< endl;
 
-	Date birthdayTomorrow = ++birthday + 1;
+	DateTime birthdayTomorrow = ++birthday + 1;
 	cout << birthdayTomorrow.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << birthdayTomorrow.GetMonth()
@@ -742,7 +742,7 @@ int main(int argc, char* argv[]) {
 		<< setw(2) << setfill('0') << birthdayTomorrow.GetDay()
 		<< endl;
 
-	Date twoDaysAfter = birthday++ + 2;
+	DateTime twoDaysAfter = birthday++ + 2;
 	cout << twoDaysAfter.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << twoDaysAfter.GetMonth()
@@ -750,7 +750,7 @@ int main(int argc, char* argv[]) {
 		<< setw(2) << setfill('0') << twoDaysAfter.GetDay()
 		<< endl;
 
-	Date birthDayYesterday = birthday-- - 2;
+	DateTime birthDayYesterday = birthday-- - 2;
 	cout << birthDayYesterday.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << birthDayYesterday.GetMonth()
@@ -759,7 +759,7 @@ int main(int argc, char* argv[]) {
 		<< endl;
 
 	
-	Date stringMade(const_cast<char(*)>("19930609"));
+	DateTime stringMade(const_cast<char(*)>("19930609"));
 	cout << stringMade.GetYear()
 		<< "-"
 		<< setw(2) << setfill('0') << stringMade.GetMonth()

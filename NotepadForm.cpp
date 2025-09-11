@@ -32,7 +32,6 @@
 #include "message.h"
 #include "FindReplaceCommandFactory.h"
 #include "HistoryBook.h"
-#include "HistoryBinder.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -73,7 +72,6 @@ NotepadForm::NotepadForm() {
 	this->searchResultController = NULL;
 	this->undoHistoryBook = NULL;
 	this->redoHistoryBook = NULL;
-	this->historyBinder = NULL;
 	this->hasFindReplaceDialog = FALSE;
 
 	TCHAR buffer[256];
@@ -116,7 +114,6 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->searchResultController = new SearchResultController;
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
-	this->historyBinder = new HistoryBinder;
 
 	this->Notify("CreateScrollBars");
 	this->Notify("AdjustScrollBars");
@@ -148,19 +145,8 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			command->Execute();
 			if (command->IsUndoable())
 			{
-				if (this->historyBinder->IsBindable(command))
-				{
-					this->historyBinder->Bind(command);
-				}
-				else
-				{
-					History history = this->historyBinder->Commit();
-					this->historyBinder->Bind(command);
-					this->undoHistoryBook->Push(history);
-					this->redoHistoryBook->Clear();
-				}
+				this->undoHistoryBook->Push(command);
 			}
-			delete command;
 		}
 
 		this->note->Select(false);
@@ -315,19 +301,8 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
-			if (this->historyBinder->IsBindable(command))
-			{
-				this->historyBinder->Bind(command);
-			}
-			else
-			{
-				History history = this->historyBinder->Commit();
-				this->historyBinder->Bind(command);
-				this->undoHistoryBook->Push(history);
-				this->redoHistoryBook->Clear();
-			}
+			this->undoHistoryBook->Push(command);
 		}
-		delete command;
 	}
 
 	this->note->Select(false);
@@ -376,19 +351,8 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
-			if (this->historyBinder->IsBindable(command))
-			{
-				this->historyBinder->Bind(command);
-			}
-			else
-			{
-				History history = this->historyBinder->Commit();
-				this->historyBinder->Bind(command);
-				this->undoHistoryBook->Push(history);
-				this->redoHistoryBook->Clear();
-			}
+			this->undoHistoryBook->Push(command);
 		}
-		delete command;
 	}
 	this->Notify("CreateScrollBars");
 	this->Notify("AdjustScrollBars");
@@ -501,11 +465,6 @@ void NotepadForm::OnClose() {
 	if (this->redoHistoryBook != NULL)
 	{
 		delete this->redoHistoryBook;
-	}
-
-	if (this->historyBinder != NULL)
-	{
-		delete this->historyBinder;
 	}
 
 	CFrameWnd::OnClose();

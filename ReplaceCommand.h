@@ -11,7 +11,7 @@ public:
 	virtual ~ReplaceCommand();
 
 	virtual void Execute();
-	virtual void Unexecute();
+	virtual void Undo();
 	virtual Command* Clone();
 	virtual UINT GetId();
 };

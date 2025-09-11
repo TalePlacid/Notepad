@@ -8,7 +8,7 @@
 #pragma warning(disable:4996)
 
 InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, char(*character), BOOL onChar)
-	:UndoableCommand(parent) {
+	:Command(parent) {
 	this->character[0] = character[0];
 	if (character[0] & 0x80)
 	{
@@ -23,7 +23,7 @@ InsertAtCaretCommand::~InsertAtCaretCommand() {
 }
 
 InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
-	:UndoableCommand(source) {
+	:Command(source) {
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	if (this->character[0] & 0x80)
 	{
@@ -34,7 +34,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 }
 
 InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand& source){
-	UndoableCommand::operator=(source);
+	Command::operator=(source);
 
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	if (this->character[0] & 0x80)

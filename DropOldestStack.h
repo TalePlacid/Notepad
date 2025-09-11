@@ -77,7 +77,7 @@ public:
 	Node* Push(T element);
 	Node Pop();
 	Node* Clear();
-	Node& Peek();
+	Node* Peek();
 	bool IsEmpty();
 
 	Node* GetTop() const;
@@ -254,8 +254,8 @@ typename DropOldestStack<T>::Node* DropOldestStack<T>::Clear() {
 }
 
 template <typename T>
-typename DropOldestStack<T>::Node& DropOldestStack<T>::Peek() {
-	return *(this->top);
+typename DropOldestStack<T>::Node* DropOldestStack<T>::Peek() {
+	return this->top;
 }
 
 template <typename T>

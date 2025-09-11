@@ -94,6 +94,10 @@ Long MacroCommand::Add(Command* command) {
 	return index;
 }
 
+bool MacroCommand::IsMacroCommand() {
+	return true;
+}
+
 Command* MacroCommand::GetAt(Long index) {
 	return this->commands.GetAt(index);
 }

@@ -353,9 +353,6 @@
     <ClInclude Include="ReplaceAllCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="UndoableCommand.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="MacroCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -368,10 +365,7 @@
     <ClInclude Include="CtrlZAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Date.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="HistoryBinder.h">
+    <ClInclude Include="DateTime.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CtrlYAction.h">
@@ -700,9 +694,6 @@
     <ClCompile Include="ReplaceAllCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UndoableCommand.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="MacroCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -712,10 +703,7 @@
     <ClCompile Include="CtrlZAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Date.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="HistoryBinder.cpp">
+    <ClCompile Include="DateTime.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CtrlYAction.cpp">

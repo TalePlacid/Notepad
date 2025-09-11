@@ -1,6 +1,7 @@
 #ifndef _HISTORYBOOK_H //guard
 #define _HISTORYBOOK_H
 #include "DropOldestStack.h"
+#include "DateTime.h"
 
 typedef signed long int Long;
 
@@ -18,10 +19,18 @@ public:
 	Command* Pop();
 	bool IsEmpty();
 	Command** Clear();
+	Command** Peek();
+
+	DateTime& GetLatestPushTime() const;
 private:
 	DropOldestStack<Command*> histories;
 	Long capacity;
 	Long length;
+	DateTime latestPushTime;
 };
+
+inline DateTime& HistoryBook::GetLatestPushTime() const {
+	return const_cast<DateTime&>(this->latestPushTime);
+}
 
 #endif // !_HISTORYBOOK_H

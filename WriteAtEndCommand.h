@@ -1,11 +1,11 @@
 #ifndef _WRITEATENDCOMMAND_H //guard
 #define _WRITEATENDCOMMAND_H
 #include <afxwin.h>
-#include "UndoableCommand.h"
+#include "Command.h"
 
 typedef signed long int Long;
 
-class WriteAtEndCommand : public UndoableCommand {
+class WriteAtEndCommand : public Command {
 public:
 	WriteAtEndCommand(CWnd* parent, char(*character), BOOL onChar = TRUE);
 	virtual ~WriteAtEndCommand();

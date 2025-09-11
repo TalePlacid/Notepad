@@ -164,7 +164,7 @@
     <ClInclude Include="CtrlYAction.h" />
     <ClInclude Include="CtrlZAction.h" />
     <ClInclude Include="CutCommand.h" />
-    <ClInclude Include="Date.h" />
+    <ClInclude Include="DateTime.h" />
     <ClInclude Include="DownArrowAction.h" />
     <ClInclude Include="DropOldestStack.h" />
     <ClInclude Include="DummyRow.h" />
@@ -181,7 +181,6 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
-    <ClInclude Include="HistoryBinder.h" />
     <ClInclude Include="HistoryBook.h" />
     <ClInclude Include="HomeAction.h" />
     <ClInclude Include="HScrollBarDragAction.h" />
@@ -237,7 +236,6 @@
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TextOutVisitor.h" />
-    <ClInclude Include="UndoableCommand.h" />
     <ClInclude Include="UpArrowAction.h" />
     <ClInclude Include="Visitor.h" />
     <ClInclude Include="VScrollBarDownClickAction.h" />
@@ -284,7 +282,7 @@
     <ClCompile Include="CtrlYAction.cpp" />
     <ClCompile Include="CtrlZAction.cpp" />
     <ClCompile Include="CutCommand.cpp" />
-    <ClCompile Include="Date.cpp" />
+    <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="DownArrowAction.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EndAction.cpp" />
@@ -300,7 +298,6 @@
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
     <ClCompile Include="HistoryBook.cpp" />
-    <ClCompile Include="HistoryBinder.cpp" />
     <ClCompile Include="HomeAction.cpp" />
     <ClCompile Include="HScrollBarDragAction.cpp" />
     <ClCompile Include="HScrollBarLeftClickAction.cpp" />
@@ -353,7 +350,6 @@
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
-    <ClCompile Include="UndoableCommand.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
     <ClCompile Include="Visitor.cpp" />
     <ClCompile Include="VScrollBarDownClickAction.cpp" />

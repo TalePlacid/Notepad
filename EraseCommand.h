@@ -1,11 +1,11 @@
 #ifndef _ERASECOMMAND_H //guard
 #define _ERASECOMMAND_H
 #include <afxwin.h>
-#include "UndoableCommand.h"
+#include "Command.h"
 
 typedef signed long int Long;
 
-class EraseCommand : public UndoableCommand {
+class EraseCommand : public Command {
 public:
 	EraseCommand(CWnd* parent);
 	virtual ~EraseCommand();

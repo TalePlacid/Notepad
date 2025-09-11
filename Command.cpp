@@ -32,6 +32,18 @@ bool Command::IsUndoable() {
 	return false;
 }
 
+Long Command::Add(Command* command) {
+	return -1;
+}
+
+Command* Command::GetAt(Long index) {
+	return 0;
+}
+
+bool Command::IsMacroCommand() {
+	return false;
+}
+
 UINT Command::GetId() {
 	return 0;
 }

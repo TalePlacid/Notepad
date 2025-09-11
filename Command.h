@@ -2,6 +2,8 @@
 #define _COMMAND_H
 #include <afxwin.h>
 
+typedef signed long int Long;
+
 class Command {
 public:
 	Command(CWnd* parent = NULL);
@@ -13,9 +15,18 @@ public:
 	virtual void Undo();
 	virtual Command* Clone();
 	virtual bool IsUndoable();
+	virtual Long Add(Command* command);
+	virtual Command* GetAt(Long index);
+	virtual bool IsMacroCommand();
 	virtual UINT GetId();
+
+	virtual CWnd* GetParent() const;
 protected:
 	CWnd* parent;
 };
+
+inline CWnd* Command::GetParent() const {
+	return const_cast<CWnd*>(this->parent);
+}
 
 #endif // !_COMMAND_H

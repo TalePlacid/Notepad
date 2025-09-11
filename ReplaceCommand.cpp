@@ -121,3 +121,15 @@ void ReplaceCommand::Execute() {
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }
+
+void ReplaceCommand::Undo() {
+
+}
+
+UINT ReplaceCommand::GetId() {
+	return 0;
+}
+
+Command* ReplaceCommand::Clone() {
+	return 0;
+}

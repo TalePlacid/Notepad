@@ -12,7 +12,7 @@ using namespace std;
 #pragma warning(disable:4996)
 
 PasteCommand::PasteCommand(CWnd* parent)
-	:UndoableCommand(parent), contents("") {
+	:Command(parent), contents("") {
 	this->offset = -1;
 }
 
@@ -21,12 +21,12 @@ PasteCommand::~PasteCommand() {
 }
 
 PasteCommand::PasteCommand(const PasteCommand& source)
-	:UndoableCommand(source), contents(source.contents) {
+	:Command(source), contents(source.contents) {
 	this->offset = source.offset;
 }
 
 PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
-	UndoableCommand::operator=(source);
+	Command::operator=(source);
 
 	this->contents = source.contents;
 	this->offset = source.offset;

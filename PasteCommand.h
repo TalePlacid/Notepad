@@ -1,13 +1,13 @@
 #ifndef _PASTECOMMAND_H //guard
 #define _PASTECOMMAND_H
 #include <afxwin.h>
-#include "UndoableCommand.h"
+#include "Command.h"
 
 typedef signed long int Long;
 
 class Command;
 
-class PasteCommand : public UndoableCommand {
+class PasteCommand : public Command {
 public:
 	PasteCommand(CWnd* parent);
 	virtual ~PasteCommand();

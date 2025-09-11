@@ -11,7 +11,7 @@
 #pragma warning(disable:4996)
 
 EraseRangeCommand::EraseRangeCommand(CWnd* parent)
-	:UndoableCommand(parent), contents("") {
+	:Command(parent), contents("") {
 	this->frontOffset = -1;
 	this->rearOffset = -1;
 }
@@ -21,13 +21,13 @@ EraseRangeCommand::~EraseRangeCommand() {
 }
 
 EraseRangeCommand::EraseRangeCommand(const EraseRangeCommand& source)
-	:UndoableCommand(source), contents(source.contents) {
+	:Command(source), contents(source.contents) {
 	this->frontOffset = source.frontOffset;
 	this->rearOffset = source.rearOffset;
 }
 
 EraseRangeCommand& EraseRangeCommand::operator=(const EraseRangeCommand& source) {
-	UndoableCommand::operator=(source);
+	Command::operator=(source);
 
 	this->contents = source.contents;
 	this->frontOffset = source.frontOffset;

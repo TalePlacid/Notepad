@@ -8,7 +8,7 @@
 #pragma warning(disable:4996)
 
 EraseCommand::EraseCommand(CWnd* parent)
-	:UndoableCommand(parent) {
+	:Command(parent) {
 	this->offset = -1;
 }
 
@@ -17,14 +17,14 @@ EraseCommand::~EraseCommand() {
 }
 
 EraseCommand::EraseCommand(const EraseCommand& source)
-	:UndoableCommand(source) {
+	:Command(source) {
 	this->character[0] = source.character[0];
 	this->character[1] = source.character[1];
 	this->offset = source.offset;
 }
 
 EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
-	UndoableCommand::operator=(source);
+	Command::operator=(source);
 
 	this->character[0] = source.character[0];
 	this->character[1] = source.character[1];

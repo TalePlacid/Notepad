@@ -8,7 +8,7 @@
 #pragma warning(disable:4996)
 
 WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, char(*character), BOOL onChar)
-	:UndoableCommand(parent) {
+	:Command(parent) {
 	this->character[0] = character[0];
 	this->character[1] = character[1];
 	this->onChar = onChar;
@@ -20,7 +20,7 @@ WriteAtEndCommand::~WriteAtEndCommand() {
 }
 
 WriteAtEndCommand::WriteAtEndCommand(const WriteAtEndCommand& source)
-	:UndoableCommand(source.parent) {
+	:Command(source.parent) {
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
 	this->onChar = source.onChar;
@@ -28,7 +28,7 @@ WriteAtEndCommand::WriteAtEndCommand(const WriteAtEndCommand& source)
 }
 
 WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source) {
-	UndoableCommand::operator=(source);
+	Command::operator=(source);
 
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
