@@ -12,6 +12,8 @@
 #include "CutCommand.h"
 #include "OpenFindDialogCommand.h"
 #include "OpenReplaceDialogCommand.h"
+#include "UndoCommand.h"
+#include "RedoCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -66,6 +68,12 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID) {
 		break;
 	case ID_COMMAND_CUT:
 		command = new CutCommand(parent);
+		break;
+	case ID_COMMAND_UNDO:
+		command = new UndoCommand(parent);
+		break;
+	case ID_COMMAND_REDO:
+		command = new RedoCommand(parent);
 		break;
 	default:
 		break;

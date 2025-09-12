@@ -1,5 +1,6 @@
 #ifndef _MACROCOMMAND_H //guard
 #define _MACROCOMMAND_H
+#include <afxwin.h>
 #include "Command.h"
 #include "Array.h"
 
@@ -19,6 +20,7 @@ public:
 	virtual Long Add(Command* command);
 	virtual Command* GetAt(Long index);
 	virtual bool IsMacroCommand();
+	virtual UINT GetId();
 
 	Long GetCapacity() const;
 	Long GetLength() const;

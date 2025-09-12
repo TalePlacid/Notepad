@@ -40,6 +40,8 @@
 #define ID_COMMAND_CUT					50005
 #define ID_COMMAND_WRITEATEND			50006
 #define ID_COMMAND_INSERTATCARET		50007
+#define ID_COMMAND_UNDO					50008
+#define ID_COMMAND_REDO					50009
 
 // Next default values for new elements
 // 

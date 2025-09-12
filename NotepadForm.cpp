@@ -49,7 +49,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_CUT, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_REDO, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -145,6 +145,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			command->Execute();
 			if (command->IsUndoable())
 			{
+				command = this->undoHistoryBook->Bind(command);
 				this->undoHistoryBook->Push(command);
 			}
 		}
@@ -301,6 +302,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
+			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
 		}
 	}
@@ -330,15 +332,6 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 		this->caretController->Destroy();
 	}
 
-#if 0
-	if (this->note != NULL)
-	{
-		this->note->Select(false);
-		MarkingHelper markingHelper(this);
-		markingHelper.Unmark();
-	}
-#endif
-
 	this->Invalidate();
 }
 
@@ -351,6 +344,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
+			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
 		}
 	}

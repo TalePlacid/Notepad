@@ -16,11 +16,11 @@ public:
 	virtual void Undo();
 	virtual Command* Clone();
 	virtual UINT GetId();
+	virtual bool IsUndoable();
 private:
 	char character[2];
 	BOOL onChar;
 	Long offset;
 };
-
 
 #endif // !_WRITEATENDCOMMAND_H

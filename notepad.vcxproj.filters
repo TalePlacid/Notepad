@@ -371,6 +371,12 @@
     <ClInclude Include="CtrlYAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="UndoCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RedoCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -707,6 +713,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CtrlYAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UndoCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RedoCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

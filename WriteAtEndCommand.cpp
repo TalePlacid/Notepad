@@ -134,3 +134,7 @@ Command* WriteAtEndCommand::Clone() {
 UINT WriteAtEndCommand::GetId() {
 	return ID_COMMAND_WRITEATEND;
 }
+
+bool WriteAtEndCommand::IsUndoable() {
+	return true;
+}

@@ -18,6 +18,7 @@ public:
 	virtual void Undo();
 	virtual Command* Clone();
 	virtual UINT GetId();
+	virtual bool IsUndoable();
 private:
 	Long offset;
 	CString contents;

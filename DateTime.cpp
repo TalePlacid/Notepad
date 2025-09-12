@@ -229,8 +229,8 @@ DateTime DateTime::AddSeconds(int seconds) {
 	struct tm date = { 0, };
 	DateTime date_;
 
-	date.tm_year = this->year;
-	date.tm_mon = this->month;
+	date.tm_year = this->year - 1900;
+	date.tm_mon = this->month - 1;
 	date.tm_mday = this->day;
 	date.tm_hour = this->hour;
 	date.tm_min = this->minute;
@@ -238,8 +238,8 @@ DateTime DateTime::AddSeconds(int seconds) {
 
 	mktime(&date);
 
-	date_.year = date.tm_year;
-	date_.month = static_cast<Month>(date.tm_mon);
+	date_.year = date.tm_year + 1900;
+	date_.month = static_cast<Month>(date.tm_mon + 1);
 	date_.day = date.tm_mday;
 	date_.weekday = static_cast<Weekday>(date.tm_wday);
 	date_.hour = date.tm_hour;

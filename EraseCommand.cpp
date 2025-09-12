@@ -133,3 +133,7 @@ Command* EraseCommand::Clone() {
 UINT EraseCommand::GetId() {
 	return ID_COMMAND_ERASE;
 }
+
+bool EraseCommand::IsUndoable() {
+	return true;
+}

@@ -153,3 +153,7 @@ Command* InsertAtCaretCommand::Clone() {
 UINT InsertAtCaretCommand::GetId() {
 	return ID_COMMAND_INSERTATCARET;
 }
+
+bool InsertAtCaretCommand::IsUndoable() {
+	return true;
+}

@@ -44,34 +44,44 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 	return *this;
 }
 
-Command** HistoryBook::Push(Command* history) {
-	Command* command = history;
-	if ((this->latestPushTime == DateTime() || DateTime::Now() <= this->latestPushTime.AddSeconds(600)) 
+Command* HistoryBook::Bind(Command* command) {
+	Command* history = command;
+	DateTime now = DateTime::Now();
+	DateTime latest = this->latestPushTime.AddSeconds(1);
+	if ((this->latestPushTime == DateTime() || DateTime::Now() <= this->latestPushTime.AddSeconds(1))
 		&& this->histories.Peek() != 0)
 	{
 		DropOldestStack<Command*>::Node top = this->histories.Pop();
 		(this->length)--;
 		Command* top_ = top.GetElement();
-		if (history->GetId() == top_->GetId())
+		if (command->GetId() == top_->GetId())
 		{
 			if (top_->IsMacroCommand())
 			{
-				top_->Add(history);
-				command = top_;
+				top_->Add(command);
+				history = top_;
 			}
 			else
 			{
-				command = new MacroCommand(top_->GetParent());
-				command->Add(top_);
-				command->Add(history);
+				history = new MacroCommand(top_->GetParent());
+				history->Add(top_);
+				history->Add(command);
 			}
 		}
 		else
 		{
 			this->histories.Push(top_);
+			if (this->length < this->capacity)
+			{
+				(this->length)++;
+			}
 		}
 	}
-		
+
+	return history;
+}
+
+Command** HistoryBook::Push(Command* history) {
 	DropOldestStack<Command*>::Node* node = this->histories.Push(history);
 	if (this->length < this->capacity)
 	{

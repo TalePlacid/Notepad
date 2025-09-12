@@ -1,7 +1,6 @@
 #include <afxwin.h>
 #include "CtrlZAction.h"
-#include "NotepadForm.h"
-#include "HistoryBook.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -15,26 +14,6 @@ CtrlZAction::~CtrlZAction() {
 }
 
 void CtrlZAction::Perform() {
-	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
-	//HistoryBinder* historyBinder = ((NotepadForm*)(this->parent))->historyBinder;
-#if 0
-	if (historyBinder->GetLength() > 0)
-	{
-		//History history = historyBinder->Commit();
-		//undoHistoryBook->Push(history);
-	}
-#endif
-	if (!undoHistoryBook->IsEmpty())
-	{
-		//History history = undoHistoryBook->Pop();
-		//history.Undo();
-		//((NotepadForm*)(this->parent))->redoHistoryBook->Push(history);
-	}
-
-	((NotepadForm*)(this->parent))->Notify("CreateScrollBars");
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	((NotepadForm*)(this->parent))->Notify("ChangeCaret");
-	this->parent->Invalidate();
-
+	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_UNDO, 0);
 }
 

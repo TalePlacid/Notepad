@@ -213,3 +213,7 @@ Command* EraseRangeCommand::Clone() {
 UINT EraseRangeCommand::GetId() {
 	return ID_COMMAND_ERASERANGE;
 }
+
+bool EraseRangeCommand::IsUndoable() {
+	return true;
+}

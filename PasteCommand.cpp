@@ -185,3 +185,7 @@ Command* PasteCommand::Clone() {
 UINT PasteCommand::GetId() {
 	return ID_COMMAND_PASTE;
 }
+
+bool PasteCommand::IsUndoable() {
+	return true;
+}
