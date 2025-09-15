@@ -8,116 +8,165 @@
 #include "ByteChecker.h"
 #include "MarkingHelper.h"
 #include "SearchResultController.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
 ReplaceCommand::ReplaceCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog)
-	:FindReplaceCommand(parent, findReplaceDialog) {
-
+	:FindReplaceCommand(parent, findReplaceDialog), source(""), replaced("") {
+	this->offset = -1;
 }
 
 ReplaceCommand::~ReplaceCommand() {
 
 }
  
+ReplaceCommand::ReplaceCommand(const ReplaceCommand& source)
+	:FindReplaceCommand(parent, findReplaceDialog) {
+	this->offset = source.offset;
+	this->source = source.source;
+	this->replaced = source.replaced;
+}
+
+ReplaceCommand& ReplaceCommand::operator=(const ReplaceCommand& source) {
+	FindReplaceCommand::operator=(source);
+
+	this->offset = source.offset;
+	this->source = source.source;
+	this->replaced = source.replaced;
+
+	return *this;
+}
+
 void ReplaceCommand::Execute() {
-	//1. 노트에서 교체한다.
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long markedRowIndex = note->GetMarked();
-	markedRowIndex = note->Move(markedRowIndex);
-
-	Glyph* row = note->GetAt(markedRowIndex);
-	Long markedColumnIndex = row->GetMarked();
-	markedColumnIndex = row->Move(markedColumnIndex);
-
+	//1. 재실행이 아니면, 기록한다.
+	Glyph* note;
+	Glyph* row;
+	Long rowIndex;
+	Long columnIndex;
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-	CString replaceString(this->findReplaceDialog->GetReplaceString());
-
-	Glyph* character;
-	Glyph* glyph;
-	GlyphFactory glyphFactory;
-	ByteChecker byteChecker;
-	TCHAR contents[2];
-	BOOL isSelected = TRUE;
-	Long j = markedColumnIndex;
-	Long i = 0;
-	while (i < replaceString.GetLength() && j < row->GetLength())
-	{
-		character = row->GetAt(j);
-		if (character->IsSelected())
-		{
-			contents[0] = replaceString.GetAt(i);
-			if (byteChecker.IsLeadByte(contents[0]))
-			{
-				contents[1] = replaceString.GetAt(++i);
-			}
-
-			glyph = glyphFactory.Create(contents);
-
-			row->Replace(j, glyph);
-			j = row->Next();
-		}
-
-		i++;
-	}
-
-	while (i < replaceString.GetLength())
-	{
-		contents[0] = replaceString.GetAt(i);
-		if (byteChecker.IsLeadByte(contents[0]))
-		{
-			contents[1] = replaceString.GetAt(++i);
-		}
-
-		glyph = glyphFactory.Create(contents);
-
-		row->Add(j, glyph);
-
-		i++;
-	}
-
-	Long currentIndex = row->GetCurrent();
-	character = row->GetAt(currentIndex);
-	while (row->GetLength() > currentIndex && character->IsSelected())
-	{
-		row->Remove(currentIndex);
-		character = row->GetAt(currentIndex);
-	}
-
-	//2. 페이징 버퍼에서 교체한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	CString findString(searchResultController->GetKey().c_str());
-	Long currentSearchIndex = searchResultController->GetCurrent();
-	Long replaceStartOffset = searchResultController->GetAt(currentSearchIndex).GetOffset();
-
-	if (replaceString.GetLength() < findString.GetLength())
+	if (this->offset < 0)
 	{
-		pagingBuffer->Replace(replaceStartOffset, replaceString);
-		pagingBuffer->Remove(replaceStartOffset + findString.GetLength());
+		Long currentIndex = searchResultController->GetCurrent();
+		pagingBuffer->MoveOffset(searchResultController->GetAt(currentIndex).GetOffset());
+		this->offset = pagingBuffer->GetCurrentOffset();
+		this->source = CString(searchResultController->GetKey().c_str());
+		this->replaced = this->findReplaceDialog->GetReplaceString();
+	}
+	else //2. 재실행이면, 해당 위치로 이동한다.
+	{
+		pagingBuffer->MoveOffset(this->offset);
+		if (!pagingBuffer->IsOnPage(this->offset))
+		{
+			pagingBuffer->Load();
+		}
+	}
+	note = ((NotepadForm*)(this->parent))->note;
+	rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	row = note->GetAt(rowIndex);
+	columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	//3. 노트에서 교체한다.
+	ByteChecker byteChecker;
+	Long sourceCount = byteChecker.CountCharacters(this->source);
+	Long replacedCount = byteChecker.CountCharacters(this->replaced);
+	TCHAR letter[2];
+	GlyphFactory glyphFactory;
+	Glyph* glyph;
+	Long k = columnIndex;
+	Long j = 0;
+	Long i = 0;
+	if (sourceCount < replacedCount) //원본 문자열이 더 짧으면,
+	{
+		//원본 문자열 길이만큼 교체한다.
+		while (i < sourceCount)
+		{
+			letter[0] = this->replaced.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->replaced.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Replace(k, glyph);
+			k++;
+			i++;
+		}
+
+		//남은 길이만큼 추가한다.
+		while (i < replacedCount)
+		{
+			letter[0] = this->replaced.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->replaced.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Add(k, glyph);
+			k++;
+			i++;
+		}
+	}
+	else // 교체 문자열이 더 짧거나 같으면,
+	{
+		//교체 문자열 길이만큼 교체한다.
+		while (i < replacedCount)
+		{
+			letter[0] = this->replaced.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->replaced.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Replace(k, glyph);
+			k++;
+			j++;
+			i++;
+		}
+		
+		//남은 길이만큼 삭제한다.
+		j = 1;
+		while (j <= sourceCount - replacedCount && row->GetLength() > k)
+		{
+			row->Remove(k);
+			j++;
+		}
+	}
+	row->Move(k);
+
+	//4. 페이징 버퍼에서 교체한다.
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	if (this->source.GetLength() < this->replaced.GetLength())
+	{
+		pagingBuffer->Replace(currentOffset, this->replaced.Left(this->source.GetLength()));
+		pagingBuffer->Add(this->replaced.Right(this->replaced.GetLength() - this->source.GetLength()));
 	}
 	else
 	{
-		pagingBuffer->Replace(replaceStartOffset, replaceString.Left(findString.GetLength()));
-		pagingBuffer->Add(replaceString.Right(replaceString.GetLength() - findString.GetLength()));
+		pagingBuffer->Replace(currentOffset, this->replaced);
+		pagingBuffer->Remove(currentOffset + this->source.GetLength());
 	}
 
-	//3. 이후 검색결과들에 길이변화를 반영한다.
-	Long difference = replaceString.GetLength() - findString.GetLength();
+	//5. 이후 검색결과들에 편차를 반영한다.
+	Long difference = this->replaced.GetLength() - this->source.GetLength();
 	SearchResult searchResult;
-	i = currentSearchIndex + 1;
+	i = searchResultController->GetCurrent() + 1;
 	while (i < searchResultController->GetLength())
 	{
 		searchResult = searchResultController->GetAt(i);
 		searchResultController->Replace(i, searchResult.OffsetBy(difference));
 		i++;
 	}
-
-	//4. 선택을 취소한다.
+	
+	//6. 선택을 취소한다.
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
 	note->Select(false);
 
-	//5. 클라이언트 영역을 갱신한다.
+	//7. 클라이언트 영역을 갱신한다.
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }
@@ -127,9 +176,13 @@ void ReplaceCommand::Undo() {
 }
 
 UINT ReplaceCommand::GetId() {
-	return 0;
+	return ID_COMMAND_REPLACE;
 }
 
 Command* ReplaceCommand::Clone() {
-	return 0;
+	return new ReplaceCommand(*this);
+}
+
+bool ReplaceCommand::IsUndoable() {
+	return true;
 }

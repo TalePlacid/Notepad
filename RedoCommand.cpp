@@ -18,11 +18,11 @@ void RedoCommand::Execute() {
 	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 	if (!redoHistoryBook->IsEmpty())
 	{
-		//History history = redoHistoryBook->Pop();
-		//history.Execute();
+		Command* history = redoHistoryBook->Pop();
+		history->Execute();
 
 		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
-		//undoHistoryBook->Push(history);
+		undoHistoryBook->Push(history);
 
 		((NotepadForm*)(this->parent))->Notify("CreateScrollBars");
 		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");

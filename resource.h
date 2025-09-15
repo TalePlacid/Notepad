@@ -42,6 +42,7 @@
 #define ID_COMMAND_INSERTATCARET		50007
 #define ID_COMMAND_UNDO					50008
 #define ID_COMMAND_REDO					50009
+#define ID_COMMAND_REPLACE				50010
 
 // Next default values for new elements
 // 

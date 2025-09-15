@@ -10,6 +10,23 @@ ByteChecker::~ByteChecker() {
 
 }
 
+Long ByteChecker::CountCharacters(CString str) {
+	Long count = 0;
+	Long i = 0;
+	while (i < str.GetLength())
+	{
+		if (str.GetAt(i) & 0x80 || str.GetAt(i) == '\r')
+		{
+			i++;
+		}
+
+		count++;
+		i++;
+	}
+
+	return count;
+}
+
 bool ByteChecker::IsASCII(char character) {
 	return static_cast<unsigned char>(character) <= 0x7F;
 }

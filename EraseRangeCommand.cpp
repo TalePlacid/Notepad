@@ -183,9 +183,9 @@ void EraseRangeCommand::Undo() {
 		else
 		{
 			glyph = glyphFactory.Create(character);
-			glyph->Select(true);
 			if (character[0] != '\r')
 			{
+				glyph->Select(true);
 				row->Add(columnIndex, glyph);
 				columnIndex = row->GetCurrent();
 			}
