@@ -91,6 +91,7 @@ void ReplaceCommand::Execute() {
 
 			row->Replace(k, glyph);
 			k++;
+			j++;
 			i++;
 		}
 
@@ -106,6 +107,7 @@ void ReplaceCommand::Execute() {
 
 			row->Add(k, glyph);
 			k++;
+			j++;
 			i++;
 		}
 	}
@@ -172,7 +174,112 @@ void ReplaceCommand::Execute() {
 }
 
 void ReplaceCommand::Undo() {
+	//1. 위치로 이동한다.
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->offset);
+	if (!pagingBuffer->IsOnPage(this->offset))
+	{
+		pagingBuffer->Load();
+	}
+
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	markingHelper.Mark();
+
+	//2. 노트에서 교체한다.
+	ByteChecker byteChecker;
+	GlyphFactory glyphFactory;
+	Glyph* glyph;
+	Long sourceCount = byteChecker.CountCharacters(this->source);
+	Long replacedCount = byteChecker.CountCharacters(this->replaced);
+	TCHAR letter[2];
+	Long k = columnIndex;
+	Long j = 0;
+	Long i = 0;
+	if (sourceCount <= replacedCount)
+	{
+		while (i < sourceCount)
+		{
+			letter[0] = this->source.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->source.GetAt(++j);
+			}
+			GlyphFactory glyphFactory;
+			glyph = glyphFactory.Create(letter);
+
+			row->Replace(k, glyph);
+			row->GetAt(k)->Select(true);
+			k++;
+			j++;
+			i++;
+		}
+
+		j = 1;
+		while (j <= replacedCount - sourceCount && row->GetLength() > k)
+		{
+			row->Remove(k);
+			j++;
+		}
+	}
+	else
+	{
+		while (i < sourceCount)
+		{
+			letter[0] = this->source.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->source.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Replace(k, glyph);
+			row->GetAt(k)->Select(true);
+			k++;
+			j++;
+			i++;
+		}
+
+		while (i < replacedCount)
+		{
+			letter[0] = this->replaced.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->replaced.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Add(k, glyph);
+			row->GetAt(k)->Select(true);
+			k++;
+			j++;
+			i++;
+		}
+	}
+	row->Move(k);
+
+	//3. 페이징버퍼에서 교체한다.
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	if (this->source.GetLength() <= this->replaced.GetLength())
+	{
+		pagingBuffer->Replace(currentOffset, this->source);
+		pagingBuffer->Remove(currentOffset + this->replaced.GetLength());
+	}
+	else
+	{
+		pagingBuffer->Replace(currentOffset, this->source.Left(this->source.GetLength()));
+		pagingBuffer->Add(this->source.Right(this->replaced.GetLength() - this->source.GetLength()));
+	}
+
+	//4. 클라이언트 영역을 갱신한다.
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
+	this->parent->Invalidate();
 }
 
 UINT ReplaceCommand::GetId() {

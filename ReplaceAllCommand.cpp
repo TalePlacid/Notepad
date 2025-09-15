@@ -8,6 +8,7 @@
 #include "NotepadForm.h"
 #include "SearchResultController.h"
 #include "PagingBuffer.h"
+#include "HistoryBook.h"
 
 #pragma warning(disable:4996)
 
@@ -48,6 +49,7 @@ void ReplaceAllCommand::Execute() {
 		if (command != NULL)
 		{
 			command->Execute();
+			((NotepadForm*)(this->parent))->undoHistoryBook->Push(command);
 			command = NULL;
 		}
 
@@ -55,6 +57,7 @@ void ReplaceAllCommand::Execute() {
 		if (command != NULL)
 		{
 			command->Execute();
+			delete command;
 			command = NULL;
 		}
 

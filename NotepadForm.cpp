@@ -148,6 +148,10 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 				command = this->undoHistoryBook->Bind(command);
 				this->undoHistoryBook->Push(command);
 			}
+			else
+			{
+				delete command;
+			}
 		}
 
 		this->note->Select(false);
@@ -305,6 +309,10 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
 		}
+		else
+		{
+			delete command;
+		}
 	}
 
 	this->note->Select(false);
@@ -346,6 +354,10 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		{
 			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
+		}
+		else
+		{
+			delete command;
 		}
 	}
 	this->Notify("CreateScrollBars");
@@ -395,7 +407,14 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	if (command != NULL)
 	{
 		command->Execute();
-		delete command;
+		if (command->IsUndoable())
+		{
+			this->undoHistoryBook->Push(command);
+		}
+		else
+		{
+			delete command;
+		}
 	}
 
 	return 0;

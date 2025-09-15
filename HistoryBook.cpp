@@ -2,6 +2,7 @@
 #include "HistoryBook.h"
 #include "Command.h"
 #include "MacroCommand.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
