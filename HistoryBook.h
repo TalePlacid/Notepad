@@ -16,7 +16,7 @@ public:
 	HistoryBook& operator=(const HistoryBook& source);
 
 	Command* Bind(Command* command);
-	Long Update(Command* command);
+	Long Update(Command* command, Long difference);
 	Command** Push(Command* history);
 	Command* Pop();
 	bool IsEmpty();

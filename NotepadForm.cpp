@@ -409,6 +409,9 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
+			Long difference =  command->GetReplaced().GetLength() - command->GetSource().GetLength();
+			this->undoHistoryBook->Update(command, difference);
+			this->redoHistoryBook->Update(command, difference);
 			this->undoHistoryBook->Push(command);
 		}
 		else

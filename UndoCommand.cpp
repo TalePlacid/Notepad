@@ -2,6 +2,7 @@
 #include "UndoCommand.h"
 #include "NotepadForm.h"
 #include "HistoryBook.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -20,7 +21,15 @@ void UndoCommand::Execute() {
 	{
 		Command* history = undoHistoryBook->Pop();
 		history->Undo();
-		((NotepadForm*)(this->parent))->redoHistoryBook->Push(history);
+		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
+		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
+		if (history->GetId() == ID_COMMAND_REPLACE)
+		{
+			Long difference = history->GetSource().GetLength() - history->GetReplaced().GetLength();
+			undoHistoryBook->Update(history, difference);
+			redoHistoryBook->Update(history, difference);
+		}
+		redoHistoryBook->Push(history);
 	}
 
 	((NotepadForm*)(this->parent))->Notify("CreateScrollBars");

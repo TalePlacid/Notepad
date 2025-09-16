@@ -49,7 +49,12 @@ void ReplaceAllCommand::Execute() {
 		if (command != NULL)
 		{
 			command->Execute();
-			((NotepadForm*)(this->parent))->undoHistoryBook->Push(command);
+			HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
+			HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
+			Long difference = command->GetReplaced().GetLength() - command->GetSource().GetLength();
+			undoHistoryBook->Update(command, difference);
+			redoHistoryBook->Update(command, difference);
+			undoHistoryBook->Push(command);
 			command = NULL;
 		}
 

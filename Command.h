@@ -19,6 +19,10 @@ public:
 	virtual Command* GetAt(Long index);
 	virtual bool IsMacroCommand();
 	virtual UINT GetId();
+	virtual Long GetOffset();
+	virtual CString GetSource();
+	virtual CString GetReplaced();
+	virtual void Update(Long difference);
 
 	virtual CWnd* GetParent() const;
 protected:

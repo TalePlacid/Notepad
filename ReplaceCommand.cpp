@@ -175,9 +175,6 @@ void ReplaceCommand::Execute() {
 
 void ReplaceCommand::Undo() {
 	//1. 위치로 이동한다.
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
-
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->MoveOffset(this->offset);
 	if (!pagingBuffer->IsOnPage(this->offset))
@@ -189,6 +186,10 @@ void ReplaceCommand::Undo() {
 	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
+	note->Select(false);
 
 	markingHelper.Mark();
 
@@ -230,7 +231,7 @@ void ReplaceCommand::Undo() {
 	}
 	else
 	{
-		while (i < sourceCount)
+		while (i < replacedCount)
 		{
 			letter[0] = this->source.GetAt(j);
 			if (byteChecker.IsLeadByte(letter[0]))
@@ -246,12 +247,12 @@ void ReplaceCommand::Undo() {
 			i++;
 		}
 
-		while (i < replacedCount)
+		while (i < sourceCount)
 		{
-			letter[0] = this->replaced.GetAt(j);
+			letter[0] = this->source.GetAt(j);
 			if (byteChecker.IsLeadByte(letter[0]))
 			{
-				letter[1] = this->replaced.GetAt(++j);
+				letter[1] = this->source.GetAt(++j);
 			}
 			glyph = glyphFactory.Create(letter);
 
@@ -292,4 +293,20 @@ Command* ReplaceCommand::Clone() {
 
 bool ReplaceCommand::IsUndoable() {
 	return true;
+}
+
+void ReplaceCommand::Update(Long difference) {
+	this->offset += difference;
+}
+
+Long ReplaceCommand::GetOffset() {
+	return this->offset;
+}
+
+CString ReplaceCommand::GetSource() {
+	return this->source;
+}
+
+CString ReplaceCommand::GetReplaced() {
+	return this->replaced;
 }

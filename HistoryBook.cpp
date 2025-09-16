@@ -45,6 +45,40 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 	return *this;
 }
 
+Long HistoryBook::Update(Command* command, Long difference) {
+	Command* (*commands) = new Command * [this->capacity];
+	Long count = 0;
+	Long i = 0;
+	while (!this->histories.IsEmpty() 
+		&& this->histories.Peek()->GetElement()->GetId() == ID_COMMAND_REPLACE)
+	{
+		DropOldestStack<Command*>::Node node = this->histories.Pop();
+		Command* top = node.GetElement();
+		if (top->GetSource() == command->GetSource() && top->GetReplaced() == command->GetReplaced()
+			&& top->GetOffset() > command->GetOffset())
+		{
+			top->Update(difference);
+		}
+		commands[i] = top;
+		i++;
+		count++;
+	}
+
+	i = count - 1;
+	while (i >= 0)
+	{
+		this->histories.Push(commands[i]);
+		i--;
+	}
+
+	if (commands != NULL)
+	{
+		delete commands;
+	}
+
+	return count;
+}
+
 Command* HistoryBook::Bind(Command* command) {
 	Command* history = command;
 	DateTime now = DateTime::Now();
@@ -89,6 +123,17 @@ Command** HistoryBook::Push(Command* history) {
 		(this->length)++;
 	}
 	this->latestPushTime = DateTime::Now();
+
+	DropOldestStack<Command*>::Node* ret = this->histories.GetBottom();
+	Long offset;
+	Long i = 0;
+	while (ret != NULL)
+	{
+		offset = ret->GetElement()->GetOffset();
+		TRACE("%ld: %ld\n", i, offset);
+		i++;
+		ret = ret->GetNext();
+	}
 
 	return &node->GetElement();
 }

@@ -2,6 +2,7 @@
 #include "RedoCommand.h"
 #include "NotepadForm.h"
 #include "HistoryBook.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -22,6 +23,13 @@ void RedoCommand::Execute() {
 		history->Execute();
 
 		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
+		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
+		if (history->GetId() == ID_COMMAND_REPLACE)
+		{
+			Long difference = history->GetReplaced().GetLength() - history->GetSource().GetLength();
+			undoHistoryBook->Update(history, difference);
+			redoHistoryBook->Update(history, difference);
+		}
 		undoHistoryBook->Push(history);
 
 		((NotepadForm*)(this->parent))->Notify("CreateScrollBars");

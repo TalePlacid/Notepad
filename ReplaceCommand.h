@@ -17,6 +17,10 @@ public:
 	virtual Command* Clone();
 	virtual UINT GetId();
 	virtual bool IsUndoable();
+	virtual void Update(Long difference);
+	virtual Long GetOffset();
+	virtual CString GetSource();
+	virtual CString GetReplaced();
 private:
 	Long offset;
 	CString source;

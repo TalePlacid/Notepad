@@ -47,3 +47,19 @@ bool Command::IsMacroCommand() {
 UINT Command::GetId() {
 	return 0;
 }
+
+void Command::Update(Long difference) {
+
+}
+
+Long Command::GetOffset() {
+	return -1;
+}
+
+CString Command::GetSource() {
+	return CString("");
+}
+
+CString Command::GetReplaced() {
+	return CString("");
+}
