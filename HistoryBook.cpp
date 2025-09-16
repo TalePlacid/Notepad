@@ -124,17 +124,6 @@ Command** HistoryBook::Push(Command* history) {
 	}
 	this->latestPushTime = DateTime::Now();
 
-	DropOldestStack<Command*>::Node* ret = this->histories.GetBottom();
-	Long offset;
-	Long i = 0;
-	while (ret != NULL)
-	{
-		offset = ret->GetElement()->GetOffset();
-		TRACE("%ld: %ld\n", i, offset);
-		i++;
-		ret = ret->GetNext();
-	}
-
 	return &node->GetElement();
 }
 
