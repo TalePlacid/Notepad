@@ -11,8 +11,8 @@
 #pragma warning(disable:4996)
 
 FindNextCommand::FindNextCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog)
-	:FindReplaceCommand(parent, findReplaceDialog) {
-
+	:Command(parent) {
+	this->findReplaceDialog = findReplaceDialog;
 }
 
 FindNextCommand::~FindNextCommand() {

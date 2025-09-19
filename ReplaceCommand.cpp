@@ -13,7 +13,8 @@
 #pragma warning(disable:4996)
 
 ReplaceCommand::ReplaceCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog)
-	:FindReplaceCommand(parent, findReplaceDialog), source(""), replaced("") {
+	:Command(parent), source(""), replaced("") {
+	this->findReplaceDialog = findReplaceDialog;
 	this->offset = -1;
 }
 
@@ -22,15 +23,17 @@ ReplaceCommand::~ReplaceCommand() {
 }
  
 ReplaceCommand::ReplaceCommand(const ReplaceCommand& source)
-	:FindReplaceCommand(parent, findReplaceDialog) {
+	:Command(parent) {
+	this->findReplaceDialog = source.findReplaceDialog;
 	this->offset = source.offset;
 	this->source = source.source;
 	this->replaced = source.replaced;
 }
 
 ReplaceCommand& ReplaceCommand::operator=(const ReplaceCommand& source) {
-	FindReplaceCommand::operator=(source);
+	Command::operator=(source);
 
+	this->findReplaceDialog = source.findReplaceDialog;
 	this->offset = source.offset;
 	this->source = source.source;
 	this->replaced = source.replaced;

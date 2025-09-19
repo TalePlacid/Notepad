@@ -108,3 +108,19 @@ UINT MacroCommand::GetId() {
 Command* MacroCommand::operator[](Long index) {
 	return this->commands[index];
 }
+
+Long MacroCommand::GetOffset() {
+	return this->commands[this->length - 1]->GetOffset();
+}
+
+CString MacroCommand::GetSource() {
+	return this->commands[0]->GetSource();
+}
+
+CString MacroCommand::GetReplaced() {
+	return this->commands[0]->GetReplaced();
+}
+
+void MacroCommand::Update(Long difference) {
+
+}

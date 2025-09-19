@@ -174,8 +174,6 @@
     <ClInclude Include="FilePointerCalculator.h" />
     <ClInclude Include="FindCommand.h" />
     <ClInclude Include="FindNextCommand.h" />
-    <ClInclude Include="FindNextCommand_Fixed.h" />
-    <ClInclude Include="FindReplaceCommand.h" />
     <ClInclude Include="FindReplaceCommandFactory.h" />
     <ClInclude Include="FindReplaceOption.h" />
     <ClInclude Include="Font.h" />
@@ -293,7 +291,6 @@
     <ClCompile Include="FilePointerCalculator.cpp" />
     <ClCompile Include="FindCommand.cpp" />
     <ClCompile Include="FindNextCommand.cpp" />
-    <ClCompile Include="FIndReplaceCommand.cpp" />
     <ClCompile Include="FindReplaceCommandFactory.cpp" />
     <ClCompile Include="FindReplaceOption.cpp" />
     <ClCompile Include="Font.cpp" />

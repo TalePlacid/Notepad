@@ -20,7 +20,8 @@ using namespace std;
 #pragma warning(disable:4996)
 
 FindCommand::FindCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog)
-	:FindReplaceCommand(parent, findReplaceDialog) {
+	:Command(parent) {
+	this->findReplaceDialog = findReplaceDialog;
 }
 
 FindCommand::~FindCommand() {

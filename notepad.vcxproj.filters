@@ -320,9 +320,6 @@
     <ClInclude Include="message.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="FindReplaceCommand.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="FindReplaceCommandFactory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -333,9 +330,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CloseFindReplaceCommand.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="FindNextCommand_Fixed.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="FindReplaceOption.h">
@@ -668,9 +662,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SearchResultController.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="FIndReplaceCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="FindReplaceCommandFactory.cpp">

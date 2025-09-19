@@ -1,3 +1,4 @@
+#include <afxdlgs.h>
 #include "resource.h"
 #include "CommandFactory.h"
 #include "SelectFontCommand.h"
@@ -25,7 +26,7 @@ CommandFactory::~CommandFactory() {
 
 }
 
-Command* CommandFactory::Create(CWnd* parent, UINT nID) {
+Command* CommandFactory::Create(CWnd* parent, UINT nID, CFindReplaceDialog* findReplaceDialog) {
 	Command* command = NULL;
 
 	switch (nID)

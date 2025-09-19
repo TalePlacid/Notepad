@@ -1,11 +1,11 @@
 #ifndef _REPLACECOMMAND_H //guard
 #define _REPLACECOMMAND_H
 #include <afxwin.h>
-#include "FindReplaceCommand.h"
+#include "Command.h"
 
 class CFindReplaceDialog;
 
-class ReplaceCommand : public FindReplaceCommand {
+class ReplaceCommand : public Command {
 public:
 	ReplaceCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog);
 	virtual ~ReplaceCommand();
@@ -22,6 +22,7 @@ public:
 	virtual CString GetSource();
 	virtual CString GetReplaced();
 private:
+	CFindReplaceDialog* findReplaceDialog;
 	Long offset;
 	CString source;
 	CString replaced;

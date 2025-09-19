@@ -3,13 +3,10 @@
 #include "NotepadForm.h"
 #include "FindReplaceOption.h"
 #include "Command.h"
-#include "FindCommand.h"
-#include "FindNextCommand.h"
-#include "CloseFindReplaceCommand.h"
 #include "SearchResultController.h"
-#include "ReplaceCommand.h"
 #include "PagingBuffer.h"
-#include "ReplaceAllCommand.h"
+#include "CommandFactory.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -22,6 +19,7 @@ FindReplaceCommandFactory::~FindReplaceCommandFactory() {
 }
 
 Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* findReplaceDialog) {
+	CommandFactory commandFactory;
 	Command* command = NULL;
 
 	FindReplaceOption findReplaceOption(findReplaceDialog->GetFindString(),
@@ -31,37 +29,40 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	FindReplaceOption searchedOption(CString(searchResultController->GetKey().c_str()), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
+	UINT nID;
 	if (findReplaceDialog->IsTerminating())
 	{
-		command = new CloseFindReplaceCommand(parent, findReplaceDialog);
+		nID = ID_COMMAND_CLOSEFINDREPLACE;
 	}
 	else if (findReplaceDialog->ReplaceAll())
 	{
-		command = new ReplaceAllCommand(parent, findReplaceDialog);
+		nID = ID_COMMAND_REPLACEALL;
 	}
 	else if (findReplaceDialog->ReplaceCurrent())
 	{
 		if (findReplaceOption != searchedOption)
 		{
-			command = new FindCommand(parent, findReplaceDialog);
+			nID = ID_COMMAND_FIND;
 		}
 		else if (pagingBuffer->GetSelectionBeginOffset() < 0)
 		{
-			command = new FindNextCommand(parent, findReplaceDialog);
+			nID = ID_COMMAND_FINDNEXT;
 		}
 		else
 		{
-			command = new ReplaceCommand(parent, findReplaceDialog);
+			nID = ID_COMMAND_REPLACE;
 		}
 	}
 	else if (findReplaceOption != searchedOption)
 	{
-		command = new FindCommand(parent, findReplaceDialog);
+		nID = ID_COMMAND_FIND;
 	}
 	else if (findReplaceOption == searchedOption)
 	{
-		command = new FindNextCommand(parent, findReplaceDialog);
+		nID = ID_COMMAND_FINDNEXT;
 	}
+
+	command = commandFactory.Create(parent, nID, findReplaceDialog);
 
 	return command;
 }

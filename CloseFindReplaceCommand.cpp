@@ -6,8 +6,8 @@
 #pragma warning(disable:4996)
 
 CloseFindReplaceCommand::CloseFindReplaceCommand(CWnd* parent, CFindReplaceDialog* findReplaceDialog)
-	:FindReplaceCommand(parent, findReplaceDialog) {
-
+	:Command(parent) {
+	this->findReplaceDialog = findReplaceDialog;
 }
 
 CloseFindReplaceCommand::~CloseFindReplaceCommand() {

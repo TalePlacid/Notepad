@@ -6,8 +6,6 @@
 
 typedef signed long int Long;
 
-class CWnd;
-
 class MacroCommand : public Command {
 public:
 	MacroCommand(CWnd* parent, Long capacity = 64);
@@ -21,6 +19,10 @@ public:
 	virtual Command* GetAt(Long index);
 	virtual bool IsMacroCommand();
 	virtual UINT GetId();
+	virtual Long GetOffset();
+	virtual CString GetSource();
+	virtual CString GetReplaced();
+	virtual void Update(Long difference);
 
 	Long GetCapacity() const;
 	Long GetLength() const;

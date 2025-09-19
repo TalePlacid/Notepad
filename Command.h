@@ -23,14 +23,18 @@ public:
 	virtual CString GetSource();
 	virtual CString GetReplaced();
 	virtual void Update(Long difference);
-
 	virtual CWnd* GetParent() const;
+	virtual Long GetLength() const;
 protected:
 	CWnd* parent;
 };
 
 inline CWnd* Command::GetParent() const {
 	return const_cast<CWnd*>(this->parent);
+}
+
+inline Long Command::GetLength() const {
+	return 0;
 }
 
 #endif // !_COMMAND_H

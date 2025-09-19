@@ -43,6 +43,10 @@
 #define ID_COMMAND_UNDO					50008
 #define ID_COMMAND_REDO					50009
 #define ID_COMMAND_REPLACE				50010
+#define ID_COMMAND_CLOSEFINDREPLACE		50011
+#define ID_COMMAND_REPLACEALL			50012
+#define ID_COMMAND_FIND					50013
+#define ID_COMMAND_FINDNEXT				50014
 
 // Next default values for new elements
 // 
