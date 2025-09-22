@@ -44,6 +44,7 @@ void ReplaceAllCommand::Execute() {
 	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	TRACE("[Execute]\n");
 	Long i = 0;
 	while (i < searchResultController->GetLength())
 	{
@@ -51,6 +52,7 @@ void ReplaceAllCommand::Execute() {
 		if (command != NULL)
 		{
 			command->Execute();
+			TRACE("%ld\n", command->GetOffset());
 			undoHistoryBook->Update(command, true);
 			redoHistoryBook->Update(command, true);
 			this->Add(command);
@@ -67,22 +69,25 @@ void ReplaceAllCommand::Execute() {
 
 		i++;
 	}
-
+	
 	CString message;
 	message.Format("%ld개를 바꾸었습니다.", this->length);
 	this->parent->MessageBox(message);
 }
 
 void ReplaceAllCommand::Undo() {
+	TRACE("[Undo]\n");
 	Long j;
 	Long i = this->length - 1;
 	while (i >= 0)
 	{
 		this->commands[i]->Undo();
+		TRACE("%ld\n", this->commands[i]->GetOffset());
 		j = i + 1;
 		while (j < this->length)
 		{
 			this->commands[j]->Update(this->commands[i], false);
+			TRACE("\t%d, %ld\n", j, this->commands[j]->GetOffset());
 			j++;
 		}
 		i--;
@@ -90,7 +95,27 @@ void ReplaceAllCommand::Undo() {
 }
 
 void ReplaceAllCommand::Redo() {
-
+	TRACE("[Redo]\n");
+	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
+	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
+	Command* command;
+	Long j;
+	Long i = 0;
+	while (i < this->length)
+	{
+		command = this->commands.GetAt(i);
+		command->Redo();
+		TRACE("%ld\n", command->GetOffset());
+		j = i + 1;
+		while (j < this->length)
+		{
+			this->commands[j]->Update(command, true);
+			j++;
+		}
+;		undoHistoryBook->Update(command, true);
+		redoHistoryBook->Update(command, true);
+		i++;
+	}
 }
 
 void ReplaceAllCommand::Update(Command* command, bool isDone) {
@@ -100,6 +125,10 @@ void ReplaceAllCommand::Update(Command* command, bool isDone) {
 		this->commands[i]->Update(command, isDone);
 		i++;
 	}
+}
+
+bool ReplaceAllCommand::IsUndoable() {
+	return true;
 }
 
 CString ReplaceAllCommand::GetSource() {

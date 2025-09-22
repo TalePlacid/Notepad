@@ -15,6 +15,7 @@ public:
 	virtual void Undo();
 	virtual void Redo();
 	virtual void Update(Command* command, bool isDone);
+	virtual bool IsUndoable();
 	virtual CString GetSource();
 	virtual CString GetReplaced();
 private:
