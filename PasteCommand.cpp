@@ -61,22 +61,25 @@ void PasteCommand::Execute() {
 				letters[1] = this->contents.GetAt(++i);
 			}
 
-			glyph = glyphFactory.Create(letters);
 			if (letters[0] != '\r')
 			{
+				glyph = glyphFactory.Create(letters);
 				columnIndex = row->Add(columnIndex, glyph);
 				pagingBuffer->Add((char*)(*glyph));
 			}
 			else
 			{
-				rowIndex = note->Add(rowIndex + 1, glyph);
-				pagingBuffer->Add(letters);
+				note->SplitRows(rowIndex, columnIndex);
+				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
+				columnIndex = row->First();
+
+				pagingBuffer->Add(letters);
 			}
 			columnIndex = row->GetCurrent();
 			i++;
 		}
-
+		
 		if (!pagingBuffer->IsAboveBottomLine())
 		{
 			pagingBuffer->Load();
@@ -118,10 +121,11 @@ void PasteCommand::Undo() {
 	{
 		row->TruncateAfter(columnIndex);
 		
-		i = 0;
-		while (i < count - 1 && note->GetLength() > rowIndex + 1)
+		i = 1;
+		while (i < count && note->GetLength() - 1 > rowIndex + 1)
 		{
 			note->Remove(rowIndex+1);
+			i++;
 		}
 
 		if (rowIndex + 1 < note->GetLength())
@@ -140,11 +144,11 @@ void PasteCommand::Undo() {
 			}
 
 			row->TruncateBefore(index);
+			note->MergeRows(rowIndex);
 		}
 	}
 	else
 	{
-		Long glyphCount = 0;
 		i = 0;
 		while (i < this->contents.GetLength() && row->GetLength() > columnIndex)
 		{
@@ -170,11 +174,12 @@ void PasteCommand::Redo() {
 	{
 		pagingBuffer->Load();
 	}
+
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
-	
+
 	TCHAR letters[2];
 	Glyph* glyph;
 	GlyphFactory glyphFactory;
@@ -189,17 +194,20 @@ void PasteCommand::Redo() {
 			letters[1] = this->contents.GetAt(++i);
 		}
 
-		glyph = glyphFactory.Create(letters);
 		if (letters[0] != '\r')
 		{
+			glyph = glyphFactory.Create(letters);
 			columnIndex = row->Add(columnIndex, glyph);
 			pagingBuffer->Add((char*)(*glyph));
 		}
 		else
 		{
-			rowIndex = note->Add(rowIndex + 1, glyph);
-			pagingBuffer->Add(letters);
+			note->SplitRows(rowIndex, columnIndex);
+			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
+
+			pagingBuffer->Add(letters);
 		}
 		columnIndex = row->GetCurrent();
 		i++;
