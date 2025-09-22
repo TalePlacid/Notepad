@@ -45,7 +45,7 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 	return *this;
 }
 
-Long HistoryBook::Update(Command* command, Long difference) {
+Long HistoryBook::Update(Command* command, bool isDone) {
 	Command* (*commands) = new Command * [this->capacity];
 	Long count = 0;
 	Long i = 0;
@@ -54,10 +54,9 @@ Long HistoryBook::Update(Command* command, Long difference) {
 	{
 		DropOldestStack<Command*>::Node node = this->histories.Pop();
 		Command* top = node.GetElement();
-		if (top->GetSource() == command->GetSource() && top->GetReplaced() == command->GetReplaced()
-			&& top->GetOffset() > command->GetOffset())
+		if (top->GetSource() == command->GetSource() && top->GetReplaced() == command->GetReplaced())
 		{
-			top->Update(difference);
+			top->Update(command, isDone);
 		}
 		commands[i] = top;
 		i++;

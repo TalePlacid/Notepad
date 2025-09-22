@@ -29,7 +29,7 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	FindReplaceOption searchedOption(CString(searchResultController->GetKey().c_str()), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
-	UINT nID;
+	UINT nID = 0;
 	if (findReplaceDialog->IsTerminating())
 	{
 		nID = ID_COMMAND_CLOSEFINDREPLACE;

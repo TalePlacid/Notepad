@@ -2,14 +2,13 @@
 #include <afxdlgs.h>
 #include "ReplaceAllCommand.h"
 #include "Command.h"
-#include "FindCommand.h"
-#include "FindNextCommand.h"
-#include "ReplaceCommand.h"
 #include "NotepadForm.h"
 #include "SearchResultController.h"
 #include "PagingBuffer.h"
 #include "HistoryBook.h"
 #include "MacroCommand.h"
+#include "CommandFactory.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -33,7 +32,8 @@ void ReplaceAllCommand::Execute() {
 	}
 	((NotepadForm*)(this->parent))->searchResultController = new SearchResultController;
 
-	Command* command = new FindCommand(this->parent, this->findReplaceDialog);
+	CommandFactory commandFactory;
+	Command* command = commandFactory.Create(this->parent, ID_COMMAND_FIND, this->findReplaceDialog);
 	if (command != NULL)
 	{
 		command->Execute();
@@ -41,20 +41,23 @@ void ReplaceAllCommand::Execute() {
 		command = NULL;
 	}
 
+	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
+	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-	Command* history = new MacroCommand(this->parent);
 	Long i = 0;
 	while (i < searchResultController->GetLength())
 	{
-		command = new ReplaceCommand(this->parent, this->findReplaceDialog);
+		command = commandFactory.Create(this->parent, ID_COMMAND_REPLACE, this->findReplaceDialog);
 		if (command != NULL)
 		{
 			command->Execute();
-			history->Add(command);
+			undoHistoryBook->Update(command, true);
+			redoHistoryBook->Update(command, true);
+			this->Add(command);
 			command = NULL;
 		}
 
-		command = new FindNextCommand(this->parent, this->findReplaceDialog);
+		command = commandFactory.Create(this->parent, ID_COMMAND_FINDNEXT, this->findReplaceDialog);
 		if (command != NULL)
 		{
 			command->Execute();
@@ -65,25 +68,44 @@ void ReplaceAllCommand::Execute() {
 		i++;
 	}
 
-	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
-	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
-	Long difference = history->GetReplaced().GetLength() - history->GetSource().GetLength();
+	CString message;
+	message.Format("%ld개를 바꾸었습니다.", this->length);
+	this->parent->MessageBox(message);
+}
 
-#if 0
-	i = 0;
-	while (i < this->length)
+void ReplaceAllCommand::Undo() {
+	Long j;
+	Long i = this->length - 1;
+	while (i >= 0)
 	{
-		findCommand = this->commands[i]
-		undoHistoryBook->Update(findCommand, difference);
-		redoHistoryBook->Update(findCommand, difference);
+		this->commands[i]->Undo();
+		j = i + 1;
+		while (j < this->length)
+		{
+			this->commands[j]->Update(this->commands[i], false);
+			j++;
+		}
+		i--;
+	}
+}
+
+void ReplaceAllCommand::Redo() {
+
+}
+
+void ReplaceAllCommand::Update(Command* command, bool isDone) {
+	Long i = 0;
+	while (i < this->length && this->commands[i]->GetOffset() > command->GetOffset())
+	{
+		this->commands[i]->Update(command, isDone);
 		i++;
 	}
-#endif
-	undoHistoryBook->Update(history, difference);
-	redoHistoryBook->Update(history, difference);
-	undoHistoryBook->Push(history);
+}
 
-	CString message;
-	message.Format("%ld개를 바꾸었습니다.", history->GetLength());
-	this->parent->MessageBox(message);
+CString ReplaceAllCommand::GetSource() {
+	return this->commands[0]->GetSource();
+}
+
+CString ReplaceAllCommand::GetReplaced() {
+	return this->commands[0]->GetReplaced();
 }

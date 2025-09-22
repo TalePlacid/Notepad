@@ -77,6 +77,15 @@ void MacroCommand::Undo() {
 	}
 }
 
+void MacroCommand::Redo() {
+	Long i = 0;
+	while (i < this->length)
+	{
+		this->commands[i]->Redo();
+		i++;
+	}
+}
+
 Long MacroCommand::Add(Command* command) {
 	Long index = -1;
 	if (this->length < this->capacity)
@@ -107,20 +116,4 @@ UINT MacroCommand::GetId() {
 
 Command* MacroCommand::operator[](Long index) {
 	return this->commands[index];
-}
-
-Long MacroCommand::GetOffset() {
-	return this->commands[this->length - 1]->GetOffset();
-}
-
-CString MacroCommand::GetSource() {
-	return this->commands[0]->GetSource();
-}
-
-CString MacroCommand::GetReplaced() {
-	return this->commands[0]->GetReplaced();
-}
-
-void MacroCommand::Update(Long difference) {
-
 }

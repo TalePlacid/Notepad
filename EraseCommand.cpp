@@ -34,30 +34,12 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 }
 
 void EraseCommand::Execute() {
-	Glyph* note;
-	Glyph* row;
-	Long rowIndex;
-	Long columnIndex;
-	
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (this->offset >= 0)
-	{
-		pagingBuffer->MoveOffset(this->offset);
-		if (!pagingBuffer->IsOnPage(this->offset))
-		{
-			pagingBuffer->Load();
-		}
-		note = ((NotepadForm*)(this->parent))->note;
-		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-		row = note->GetAt(rowIndex);
-		row->Move(pagingBuffer->GetCurrent().GetColumn());
-	}
-
-	note = ((NotepadForm*)(this->parent))->note;
-	rowIndex = note->GetCurrent();
-	row = note->GetAt(rowIndex);
-
-	columnIndex = row->GetCurrent();
 	if (columnIndex > 0)
 	{
 		Glyph* letter = row->GetAt(columnIndex - 1);
@@ -123,6 +105,58 @@ void EraseCommand::Undo() {
 
 	pagingBuffer->Add(character);
 
+	this->offset = pagingBuffer->GetCurrentOffset();
+}
+
+void EraseCommand::Redo() {
+
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->offset);
+	if (!pagingBuffer->IsOnPage(this->offset))
+	{
+		pagingBuffer->Load();
+	}
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Glyph* row = note->GetAt(rowIndex);
+	row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	Long columnIndex = row->GetCurrent();
+	if (columnIndex > 0)
+	{
+		Glyph* letter = row->GetAt(columnIndex - 1);
+		this->character[0] = letter->MakeString()[0];
+		if (letter->IsMultiByteCharacter())
+		{
+			this->character[1] = letter->MakeString()[1];
+		}
+
+		row->Remove(columnIndex - 1);
+		pagingBuffer->Remove();
+	}
+	else
+	{
+		if (rowIndex > 0)
+		{
+			this->character[0] = '\r';
+			this->character[1] = '\n';
+
+			Glyph* previousRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex - 1);
+			Long previousCurrent = previousRow->Last();
+			rowIndex = note->MergeRows(rowIndex - 1);
+			rowIndex = note->Move(rowIndex);
+			row = note->GetAt(rowIndex);
+			row->Move(previousCurrent);
+
+			pagingBuffer->Remove();
+			previousRow->Move(previousCurrent);
+
+			if (!pagingBuffer->IsBelowTopLine())
+			{
+				pagingBuffer->Load();
+			}
+		}
+	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
 

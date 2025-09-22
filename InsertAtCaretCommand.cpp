@@ -51,35 +51,17 @@ void InsertAtCaretCommand::Execute() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
 
-	Glyph* note;
-	Glyph* row;
-	Long rowIndex;
-	Long columnIndex;
-
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (this->offset >= 0)
-	{
-		pagingBuffer->MoveOffset(this->offset);
-		if (!pagingBuffer->IsOnPage(this->offset))
-		{
-			pagingBuffer->Load();
-		}
-		note = ((NotepadForm*)(this->parent))->note;
-		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-		row = note->GetAt(rowIndex);
-		row->Move(pagingBuffer->GetCurrent().GetColumn());
-	}
-
-	note = ((NotepadForm*)(this->parent))->note;
-	rowIndex = note->GetCurrent();
-	row = note->GetAt(rowIndex);
-	columnIndex = row->GetCurrent();
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
 
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
 	}
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (this->character[0] != '\r')
 	{
 		row->Add(row->GetCurrent(), glyph);
@@ -144,6 +126,58 @@ void InsertAtCaretCommand::Undo() {
 	pagingBuffer->Remove();
 
 	this->offset = pagingBuffer->GetCurrentOffset();
+}
+
+void InsertAtCaretCommand::Redo() {
+	GlyphFactory glyphFactory;
+	Glyph* glyph = glyphFactory.Create(this->character);
+
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->offset);
+	if (!pagingBuffer->IsOnPage(this->offset))
+	{
+		pagingBuffer->Load();
+	}
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	if (((NotepadForm*)(this->parent))->IsCompositing())
+	{
+		row->Remove(columnIndex - 1);
+	}
+
+	if (this->character[0] != '\r')
+	{
+		row->Add(row->GetCurrent(), glyph);
+		if (this->onChar)
+		{
+			pagingBuffer->Add(this->character);
+		}
+	}
+	else
+	{
+		this->character[0] = '\r';
+		this->character[1] = '\n';
+
+		if (this->onChar)
+		{
+			pagingBuffer->Add(this->character);
+		}
+
+		rowIndex = note->SplitRows(rowIndex, columnIndex);
+		rowIndex = note->Move(rowIndex);
+		row = note->GetAt(rowIndex);
+		row->First();
+
+		if (!pagingBuffer->IsAboveBottomLine())
+		{
+			pagingBuffer->Load();
+		}
+	}
+	this->offset = pagingBuffer->GetCurrentOffset();
+
 }
 
 Command* InsertAtCaretCommand::Clone() {

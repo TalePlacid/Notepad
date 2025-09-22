@@ -15,6 +15,11 @@
 #include "OpenReplaceDialogCommand.h"
 #include "UndoCommand.h"
 #include "RedoCommand.h"
+#include "ReplaceCommand.h"
+#include "ReplaceAllCommand.h"
+#include "CloseFindReplaceCommand.h"
+#include "FindCommand.h"
+#include "FindNextCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -75,6 +80,21 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, CFindReplaceDialog* find
 		break;
 	case ID_COMMAND_REDO:
 		command = new RedoCommand(parent);
+		break;
+	case ID_COMMAND_REPLACE:
+		command = new ReplaceCommand(parent, findReplaceDialog);
+		break;
+	case ID_COMMAND_CLOSEFINDREPLACE:
+		command = new CloseFindReplaceCommand(parent, findReplaceDialog);
+		break;
+	case ID_COMMAND_REPLACEALL:
+		command = new ReplaceAllCommand(parent, findReplaceDialog);
+		break;
+	case ID_COMMAND_FIND:
+		command = new FindCommand(parent, findReplaceDialog);
+		break;
+	case ID_COMMAND_FINDNEXT:
+		command = new FindNextCommand(parent, findReplaceDialog);
 		break;
 	default:
 		break;

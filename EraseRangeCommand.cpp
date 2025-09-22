@@ -38,21 +38,18 @@ EraseRangeCommand& EraseRangeCommand::operator=(const EraseRangeCommand& source)
 
 void EraseRangeCommand::Execute() {	
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (this->frontOffset < 0)
+	this->contents = pagingBuffer->MakeSelectedString();
+	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	if (selectionBeginOffset < currentOffset)
 	{
-		this->contents = pagingBuffer->MakeSelectedString();
-		Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-		Long currentOffset = pagingBuffer->GetCurrentOffset();
-		if (selectionBeginOffset < currentOffset)
-		{
-			this->frontOffset = selectionBeginOffset;
-			this->rearOffset = currentOffset;
-		}
-		else
-		{
-			this->frontOffset = currentOffset;
-			this->rearOffset = selectionBeginOffset;
-		}
+		this->frontOffset = selectionBeginOffset;
+		this->rearOffset = currentOffset;
+	}
+	else
+	{
+		this->frontOffset = currentOffset;
+		this->rearOffset = selectionBeginOffset;
 	}
 
 	pagingBuffer->MoveOffset(this->frontOffset);
@@ -201,6 +198,95 @@ void EraseRangeCommand::Undo() {
 	}
 
 	pagingBuffer->Add(this->contents);
+
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
+	this->parent->Invalidate();
+}
+
+void EraseRangeCommand::Redo() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->frontOffset);
+	if (!pagingBuffer->IsOnPage(this->frontOffset))
+	{
+		pagingBuffer->Load();
+	}
+
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	TCHAR character[2];
+	Long lastIndex = 0;
+	Long rowCount = 0;
+	Long i = 0;
+	while (i < this->contents.GetLength())
+	{
+		character[0] = this->contents.GetAt(i);
+		if (character[0] == '\n')
+		{
+			lastIndex = i;
+			rowCount++;
+		}
+		i++;
+	}
+
+	while (row->GetLength() > columnIndex && row->GetAt(columnIndex)->IsSelected())
+	{
+		row->Remove(columnIndex);
+	}
+
+	i = 0;
+	while (i < rowCount - 1)
+	{
+		note->Remove(rowIndex + 1);
+		i++;
+	}
+
+	if (rowCount > 0)
+	{
+		ByteChecker byteChecker;
+		Long count = 0;
+		i = lastIndex + 1;
+		while (i < this->contents.GetLength())
+		{
+			character[0] = this->contents.GetAt(i);
+			if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
+			{
+				character[1] = this->contents.GetAt(++i);
+			}
+
+			count++;
+			i++;
+		}
+
+		Glyph* nextRow = NULL;
+		if (rowIndex + 1 < note->GetLength())
+		{
+			nextRow = note->GetAt(rowIndex + 1);
+		}
+
+		i = 1;
+		while (i <= count)
+		{
+			nextRow->Remove(0);
+			i++;
+		}
+
+		if (character[0] != '\r' && rowIndex < note->GetLength() - 1)
+		{
+			note->MergeRows(rowIndex);
+		}
+	}
+
+	rowIndex = note->Move(rowIndex);
+	row = note->GetAt(rowIndex);
+	row->Move(columnIndex);
+
+	pagingBuffer->Remove(this->rearOffset);
+
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Unmark();
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();

@@ -14,6 +14,7 @@ public:
 
 	virtual void Execute();
 	virtual void Undo();
+	virtual void Redo();
 	virtual Command* Clone();
 	virtual UINT GetId();
 	virtual bool IsUndoable();

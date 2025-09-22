@@ -2,6 +2,7 @@
 #define _REPLACEALLCOMMAND_H
 #include "MacroCommand.h"
 
+class Command;
 class CWnd;
 class CFindReplaceDialog;
 
@@ -11,6 +12,11 @@ public:
 	virtual ~ReplaceAllCommand();
 
 	virtual void Execute();
+	virtual void Undo();
+	virtual void Redo();
+	virtual void Update(Command* command, bool isDone);
+	virtual CString GetSource();
+	virtual CString GetReplaced();
 private:
 	CFindReplaceDialog* findReplaceDialog;
 };

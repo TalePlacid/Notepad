@@ -14,10 +14,11 @@ public:
 
 	virtual void Execute();
 	virtual void Undo();
+	virtual void Redo();
 	virtual Command* Clone();
 	virtual UINT GetId();
 	virtual bool IsUndoable();
-	virtual void Update(Long difference);
+	virtual void Update(Command* command, bool isDone);
 	virtual Long GetOffset();
 	virtual CString GetSource();
 	virtual CString GetReplaced();

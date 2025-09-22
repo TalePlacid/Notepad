@@ -24,6 +24,10 @@ void Command::Undo() {
 
 }
 
+void Command::Redo() {
+
+}
+
 Command* Command::Clone() {
 	return 0;
 }
@@ -48,7 +52,7 @@ UINT Command::GetId() {
 	return 0;
 }
 
-void Command::Update(Long difference) {
+void Command::Update(Command *command, bool isDone) {
 
 }
 

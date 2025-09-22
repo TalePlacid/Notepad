@@ -13,6 +13,7 @@ public:
 
 	virtual void Execute() = 0;
 	virtual void Undo();
+	virtual void Redo();
 	virtual Command* Clone();
 	virtual bool IsUndoable();
 	virtual Long Add(Command* command);
@@ -22,7 +23,7 @@ public:
 	virtual Long GetOffset();
 	virtual CString GetSource();
 	virtual CString GetReplaced();
-	virtual void Update(Long difference);
+	virtual void Update(Command *command, bool isDone);
 	virtual CWnd* GetParent() const;
 	virtual Long GetLength() const;
 protected:

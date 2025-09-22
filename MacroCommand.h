@@ -15,15 +15,11 @@ public:
 
 	virtual void Execute();
 	virtual void Undo();
+	virtual void Redo();
 	virtual Long Add(Command* command);
 	virtual Command* GetAt(Long index);
 	virtual bool IsMacroCommand();
 	virtual UINT GetId();
-	virtual Long GetOffset();
-	virtual CString GetSource();
-	virtual CString GetReplaced();
-	virtual void Update(Long difference);
-
 	Long GetCapacity() const;
 	Long GetLength() const;
 

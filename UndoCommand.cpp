@@ -25,9 +25,8 @@ void UndoCommand::Execute() {
 		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 		if (history->GetId() == ID_COMMAND_REPLACE)
 		{
-			Long difference = history->GetSource().GetLength() - history->GetReplaced().GetLength();
-			undoHistoryBook->Update(history, difference);
-			redoHistoryBook->Update(history, difference);
+			undoHistoryBook->Update(history, false);
+			redoHistoryBook->Update(history, false);
 		}
 		redoHistoryBook->Push(history);
 	}

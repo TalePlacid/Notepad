@@ -36,7 +36,7 @@ PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
 
 void PasteCommand::Execute() {
 	BOOL isPasted = ((NotepadForm*)(this->parent))->clipboardController->Paste();
-	if (isPasted || this->offset >= 0)
+	if (isPasted)
 	{
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
@@ -44,23 +44,8 @@ void PasteCommand::Execute() {
 		Long columnIndex = row->GetCurrent();
 
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		if (this->offset < 0)
-		{
-			this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
-			this->offset = pagingBuffer->GetCurrentOffset();
-		}
-		else
-		{
-			pagingBuffer->MoveOffset(this->offset);
-			if (!pagingBuffer->IsOnPage(this->offset))
-			{
-				pagingBuffer->Load();
-				note = ((NotepadForm*)(this->parent))->note;
-			}
-			rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-			row = note->GetAt(rowIndex);
-			columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
-		}
+		this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
+		this->offset = pagingBuffer->GetCurrentOffset();
 
 		TCHAR letters[2];
 		Glyph* glyph;
@@ -176,6 +161,57 @@ void PasteCommand::Undo() {
 	row->Move(columnIndex);
 
 	pagingBuffer->Remove(this->offset + this->contents.GetLength());
+}
+
+void PasteCommand::Redo() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->offset);
+	if (!pagingBuffer->IsOnPage(this->offset))
+	{
+		pagingBuffer->Load();
+	}
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+	
+	TCHAR letters[2];
+	Glyph* glyph;
+	GlyphFactory glyphFactory;
+	ByteChecker byteChecker;
+	Long length = strlen((LPCTSTR)(this->contents));
+	Long i = 0;
+	while (i < length)
+	{
+		letters[0] = this->contents.GetAt(i);
+		if (byteChecker.IsLeadByte(letters[0]) || letters[0] == '\r')
+		{
+			letters[1] = this->contents.GetAt(++i);
+		}
+
+		glyph = glyphFactory.Create(letters);
+		if (letters[0] != '\r')
+		{
+			columnIndex = row->Add(columnIndex, glyph);
+			pagingBuffer->Add((char*)(*glyph));
+		}
+		else
+		{
+			rowIndex = note->Add(rowIndex + 1, glyph);
+			pagingBuffer->Add(letters);
+			row = note->GetAt(rowIndex);
+		}
+		columnIndex = row->GetCurrent();
+		i++;
+	}
+
+	if (!pagingBuffer->IsAboveBottomLine())
+	{
+		pagingBuffer->Load();
+	}
+
+	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
+	this->parent->Invalidate();
 }
 
 Command* PasteCommand::Clone() {

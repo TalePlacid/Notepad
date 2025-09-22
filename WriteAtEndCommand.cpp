@@ -41,33 +41,16 @@ WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source)
 void WriteAtEndCommand::Execute() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
-
-	Glyph* note;
-	Glyph* row;
-	Long rowIndex;
-
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (this->offset >= 0)
-	{
-		pagingBuffer->MoveOffset(this->offset);
-		if (!pagingBuffer->IsOnPage(this->offset))
-		{
-			pagingBuffer->Load();
-		}
-		note = ((NotepadForm*)(this->parent))->note;
-		rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-		row = note->GetAt(rowIndex);
-		row->Move(pagingBuffer->GetCurrent().GetColumn());
-	}
 	
-	note = ((NotepadForm*)(this->parent))->note;
-	row = note->GetAt(note->GetCurrent());
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Glyph* row = note->GetAt(note->GetCurrent());
 	
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove();
 	}
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
@@ -124,6 +107,57 @@ void WriteAtEndCommand::Undo() {
 		pagingBuffer->Remove();
 	}
 
+	this->offset = pagingBuffer->GetCurrentOffset();
+}
+
+void WriteAtEndCommand::Redo() {
+	GlyphFactory glyphFactory;
+	Glyph* glyph = glyphFactory.Create(this->character);
+
+	Glyph* note;
+	Glyph* row;
+	Long rowIndex;
+
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MoveOffset(this->offset);
+	if (!pagingBuffer->IsOnPage(this->offset))
+	{
+		pagingBuffer->Load();
+	}
+	note = ((NotepadForm*)(this->parent))->note;
+	rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	row = note->GetAt(rowIndex);
+	row->Move(pagingBuffer->GetCurrent().GetColumn());
+
+	note = ((NotepadForm*)(this->parent))->note;
+	row = note->GetAt(note->GetCurrent());
+
+	if (((NotepadForm*)(this->parent))->IsCompositing())
+	{
+		row->Remove();
+	}
+
+	if (this->character[0] != '\r')
+	{
+		row->Add(glyph);
+		if (this->onChar)
+		{
+			pagingBuffer->Add((char*)(*glyph));
+		}
+	}
+	else
+	{
+		note->Add(glyph);
+		TCHAR contents[2];
+		contents[0] = '\r';
+		contents[1] = '\n';
+		pagingBuffer->Add(contents);
+
+		if (!pagingBuffer->IsAboveBottomLine())
+		{
+			pagingBuffer->Load();
+		}
+	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
 

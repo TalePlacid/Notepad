@@ -20,15 +20,14 @@ void RedoCommand::Execute() {
 	if (!redoHistoryBook->IsEmpty())
 	{
 		Command* history = redoHistoryBook->Pop();
-		history->Execute();
+		history->Redo();
 
 		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 		if (history->GetId() == ID_COMMAND_REPLACE)
 		{
-			Long difference = history->GetReplaced().GetLength() - history->GetSource().GetLength();
-			undoHistoryBook->Update(history, difference);
-			redoHistoryBook->Update(history, difference);
+			undoHistoryBook->Update(history, true);
+			redoHistoryBook->Update(history, true);
 		}
 		undoHistoryBook->Push(history);
 
