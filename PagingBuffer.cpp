@@ -452,16 +452,18 @@ Long PagingBuffer::Add(CString str) {
 		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
 		fseek(this->file, currentOffset + str.GetLength(), SEEK_SET);
 
+		TCHAR character[2];
 		ByteChecker byteChecker;
 		Long i = 0;
 		while (i < str.GetLength())
 		{
-			if (byteChecker.IsLeadByte(str.GetAt(i)) || str.GetAt(i) == '\r')
+			character[0] = str.GetAt(i);
+			if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
 			{
-				i++;
+				character[1] = str.GetAt(++i);
 			}
 
-			if (str.GetAt(i) != '\r')
+			if (character[0] != '\r')
 			{
 				this->current = this->current.Right();
 			}

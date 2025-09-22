@@ -179,16 +179,17 @@ void EraseRangeCommand::Undo() {
 		}
 		else
 		{
-			glyph = glyphFactory.Create(character);
 			if (character[0] != '\r')
 			{
+				glyph = glyphFactory.Create(character);
 				glyph->Select(true);
 				row->Add(columnIndex, glyph);
 				columnIndex = row->GetCurrent();
 			}
 			else
 			{
-				rowIndex = note->Add(rowIndex + 1, glyph);
+				note->SplitRows(rowIndex, columnIndex);
+				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
 				columnIndex = row->First();
 				rowCount++;

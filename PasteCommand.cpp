@@ -8,6 +8,7 @@ using namespace std;
 #include "PagingBuffer.h"
 #include "resource.h"
 #include "ByteChecker.h"
+#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -47,6 +48,9 @@ void PasteCommand::Execute() {
 		this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
 		this->offset = pagingBuffer->GetCurrentOffset();
 
+		MarkingHelper markingHelper(this->parent);
+		markingHelper.Mark();
+
 		TCHAR letters[2];
 		Glyph* glyph;
 		GlyphFactory glyphFactory;
@@ -64,6 +68,7 @@ void PasteCommand::Execute() {
 			if (letters[0] != '\r')
 			{
 				glyph = glyphFactory.Create(letters);
+				glyph->Select(true);
 				columnIndex = row->Add(columnIndex, glyph);
 				pagingBuffer->Add((char*)(*glyph));
 			}
@@ -180,6 +185,9 @@ void PasteCommand::Redo() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
 
+	MarkingHelper markingHelper(this->parent);
+	markingHelper.Mark();
+
 	TCHAR letters[2];
 	Glyph* glyph;
 	GlyphFactory glyphFactory;
@@ -197,6 +205,7 @@ void PasteCommand::Redo() {
 		if (letters[0] != '\r')
 		{
 			glyph = glyphFactory.Create(letters);
+			glyph->Select(true);
 			columnIndex = row->Add(columnIndex, glyph);
 			pagingBuffer->Add((char*)(*glyph));
 		}
