@@ -23,7 +23,6 @@ void FindNextCommand::Execute() {
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 	Long current = searchResultController->GetCurrent();
 	Long previous = current;
-
 	if (searchResultController->IsSearchDown())
 	{
 		current = searchResultController->Next();
@@ -33,6 +32,7 @@ void FindNextCommand::Execute() {
 		current = searchResultController->Previous();
 	}
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	string key = searchResultController->GetKey();
 	if (current != previous)
 	{
@@ -43,7 +43,6 @@ void FindNextCommand::Execute() {
 
 		Glyph* row;
 		Long rowIndex;
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Long offset = searchResultController->GetAt(current).GetOffset();
 
 		pagingBuffer->MoveOffset(offset);

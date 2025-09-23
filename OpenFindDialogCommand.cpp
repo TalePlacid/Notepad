@@ -35,6 +35,12 @@ void OpenFindDialogCommand::Execute() {
 		CFindReplaceDialog* findDialog = new CFindReplaceDialog;
 		findDialog->Create(TRUE, (LPCTSTR)key, NULL, 1, this->parent);
 
+		if (searchResultController != NULL)
+		{
+			delete searchResultController;
+			((NotepadForm*)(this->parent))->searchResultController = NULL;
+		}
+
 		((NotepadForm*)(this->parent))->hasFindReplaceDialog = TRUE;
 		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_FOCUS, (WPARAM)findDialog, 0);
 	}

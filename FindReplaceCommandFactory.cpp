@@ -26,7 +26,14 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 		findReplaceDialog->MatchWholeWord(), findReplaceDialog->MatchCase(), findReplaceDialog->SearchDown());
 
 	SearchResultController* searchResultController = ((NotepadForm*)parent)->searchResultController;
-	FindReplaceOption searchedOption(CString(searchResultController->GetKey().c_str()), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
+	FindReplaceOption searchedOption;
+	if (searchResultController != NULL)
+	{
+		searchedOption.findString = CString(searchResultController->GetKey().c_str());
+		searchedOption.isMatchWhole = searchResultController->IsMatchWhole();
+		searchedOption.isMatchCase = searchResultController->IsMatchCase();
+		searchedOption.isSearchDown = searchResultController->IsSearchDown();
+	}
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
 	UINT nID = 0;
