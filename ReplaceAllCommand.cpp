@@ -44,7 +44,6 @@ void ReplaceAllCommand::Execute() {
 	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-	TRACE("[Execute]\n");
 	Long i = 0;
 	while (i < searchResultController->GetLength())
 	{
@@ -52,9 +51,6 @@ void ReplaceAllCommand::Execute() {
 		if (command != NULL)
 		{
 			command->Execute();
-			TRACE("%ld\n", command->GetOffset());
-			undoHistoryBook->Update(command, true);
-			redoHistoryBook->Update(command, true);
 			this->Add(command);
 			command = NULL;
 		}
@@ -76,18 +72,15 @@ void ReplaceAllCommand::Execute() {
 }
 
 void ReplaceAllCommand::Undo() {
-	TRACE("[Undo]\n");
 	Long j;
 	Long i = this->length - 1;
 	while (i >= 0)
 	{
 		this->commands[i]->Undo();
-		TRACE("%ld\n", this->commands[i]->GetOffset());
 		j = i + 1;
 		while (j < this->length)
 		{
 			this->commands[j]->Update(this->commands[i], false);
-			TRACE("\t%d, %ld\n", j, this->commands[j]->GetOffset());
 			j++;
 		}
 		i--;
@@ -95,7 +88,6 @@ void ReplaceAllCommand::Undo() {
 }
 
 void ReplaceAllCommand::Redo() {
-	TRACE("[Redo]\n");
 	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 	Command* command;
@@ -105,15 +97,12 @@ void ReplaceAllCommand::Redo() {
 	{
 		command = this->commands.GetAt(i);
 		command->Redo();
-		TRACE("%ld\n", command->GetOffset());
 		j = i + 1;
 		while (j < this->length)
 		{
 			this->commands[j]->Update(command, true);
 			j++;
 		}
-;		undoHistoryBook->Update(command, true);
-		redoHistoryBook->Update(command, true);
 		i++;
 	}
 }
