@@ -1,5 +1,5 @@
 #ifndef _SIZECALCULATOR_H //guard
-#define _SIZE_CALCULATOR_H
+#define _SIZECALCULATOR_H
 #include "Observer.h"
 #include <afxwin.h>
 

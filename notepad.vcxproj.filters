@@ -371,6 +371,18 @@
     <ClInclude Include="RedoCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="PreviewCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PreviewForm.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PaperCalculator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Paper.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -710,6 +722,18 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="RedoCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PreviewCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PreviewForm.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PaperCalculator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Paper.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

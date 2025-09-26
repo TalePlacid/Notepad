@@ -20,6 +20,7 @@
 #include "CloseFindReplaceCommand.h"
 #include "FindCommand.h"
 #include "FindNextCommand.h"
+#include "PreviewCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -47,6 +48,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, CFindReplaceDialog* find
 		break;
 	case ID_MENU_SAVEAS:
 		command = new SaveCommand(parent);
+		break;
+	case ID_MENU_PREVIEW:
+		command = new PreviewCommand(parent);
 		break;
 	case ID_MENU_FONT:
 		command = new SelectFontCommand(parent);

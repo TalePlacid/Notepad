@@ -206,9 +206,13 @@
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageUpAction.h" />
     <ClInclude Include="PagingBuffer.h" />
+    <ClInclude Include="Paper.h" />
+    <ClInclude Include="PaperCalculator.h" />
     <ClInclude Include="PasteCommand.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="PositionCalculator.h" />
+    <ClInclude Include="PreviewCommand.h" />
+    <ClInclude Include="PreviewForm.h" />
     <ClInclude Include="RedoCommand.h" />
     <ClInclude Include="ReplaceAllCommand.h" />
     <ClInclude Include="ReplaceCommand.h" />
@@ -322,9 +326,13 @@
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageUpAction.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />
+    <ClCompile Include="Paper.cpp" />
+    <ClCompile Include="PaperCalculator.cpp" />
     <ClCompile Include="PasteCommand.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="PositionCalculator.cpp" />
+    <ClCompile Include="PreviewCommand.cpp" />
+    <ClCompile Include="PreviewForm.cpp" />
     <ClCompile Include="RedoCommand.cpp" />
     <ClCompile Include="ReplaceAllCommand.cpp" />
     <ClCompile Include="ReplaceCommand.cpp" />

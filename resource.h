@@ -3,6 +3,32 @@
 // notepad250410.rc에서 사용되고 있습니다.
 //
 #define IDR_MENU_MAIN                   101
+#define IDD_DIALOG_PREVIEW              102
+#define IDC_GROUP_PAPER                 1001
+#define IDC_STATIC_SIZE                 1002
+#define IDC_STATIC_SOURCE               1003
+#define IDC_COMBO_SIZE                  1004
+#define IDC_COMBO_SOURCE                1005
+#define IDC_GROUP_DIRECTION             1006
+#define IDC_RADIO_VERTICAL              1007
+#define IDC_RADIO_HORIZONTAL            1008
+#define IDC_GROUP_MARGIN                1009
+#define IDC_STATIC_LEFT                 1010
+#define IDC_EDIT_LEFT                   1011
+#define IDC_STATIC_RIGHT                1012
+#define IDC_EDIT_RIGHT                  1013
+#define IDC_STATIC_UP                   1014
+#define IDC_EDIT_UP                     1015
+#define IDC_STATIC_DOWN                 1016
+#define IDC_EDIT_DOWN                   1017
+#define IDC_STATIC_HEADER               1018
+#define IDC_EDIT_HEADER                 1019
+#define IDC_EDIT_FOOTER                 1020
+#define IDC_STATIC_FOOTER               1021
+#define IDC_GROUP_PREVIEW               1022
+#define IDC_BUTTON_CANCEL               1023
+#define IDC_BUTTON_OK                   1024
+#define IDC_BUTTON_FIRST                1025
 #define ID_MENU_NEW                     40003
 #define ID_MENU_OPEN                    40004
 #define ID_MENU_SAVE                    40005
@@ -34,27 +60,27 @@
 #define ID_MENU_ZOOMDEFAULT             40053
 #define ID_MENU_AUTOWRAP                40054
 #define ID_COMMAND_ERASE                50001
-#define ID_COMMAND_PASTE				50002
-#define ID_COMMAND_ERASERANGE			50003
-#define ID_COMMAND_COPY					50004
-#define ID_COMMAND_CUT					50005
-#define ID_COMMAND_WRITEATEND			50006
-#define ID_COMMAND_INSERTATCARET		50007
-#define ID_COMMAND_UNDO					50008
-#define ID_COMMAND_REDO					50009
-#define ID_COMMAND_REPLACE				50010
-#define ID_COMMAND_CLOSEFINDREPLACE		50011
-#define ID_COMMAND_REPLACEALL			50012
-#define ID_COMMAND_FIND					50013
-#define ID_COMMAND_FINDNEXT				50014
+#define ID_COMMAND_PASTE                50002
+#define ID_COMMAND_ERASERANGE           50003
+#define ID_COMMAND_COPY                 50004
+#define ID_COMMAND_CUT                  50005
+#define ID_COMMAND_WRITEATEND           50006
+#define ID_COMMAND_INSERTATCARET        50007
+#define ID_COMMAND_UNDO                 50008
+#define ID_COMMAND_REDO                 50009
+#define ID_COMMAND_REPLACE              50010
+#define ID_COMMAND_CLOSEFINDREPLACE     50011
+#define ID_COMMAND_REPLACEALL           50012
+#define ID_COMMAND_FIND                 50013
+#define ID_COMMAND_FINDNEXT             50014
 
-// Next default values for new elements
+// Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        102
+#define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40055
-#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

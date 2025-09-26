@@ -13,6 +13,7 @@ class PagingBuffer;
 class CFindReplaceDialog;
 class SearchResultController;
 class HistoryBook;
+class PreviewForm;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
