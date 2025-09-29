@@ -127,11 +127,18 @@ Long Note::MergeRows(Long index) {
 	return index;
 }
 
-Long Note::SplitRows(Long rowIndex, Long columnIndex) {
+Long Note::SplitRows(Long rowIndex, Long columnIndex, bool isDummyRow) {
 	GlyphFactory glyphFactory;
 	char contents[2];
-	contents[0] = '\r';
-	contents[1] = '\n';
+	if (!isDummyRow)
+	{
+		contents[0] = '\r';
+		contents[1] = '\n';
+	}
+	else
+	{
+		contents[0] = '\n';
+	}
 	Glyph* newRow = glyphFactory.Create(contents);
 
 	Long index = -1;

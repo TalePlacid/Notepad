@@ -101,7 +101,7 @@ Long Glyph::MergeRows(Long index) {
 	return -1;
 }
 
-Long Glyph::SplitRows(Long rowIndex, Long columnIndex) {
+Long Glyph::SplitRows(Long rowIndex, Long columnIndex, bool isDummyRow) {
 	return -1;
 }
 

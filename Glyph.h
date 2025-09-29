@@ -35,7 +35,7 @@ public:
 	virtual Long TruncateAfter(Long index);
 	virtual Long TruncateBefore(Long index);
 	virtual Long MergeRows(Long index);
-	virtual Long SplitRows(Long rowIndex, Long columnIndex);
+	virtual Long SplitRows(Long rowIndex, Long columnIndex, bool IsDummyRow = false);
 	virtual Long Mark(Long index);
 	virtual Long Unmark();
 

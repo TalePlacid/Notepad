@@ -6,6 +6,9 @@
 #include "GlyphFactory.h"
 #include "SizeCalculator.h"
 #include "resource.h"
+#include "AutoWrappingPolicy.h"
+#include "MultiByteWrappingPolicy.h"
+#include "SingleByteWrappingPolicy.h"
 
 #pragma warning(disable:4996)
 
@@ -17,19 +20,20 @@ NoteWrapper::~NoteWrapper() {
 
 }
 
-void NoteWrapper::InsertDummyRows() {
+void NoteWrapper::InsertDummyRows(Long width) {
+	AutoWrappingPolicy* multiByteWrappingPolicy = new MultiByteWrappingPolicy;
+	AutoWrappingPolicy* singleByteWrappingPolicy = new SingleByteWrappingPolicy;
+
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Long columnIndex = note->GetAt(rowIndex)->GetCurrent();
 
-	RECT rect;
-	GetClientRect(this->parent->GetSafeHwnd(), &rect);
-	Long clientAreaWidth = rect.right - rect.left;
-
+	Long cuttingIndex;
 	Long k;
 	Glyph* dummyRow;
 	Long widthSum;
 	Long j;
+	Glyph* character = NULL;
 	Glyph* row;
 	GlyphFactory glyphFactory;
 	Long i = 0;
@@ -39,50 +43,40 @@ void NoteWrapper::InsertDummyRows() {
 		
 		widthSum = 0;
 		j = 0;
-		while (j < row->GetLength() && widthSum <= clientAreaWidth)
+		while (j < row->GetLength() && widthSum <= width)
 		{
-			TCHAR(*character) = (char*)(*(row->GetAt(j)));
-			widthSum += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth(const_cast<char*>(character));
+			character = row->GetAt(j);
+			widthSum += ((NotepadForm*)(this->parent))->sizeCalculator->GetCharacterWidth((char*)(*character));
 			j++;
 		}
 
 		if (j < row->GetLength())
 		{
-			char character = '\n';
-			dummyRow = glyphFactory.Create(&character);
-			note->Add(i + 1, dummyRow);
-
-			k = j - 1;
-			while (k < row->GetLength())
+			if (character->IsMultiByteCharacter())
 			{
-				dummyRow->Add(row->GetAt(k)->Clone());
-				k++;
+				cuttingIndex = multiByteWrappingPolicy->FindWrappingPoint(row, j - 1);
 			}
-
-			k = j - 1;
-			while (k < row->GetLength())
+			else
 			{
-				row->Remove(k);
+				cuttingIndex = singleByteWrappingPolicy->FindWrappingPoint(row, j - 1);
 			}
-
-			if (i < rowIndex)
-			{
-				rowIndex++;
-			}
-			else if (i == rowIndex)
-			{
-				if (columnIndex > row->GetLength() - 1)
-				{
-					rowIndex++;
-					columnIndex -= row->GetLength();
-				}
-			}
+			note->SplitRows(i, cuttingIndex, true);
 		}
 		i++;
 	}
 
 	rowIndex = note->Move(rowIndex);
 	columnIndex = note->GetAt(rowIndex)->Move(columnIndex);
+
+	if (multiByteWrappingPolicy != 0)
+	{
+		delete multiByteWrappingPolicy;
+	}
+
+	if (singleByteWrappingPolicy != 0)
+	{
+		delete singleByteWrappingPolicy;
+	}
 }
 
 void NoteWrapper::DeleteDummyRows() {

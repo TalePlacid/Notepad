@@ -164,7 +164,9 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		UINT isChecked = this->menu.GetMenuState(ID_MENU_AUTOWRAP, MF_BYCOMMAND);
 		if (isChecked == MF_CHECKED)
 		{
-			noteWrapper.InsertDummyRows();
+			RECT rect;
+			this->GetClientRect(&rect);
+			noteWrapper.InsertDummyRows(rect.right - rect.left);
 		}
 
 		this->Notify("ChangeCaret");
@@ -181,7 +183,9 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 	UINT isChecked = this->menu.GetMenuState(ID_MENU_AUTOWRAP, MF_BYCOMMAND);
 	if (isChecked == MF_CHECKED)
 	{
-		noteWrapper.InsertDummyRows();
+		RECT rect;
+		this->GetClientRect(&rect);
+		noteWrapper.InsertDummyRows(rect.right - rect.left);
 	}
 
 	this->Notify("CreateScrollBars");

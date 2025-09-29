@@ -130,6 +130,7 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="AutoWrapCommand.h" />
+    <ClInclude Include="AutoWrappingPolicy.h" />
     <ClInclude Include="BackspaceAction.h" />
     <ClInclude Include="BruteForce.h" />
     <ClInclude Include="BruteForceWhole.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="CutCommand.h" />
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="DownArrowAction.h" />
+    <ClInclude Include="DpiScaler.h" />
     <ClInclude Include="DropOldestStack.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
@@ -194,6 +196,7 @@
     <ClInclude Include="MarkingHelper.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="MultiByteCharacter.h" />
+    <ClInclude Include="MultiByteWrappingPolicy.h" />
     <ClInclude Include="NewCommand.h" />
     <ClInclude Include="Note.h" />
     <ClInclude Include="NoteConverter.h" />
@@ -236,6 +239,7 @@
     <ClInclude Include="ShiftRightAction.h" />
     <ClInclude Include="ShiftUpAction.h" />
     <ClInclude Include="SingleByteCharacter.h" />
+    <ClInclude Include="SingleByteWrappingPolicy.h" />
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TextOutVisitor.h" />
@@ -252,6 +256,7 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="AutoWrapCommand.cpp" />
+    <ClCompile Include="AutoWrappingPolicy.cpp" />
     <ClCompile Include="BackspaceAction.cpp" />
     <ClCompile Include="BruteForce.cpp" />
     <ClCompile Include="BruteForceWhole.cpp" />
@@ -288,6 +293,7 @@
     <ClCompile Include="CutCommand.cpp" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="DownArrowAction.cpp" />
+    <ClCompile Include="DpiScaler.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EndAction.cpp" />
     <ClCompile Include="EraseCommand.cpp" />
@@ -314,6 +320,7 @@
     <ClCompile Include="MacroCommand.cpp" />
     <ClCompile Include="MarkingHelper.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
+    <ClCompile Include="MultiByteWrappingPolicy.cpp" />
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="NoteConverter.cpp" />
@@ -355,6 +362,7 @@
     <ClCompile Include="ShiftRightAction.cpp" />
     <ClCompile Include="ShiftUpAction.cpp" />
     <ClCompile Include="SingleByteCharacter.cpp" />
+    <ClCompile Include="SingleByteWrappingPolicy.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />

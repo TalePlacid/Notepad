@@ -23,7 +23,9 @@ void AutoWrapCommand::Execute() {
 	if (isChecked == MF_UNCHECKED)
 	{
 		notepadForm->menu.CheckMenuItem(ID_MENU_AUTOWRAP, MF_CHECKED);
-		noteWrapper.InsertDummyRows();
+		RECT rect;
+		this->parent->GetClientRect(&rect);
+		noteWrapper.InsertDummyRows(rect.right - rect.left);
 	}
 	else if (isChecked == MF_CHECKED)
 	{

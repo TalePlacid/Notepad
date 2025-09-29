@@ -24,7 +24,7 @@ public:
 	virtual Long Last();
 
 	virtual Long MergeRows(Long index);
-	virtual Long SplitRows(Long rowIndex, Long columnIndex);
+	virtual Long SplitRows(Long rowIndex, Long columnIndex, bool IsDummyRow = false);
 };
 
 #endif // !_NOTE_H

@@ -383,6 +383,18 @@
     <ClInclude Include="Paper.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="DpiScaler.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoWrappingPolicy.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiByteWrappingPolicy.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleByteWrappingPolicy.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -734,6 +746,18 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Paper.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DpiScaler.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoWrappingPolicy.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiByteWrappingPolicy.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleByteWrappingPolicy.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

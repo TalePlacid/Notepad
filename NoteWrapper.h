@@ -10,11 +10,10 @@ public:
 	NoteWrapper(CWnd* parent);
 	~NoteWrapper();
 
-	void InsertDummyRows();
+	void InsertDummyRows(Long width);
 	void DeleteDummyRows();
 private:
 	CWnd* parent;
 };
-
 
 #endif // !_NOTEWRAPPER_H
