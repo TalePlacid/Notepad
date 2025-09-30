@@ -8,12 +8,14 @@
 
 typedef signed long int Long;
 
+class Glyph;
+
 class PagingBuffer {
 public:
 	PagingBuffer(CWnd* parent, Long pageSize = 2097152);
 	~PagingBuffer();
 
-	virtual void Load();
+	Glyph* Load();
 	Long Add(char(*character));
 	Long Add(CString str);
 	Long Remove();
@@ -42,7 +44,6 @@ public:
 	Long MoveOffset(Long offset);
 
 	CString MakeSelectedString();
-	bool MarkAsDirty();
 	CString GetFullText();
 
 	CWnd* GetParent() const;
@@ -64,7 +65,6 @@ protected:
 	Position current;
 	Position start;
 	Position end;
-	bool isDirty;
 	Long selectionBeginOffset;
 };
 
