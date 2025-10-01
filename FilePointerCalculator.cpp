@@ -195,6 +195,7 @@ Long FilePointerCalculator::NextRow(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
 	Long currentOffset = ftell(file);
 	
+	fseek(file, offset, SEEK_SET);
 	TCHAR character;
 	size_t flag = fread(&character, 1, 1, file);
 	while (character != '\n' && flag > 0 && !feof(file))
