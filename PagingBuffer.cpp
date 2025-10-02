@@ -60,16 +60,26 @@ Glyph* PagingBuffer::Load() {
 	{
 		previousOffset = offset;
 		offset = filePointerCalculator.PreviousRow(offset);
-		lineCount++;
+		if (previousOffset != offset)
+		{
+			lineCount++;
+		}
 	}
+
 	offset = filePointerCalculator.First(offset);
 
 	this->startOffset = offset;
 	this->start = Position(0, 0);
 
 	//3. 현재 좌표를 구한다.
+	Long i = 0;
+	while (i < lineCount)
+	{
+		offset = filePointerCalculator.NextRow(offset);
+		i++;
+	}
 	this->current = Position(this->start.GetRow() + lineCount, 0);
-	offset = filePointerCalculator.First(currentOffset);
+
 	while (offset < currentOffset)
 	{
 		previousOffset = offset;
@@ -82,17 +92,53 @@ Glyph* PagingBuffer::Load() {
 	previousOffset = -1;
 	Long belowLineCount = loadingRowCount - (lineCount + 1);
 	lineCount = 0;
-	while (lineCount < belowLineCount && previousOffset != offset)
+	while (lineCount < belowLineCount && previousOffset != offset && (offset - this->startOffset) <= this->pageSize)
 	{
 		previousOffset = offset;
 		offset = filePointerCalculator.NextRow(offset);
 		this->end = positionCalculator.NextRow(this->end, previousOffset);
+		lineCount++;
 	}
 
-	previousOffset = offset;
-	offset = filePointerCalculator.Last(offset);
+	//페이지 크기를 넘고, 마지막줄이면,
+	if ((offset - this->startOffset) > this->pageSize && previousOffset == offset)
+	{
+		//현재 줄에서 가장 가까운 글자까지만 적재한다.
+		previousOffset = offset;
+		offset = filePointerCalculator.First(offset);
+		this->end = positionCalculator.First(this->end);
+
+		Long pageEndOffset = this->startOffset + this->pageSize;
+		while (offset < pageEndOffset)
+		{
+			previousOffset = offset;
+			offset = filePointerCalculator.Next(offset);
+			this->end = positionCalculator.Next(this->end, previousOffset);
+		}
+
+		if (offset > pageEndOffset)
+		{
+			previousOffset = offset;
+			offset = filePointerCalculator.Previous(offset);
+			this->end = positionCalculator.Previous(this->end);
+		}
+	}
+	else
+	{
+		// 페이지 크기를 넘으면, 이전줄로 이동한다.
+		if ((offset - this->startOffset) > this->pageSize)
+		{
+			previousOffset = offset;
+			offset = filePointerCalculator.PreviousRow(offset);
+			this->end = positionCalculator.PreviousRow(this->end, previousOffset);
+		}
+
+		// 마지막 위치로 이동한다.
+		previousOffset = offset;
+		offset = filePointerCalculator.Last(offset);
+		this->end = positionCalculator.Last(this->end, previousOffset);
+	}
 	this->endOffset = offset;
-	this->end = positionCalculator.Last(this->end, previousOffset);
 
 	//5. 페이지를 읽는다.
 	fseek(this->file, this->startOffset, SEEK_SET);
