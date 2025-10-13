@@ -10,10 +10,8 @@ ScrollBarNecessityChecker::~ScrollBarNecessityChecker() {
 
 }
 
-void ScrollBarNecessityChecker::Check(RECT contentsSize, RECT clientAreaSize, 
+void ScrollBarNecessityChecker::Check(Long contentsWidth, Long contentsHeight, RECT clientAreaSize, 
 	Long scrollBarThickness, bool& vScrollNeeded, bool& hScrollNeeded) {
-	Long contentsWidth = contentsSize.right - contentsSize.left;
-	Long contentsHeight = contentsSize.bottom - contentsSize.top;
 	Long clientAreaWidth = clientAreaSize.right - clientAreaSize.left;
 	Long clientAreaHeight = clientAreaSize.bottom - clientAreaSize.top;
 

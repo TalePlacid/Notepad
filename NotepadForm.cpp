@@ -20,7 +20,7 @@
 #include "KeyAction.h"
 #include "KeyActionFactory.h"
 #include "NoteWrapper.h"
-#include "ScrollBarController.h"
+#include "ScrollBarAdapter.h"
 #include "ScrollBarActionFactory.h"
 #include "ScrollBarAction.h"
 #include "TextOutVisitor.h"
@@ -49,7 +49,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_REDO, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_CREATESCROLLBARS, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -66,7 +66,7 @@ NotepadForm::NotepadForm() {
 	this->font = NULL;
 	this->sizeCalculator = NULL;
 	this->caretController = NULL;
-	this->scrollBarController = NULL;
+	this->scrollBarAdapter = NULL;
 	this->clipboardController = NULL;
 	this->pagingBuffer = NULL;
 	this->searchResultController = NULL;
@@ -96,14 +96,16 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->sizeCalculator = new SizeCalculator(this);
 
 	this->pagingBuffer = new PagingBuffer(this);
-	this->pagingBuffer->Load();
+	this->note = this->pagingBuffer->Load();
+	Long rowIndex = this->note->Move(this->pagingBuffer->GetCurrent().GetRow());
+	this->note->GetAt(rowIndex)->Move(this->pagingBuffer->GetCurrent().GetColumn());
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
 	this->caretController->Create();
 
-	this->scrollBarController = new ScrollBarController(this);
-	this->Register(this->scrollBarController);
+	this->scrollBarAdapter = new ScrollBarAdapter(this);
+	PostMessage(WM_COMMAND, (WPARAM)ID_COMMAND_CREATESCROLLBARS, 0);
 
 	this->clipboardController = new ClipboardController(this);
 
@@ -456,9 +458,9 @@ void NotepadForm::OnClose() {
 		delete this->sizeCalculator;
 	}
 
-	if (this->scrollBarController != NULL)
+	if (this->scrollBarAdapter != NULL)
 	{
-		delete this->scrollBarController;
+		delete this->scrollBarAdapter;
 	}
 
 	if (this->clipboardController != NULL)

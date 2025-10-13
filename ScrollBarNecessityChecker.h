@@ -9,7 +9,7 @@ public:
 	ScrollBarNecessityChecker();
 	~ScrollBarNecessityChecker();
 
-	void Check(RECT contentsSize, RECT clientAreaSize, Long scrollBarThickness,
+	void Check(Long contentsWidth, Long contentsHeight, RECT clientAreaSize, Long scrollBarThickness,
 		bool& vScrollNeeded, bool& hScrollNeeded);
 };
 

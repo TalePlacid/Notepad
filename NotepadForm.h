@@ -7,7 +7,7 @@ class Glyph;
 class CaretController;
 class Font;
 class SizeCalculator;
-class ScrollBarController;
+class ScrollBarAdapter;
 class ClipboardController;
 class PagingBuffer;
 class CFindReplaceDialog;
@@ -28,7 +28,7 @@ public:
 	SizeCalculator* sizeCalculator;
 	Font* font;
 	CMenu menu;
-	ScrollBarController* scrollBarController;
+	ScrollBarAdapter* scrollBarAdapter;
 	ClipboardController* clipboardController;
 	PagingBuffer* pagingBuffer;
 	SearchResultController* searchResultController;
