@@ -2,6 +2,7 @@
 #define _NOTE_H
 #include "Composite.h"
 #include "Array.h"
+#include "Position.h"
 #include <string>
 using namespace std;
 
@@ -25,6 +26,7 @@ public:
 
 	virtual Long MergeRows(Long index);
 	virtual Long SplitRows(Long rowIndex, Long columnIndex, bool IsDummyRow = false);
+	virtual void SelectRange(Position start, Position end);
 };
 
 #endif // !_NOTE_H

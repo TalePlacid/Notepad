@@ -73,6 +73,9 @@
 #define ID_COMMAND_REPLACEALL           50012
 #define ID_COMMAND_FIND                 50013
 #define ID_COMMAND_FINDNEXT             50014
+#define ID_COMMAND_LOAD					50015
+#define ID_COMMAND_AUTOWRAP				50016
+#define ID_COMMAND_CREATESCROLLBARS		50017
 
 // Next default values for new objects
 // 

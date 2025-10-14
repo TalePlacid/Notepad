@@ -147,6 +147,7 @@
     <ClInclude Include="Comparer.h" />
     <ClInclude Include="Composite.h" />
     <ClInclude Include="CopyCommand.h" />
+    <ClInclude Include="CreateScrollBarsCommand.h" />
     <ClInclude Include="CtrlCAction.h" />
     <ClInclude Include="CtrlEndAction.h" />
     <ClInclude Include="CtrlFAction.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
+    <ClInclude Include="LoadCommand.h" />
     <ClInclude Include="MacroCommand.h" />
     <ClInclude Include="MarkingHelper.h" />
     <ClInclude Include="message.h" />
@@ -225,7 +227,8 @@
     <ClInclude Include="SaveCommand.h" />
     <ClInclude Include="ScrollBarAction.h" />
     <ClInclude Include="ScrollBarActionFactory.h" />
-    <ClInclude Include="ScrollBarController.h" />
+    <ClInclude Include="ScrollBarAdapter.h" />
+    <ClInclude Include="ScrollBarNecessityChecker.h" />
     <ClInclude Include="SearchingAlgorithm.h" />
     <ClInclude Include="SearchingAlgorithmFactory.h" />
     <ClInclude Include="SearchResult.h" />
@@ -273,6 +276,7 @@
     <ClCompile Include="Comparer.cpp" />
     <ClCompile Include="Composite.cpp" />
     <ClCompile Include="CopyCommand.cpp" />
+    <ClCompile Include="CreateScrollBarsCommand.cpp" />
     <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
     <ClCompile Include="CtrlFAction.cpp" />
@@ -317,6 +321,7 @@
     <ClCompile Include="KeyAction.cpp" />
     <ClCompile Include="KeyActionFactory.cpp" />
     <ClCompile Include="LeftArrowAction.cpp" />
+    <ClCompile Include="LoadCommand.cpp" />
     <ClCompile Include="MacroCommand.cpp" />
     <ClCompile Include="MarkingHelper.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
@@ -348,7 +353,8 @@
     <ClCompile Include="SaveCommand.cpp" />
     <ClCompile Include="ScrollBarAction.cpp" />
     <ClCompile Include="ScrollBarActionFactory.cpp" />
-    <ClCompile Include="ScrollBarController.cpp" />
+    <ClCompile Include="ScrollBarAdapter.cpp" />
+    <ClCompile Include="ScrollBarNecessityChecker.cpp" />
     <ClCompile Include="SearchingAlgorithm.cpp" />
     <ClCompile Include="SearchingAlgorithmFactory.cpp" />
     <ClCompile Include="SearchResult.cpp" />

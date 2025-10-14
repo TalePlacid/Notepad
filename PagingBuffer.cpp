@@ -149,7 +149,7 @@ Glyph* PagingBuffer::Load() {
 
 	//6. 노트로 변환한다.
 	NoteConverter noteConverter;
-	Glyph *note = noteConverter.Convert(contents, false);
+	Glyph *note = noteConverter.Convert(contents);
 
 	if (contents != NULL)
 	{
@@ -549,7 +549,7 @@ Long PagingBuffer::CountRow(Long offset) {
 
 	fseek(this->file, current, SEEK_SET);
 
-	return count;
+	return count + 1;
 }
 
 bool PagingBuffer::IsAboveBottomLine() {

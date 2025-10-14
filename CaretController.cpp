@@ -30,7 +30,7 @@ Caret* CaretController::Create() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long startOffset = pagingBuffer->GetStartOffset();
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long startRowHeight = pagingBuffer->CountRow(startOffset) * sizeCalculator->GetRowHeight();
+	Long startRowHeight = (pagingBuffer->CountRow(startOffset) - 1) * sizeCalculator->GetRowHeight();
 
 	//3. 노트에서의 높이를 구한다.
 	Long nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
@@ -96,7 +96,7 @@ void CaretController::Update(Subject *subject, string interest) {
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Long startOffset = pagingBuffer->GetStartOffset();
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long startRowHeight = pagingBuffer->CountRow(startOffset) * sizeCalculator->GetRowHeight();
+		Long startRowHeight = (pagingBuffer->CountRow(startOffset) - 1) * sizeCalculator->GetRowHeight();
 
 		//4. 노트에서의 높이를 구한다.
 		Long nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);

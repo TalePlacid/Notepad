@@ -102,6 +102,10 @@ Long Glyph::SplitRows(Long rowIndex, Long columnIndex, bool isDummyRow) {
 	return -1;
 }
 
+void Glyph::SelectRange(Position start, Position end) {
+
+}
+
 Long Glyph::Mark(Long index) {
 	return -1;
 }

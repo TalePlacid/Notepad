@@ -2,6 +2,7 @@
 #define _GLYPH_H
 #include <string>
 using namespace std;
+#include "Position.h"
 
 typedef signed long int Long;
 
@@ -36,6 +37,7 @@ public:
 	virtual Long TruncateBefore(Long index);
 	virtual Long MergeRows(Long index);
 	virtual Long SplitRows(Long rowIndex, Long columnIndex, bool IsDummyRow = false);
+	virtual void SelectRange(Position start, Position end);
 	virtual Long Mark(Long index);
 	virtual Long Unmark();
 

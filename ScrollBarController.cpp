@@ -17,7 +17,44 @@ ScrollBarController::~ScrollBarController() {
 
 }
 
+void ScrollBarController::Create() {
+	//1. 스크롤바들을 지운다.
+	this->parent->ModifyStyle(WS_VSCROLL, 0);
+	this->parent->ModifyStyle(WS_HSCROLL, 0);
+	this->hasVScrollBar = FALSE;
+	this->hasHScrollBar = FALSE;
+
+	//2. 전체 줄 수를 센다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
+
+	//3. 전체높이가 화면너비보다 크면, 수직스크롤을 만든다.
+	RECT rect;
+	this->parent->GetClientRect(&rect);
+	Long clientAreaHeight = rect.bottom - rect.top;
+
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+
+	if (rowCount * sizeCalculator->GetRowHeight() > clientAreaHeight)
+	{
+		this->parent->ModifyStyle(0, WS_VSCROLL);
+		this->hasVScrollBar = TRUE;
+
+		SCROLLINFO scrollInfo = { 0, };
+		scrollInfo.cbSize = sizeof(SCROLLINFO);
+		scrollInfo.fMask = SIF_ALL;
+		scrollInfo.nMin = 0;
+		scrollInfo.nMax = rowCount * sizeCalculator->GetRowHeight();
+		scrollInfo.nPage = clientAreaHeight;
+		scrollInfo.nPos = 0;
+		scrollInfo.nTrackPos = 0;
+
+		SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+	}
+}
+
 void ScrollBarController::Update(Subject* subject, string interest) {
+#if 0
 	if (interest == "CreateScrollBars")
 	{
 		//1. 화면 크기를 구한다.
@@ -221,4 +258,5 @@ void ScrollBarController::Update(Subject* subject, string interest) {
 			SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
 		}
 	}
+#endif
 }

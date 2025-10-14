@@ -5,7 +5,7 @@
 #include "SizeCalculator.h"
 #include "Caret.h"
 #include "CaretController.h"
-#include "ScrollBarController.h"
+#include "scrollBarAdapter.h"
 #include "PagingBuffer.h"
 
 #pragma warning(disable:4996)

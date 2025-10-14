@@ -21,6 +21,8 @@
 #include "FindCommand.h"
 #include "FindNextCommand.h"
 #include "PreviewCommand.h"
+#include "LoadCommand.h"
+#include "CreateScrollBarsCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -56,6 +58,7 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, CFindReplaceDialog* find
 		command = new SelectFontCommand(parent);
 		break;
 	case ID_MENU_AUTOWRAP:
+	case ID_COMMAND_AUTOWRAP:
 		command = new AutoWrapCommand(parent);
 		break;
 	case ID_MENU_FIND:
@@ -99,6 +102,12 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, CFindReplaceDialog* find
 		break;
 	case ID_COMMAND_FINDNEXT:
 		command = new FindNextCommand(parent, findReplaceDialog);
+		break;
+	case ID_COMMAND_LOAD:
+		command = new LoadCommand(parent);
+		break;
+	case ID_COMMAND_CREATESCROLLBARS:
+		command = new CreateScrollBarsCommand(parent);
 		break;
 	default:
 		break;

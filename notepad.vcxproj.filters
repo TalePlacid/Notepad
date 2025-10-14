@@ -137,9 +137,6 @@
     <ClInclude Include="SaveCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ScrollBarController.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="SelectFontCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -395,6 +392,18 @@
     <ClInclude Include="SingleByteWrappingPolicy.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="LoadCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBarNecessityChecker.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBarAdapter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateScrollBarsCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -506,9 +515,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SaveCommand.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ScrollBarController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SelectFontCommand.cpp">
@@ -758,6 +764,18 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SingleByteWrappingPolicy.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollBarNecessityChecker.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollBarAdapter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateScrollBarsCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

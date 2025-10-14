@@ -96,13 +96,10 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->sizeCalculator = new SizeCalculator(this);
 
 	this->pagingBuffer = new PagingBuffer(this);
-	this->note = this->pagingBuffer->Load();
-	Long rowIndex = this->note->Move(this->pagingBuffer->GetCurrent().GetRow());
-	this->note->GetAt(rowIndex)->Move(this->pagingBuffer->GetCurrent().GetColumn());
+	SendMessage(WM_COMMAND, (WPARAM)ID_COMMAND_LOAD, 0);
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
-	this->caretController->Create();
 
 	this->scrollBarAdapter = new ScrollBarAdapter(this);
 	PostMessage(WM_COMMAND, (WPARAM)ID_COMMAND_CREATESCROLLBARS, 0);
@@ -116,9 +113,6 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->searchResultController = new SearchResultController;
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
-
-	this->Notify("CreateScrollBars");
-	this->Notify("AdjustScrollBars");
 
 	return 0;
 }
@@ -337,7 +331,7 @@ LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnSetFocus(CWnd* pOldWnd) {
-	this->Notify("ChangeCaret");
+	//this->Notify("ChangeCaret");
 }
 
 void NotepadForm::OnKillFocus(CWnd* pNewWnd) {

@@ -32,7 +32,7 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long startOffset = pagingBuffer->GetStartOffset();
-	Long startRowIndex = pagingBuffer->CountRow(startOffset);
+	Long startRowIndex = pagingBuffer->CountRow(startOffset) - 1;
 	if (startRowIndex < 0)
 	{
 		startRowIndex = 0;

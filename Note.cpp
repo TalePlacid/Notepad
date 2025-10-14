@@ -171,6 +171,46 @@ Long Note::SplitRows(Long rowIndex, Long columnIndex, bool isDummyRow) {
 	return index;
 }
 
+void Note::SelectRange(Position start, Position end) {
+	Glyph* row;
+	Long i;
+	if (start.GetRow() < end.GetRow())
+	{
+		row = this->glyphs[start.GetRow()];
+		i = start.GetColumn();
+		while (i < row->GetLength())
+		{
+			row->GetAt(i)->Select(true);
+			i++;
+		}
+
+		i = start.GetRow() + 1;
+		while (i < end.GetRow())
+		{
+			this->glyphs[i]->Select(true);
+			i++;
+		}
+
+		row = this->glyphs[end.GetRow()];
+		i = 0;
+		while (i < row->GetLength())
+		{
+			row->GetAt(i)->Select(true);
+			i++;
+		}
+	}
+	else if (start.GetRow() == end.GetRow())
+	{
+		row = this->glyphs[start.GetRow()];
+		i = start.GetColumn();
+		while (i < end.GetColumn())
+		{
+			row->GetAt(i)->Select(true);
+			i++;
+		}
+	}
+}
+
 #if 0
 
 #include <iostream>

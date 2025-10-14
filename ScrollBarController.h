@@ -12,6 +12,7 @@ public:
 	ScrollBarController(CWnd* parent);
 	virtual ~ScrollBarController();
 
+	void Create();
 	virtual void Update(Subject* subject, string interest);
 
 	BOOL HasVSCrollBar() const;
