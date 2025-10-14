@@ -9,7 +9,7 @@ class Visitor;
 
 class Glyph {
 public:
-	Glyph(bool isDirty = true);
+	Glyph();
 	virtual ~Glyph() = 0;
 	Glyph(const Glyph& source);
 	Glyph& operator=(const Glyph& source);
@@ -47,10 +47,8 @@ public:
 	virtual Long GetCurrent() const;
 	virtual bool IsSelected() const;
 	virtual Long GetMarked() const;
-	virtual bool IsDirty() const;
 protected:
 	bool isSelected;
-	bool isDirty;
 };
 
 inline Long Glyph::GetCapacity() const {
@@ -71,10 +69,6 @@ inline bool Glyph::IsSelected() const {
 
 inline Long Glyph::GetMarked() const {
 	return -1;
-}
-
-inline bool Glyph::IsDirty() const {
-	return this->isDirty;
 }
 
 #endif // !_GLYPH_H

@@ -12,15 +12,15 @@ NoteConverter::~NoteConverter() {
 
 }
 
-Glyph* NoteConverter::Convert(string str, bool isDirty) {
+Glyph* NoteConverter::Convert(string str) {
 	GlyphFactory glyphFactory;
 	char character[2];
 
 	character[0] = '\0';
-	Glyph* note = glyphFactory.Create(character, isDirty);
+	Glyph* note = glyphFactory.Create(character);
 
 	character[0] = '\r';
-	Glyph* glyph = glyphFactory.Create(character, isDirty);
+	Glyph* glyph = glyphFactory.Create(character);
 	Long index = note->Add(glyph);
 	Glyph* current = note->GetAt(index);
 
@@ -34,7 +34,7 @@ Glyph* NoteConverter::Convert(string str, bool isDirty) {
 			character[1] = str.at(i);
 		}
 
-		glyph = glyphFactory.Create(character, isDirty);
+		glyph = glyphFactory.Create(character);
 
 		if (character[0] != '\r')
 		{

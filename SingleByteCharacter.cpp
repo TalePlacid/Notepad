@@ -2,8 +2,7 @@
 
 #pragma warning(disable:4996)
 
-SingleByteCharacter::SingleByteCharacter(char content, bool isDirty)
-	:Character(isDirty) {
+SingleByteCharacter::SingleByteCharacter(char content, bool isDirty){
 	this->content = content;
 }
 

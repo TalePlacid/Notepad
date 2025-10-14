@@ -4,7 +4,7 @@
 #pragma warning(disable:4996)
 
 Row::Row(Long capacity, bool isDirty)
-	:Composite(capacity, isDirty) {
+	:Composite(capacity) {
 }
 
 Row::~Row() {
