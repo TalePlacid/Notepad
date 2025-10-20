@@ -5,7 +5,9 @@
 #pragma warning(disable:4996)
 
 SizeCalculator::SizeCalculator(CWnd* parent) {
-	CDC *cdc = parent->GetDC();
+	this->parent = parent;
+	
+	CDC *cdc = this->parent->GetDC();
 	CFont* oldFont = NULL;
 	char character;
 	this->singleByteWidths = new Long[95];
@@ -72,4 +74,23 @@ Long SizeCalculator::GetCharacterWidth(char(*character)) {
 	}
 
 	return width;
+}
+
+Long SizeCalculator::GetRowWidth(CString contents) {
+	CDC* cdc = this->parent->GetDC();
+	CFont* oldFont = NULL;
+	if (((NotepadForm*)parent)->font != NULL)
+	{
+		oldFont = cdc->SelectObject(((NotepadForm*)parent)->font->GetCFont());
+	}
+
+	Long rowWidth = cdc->GetTextExtent(contents).cx;
+	
+	if (((NotepadForm*)parent)->font != NULL)
+	{
+		cdc->SelectObject(oldFont);
+	}
+	ReleaseDC(parent->GetSafeHwnd(), cdc->GetSafeHdc());
+
+	return rowWidth;
 }

@@ -33,7 +33,7 @@ void ReplaceAllCommand::Execute() {
 	((NotepadForm*)(this->parent))->searchResultController = new SearchResultController;
 
 	CommandFactory commandFactory;
-	Command* command = commandFactory.Create(this->parent, ID_COMMAND_FIND, this->findReplaceDialog);
+	Command* command = commandFactory.Create(this->parent, ID_COMMAND_FIND, (LPARAM)(this->findReplaceDialog));
 	if (command != NULL)
 	{
 		command->Execute();
@@ -47,7 +47,7 @@ void ReplaceAllCommand::Execute() {
 	Long i = 0;
 	while (i < searchResultController->GetLength())
 	{
-		command = commandFactory.Create(this->parent, ID_COMMAND_REPLACE, this->findReplaceDialog);
+		command = commandFactory.Create(this->parent, ID_COMMAND_REPLACE, (LPARAM)(this->findReplaceDialog));
 		if (command != NULL)
 		{
 			command->Execute();
@@ -55,7 +55,7 @@ void ReplaceAllCommand::Execute() {
 			command = NULL;
 		}
 
-		command = commandFactory.Create(this->parent, ID_COMMAND_FINDNEXT, this->findReplaceDialog);
+		command = commandFactory.Create(this->parent, ID_COMMAND_FINDNEXT, (LPARAM)(this->findReplaceDialog));
 		if (command != NULL)
 		{
 			command->Execute();

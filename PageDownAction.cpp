@@ -2,7 +2,7 @@
 #include "PageDownAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
-#include "ScrollBarAdapter.h"
+#include "ScrollController.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
 #include "MarkingHelper.h"
@@ -19,9 +19,10 @@ PageDownAction::~PageDownAction() {
 }
 
 void PageDownAction::Perform() {
+#if 0
 	//1. 수직 스크롤바가 존재하면,
-	ScrollBarAdapter* scrollBarAdapter = ((NotepadForm*)(this->parent))->scrollBarAdapter;
-	if (scrollBarAdapter->HasVScrollBar())
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	if (scrollController->HasVScrollBar())
 	{
 		//1.1. 수직 스크롤바 정보를 읽는다.
 		SCROLLINFO scrollInfo = {};
@@ -100,4 +101,5 @@ void PageDownAction::Perform() {
 			this->parent->Invalidate();
 		}
 	}
+#endif
 }

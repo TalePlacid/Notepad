@@ -22,7 +22,6 @@
 #include "FindNextCommand.h"
 #include "PreviewCommand.h"
 #include "LoadCommand.h"
-#include "CreateScrollBarsCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -34,7 +33,7 @@ CommandFactory::~CommandFactory() {
 
 }
 
-Command* CommandFactory::Create(CWnd* parent, UINT nID, CFindReplaceDialog* findReplaceDialog) {
+Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	Command* command = NULL;
 
 	switch (nID)
@@ -89,25 +88,22 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, CFindReplaceDialog* find
 		command = new RedoCommand(parent);
 		break;
 	case ID_COMMAND_REPLACE:
-		command = new ReplaceCommand(parent, findReplaceDialog);
+		command = new ReplaceCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
 	case ID_COMMAND_CLOSEFINDREPLACE:
-		command = new CloseFindReplaceCommand(parent, findReplaceDialog);
+		command = new CloseFindReplaceCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
 	case ID_COMMAND_REPLACEALL:
-		command = new ReplaceAllCommand(parent, findReplaceDialog);
+		command = new ReplaceAllCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
 	case ID_COMMAND_FIND:
-		command = new FindCommand(parent, findReplaceDialog);
+		command = new FindCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
 	case ID_COMMAND_FINDNEXT:
-		command = new FindNextCommand(parent, findReplaceDialog);
+		command = new FindNextCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
 	case ID_COMMAND_LOAD:
 		command = new LoadCommand(parent);
-		break;
-	case ID_COMMAND_CREATESCROLLBARS:
-		command = new CreateScrollBarsCommand(parent);
 		break;
 	default:
 		break;

@@ -398,10 +398,10 @@
     <ClInclude Include="ScrollBarNecessityChecker.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ScrollBarAdapter.h">
+    <ClInclude Include="Scroll.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CreateScrollBarsCommand.h">
+    <ClInclude Include="ScrollController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -772,10 +772,10 @@
     <ClCompile Include="ScrollBarNecessityChecker.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ScrollBarAdapter.cpp">
+    <ClCompile Include="Scroll.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CreateScrollBarsCommand.cpp">
+    <ClCompile Include="ScrollController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

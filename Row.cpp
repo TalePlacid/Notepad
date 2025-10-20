@@ -5,6 +5,7 @@
 
 Row::Row(Long capacity, bool isDirty)
 	:Composite(capacity) {
+	this->current = 0;
 }
 
 Row::~Row() {

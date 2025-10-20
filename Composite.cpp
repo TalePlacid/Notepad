@@ -6,7 +6,7 @@ Composite::Composite(Long capacity)
 	:glyphs(capacity) {
 	this->capacity = capacity;
 	this->length = 0;
-	this->current = 0;
+	this->current = -1;
 	this->marked = -1;
 }
 

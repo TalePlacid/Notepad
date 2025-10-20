@@ -62,4 +62,7 @@ void LoadCommand::Execute() {
 			}
 		}
 	}
+
+	//4. 스크롤바를 업데이트한다.
+	((NotepadForm*)(this->parent))->Notify("UpdateScrollBars");
 }

@@ -4,7 +4,7 @@
 #include "PagingBuffer.h"
 #include "Glyph.h"
 #include "SizeCalculator.h"
-#include "scrollBarAdapter.h"
+#include "ScrollController.h"
 #include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
@@ -19,6 +19,7 @@ PageUpAction::~PageUpAction() {
 }
 
 void PageUpAction::Perform() {
+#if 0
 	//1. 수직 스크롤바가 있으면,
 	ScrollBarAdapter* scrollBarAdapter = ((NotepadForm*)(this->parent))->scrollBarAdapter;
 	if (scrollBarAdapter->HasVScrollBar())
@@ -104,4 +105,5 @@ void PageUpAction::Perform() {
 		}
 
 	}
+#endif
 }

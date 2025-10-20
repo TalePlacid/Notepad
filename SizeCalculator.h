@@ -11,11 +11,13 @@ public:
 	~SizeCalculator();
 
 	Long GetCharacterWidth(char(*character));
-	
+	Long GetRowWidth(CString contents);
+
 	Long GetMultiByteWidth() const;
 	Long GetRowHeight() const;
 	Long GetMaxCharacterWidth() const;
 private:
+	CWnd* parent;
 	Long(*singleByteWidths);
 	Long multiByteWidth;
 	Long rowHeight;

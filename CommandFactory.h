@@ -10,7 +10,7 @@ public:
 	CommandFactory();
 	~CommandFactory();
 
-	Command* Create(CWnd* parent, UINT nID, CFindReplaceDialog* findReplaceDialog = NULL);
+	Command* Create(CWnd* parent, UINT nID, LPARAM lParam = 0);
 };
 
 #endif // !_COMMANDFACTORY_H

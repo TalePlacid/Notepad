@@ -1,16 +1,18 @@
 #ifndef _SCROLLBARNECESSITYCHECKER_H //guard
 #define _SCROLLBARNECESSITYCHECKER_H
-#include <afxwin.h>
 
 typedef signed long int Long;
 
+class CWnd;
+
 class ScrollBarNecessityChecker {
 public:
-	ScrollBarNecessityChecker();
+	ScrollBarNecessityChecker(CWnd *parent);
 	~ScrollBarNecessityChecker();
 
-	void Check(Long contentsWidth, Long contentsHeight, RECT clientAreaSize, Long scrollBarThickness,
-		bool& vScrollNeeded, bool& hScrollNeeded);
+	void Check(bool& vScrollNeeded, bool& hScrollNeeded);
+private:
+	CWnd* parent;
 };
 
 #endif // !_SCROLLBARNECESSITYCHECKER_H

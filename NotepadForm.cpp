@@ -20,7 +20,7 @@
 #include "KeyAction.h"
 #include "KeyActionFactory.h"
 #include "NoteWrapper.h"
-#include "ScrollBarAdapter.h"
+#include "ScrollController.h"
 #include "ScrollBarActionFactory.h"
 #include "ScrollBarAction.h"
 #include "TextOutVisitor.h"
@@ -49,7 +49,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_CREATESCROLLBARS, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_AUTOWRAP, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -66,7 +66,7 @@ NotepadForm::NotepadForm() {
 	this->font = NULL;
 	this->sizeCalculator = NULL;
 	this->caretController = NULL;
-	this->scrollBarAdapter = NULL;
+	this->scrollController = NULL;
 	this->clipboardController = NULL;
 	this->pagingBuffer = NULL;
 	this->searchResultController = NULL;
@@ -86,6 +86,7 @@ NotepadForm::~NotepadForm() {
 
 BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
 	cs.style &= ~WS_HSCROLL;
+	cs.style &= ~WS_VSCROLL;
 
 	return CFrameWnd::PreCreateWindow(cs);
 }
@@ -95,14 +96,20 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->sizeCalculator = new SizeCalculator(this);
 
+	GlyphFactory glyphFactory;
+	TCHAR character = '\0';
+	this->note = glyphFactory.Create(&character);
+	character = '\r';
+	this->note->Add(glyphFactory.Create(&character));
+
 	this->pagingBuffer = new PagingBuffer(this);
-	SendMessage(WM_COMMAND, (WPARAM)ID_COMMAND_LOAD, 0);
+	PostMessage(WM_COMMAND, (WPARAM)ID_COMMAND_LOAD, 0);
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
 
-	this->scrollBarAdapter = new ScrollBarAdapter(this);
-	PostMessage(WM_COMMAND, (WPARAM)ID_COMMAND_CREATESCROLLBARS, 0);
+	this->scrollController = new ScrollController(this);
+	this->Register(this->scrollController);
 
 	this->clipboardController = new ClipboardController(this);
 
@@ -166,8 +173,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 
 		this->Notify("ChangeCaret");
-		this->Notify("CreateScrollBars");
-		this->Notify("AdjustScrollBars");
+		this->Notify("UpdateScrollBars");
 		this->Invalidate();
 	}
 }
@@ -184,8 +190,7 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 		noteWrapper.InsertDummyRows(rect.right - rect.left);
 	}
 
-	this->Notify("CreateScrollBars");
-	this->Notify("AdjustScrollBars");
+	this->Notify("UpdateScrollBars");
 }
 
 void NotepadForm::OnPaint() {
@@ -224,6 +229,8 @@ void NotepadForm::OnPaint() {
 	{
 		this->Notify("ChangeCaret");
 	}
+
+	this->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 }
 
 LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
@@ -260,8 +267,6 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 				command->Execute();
 				delete command;
 			}			
-			this->Notify("CreateScrollBars");
-			this->Notify("AdjustScrollBars");
 			this->isCompositing = TRUE;
 		}
 		else if (length == 0)
@@ -276,6 +281,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		this->Invalidate();
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
+		this->Notify("UpdateScrollBars");
 	}
 	
 	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
@@ -319,8 +325,8 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	MarkingHelper markingHelper(this);
 	markingHelper.Unmark();
 	this->Invalidate();
-	
-	//DefWindowProc(WM_IME_CHAR, wParam, lParam)
+	this->Notify("UpdateScrollBars");
+
 	return 0;
 }
 
@@ -360,8 +366,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 			delete command;
 		}
 	}
-	this->Notify("CreateScrollBars");
-	this->Notify("AdjustScrollBars");
+	this->Notify("UpdateScrollBars");
 	this->Invalidate();
 }
 
@@ -452,9 +457,9 @@ void NotepadForm::OnClose() {
 		delete this->sizeCalculator;
 	}
 
-	if (this->scrollBarAdapter != NULL)
+	if (this->scrollController != NULL)
 	{
-		delete this->scrollBarAdapter;
+		delete this->scrollController;
 	}
 
 	if (this->clipboardController != NULL)
