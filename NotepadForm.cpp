@@ -229,8 +229,6 @@ void NotepadForm::OnPaint() {
 	{
 		this->Notify("ChangeCaret");
 	}
-
-	this->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 }
 
 LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {

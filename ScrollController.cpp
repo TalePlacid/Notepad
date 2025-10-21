@@ -122,6 +122,8 @@ void ScrollController::Update(Subject* subject, string interest) {
 			this->parent->ModifyStyle(WS_HSCROLL, 0);
 			this->hasHScroll = false;
 		}
+		
+		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
 }
 
