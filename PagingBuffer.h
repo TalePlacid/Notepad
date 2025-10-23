@@ -43,12 +43,15 @@ public:
 	bool IsOnPage(Long offset);
 	Long MoveOffset(Long offset);
 
+	Long CacheRowStartIndex(Long difference);
+
 	CString MakeSelectedString();
 	CString GetFullText();
 
 	CWnd* GetParent() const;
 	FILE* GetFile() const;
 	Long GetFileEndOffset() const;
+	Long GetRowStartIndex() const;
 	Long GetStartOffset() const;
 	Long GetCurrentOffset() const;
 	Long GetEndOffset() const;
@@ -60,6 +63,7 @@ protected:
 	CWnd* parent;
 	Long pageSize;
 	FILE* file;
+	Long rowStartIndex;
 	Long startOffset;
 	Long endOffset;
 	Position current;
@@ -74,6 +78,10 @@ inline CWnd* PagingBuffer::GetParent() const {
 
 inline FILE* PagingBuffer::GetFile() const{
 	return const_cast<FILE*>(this->file);
+}
+
+inline Long PagingBuffer::GetRowStartIndex() const {
+	return this->rowStartIndex;
 }
 
 inline Long PagingBuffer::GetStartOffset() const {

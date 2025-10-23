@@ -28,6 +28,7 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 		fseek(this->file, 0, SEEK_SET);
 	}
 
+	this->rowStartIndex = 0;
 	this->selectionBeginOffset = -1;
 }
 
@@ -43,6 +44,50 @@ PagingBuffer::~PagingBuffer() {
 }
 
 Glyph* PagingBuffer::Load() {
+	//1. 줄의 처음으로 이동한다.
+	Long currentOffset = ftell(this->file);
+	FilePointerCalculator filePointerCaculator(this);
+	Long offset = filePointerCaculator.First(currentOffset);
+	fseek(this->file, offset, SEEK_SET);
+	
+	//2. 바이트수가 페이지 크기보다 작고, 줄수가 적재 줄수보다 작으면 반복한다.
+	Long loadingRowCount = PAGE_ROWCOUNT * PAGE_MULTIPLE;
+	Long rowCount = 0;
+	TCHAR(*contents) = new TCHAR[this->pageSize+1];
+	Long i = 0;
+	while (i < this->pageSize && rowCount < loadingRowCount)
+	{
+		//2.1. 내용을 읽는다.
+		fread(contents + i, 1, 1, this->file);
+		if (contents[i] == '\n')
+		{
+			rowCount++;
+		}
+		i++;
+	}
+
+	//3. 페이지 크기를 넘어섰다면,
+	ByteChecker byteChecker;
+	if (i >= this->pageSize && (byteChecker.IsLeadByte(contents[--i]) || contents[--i] == '\r'))
+	{
+		i--;
+	}
+	contents[i] = '\0';
+
+	//4. 기존 위치로 이동한다.
+	fseek(this->file, currentOffset, SEEK_SET);
+
+	//5. 노트로 전환한다.
+	NoteConverter noteConverter;
+	Glyph* note = noteConverter.Convert(contents);
+
+	if (contents != NULL)
+	{
+		delete[] contents;
+	}
+
+	return note;
+#if 0
 	//1. 적재할 줄 수를 구한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long loadingRowCount = PAGE_ROWCOUNT * PAGE_MULTIPLE;
@@ -157,6 +202,7 @@ Glyph* PagingBuffer::Load() {
 	}
 
 	return note;
+#endif
 }
 
 Long PagingBuffer::Add(char(*character)) {
@@ -788,6 +834,12 @@ Long PagingBuffer::MoveOffset(Long offset) {
 	}
 
 	return ftell(this->file);
+}
+
+Long PagingBuffer::CacheRowStartIndex(Long difference) {
+	this->rowStartIndex += difference;
+
+	return this->rowStartIndex;
 }
 
 CString PagingBuffer::MakeSelectedString() {
