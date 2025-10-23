@@ -211,6 +211,24 @@ void Note::SelectRange(Position start, Position end) {
 	}
 }
 
+void Note::Append(const Glyph* other) {
+	Long i = 0;
+	while (i < other->GetLength())
+	{
+		if (this->length < this->capacity)
+		{
+			this->glyphs.Store(this->length, const_cast<Glyph*>(other)->GetAt(i)->Clone());
+		}
+		else
+		{
+			this->glyphs.AppendFromRear(const_cast<Glyph*>(other)->GetAt(i)->Clone());
+			(this->capacity)++;
+		}
+		(this->length++);
+		i++;
+	}
+}
+
 #if 0
 
 #include <iostream>

@@ -27,6 +27,7 @@ public:
 	virtual Long MergeRows(Long index);
 	virtual Long SplitRows(Long rowIndex, Long columnIndex, bool IsDummyRow = false);
 	virtual void SelectRange(Position start, Position end);
+	virtual void Append(const Glyph* other);
 };
 
 #endif // !_NOTE_H

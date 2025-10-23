@@ -114,6 +114,10 @@ Long Glyph::Unmark() {
 	return -1;
 }
 
+void Glyph::Append(const Glyph* other) {
+
+}
+
 Glyph* Glyph::operator[](Long index) {
 	return 0;
 }

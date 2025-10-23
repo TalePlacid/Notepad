@@ -132,13 +132,13 @@ Long Composite::Remove(Long index) {
 
 Long Composite::TruncateAfter(Long index) {
 	Long count = 0;
-	while (this->length > index)
+	while (this->length > index + 1)
 	{
-		if (this->glyphs[index] != NULL)
+		if (this->glyphs[index + 1] != NULL)
 		{
-			delete this->glyphs[index];
+			delete this->glyphs[index + 1];
 		}
-		this->glyphs.Delete(index);
+		this->glyphs.Delete(index + 1);
 		(this->length)--;
 		(this->capacity)--;
 		count++;

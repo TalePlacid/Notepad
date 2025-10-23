@@ -44,6 +44,13 @@ void Row::Accept(Visitor& visitor) {
 	visitor.VisitRow(this);
 }
 
+Long Row::TruncateAfter(Long index) {
+	index--;
+	Long count = Composite::TruncateAfter(index);
+
+	return count;
+}
+
 #if 0
 
 #include <iostream>

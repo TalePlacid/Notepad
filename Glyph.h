@@ -40,6 +40,7 @@ public:
 	virtual void SelectRange(Position start, Position end);
 	virtual Long Mark(Long index);
 	virtual Long Unmark();
+	virtual void Append(const Glyph* other);
 
 	virtual Glyph* operator[](Long index);
 	virtual operator char*() const;

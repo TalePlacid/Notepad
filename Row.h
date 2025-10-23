@@ -18,6 +18,7 @@ public:
 	virtual string MakeString();
 	virtual Glyph* Clone();
 	virtual void Accept(Visitor& visitor);
+	virtual Long TruncateAfter(Long index);
 };
 
 #endif // !_ROW_H
