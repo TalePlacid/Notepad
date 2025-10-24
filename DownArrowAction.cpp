@@ -5,6 +5,8 @@
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "ScrollController.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -36,15 +38,9 @@ void DownArrowAction::Perform() {
 	}
 
 	rowIndex = note->Next();
+	Glyph* nextRow = note->GetAt(rowIndex);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->NextRow();
-	if (!pagingBuffer->IsAboveBottomLine())
-	{
-		pagingBuffer->Load();
-		note = ((NotepadForm*)(this->parent))->note;
-		rowIndex = note->GetCurrent();
-	}
-	Glyph* nextRow = note->GetAt(rowIndex);
 
 	Long previousWidth = 0;
 	Long width = 0;
@@ -65,10 +61,23 @@ void DownArrowAction::Perform() {
 	pagingBuffer->Move(i);
 	nextRow->Move(i);
 
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Scroll vScroll = scrollController->GetVScroll();
+
+	Long currentHeight = (rowIndex + 1) * sizeCalculator->GetRowHeight();
+	if (currentHeight > vScroll.GetPage())
+	{
+		scrollController->Down();
+	}
+
+	if (!note->IsAboveBottomLine())
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, ID_COMMAND_LOAD, 0);
+	}
+
 	note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
 
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }

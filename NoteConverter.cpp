@@ -48,5 +48,9 @@ Glyph* NoteConverter::Convert(string str) {
 		i++;
 	}
 
+	Long rowIndex = note->Move(0);
+	Glyph* row = note->GetAt(rowIndex);
+	row->Move(0);
+
 	return note;
 }

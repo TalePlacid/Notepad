@@ -229,86 +229,8 @@ void Note::Append(const Glyph* other) {
 	}
 }
 
-#if 0
+bool Note::IsAboveBottomLine() {
+	Long bottomLine = this->length / 10 * 7;
 
-#include <iostream>
-using namespace std;
-#include "Glyph.h"
-#include "NoteConverter.h"
-
-int main(int argc, char* argv[]) {
-	string contents("나랏말싸미\r\n듕귁에 달아\r\nOne ring\r\nFind them\r\nall.");
-	NoteConverter noteConverter;
-	Glyph* note = noteConverter.Convert(contents);
-
-	cout << "[선택없음]" << endl
-		<< "선택시작줄 : " << note->FindSelectionStart() << endl
-		<< "선택시작칸 : " << note->GetAt(0)->FindSelectionStart() << endl
-		<< "선택끝줄 : " << note->FindSelectionStart() << endl
-		<< "선택끝칸 : " << note->GetAt(0)->FindSelectionEnd() << endl << endl;
-
-	Glyph* row = note->GetAt(1);
-	Long i = 2;
-	while (i < row->GetLength())
-	{
-		row->GetAt(i)->Select(true);
-		i++;
-	}
-
-	cout << "[1줄 선택]" << endl
-		<< "선택시작줄 : " << note->FindSelectionStart() << endl
-		<< "선택시작칸 : " << note->GetAt(note->FindSelectionStart())->FindSelectionStart() << endl
-		<< "선택끝줄 : " << note->FindSelectionEnd() << endl
-		<< "선택끝칸 : " << note->GetAt(note->FindSelectionEnd())->FindSelectionEnd() << endl << endl;
-
-	note->GetAt(2)->Select(true);
-
-	row = note->GetAt(3);
-	i = 0;
-	while (i < 3)
-	{
-		row->GetAt(i)->Select(true);
-		i++;
-	}
-
-	cout << "[여러 줄 선택]" << endl
-		<< "선택시작줄 : " << note->FindSelectionStart() << endl
-		<< "선택시작칸 : " << note->GetAt(note->FindSelectionStart())->FindSelectionStart() << endl
-		<< "선택끝줄 : " << note->FindSelectionEnd() << endl
-		<< "선택끝칸 : " << note->GetAt(note->FindSelectionEnd())->FindSelectionEnd() << endl << endl;
-
-	row = note->GetAt(2);
-	Long count = row->TruncateAfter(1);
-	cout << "[칸 이후 잘라내기]" << endl
-		<< row->MakeString() << endl
-		<< count << "칸 잘렸습니다." << endl << endl;
-
-
-	count = note->TruncateAfter(2);
-	cout << "[줄 이후 잘라내기]" << endl
-		<< note->MakeString() << endl
-		<< count << "줄 잘렸습니다." << endl << endl;
-
-	row = note->GetAt(0);
-	count = row->TruncateBefore(3);
-	cout << "[칸 이전 잘라내기]" << endl
-		<< row->MakeString() << endl
-		<< count << "칸 잘렸습니다." << endl << endl;
-
-	count = note->TruncateBefore(2);
-	cout << "[줄 이전 잘라내기]" << endl
-		<< note->MakeString() << endl
-		<< count << "줄 잘렸습니다." << endl << endl;
-
-	Glyph* refilled = noteConverter.Convert(contents);
-	refilled->MergeRows(0);
-	cout << refilled->MakeString() << endl << endl;
-
-	refilled->MergeRows(1);
-	refilled->MergeRows(1);
-	cout << refilled->MakeString() << endl << endl;
-
-	return 0;
+	return this->current < bottomLine;
 }
-
-#endif

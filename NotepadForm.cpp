@@ -96,14 +96,16 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->sizeCalculator = new SizeCalculator(this);
 
+#if 0
 	GlyphFactory glyphFactory;
 	TCHAR character = '\0';
 	this->note = glyphFactory.Create(&character);
 	character = '\r';
 	this->note->Add(glyphFactory.Create(&character));
+#endif
 
 	this->pagingBuffer = new PagingBuffer(this);
-	PostMessage(WM_COMMAND, (WPARAM)ID_COMMAND_LOAD, 0);
+	SendMessage(WM_COMMAND, (WPARAM)ID_COMMAND_LOAD, 0);
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
@@ -198,14 +200,6 @@ void NotepadForm::OnPaint() {
 
 	RECT rect;
 	this->GetClientRect(&rect);
-	if (this->GetScrollPos(SB_HORZ) > 0)
-	{
-		rect.right += this->sizeCalculator->GetMultiByteWidth();
-	}
-	if (this->GetScrollPos(SB_VERT) > 0)
-	{
-		rect.bottom += this->sizeCalculator->GetRowHeight();
-	}
 	Long width = rect.right - rect.left;
 	Long height = rect.bottom - rect.top;
 
@@ -221,7 +215,7 @@ void NotepadForm::OnPaint() {
 	TextOutVisitor textOutVisitor(this, &memDC);
 	this->note->Accept(textOutVisitor);
 
-	dc.BitBlt(0, 0, width, height, &memDC, textOutVisitor.GetXOffset(), textOutVisitor.GetYOffset(), SRCCOPY);
+	dc.BitBlt(0, 0, width, height, &memDC, 0, 0, SRCCOPY);
 
 	memDC.SelectObject(oldBitMap);
 
@@ -401,7 +395,6 @@ void NotepadForm::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
 	return TRUE;
 }
-
 LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
 	

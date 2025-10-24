@@ -31,6 +31,8 @@ public:
 
 	Scroll& GetVScroll() const;
 	Scroll& GetHScroll() const;
+	bool HasVScroll() const;
+	bool HasHScroll() const;
 private:
 	CWnd* parent;
 	bool hasVScroll;
@@ -45,6 +47,14 @@ inline Scroll& ScrollController::GetVScroll() const {
 
 inline Scroll& ScrollController::GetHScroll() const {
 	return const_cast<Scroll&>(this->hScroll);
+}
+
+inline bool ScrollController::HasVScroll() const {
+	return this->hasVScroll;
+}
+
+inline bool ScrollController::HasHScroll() const {
+	return this->hasHScroll;
 }
 
 #endif // !_SCROLLCONTROLLER_H

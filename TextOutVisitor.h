@@ -15,24 +15,24 @@ public:
 	virtual void VisitRow(Glyph* row);
 	virtual void VisitCharacter(Glyph* character);
 
-	Long GetXOffset() const;
-	Long GetYOffset() const;
+	Long GetLogicalX() const;
+	Long GetLogicalY() const;
 private:
 	CDC* dc;
 	Visitor* selectionVisitor;
-	RECT paintingArea;
-	Long xOffset;
-	Long yOffset;
-	Long x;
-	Long y;
+	Long logicalX;
+	Long logicalY;
+	Long drawingX;
+	Long drawingY;
+	RECT drawingArea;
 };
 
-inline Long TextOutVisitor::GetXOffset() const {
-	return this->xOffset;
+inline Long TextOutVisitor::GetLogicalX() const {
+	return this->logicalX;
 }
 
-inline Long TextOutVisitor::GetYOffset() const {
-	return this->yOffset;
+inline Long TextOutVisitor::GetLogicalY() const {
+	return this->logicalY;
 }
 
 #endif // !_TEXTOUTVISITOR_H

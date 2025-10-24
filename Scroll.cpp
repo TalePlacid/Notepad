@@ -70,7 +70,7 @@ Long Scroll::LineDown(Long distance) {
 		this->pos = this->max;
 	}
 
-	return this->max;
+	return this->pos;
 }
 
 Long Scroll::PageUp() {

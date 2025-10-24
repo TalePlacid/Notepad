@@ -5,6 +5,7 @@
 #include "Glyph.h"
 #include "resource.h"
 #include "ScrollController.h"
+#include "GlyphFactory.h"
 
 #pragma warning(disable:4996)
 
@@ -18,29 +19,40 @@ LoadCommand::~LoadCommand() {
 }
 
 void LoadCommand::Execute() {
-	// 1. 기존 노트가 있다면, 상단부만 남기고 지운다.
+	// 1. 노트를 적재한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Long index = rowIndex - PAGE_ROWCOUNT;
-	if (index < 0)
-	{
-		index = 0;
-	}
-
-	note->TruncateBefore(index);
-	note->TruncateAfter(index);
-	pagingBuffer->CacheRowStartIndex(rowIndex - index);
-	
-	// 2. 적재한 노트와 합친다.
 	Glyph* loadedNote = pagingBuffer->Load();
-	note->Append(loadedNote);
-	if (loadedNote != NULL)
+
+	// 2. 기존 노트가 있다면,
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	if (note != NULL)
 	{
-		delete loadedNote;
+		// 1.1.상단부만 남기고 지운다.
+		Long rowIndex = note->GetCurrent();
+		Long index = rowIndex - PAGE_ROWCOUNT;
+		if (index < 0)
+		{
+			index = 0;
+		}
+
+		note->TruncateBefore(index);
+		note->TruncateAfter(index);
+		pagingBuffer->CacheRowStartIndex(index);
+		
+		// 1.2. 적재한 노트와 합친다.
+		note->Append(loadedNote);
+		if (loadedNote != NULL)
+		{
+			delete loadedNote;
+		}
+	}
+	else // 2. 노트가 없다면,
+	{
+		// 2.1. 적재한 노트를 노트로 삼는다.
+		((NotepadForm*)(this->parent))->note = loadedNote;
 	}
 
-	// 3. 노트에 선택사항을 반영한다.
+	// 4. 노트에 선택사항을 반영한다.
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 
 #if 0

@@ -51,11 +51,12 @@ Glyph* PagingBuffer::Load() {
 	fseek(this->file, offset, SEEK_SET);
 	
 	//2. 바이트수가 페이지 크기보다 작고, 줄수가 적재 줄수보다 작으면 반복한다.
+	Long fileEndOffset = filePointerCaculator.FileEnd();
 	Long loadingRowCount = PAGE_ROWCOUNT * PAGE_MULTIPLE;
 	Long rowCount = 0;
 	TCHAR(*contents) = new TCHAR[this->pageSize+1];
 	Long i = 0;
-	while (i < this->pageSize && rowCount < loadingRowCount)
+	while (i < fileEndOffset && i < this->pageSize && rowCount < loadingRowCount)
 	{
 		//2.1. 내용을 읽는다.
 		fread(contents + i, 1, 1, this->file);

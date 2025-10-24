@@ -12,6 +12,14 @@ ScrollController::ScrollController(CWnd* parent) {
 	this->parent = parent;
 	this->hasVScroll = false;
 	this->hasHScroll = false;
+
+	RECT clientArea;
+	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
+	Long clientAreaWidth = clientArea.right - clientArea.left;
+	Long clientAreaHeight = clientArea.bottom - clientArea.top;
+
+	this->vScroll.ResizePage(clientAreaHeight);
+	this->hScroll.ResizePage(clientAreaWidth);
 }
 
 ScrollController::~ScrollController() {
@@ -31,6 +39,17 @@ void ScrollController::Update(Subject* subject, string interest) {
 		GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 		Long clientAreaHeight = clientArea.bottom - clientArea.top;
 		Long clientAreaWidth = clientArea.right - clientArea.left;
+		Long scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
+
+		if (vScrollNeeded)
+		{
+			clientAreaWidth -= scrollBarThickness;
+		}
+
+		if (hScrollNeeded)
+		{
+			clientAreaHeight -= scrollBarThickness;
+		}
 
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long currentRow = note->GetCurrent();
@@ -53,7 +72,6 @@ void ScrollController::Update(Subject* subject, string interest) {
 
 				this->vScroll.ResizeRange(rowCount * sizeCalculator->GetRowHeight());
 				this->vScroll.ResizePage(clientAreaHeight);
-				this->vScroll.Move(currentRow * sizeCalculator->GetRowHeight());
 
 				scrollInfo.nMin = this->vScroll.GetMin();
 				scrollInfo.nMax = this->vScroll.GetMax();
@@ -104,7 +122,6 @@ void ScrollController::Update(Subject* subject, string interest) {
 
 				this->hScroll.ResizeRange(maxWidth);
 				this->hScroll.ResizePage(clientAreaWidth);
-				this->hScroll.Move(width);
 
 				scrollInfo.nMin = this->hScroll.GetMin();
 				scrollInfo.nMax = this->hScroll.GetMax();
@@ -141,4 +158,13 @@ void ScrollController::ResizeHRange(Long max, Long min) {
 
 Long ScrollController::ResizeHPage(Long page) {
 	return this->hScroll.ResizePage(page);
+}
+
+Long ScrollController::Down() {
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long pos = this->vScroll.LineDown(sizeCalculator->GetRowHeight());
+
+	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+
+	return pos;
 }

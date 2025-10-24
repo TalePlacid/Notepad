@@ -41,6 +41,7 @@ public:
 	virtual Long Mark(Long index);
 	virtual Long Unmark();
 	virtual void Append(const Glyph* other);
+	virtual bool IsAboveBottomLine();
 
 	virtual Glyph* operator[](Long index);
 	virtual operator char*() const;
@@ -72,6 +73,10 @@ inline bool Glyph::IsSelected() const {
 
 inline Long Glyph::GetMarked() const {
 	return -1;
+}
+
+inline bool Glyph::IsAboveBottomLine() {
+	return false;
 }
 
 #endif // !_GLYPH_H
