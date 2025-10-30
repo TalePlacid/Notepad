@@ -28,6 +28,8 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 		fseek(this->file, 0, SEEK_SET);
 	}
 
+	this->startOffset = 0;
+	this->endOffset = 0;
 	this->rowStartIndex = 0;
 	this->selectionBeginOffset = -1;
 }
@@ -56,7 +58,7 @@ Glyph* PagingBuffer::Load() {
 	Long rowCount = 0;
 	TCHAR(*contents) = new TCHAR[this->pageSize+1];
 	Long i = 0;
-	while (i < fileEndOffset && i < this->pageSize && rowCount < loadingRowCount)
+	while (ftell(this->file) < fileEndOffset && i < this->pageSize && rowCount < loadingRowCount)
 	{
 		//2.1. 내용을 읽는다.
 		fread(contents + i, 1, 1, this->file);
@@ -204,6 +206,54 @@ Glyph* PagingBuffer::Load() {
 
 	return note;
 #endif
+}
+
+Glyph* PagingBuffer::LoadNext() {
+	//1. 바이트수가 페이지 크기보다 작고, 줄수가 적재 줄수보다 작으면 반복한다.
+	Long currentOffset = ftell(this->file);
+
+	FilePointerCalculator filePointerCaculator(this);
+	Long fileEndOffset = filePointerCaculator.FileEnd();
+	Long loadingRowCount = PAGE_ROWCOUNT * PAGE_MULTIPLE;
+	Long rowCount = 0;
+	TCHAR(*contents) = new TCHAR[this->pageSize + 1];
+	Long i = 0;
+	while (ftell(this->file) < fileEndOffset && i < this->pageSize && rowCount < loadingRowCount)
+	{
+		//1.1. 내용을 읽는다.
+		fread(contents + i, 1, 1, this->file);
+		if (contents[i] == '\r')
+		{
+			rowCount++;
+		}
+		i++;
+	}
+
+	//2. 페이지 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.
+	ByteChecker byteChecker;
+	if (i >= this->pageSize && (byteChecker.IsLeadByte(contents[i - 1]) || contents[i - 1] == '\r'))
+	{
+		i -= 2;
+	}
+	else if (rowCount >= loadingRowCount) //3. 적재줄 수를 모두 채웠다면, 줄바꿈 문자를 뺸 범위로 한다.
+	{
+		i -= 1;
+	}
+	contents[i] = '\0';
+
+	//4. 기존 위치로 이동한다.
+	fseek(this->file, currentOffset, SEEK_SET);
+
+	//4. 노트로 전환한다.
+	NoteConverter noteConverter;
+	Glyph* note = noteConverter.Convert(contents);
+
+	if (contents != NULL)
+	{
+		delete[] contents;
+	}
+
+	return note;
 }
 
 Long PagingBuffer::Add(char(*character)) {
@@ -710,16 +760,19 @@ Position& PagingBuffer::PreviousRow() {
 	return this->current;
 }
 
-Position& PagingBuffer::NextRow() {
+Long PagingBuffer::NextRow(Long count) {
+	FilePointerCalculator filePointerCalculator(this);
 	Long currentOffset = ftell(this->file);
 
-	FilePointerCalculator filePointerCalculator(this);
-	fseek(this->file, filePointerCalculator.NextRow(currentOffset), SEEK_SET);
+	Long i = 0;
+	while (i < count)
+	{
+		fseek(this->file, filePointerCalculator.NextRow(currentOffset), SEEK_SET);
+		currentOffset = ftell(this->file);
+		i++;
+	}
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.NextRow(this->current, currentOffset);
-
-	return this->current;
+	return currentOffset;
 }
 
 Position& PagingBuffer::LastRow() {

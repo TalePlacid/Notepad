@@ -20,11 +20,11 @@ LoadCommand::~LoadCommand() {
 
 void LoadCommand::Execute() {
 	// 1. 노트를 적재한다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Glyph* loadedNote = pagingBuffer->Load();
+	Glyph* loadedNote = pagingBuffer->LoadNext();
 
 	// 2. 기존 노트가 있다면,
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	if (note != NULL)
 	{
 		// 1.1.상단부만 남기고 지운다.
@@ -36,7 +36,6 @@ void LoadCommand::Execute() {
 		}
 
 		note->TruncateBefore(index);
-		note->TruncateAfter(index);
 		pagingBuffer->CacheRowStartIndex(index);
 		
 		// 1.2. 적재한 노트와 합친다.

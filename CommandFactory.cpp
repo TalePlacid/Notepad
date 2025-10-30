@@ -21,7 +21,7 @@
 #include "FindCommand.h"
 #include "FindNextCommand.h"
 #include "PreviewCommand.h"
-#include "LoadCommand.h"
+#include "LoadNextCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -102,8 +102,8 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	case ID_COMMAND_FINDNEXT:
 		command = new FindNextCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
-	case ID_COMMAND_LOAD:
-		command = new LoadCommand(parent);
+	case ID_COMMAND_LOADNEXT:
+		command = new LoadNextCommand(parent);
 		break;
 	default:
 		break;

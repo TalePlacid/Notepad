@@ -95,17 +95,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CFrameWnd::OnCreate(lpCreateStruct);
 
 	this->sizeCalculator = new SizeCalculator(this);
-
-#if 0
-	GlyphFactory glyphFactory;
-	TCHAR character = '\0';
-	this->note = glyphFactory.Create(&character);
-	character = '\r';
-	this->note->Add(glyphFactory.Create(&character));
-#endif
-
 	this->pagingBuffer = new PagingBuffer(this);
-	SendMessage(WM_COMMAND, (WPARAM)ID_COMMAND_LOAD, 0);
+	this->note = this->pagingBuffer->LoadNext();
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);

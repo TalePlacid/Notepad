@@ -29,7 +29,7 @@ public:
 	virtual void SelectRange(Position start, Position end);
 	virtual void Append(const Glyph* other);
 
-	bool IsAboveBottomLine();
+	bool IsAboveBottomLine(Long index);
 };
 
 #endif // !_NOTE_H

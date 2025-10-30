@@ -19,12 +19,18 @@ Glyph* NoteConverter::Convert(string str) {
 	character[0] = '\0';
 	Glyph* note = glyphFactory.Create(character);
 
-	character[0] = '\r';
-	Glyph* glyph = glyphFactory.Create(character);
-	Long index = note->Add(glyph);
-	Glyph* current = note->GetAt(index);
-
+	Long rowIndex;
+	Glyph* glyph;
+	Glyph* row = 0;
 	Long i = 0;
+	if (str.length() > 0 && str.at(i) != '\r')
+	{
+		character[0] = '\r';
+		character[1] = '\n';
+		row = glyphFactory.Create(character);
+		note->Add(row);
+	}
+
 	while (i < str.length())
 	{
 		character[0] = str.at(i);
@@ -38,19 +44,22 @@ Glyph* NoteConverter::Convert(string str) {
 
 		if (character[0] != '\r')
 		{
-			current->Add(glyph);
+			row->Add(glyph);
 		}
 		else
 		{
-			index = note->Add(glyph);
-			current = note->GetAt(index);
+			rowIndex = note->Add(glyph);
+			row = note->GetAt(rowIndex);
 		}
 		i++;
 	}
 
-	Long rowIndex = note->Move(0);
-	Glyph* row = note->GetAt(rowIndex);
-	row->Move(0);
+	if (note->GetLength() > 0)
+	{
+		rowIndex = note->Move(0);
+		row = note->GetAt(rowIndex);
+		row->Move(0);
+	}
 
 	return note;
 }

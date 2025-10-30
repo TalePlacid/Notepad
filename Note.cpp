@@ -1,6 +1,7 @@
 #include "Note.h"
 #include "GlyphFactory.h"
 #include "DummyRow.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -229,8 +230,8 @@ void Note::Append(const Glyph* other) {
 	}
 }
 
-bool Note::IsAboveBottomLine() {
-	Long bottomLine = this->length / 10 * 7;
+bool Note::IsAboveBottomLine(Long index) {
+	Long bottomLine = this->length - PAGE_ROWCOUNT;
 
-	return this->current < bottomLine;
+	return index < bottomLine;
 }
