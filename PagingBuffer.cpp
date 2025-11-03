@@ -7,7 +7,6 @@
 #include "SizeCalculator.h"
 #include "ByteChecker.h"
 #include "FilePointerCalculator.h"
-#include "PositionCalculator.h"
 
 #pragma warning(disable:4996)
 
@@ -28,8 +27,6 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 		fseek(this->file, 0, SEEK_SET);
 	}
 
-	this->startOffset = 0;
-	this->endOffset = 0;
 	this->rowStartIndex = 0;
 	this->selectionBeginOffset = -1;
 }
@@ -43,53 +40,6 @@ PagingBuffer::~PagingBuffer() {
 		CString fileName = CString(directory) + CString("\\Note.tmp");
 		remove((LPCTSTR)fileName);
 	}
-}
-
-Glyph* PagingBuffer::Load() {
-	//1. 줄의 처음으로 이동한다.
-	Long currentOffset = ftell(this->file);
-	FilePointerCalculator filePointerCaculator(this);
-	Long offset = filePointerCaculator.First(currentOffset);
-	fseek(this->file, offset, SEEK_SET);
-	
-	//2. 바이트수가 페이지 크기보다 작고, 줄수가 적재 줄수보다 작으면 반복한다.
-	Long fileEndOffset = filePointerCaculator.FileEnd();
-	Long loadingRowCount = PAGE_ROWCOUNT * PAGE_MULTIPLE;
-	Long rowCount = 0;
-	TCHAR(*contents) = new TCHAR[this->pageSize+1];
-	Long i = 0;
-	while (ftell(this->file) < fileEndOffset && i < this->pageSize && rowCount < loadingRowCount)
-	{
-		//2.1. 내용을 읽는다.
-		fread(contents + i, 1, 1, this->file);
-		if (contents[i] == '\n')
-		{
-			rowCount++;
-		}
-		i++;
-	}
-
-	//3. 페이지 크기를 넘어섰다면,
-	ByteChecker byteChecker;
-	if (i >= this->pageSize && (byteChecker.IsLeadByte(contents[--i]) || contents[--i] == '\r'))
-	{
-		i--;
-	}
-	contents[i] = '\0';
-
-	//4. 기존 위치로 이동한다.
-	fseek(this->file, currentOffset, SEEK_SET);
-
-	//5. 노트로 전환한다.
-	NoteConverter noteConverter;
-	Glyph* note = noteConverter.Convert(contents);
-
-	if (contents != NULL)
-	{
-		delete[] contents;
-	}
-
-	return note;
 }
 
 Glyph* PagingBuffer::LoadPrevious() {
@@ -249,16 +199,6 @@ Long PagingBuffer::Add(char(*character)) {
 
 		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
 		fseek(this->file, currentOffset + characterLength, SEEK_SET);
-		this->endOffset += characterLength;
-		if (character[0] != '\r')
-		{
-			this->current = this->current.Right();
-		}
-		else
-		{
-			this->current = this->current.Down();
-			this->current = this->current.Move(this->current.GetRow(), 0);
- 		}
 	}
 
 	return ftell(this->file);
@@ -307,30 +247,6 @@ Long PagingBuffer::Add(CString str) {
 
 		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
 		fseek(this->file, currentOffset + str.GetLength(), SEEK_SET);
-
-		TCHAR character[2];
-		ByteChecker byteChecker;
-		Long i = 0;
-		while (i < str.GetLength())
-		{
-			character[0] = str.GetAt(i);
-			if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
-			{
-				character[1] = str.GetAt(++i);
-			}
-
-			if (character[0] != '\r')
-			{
-				this->current = this->current.Right();
-			}
-			else
-			{
-				this->current = this->current.Down();
-				this->current = this->current.Move(this->current.GetRow(), 0);
-			}
-			i++;
-		}
-
 	}
 
 	return ftell(this->file);
@@ -387,53 +303,6 @@ Long PagingBuffer::Remove() {
 		rename("RemovedFile.tmp", "Note.tmp");
 		this->file = fopen("Note.tmp", "r+b");
 
-		//6. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
-		if (character != '\n')
-		{
-			this->current = this->current.Left();
-		}
-		else
-		{
-			//이전 줄 첫번째 칸으로 이동.
-			TCHAR letter[2];
-			Long i = currentOffset - 3;
-			fseek(this->file, i, SEEK_SET);
-			fread(letter, 1, 1, this->file);
-			while (i >= 0 && letter[0] != '\n')
-			{
-				i--;
-				fseek(this->file, i, SEEK_SET);
-				fread(letter, 1, 1, this->file);
-			}
-
-			if (i >= 0)
-			{
-				i++;
-				this->current = this->current.Up();
-				this->current = this->current.Move(this->current.GetRow(), 0);
-			}
-			else
-			{
-				i = 0;
-				this->current = this->current.Move(0, 0);
-			}
-			fseek(this->file, i, SEEK_SET);
-
-			//현재 칸까지 센다.
-			while (i < currentOffset - characterLength)
-			{
-				fread(letter, 1, 1, this->file);
-				if (byteChecker.IsLeadByte(letter[0]))
-				{
-					fread(letter + 1, 1, 1, this->file);
-					i++;
-				}
-
-				this->current = this->current.Right();
-				i++;
-			}
-		}
-
 		fseek(this->file, currentOffset - characterLength, SEEK_SET);
 		ret = -1;
 	}
@@ -487,45 +356,6 @@ Long PagingBuffer::Remove(Long toOffset) {
 		this->file = fopen("Note.tmp", "r+b");
 
 		fseek(this->file, forwardOffset, SEEK_SET);
-		
-		Long forwardRemovedOffset;
-		if (this->startOffset <= forwardOffset)
-		{
-			forwardRemovedOffset = forwardOffset;
-		}
-		else
-		{
-			forwardRemovedOffset = this->startOffset;
-		}
-
-		Long backwardRemovedOffset;
-		if (this->endOffset <= backwardOffset)
-		{
-			backwardRemovedOffset = this->endOffset;
-		}
-		else
-		{
-			backwardRemovedOffset = backwardOffset;
-		}
-
-		if (this->startOffset > forwardOffset)
-		{
-			this->startOffset = forwardOffset;
-		}
-
-		this->endOffset -= backwardRemovedOffset - forwardRemovedOffset;
-
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
-
-		this->current = Position(rowIndex, columnIndex);
-		Long endIndex = note->GetLength() - 1;
-		row = note->GetAt(endIndex);
-		Long endColumn = row->GetLength();
-		this->end = Position(endIndex, endColumn);
-
 		ret = -1;
 	}
 
@@ -590,103 +420,56 @@ Long PagingBuffer::CountRow(Long offset) {
 	return count + 1;
 }
 
-bool PagingBuffer::IsAboveBottomLine() {
-	bool ret = false;
-
-	Long currentOffset = ftell(this->file);
-	fseek(this->file, 0, SEEK_END);
-	Long fileEnd = ftell(this->file);
-	fseek(this->file, currentOffset, SEEK_SET);
-
-	Long bottomLine = this->end.GetRow() / 10 * 8;
-	if (this->current.GetRow() < bottomLine || this->endOffset >= fileEnd)
-	{
-		ret = true;
-	}
-
-	return ret;
-}
-
-bool PagingBuffer::IsBelowTopLine() {
-	bool ret = false;
-
-	Long topLine = this->end.GetRow() / 10 * 4;
-	if (this->current.GetRow() > topLine || this->startOffset <= 0)
-	{
-		ret = true;
-	}
-
-	return ret;
-}
-
-Position& PagingBuffer::First() {
+Long PagingBuffer::First() {
 	Long currentOffset = ftell(this->file);
 
 	FilePointerCalculator filePointerCalculator(this);
 	fseek(this->file, filePointerCalculator.First(currentOffset), SEEK_SET);
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.First(this->current);
-
-	return this->current;
+	return ftell(this->file);
 }
 
-Position& PagingBuffer::Previous() {
+Long PagingBuffer::Previous() {
 	Long currentOffset = ftell(this->file);
 	
 	FilePointerCalculator filePointerCalculator(this);
 	fseek(this->file, filePointerCalculator.Previous(currentOffset), SEEK_SET);
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.Previous(this->current);
-
-	return this->current;
+	return ftell(this->file);
 }
 
-Position& PagingBuffer::Next() {
+Long PagingBuffer::Next() {
 	Long currentOffset = ftell(this->file);
 
 	FilePointerCalculator filePointerCalculator(this);
 	fseek(this->file, filePointerCalculator.Next(currentOffset), SEEK_SET);
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.Next(this->current, currentOffset);
-
-	return this->current;
+	return ftell(this->file);
 }
 
-Position& PagingBuffer::Last() {
+Long PagingBuffer::Last() {
 	Long currentOffset = ftell(this->file);
 
 	FilePointerCalculator filePointerCalculator(this);
 	fseek(this->file, filePointerCalculator.Last(currentOffset), SEEK_SET);
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.Last(this->current, currentOffset);
-
-	return this->current;
+	return ftell(this->file);
 }
 
-Position& PagingBuffer::Move(Long index) {
+Long PagingBuffer::Move(Long index) {
 	Long currentOffset = ftell(this->file);
 
 	FilePointerCalculator filePointerCalculator(this);
 	fseek(this->file, filePointerCalculator.Move(currentOffset, index), SEEK_SET);
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.Move(this->current, index);
-
-	return this->current;
+	return ftell(this->file);
 }
 
-Position& PagingBuffer::FirstRow() {
+Long PagingBuffer::FirstRow() {
 	FilePointerCalculator filePointerCalculator(this);
 	fseek(this->file, filePointerCalculator.FirstRow(), SEEK_SET);
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.FirstRow();
-
-	return this->current;
+	return ftell(this->file);
 }
 
 Long PagingBuffer::PreviousRow(Long count) {
@@ -719,38 +502,11 @@ Long PagingBuffer::NextRow(Long count) {
 	return currentOffset;
 }
 
-Position& PagingBuffer::LastRow() {
+Long PagingBuffer::LastRow() {
 	FilePointerCalculator filePointerCalculator(this);
 	fseek(this->file, filePointerCalculator.LastRow(), SEEK_SET);
 
-	PositionCalculator positionCalculator(this);
-	this->current = positionCalculator.LastRow();
-
-	return this->current;
-}
-
-Position& PagingBuffer::MoveRow(Long index) {
-	//1. 현재 위치를 읽는다.
-	Long currentOffset = ftell(this->file);
-
-	//2. 이동할 줄이 현재 줄보다 아래이면,
-	FilePointerCalculator filePointerCalculator(this);
-	PositionCalculator positionCalculator(this);
-	Long difference = index - this->current.GetRow();
-	if (difference > 0)
-	{
-		//2.1. 차이만큼 아랫줄로 이동한다.
-		fseek(this->file, filePointerCalculator.MoveDownRows(currentOffset, difference), SEEK_SET);
-		this->current = positionCalculator.MoveDownRows(this->current, currentOffset, difference);
-	}
-	else if (difference < 0) //3. 이동할 줄이 현재 줄보다 위이면,
-	{
-		//3.1. 차이만큼 윗줄로 이동한다.
-		fseek(this->file, filePointerCalculator.MoveUpRows(currentOffset, -difference), SEEK_SET);
-		this->current = positionCalculator.MoveUpRows(this->current, currentOffset, -difference);
-	}
-
-	return this->current;
+	return ftell(this->file);
 }
 
 Long PagingBuffer::MarkSelectionBegin() {
@@ -765,35 +521,22 @@ Long PagingBuffer::UnmarkSelectionBegin() {
 	return this->selectionBeginOffset;
 }
 
-bool PagingBuffer::IsOnPage(Long offset) {
-	bool ret = false;
-	if (offset >= this->startOffset && offset <= this->endOffset)
-	{
-		ret = true;
-	}
-
-	return ret;
-}
-
 Long PagingBuffer::MoveOffset(Long offset) {
 	Long currentOffset = ftell(this->file);
 	Long oldCurrentOffset = -1;
 
 	FilePointerCalculator filePointerCalculator(this);
-	PositionCalculator positionCalculator(this);
 	if (currentOffset > offset)
 	{
 		oldCurrentOffset = currentOffset;
 		currentOffset = filePointerCalculator.First(currentOffset);
 		fseek(this->file, currentOffset, SEEK_SET);
-		this->current = positionCalculator.First(this->current);
 
 		while (currentOffset > offset)
 		{
 			oldCurrentOffset = currentOffset;
 			currentOffset = filePointerCalculator.PreviousRow(currentOffset);
 			fseek(this->file, currentOffset, SEEK_SET);
-			this->current = positionCalculator.PreviousRow(this->current, oldCurrentOffset);
 		}
 
 		while (currentOffset < offset)
@@ -801,7 +544,6 @@ Long PagingBuffer::MoveOffset(Long offset) {
 			oldCurrentOffset = currentOffset;
 			currentOffset = filePointerCalculator.Next(currentOffset);
 			fseek(this->file, currentOffset, SEEK_SET);
-			this->current = positionCalculator.Next(this->current, oldCurrentOffset);
 		}
 	}
 	else if (currentOffset < offset)
@@ -811,7 +553,6 @@ Long PagingBuffer::MoveOffset(Long offset) {
 			oldCurrentOffset = currentOffset;
 			currentOffset = filePointerCalculator.NextRow(currentOffset);
 			fseek(this->file, currentOffset, SEEK_SET);
-			this->current = positionCalculator.NextRow(this->current, oldCurrentOffset);
 		}
 
 		if (currentOffset > offset)
@@ -819,7 +560,6 @@ Long PagingBuffer::MoveOffset(Long offset) {
 			oldCurrentOffset = currentOffset;
 			currentOffset = filePointerCalculator.PreviousRow(currentOffset);
 			fseek(this->file, currentOffset, SEEK_SET);
-			this->current = positionCalculator.PreviousRow(this->current, oldCurrentOffset);
 		}
 
 		while (currentOffset < offset)
@@ -827,7 +567,6 @@ Long PagingBuffer::MoveOffset(Long offset) {
 			oldCurrentOffset = currentOffset;
 			currentOffset = filePointerCalculator.Next(currentOffset);
 			fseek(this->file, currentOffset, SEEK_SET);
-			this->current = positionCalculator.Next(this->current, oldCurrentOffset);
 		}
 	}
 
