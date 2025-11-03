@@ -5,6 +5,8 @@
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "ScrollController.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -18,8 +20,18 @@ UpArrowAction::~UpArrowAction() {
 }
 
 void UpArrowAction::Perform() {
+	//1. 이전 줄이 재적재범위에 들어가면, 재적재한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Scroll vScroll = scrollController->GetVScroll();
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
+	if (note->IsAboveTopLine(rowIndex - 1) && vScroll.GetPos() > 0)
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, ID_COMMAND_LOADPREVIOUS, 0);
+		rowIndex = note->GetCurrent();
+	}
+
+	//2. 이전 줄로 이동한다.
 	Glyph* originalRow = note->GetAt(rowIndex);
 	Long columnIndex = originalRow->GetCurrent();
 
@@ -38,12 +50,6 @@ void UpArrowAction::Perform() {
 	rowIndex = note->Previous();
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->PreviousRow();
-	if (!pagingBuffer->IsBelowTopLine())
-	{
-		pagingBuffer->Load();
-		note = ((NotepadForm*)(this->parent))->note;
-		rowIndex = note->GetCurrent();
-	}
 
 	Glyph* row = note->GetAt(rowIndex);
 	Long previousWidth = 0;
@@ -65,10 +71,15 @@ void UpArrowAction::Perform() {
 	pagingBuffer->Move(i);
 	row->Move(i);
 
+	//3. 스크롤을 조정한다.
+	Long currentHeight = (pagingBuffer->GetRowStartIndex() + rowIndex) * sizeCalculator->GetRowHeight();
+	if (currentHeight < vScroll.GetPos() && vScroll.GetPos() > 0)
+	{
+		scrollController->Up();
+	}
+
 	((NotepadForm*)(this->parent))->note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }

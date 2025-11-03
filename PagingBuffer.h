@@ -16,6 +16,7 @@ public:
 	~PagingBuffer();
 
 	Glyph* Load();
+	Glyph* LoadPrevious();
 	Glyph* LoadNext();
 	Long Add(char(*character));
 	Long Add(CString str);
@@ -33,7 +34,7 @@ public:
 	Position& Move(Long index);
 
 	Position& FirstRow();
-	Position& PreviousRow();
+	Long PreviousRow(Long count = 1);
 	Long NextRow(Long count = 1);
 	Position& LastRow();
 	Position& MoveRow(Long index);

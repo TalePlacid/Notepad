@@ -39,7 +39,7 @@ void LoadCommand::Execute() {
 		pagingBuffer->CacheRowStartIndex(index);
 		
 		// 1.2. 적재한 노트와 합친다.
-		note->Append(loadedNote);
+		//note->Append(loadedNote);
 		if (loadedNote != NULL)
 		{
 			delete loadedNote;

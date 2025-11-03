@@ -160,6 +160,15 @@ Long ScrollController::ResizeHPage(Long page) {
 	return this->hScroll.ResizePage(page);
 }
 
+Long ScrollController::Up() {
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long pos = this->vScroll.LineUp(sizeCalculator->GetRowHeight());
+
+	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+
+	return pos;
+}
+
 Long ScrollController::Down() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long pos = this->vScroll.LineDown(sizeCalculator->GetRowHeight());

@@ -75,6 +75,7 @@
 #define ID_COMMAND_FINDNEXT             50014
 #define ID_COMMAND_LOADNEXT				50015
 #define ID_COMMAND_AUTOWRAP				50016
+#define ID_COMMAND_LOADPREVIOUS			50017
 
 // Next default values for new objects
 // 
