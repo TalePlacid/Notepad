@@ -22,8 +22,8 @@ public:
 
 	Long Up();
 	Long Down();
-	Long Left();
-	Long Right();
+	Long Left(Long distance);
+	Long Right(Long distance);
 	Long PageUp();
 	Long PageDown();
 	Long MoveVScroll(Long pos);

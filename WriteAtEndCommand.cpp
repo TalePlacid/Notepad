@@ -58,8 +58,10 @@ void WriteAtEndCommand::Execute() {
 	{
 		if (scrollController->HasHScroll() && rowWidth == max)
 		{
-			max -= sizeCalculator->GetCharacterWidth((char*)(*(row->GetAt(columnIndex - 1))));
+			Long width = sizeCalculator->GetCharacterWidth((char*)(*(row->GetAt(columnIndex - 1))));
+			max -= width;
 			scrollController->ResizeHRange(max);
+			scrollController->Left(width);
 		}
 		row->Remove();
 	}
@@ -76,8 +78,10 @@ void WriteAtEndCommand::Execute() {
 		rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
 		if (scrollController->HasHScroll() && rowWidth > max)
 		{
+			Long width = rowWidth - max;
 			max = rowWidth;
 			scrollController->ResizeHRange(max);
+			scrollController->Right(width);
 		}
 	}
 	else
@@ -117,8 +121,10 @@ void WriteAtEndCommand::Undo() {
 	{
 		if (scrollController->HasHScroll() && rowWidth == max)
 		{
-			max -= sizeCalculator->GetCharacterWidth(this->character);
+			Long width = sizeCalculator->GetCharacterWidth(this->character);
+			max -= width;
 			scrollController->ResizeHRange(max);
+			scrollController->Left(width);
 		}
 		row->Remove();
 	}
@@ -171,8 +177,10 @@ void WriteAtEndCommand::Redo() {
 		Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
 		if (scrollController->HasHScroll() && rowWidth > max)
 		{
+			Long width = rowWidth - max;
 			max = rowWidth;
 			scrollController->ResizeHRange(max);
+			scrollController->Right(width);
 		}
 	}
 	else

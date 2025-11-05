@@ -146,17 +146,43 @@ void ScrollController::Update(Subject* subject, string interest) {
 
 void ScrollController::ResizeVRange(Long max, Long min) {
 	this->vScroll.ResizeRange(max, min);
+
+	SCROLLINFO scrollInfo = { 0, };
+	scrollInfo.cbSize = sizeof(SCROLLINFO);
+	scrollInfo.fMask = SIF_RANGE;
+	scrollInfo.nMin = min;
+	scrollInfo.nMax = max;
+	SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
 }
 
 Long ScrollController::ResizeVPage(Long page) {
+	SCROLLINFO scrollInfo = { 0, };
+	scrollInfo.cbSize = sizeof(SCROLLINFO);
+	scrollInfo.fMask = SIF_PAGE;
+	scrollInfo.nPage = page;
+	SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+
 	return this->vScroll.ResizePage(page);
 }
 
 void ScrollController::ResizeHRange(Long max, Long min) {
 	this->hScroll.ResizeRange(max, min);
+
+	SCROLLINFO scrollInfo = { 0, };
+	scrollInfo.cbSize = sizeof(SCROLLINFO);
+	scrollInfo.fMask = SIF_RANGE;
+	scrollInfo.nMin = min;
+	scrollInfo.nMax = max;
+	SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 }
 
 Long ScrollController::ResizeHPage(Long page) {
+	SCROLLINFO scrollInfo = { 0, };
+	scrollInfo.cbSize = sizeof(SCROLLINFO);
+	scrollInfo.fMask = SIF_PAGE;
+	scrollInfo.nPage = page;
+	SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
+
 	return this->hScroll.ResizePage(page);
 }
 
@@ -174,6 +200,22 @@ Long ScrollController::Down() {
 	Long pos = this->vScroll.LineDown(sizeCalculator->GetRowHeight());
 
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+
+	return pos;
+}
+
+Long ScrollController::Left(Long distance) {
+	Long pos = this->hScroll.LineDown(distance);
+
+	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+
+	return pos;
+}
+
+Long ScrollController::Right(Long distance) {
+	Long pos = this->hScroll.LineUp(distance);
+
+	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
 
 	return pos;
 }
