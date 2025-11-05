@@ -3,6 +3,9 @@
 #include "Glyph.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
+#include "ScrollController.h"
+#include "SizeCalculator.h"
+#include "PagingNavigator.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -43,10 +46,21 @@ void WriteAtEndCommand::Execute() {
 	Glyph* glyph = glyphFactory.Create(this->character);
 	
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Glyph* row = note->GetAt(note->GetCurrent());
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
 	
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Long max = scrollController->GetHScroll().GetMax();
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
+		if (scrollController->HasHScroll() && rowWidth == max)
+		{
+			max -= sizeCalculator->GetCharacterWidth((char*)(*(row->GetAt(columnIndex - 1))));
+			scrollController->ResizeHRange(max);
+		}
 		row->Remove();
 	}
 
@@ -58,6 +72,13 @@ void WriteAtEndCommand::Execute() {
 		{
 			pagingBuffer->Add((char*)(*glyph));
 		}
+
+		rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+		if (scrollController->HasHScroll() && rowWidth > max)
+		{
+			max = rowWidth;
+			scrollController->ResizeHRange(max);
+		}
 	}
 	else
 	{
@@ -66,44 +87,55 @@ void WriteAtEndCommand::Execute() {
 		contents[0] = '\r';
 		contents[1] = '\n';
 		pagingBuffer->Add(contents);
-		
-		if (!pagingBuffer->IsAboveBottomLine())
+
+		if (scrollController->HasVScroll())
 		{
-			pagingBuffer->Load();
+			max = scrollController->GetVScroll().GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+			scrollController->Down();
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 void WriteAtEndCommand::Undo() {
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->LastRow();
-		pagingBuffer->Load();
-	}
-	else
-	{
-		pagingBuffer->MoveOffset(this->offset);
-	}
+	//1. 이전 위치로 이동한다.
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->offset);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(note->GetLength() - 1);
+	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(row->GetLength());
+	Long columnIndex = row->GetCurrent();
 
+	//2. 지운다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Long max = scrollController->GetHScroll().GetMax();
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
 	if (columnIndex > 0)
 	{
+		if (scrollController->HasHScroll() && rowWidth == max)
+		{
+			max -= sizeCalculator->GetCharacterWidth(this->character);
+			scrollController->ResizeHRange(max);
+		}
 		row->Remove();
 	}
 	else
 	{
+		if (scrollController->HasVScroll())
+		{
+			max = scrollController->GetVScroll().GetMax();
+			scrollController->ResizeVRange(max - sizeCalculator->GetRowHeight());
+			scrollController->Up();
+		}
 		note->Remove();
 	}
 
-	if (onChar)
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	if (this->onChar)
 	{
-		pagingBuffer->Last();
 		pagingBuffer->Remove();
 	}
 
@@ -111,38 +143,36 @@ void WriteAtEndCommand::Undo() {
 }
 
 void WriteAtEndCommand::Redo() {
+	//1. 원래 위치로 이동한다.
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
 
-	Glyph* note;
-	Glyph* row;
-	Long rowIndex;
+	PagingNavigator pagingNavigator(parent);
+	pagingNavigator.MoveTo(this->offset);
 
+	//2. 다시 쓴다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->offset);
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->Load();
-	}
-	note = ((NotepadForm*)(this->parent))->note;
-	rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-	row = note->GetAt(rowIndex);
-	row->Move(pagingBuffer->GetCurrent().GetColumn());
-
-	note = ((NotepadForm*)(this->parent))->note;
-	row = note->GetAt(note->GetCurrent());
-
-	if (((NotepadForm*)(this->parent))->IsCompositing())
-	{
-		row->Remove();
-	}
-
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Long max = scrollController->GetHScroll().GetMax();
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
 		if (this->onChar)
 		{
 			pagingBuffer->Add((char*)(*glyph));
+		}
+
+		Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+		if (scrollController->HasHScroll() && rowWidth > max)
+		{
+			max = rowWidth;
+			scrollController->ResizeHRange(max);
 		}
 	}
 	else
@@ -153,9 +183,11 @@ void WriteAtEndCommand::Redo() {
 		contents[1] = '\n';
 		pagingBuffer->Add(contents);
 
-		if (!pagingBuffer->IsAboveBottomLine())
+		if (scrollController->HasVScroll())
 		{
-			pagingBuffer->Load();
+			max = scrollController->GetVScroll().GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+			scrollController->Down();
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
