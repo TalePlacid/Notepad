@@ -40,8 +40,8 @@ public:
 	virtual void SelectRange(Position start, Position end);
 	virtual Long Mark(Long index);
 	virtual Long Unmark();
-	virtual void AppendFromFront(const Glyph* ohter);
-	virtual void AppendFromRear(const Glyph* other);
+	virtual Long AppendFromFront(const Glyph* ohter);
+	virtual Long AppendFromRear(const Glyph* other);
 	virtual bool IsAboveTopLine(Long index);
 	virtual bool IsBelowBottomLine(Long index);
 

@@ -212,20 +212,35 @@ void Note::SelectRange(Position start, Position end) {
 	}
 }
 
-void Note::AppendFromFront(const Glyph* other) {
+Long Note::AppendFromFront(const Glyph* other) {
 	Long i = other->GetLength() - 1;
+	if (i == 0 && const_cast<Glyph*>(other)->GetAt(i)->GetLength() == 0)
+	{
+		i--;
+	}
+
+	Long count = 0;
 	while (i >= 0)
 	{
 		this->glyphs.AppendFromFront(const_cast<Glyph*>(other)->GetAt(i)->Clone());
+		(this->capacity)++;
+		(this->length)++;
+		(this->current)++;
+		count++;
 		i--;
 	}
-	this->capacity += other->GetLength();
-	this->length += other->GetLength();
-	this->current += other->GetLength();
+
+	return count;
 }
 
-void Note::AppendFromRear(const Glyph* other) {
+Long Note::AppendFromRear(const Glyph* other) {
 	Long i = 0;
+	if (const_cast<Glyph*>(other)->GetAt(i)->GetLength() == 0)
+	{
+		i++;
+	}
+	
+	Long count = 0;
 	while (i < other->GetLength())
 	{
 		if (this->length < this->capacity)
@@ -237,9 +252,12 @@ void Note::AppendFromRear(const Glyph* other) {
 			this->glyphs.AppendFromRear(const_cast<Glyph*>(other)->GetAt(i)->Clone());
 			(this->capacity)++;
 		}
-		(this->length++);
+		(this->length)++;
+		count++;
 		i++;
 	}
+
+	return count;
 }
 
 bool Note::IsAboveTopLine(Long index) {

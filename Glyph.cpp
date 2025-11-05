@@ -114,12 +114,12 @@ Long Glyph::Unmark() {
 	return -1;
 }
 
-void Glyph::AppendFromFront(const Glyph* other) {
-
+Long Glyph::AppendFromFront(const Glyph* other) {
+	return 0;
 }
 
-void Glyph::AppendFromRear(const Glyph* other) {
-
+Long Glyph::AppendFromRear(const Glyph* other) {
+	return 0;
 }
 
 Glyph* Glyph::operator[](Long index) {

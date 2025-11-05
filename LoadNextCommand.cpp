@@ -32,6 +32,11 @@ void LoadNextCommand::Execute() {
 	pagingBuffer->Last();
 
 	//3. 뒷 부분을 로드한다.
+	if (currentOffset > 0)
+	{
+		pagingBuffer->NextRow();
+		pagingBuffer->First();
+	}
 	Glyph* loadedNote = pagingBuffer->LoadNext();
 
 	//4. 로드된 뒷 부분을 기존의 분량에 합친다.

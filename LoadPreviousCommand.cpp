@@ -35,11 +35,11 @@ void LoadPreviousCommand::Execute() {
 	Glyph* loadedNote = pagingBuffer->LoadPrevious();
 
 	//4. 로드된 분량을 붙인다.
-	note->AppendFromFront(loadedNote);
-	pagingBuffer->CacheRowStartIndex(-loadedNote->GetLength());
+	Long count = note->AppendFromFront(loadedNote);
+	pagingBuffer->CacheRowStartIndex(-count);
 
 	//5. 현재 위치로 돌아온다.
-	currentRowIndex = note->Move(currentRowIndex + loadedNote->GetLength());
+	currentRowIndex = note->Move(currentRowIndex + count);
 	row = note->GetAt(currentRowIndex);
 	currentColumnIndex = row->Move(currentColumnIndex);
 	pagingBuffer->MoveOffset(currentOffset);

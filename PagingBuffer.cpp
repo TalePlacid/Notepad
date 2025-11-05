@@ -58,7 +58,7 @@ Glyph* PagingBuffer::LoadPrevious() {
 	{
 		fseek(this->file, j, SEEK_SET);
 		fread(&character, 1, 1, this->file);
-		if (character == '\r')
+		if (character == '\n')
 		{
 			rowCount++;
 		}
@@ -79,6 +79,11 @@ Glyph* PagingBuffer::LoadPrevious() {
 			i--;
 			j++;
 		}
+	}
+	else if (rowCount >= loadingRowCount) //3. 적재줄수를 모두 채웠다면, 개행문자를 제외한다.
+	{
+		i--;
+		j++;
 	}
 
 	//4. 적재 범위만큼 읽는다.

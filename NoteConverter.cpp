@@ -19,18 +19,13 @@ Glyph* NoteConverter::Convert(string str) {
 	character[0] = '\0';
 	Glyph* note = glyphFactory.Create(character);
 
-	Long rowIndex;
-	Glyph* glyph;
-	Glyph* row = 0;
-	Long i = 0;
-	if (str.length() > 0 && str.at(i) != '\r')
-	{
-		character[0] = '\r';
-		character[1] = '\n';
-		row = glyphFactory.Create(character);
-		note->Add(row);
-	}
+	character[0] = '\r';
+	character[1] = '\n';
+	Glyph* row = glyphFactory.Create(character);
+	Long rowIndex = note->Add(row);
 
+	Glyph* glyph;
+	Long i = 0;
 	while (i < str.length())
 	{
 		character[0] = str.at(i);
