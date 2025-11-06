@@ -4,6 +4,8 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "resource.h"
+#include "ScrollController.h"
+#include "SizeCalculator.h"
 
 #pragma warning(disable:4996)
 
@@ -34,7 +36,7 @@ Long PagingNavigator::MoveTo(Long offset) {
 			rowIndex = note->Previous();
 			currentOffset = pagingBuffer->PreviousRow();
 			row = note->GetAt(rowIndex);
-			row->First();
+			columnIndex = row->First();
 		}
 	}
 	else if (currentOffset > offset)
@@ -48,7 +50,7 @@ Long PagingNavigator::MoveTo(Long offset) {
 			rowIndex = note->Next();
 			currentOffset = pagingBuffer->NextRow();
 			row = note->GetAt(rowIndex);
-			row->First();
+			columnIndex = row->First();
 		}
 
 		currentOffset = pagingBuffer->PreviousRow();
@@ -57,7 +59,42 @@ Long PagingNavigator::MoveTo(Long offset) {
 	while (currentOffset < offset)
 	{
 		currentOffset = pagingBuffer->Next();
-		row->Next();
+		columnIndex = row->Next();
+	}
+
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long rowHeight = sizeCalculator->GetRowHeight();
+		Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+		Long height = (rowStartIndex + rowIndex) * rowHeight;
+		if (height + rowHeight < vScroll.GetPos() || height > vScroll.GetPos() + vScroll.GetPage())
+		{
+			Long pos = height + rowHeight * 2 - vScroll.GetPage();
+			scrollController->MoveVScroll(pos);
+		}
+	}
+
+	if (scrollController->HasHScroll())
+	{
+		Scroll hScroll = scrollController->GetHScroll();
+		Long width = 0;
+		Long i = 0;
+		while (i < columnIndex)
+		{
+			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
+			i++;
+		}
+
+		Long multiCharacterWidth = sizeCalculator->GetMultiByteWidth();
+		if (width < hScroll.GetPos() || width + multiCharacterWidth > hScroll.GetPos() + hScroll.GetPage())
+		{
+			Long pos = width + multiCharacterWidth * 2 - hScroll.GetPage();
+			scrollController->MoveHScroll(pos);
+		}
 	}
 
 	return pagingBuffer->GetCurrentOffset();
