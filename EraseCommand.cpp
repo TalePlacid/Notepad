@@ -4,6 +4,9 @@
 #include "PagingBuffer.h"
 #include "GlyphFactory.h"
 #include "resource.h"
+#include "ScrollController.h"
+#include "SizeCalculator.h"
+#include "PagingNavigator.h"
 
 #pragma warning(disable:4996)
 
@@ -39,6 +42,8 @@ void EraseCommand::Execute() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex > 0)
 	{
@@ -49,11 +54,27 @@ void EraseCommand::Execute() {
 			this->character[1] = letter->MakeString()[1];
 		}
 
+		Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+		Long max = scrollController->GetHScroll().GetMax();
 		row->Remove(columnIndex - 1);
 		pagingBuffer->Remove();
+
+		if (scrollController->HasHScroll() && max == rowWidth)
+		{
+			Long width = sizeCalculator->GetCharacterWidth(this->character);
+			max -= width;
+			scrollController->ResizeHRange(max);
+			scrollController->Left(width);
+		}
 	}
 	else
 	{
+		if (note->IsAboveTopLine(rowIndex - 1))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			rowIndex = note->GetCurrent();
+		}
+
 		if (rowIndex > 0)
 		{
 			this->character[0] = '\r';
@@ -68,11 +89,12 @@ void EraseCommand::Execute() {
 
 			pagingBuffer->Remove();
 			previousRow->Move(previousCurrent);
-
-			if (!pagingBuffer->IsBelowTopLine())
-			{
-				pagingBuffer->Load();
-			}
+			
+			ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+			SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+			Long max = scrollController->GetVScroll().GetMax() - sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+			scrollController->Up();
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();	
@@ -80,67 +102,96 @@ void EraseCommand::Execute() {
 
 void EraseCommand::Undo() {
 	GlyphFactory glyphFactory;
-	Glyph* glyph = glyphFactory.Create(this->character);
+	Glyph* glyph;
 
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->offset);
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->Load();
-	}
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->offset);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+	Long columnIndex = row->GetCurrent();
 
-	if (character[0] != '\r')
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	if (this->character[0] != '\r')
 	{
+		glyph = glyphFactory.Create(this->character);
 		row->Add(columnIndex, glyph);
+		Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+		Long max = scrollController->GetHScroll().GetMax();
+		if (scrollController->HasHScroll() && rowWidth > max)
+		{
+			Long width = rowWidth - max;
+			max = rowWidth;
+			scrollController->ResizeHRange(max);
+			scrollController->Right(width);
+		}
 	}
 	else
 	{
-		note->Add(rowIndex + 1, glyph);
-	}
+		if (columnIndex < row->GetLength() - 1)
+		{
+			note->SplitRows(rowIndex, columnIndex);
+			rowIndex = note->Next();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
+		}
+		else
+		{
+			glyph = glyphFactory.Create(this->character);
+			rowIndex = note->Add(rowIndex + 1, glyph);
+		}
 
+		if (scrollController->HasVScroll())
+		{
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+
+			Long pos = (pagingBuffer->GetRowStartIndex() + rowIndex + 1) * sizeCalculator->GetRowHeight();
+			if (pos > vScroll.GetPos() + vScroll.GetPage())
+			{
+				scrollController->Down();
+			}
+		}
+	}
 	pagingBuffer->Add(character);
 
 	this->offset = pagingBuffer->GetCurrentOffset();
+
+	for (Long l = 0; l < 15; l++)
+	{
+		TRACE("%ld : %s\n", l, note->GetAt(l)->MakeString().c_str());
+	}
 }
 
 void EraseCommand::Redo() {
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->offset);
+
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->offset);
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->Load();
-	}
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-	Glyph* row = note->GetAt(rowIndex);
-	row->Move(pagingBuffer->GetCurrent().GetColumn());
-
-	Long columnIndex = row->GetCurrent();
 	if (columnIndex > 0)
 	{
-		Glyph* letter = row->GetAt(columnIndex - 1);
-		this->character[0] = letter->MakeString()[0];
-		if (letter->IsMultiByteCharacter())
-		{
-			this->character[1] = letter->MakeString()[1];
-		}
-
 		row->Remove(columnIndex - 1);
 		pagingBuffer->Remove();
 	}
 	else
 	{
+		if (note->IsAboveTopLine(rowIndex - 1))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			rowIndex = note->GetCurrent();
+		}
+
 		if (rowIndex > 0)
 		{
-			this->character[0] = '\r';
-			this->character[1] = '\n';
-
 			Glyph* previousRow = ((NotepadForm*)(this->parent))->note->GetAt(rowIndex - 1);
 			Long previousCurrent = previousRow->Last();
 			rowIndex = note->MergeRows(rowIndex - 1);
@@ -150,11 +201,6 @@ void EraseCommand::Redo() {
 
 			pagingBuffer->Remove();
 			previousRow->Move(previousCurrent);
-
-			if (!pagingBuffer->IsBelowTopLine())
-			{
-				pagingBuffer->Load();
-			}
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
