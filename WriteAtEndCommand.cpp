@@ -130,6 +130,11 @@ void WriteAtEndCommand::Undo() {
 	}
 	else
 	{
+		if (note->IsAboveTopLine(rowIndex - 1))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+		}
+
 		if (scrollController->HasVScroll())
 		{
 			max = scrollController->GetVScroll().GetMax();
