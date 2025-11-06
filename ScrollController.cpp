@@ -156,13 +156,17 @@ void ScrollController::ResizeVRange(Long max, Long min) {
 }
 
 Long ScrollController::ResizeVPage(Long page) {
+	this->vScroll.ResizePage(page);
+
 	SCROLLINFO scrollInfo = { 0, };
 	scrollInfo.cbSize = sizeof(SCROLLINFO);
 	scrollInfo.fMask = SIF_PAGE;
 	scrollInfo.nPage = page;
 	SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
 
-	return this->vScroll.ResizePage(page);
+	GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+
+	return scrollInfo.nPage;
 }
 
 void ScrollController::ResizeHRange(Long max, Long min) {
@@ -177,13 +181,17 @@ void ScrollController::ResizeHRange(Long max, Long min) {
 }
 
 Long ScrollController::ResizeHPage(Long page) {
+	this->hScroll.ResizePage(page);
+
 	SCROLLINFO scrollInfo = { 0, };
 	scrollInfo.cbSize = sizeof(SCROLLINFO);
 	scrollInfo.fMask = SIF_PAGE;
 	scrollInfo.nPage = page;
 	SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 
-	return this->hScroll.ResizePage(page);
+	GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
+
+	return scrollInfo.nPage;
 }
 
 Long ScrollController::Up() {
@@ -192,7 +200,7 @@ Long ScrollController::Up() {
 
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
 
-	return pos;
+	return GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
 }
 
 Long ScrollController::Down() {
@@ -201,7 +209,7 @@ Long ScrollController::Down() {
 
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
 
-	return pos;
+	return GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
 }
 
 Long ScrollController::Left(Long distance) {
@@ -209,7 +217,7 @@ Long ScrollController::Left(Long distance) {
 
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
 
-	return pos;
+	return GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
 }
 
 Long ScrollController::Right(Long distance) {
@@ -217,5 +225,21 @@ Long ScrollController::Right(Long distance) {
 
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
 
-	return pos;
+	return GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+}
+
+Long ScrollController::MoveVScroll(Long pos) {
+	pos = this->vScroll.Move(pos);
+
+	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+
+	return GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+}
+
+Long ScrollController::MoveHScroll(Long pos) {
+	pos = this->hScroll.Move(pos);
+
+	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+
+	return GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
 }
