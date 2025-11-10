@@ -144,6 +144,68 @@ void ScrollController::Update(Subject* subject, string interest) {
 	}
 }
 
+bool ScrollController::IsOnVScrollRange() {
+	bool ret = false;
+
+	if (this->hasVScroll)
+	{
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		Long rowHeight = sizeCalculator->GetRowHeight();
+		Long pos = (rowStartIndex + rowIndex) * rowHeight;
+
+		Long rangeStart = this->vScroll.GetPos();
+		Long rangeEnd = rangeStart + this->vScroll.GetPage();
+		if (pos >= rangeStart && pos + rowHeight <= rangeEnd)
+		{
+			ret = true;
+		}
+	}
+
+	return ret;
+}
+
+bool ScrollController::IsOnHScrollRange() {
+	bool ret = false;
+
+	if (this->hasHScroll)
+	{
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		Long width = 0;
+		Long i = 0;
+		while (i < columnIndex)
+		{
+			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
+			i++;
+		}
+
+		Long characterWidth = 0;
+		if (columnIndex < row->GetLength() - 1)
+		{
+			characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(columnIndex)));
+		}
+
+		Long rangeStart = this->hScroll.GetPos();
+		Long rangeEnd = rangeStart + this->hScroll.GetPage();
+		if (width >= rangeStart && width + characterWidth <= rangeEnd)
+		{
+			ret = true;
+		}
+	}
+
+	return ret;
+}
+
 void ScrollController::ResizeVRange(Long max, Long min) {
 	this->vScroll.ResizeRange(max, min);
 
@@ -213,7 +275,7 @@ Long ScrollController::Down() {
 }
 
 Long ScrollController::Left(Long distance) {
-	Long pos = this->hScroll.LineDown(distance);
+	Long pos = this->hScroll.LineUp(distance);
 
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
 
@@ -221,7 +283,7 @@ Long ScrollController::Left(Long distance) {
 }
 
 Long ScrollController::Right(Long distance) {
-	Long pos = this->hScroll.LineUp(distance);
+	Long pos = this->hScroll.LineDown(distance);
 
 	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
 

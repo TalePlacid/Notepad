@@ -160,11 +160,6 @@ void EraseCommand::Undo() {
 	pagingBuffer->Add(character);
 
 	this->offset = pagingBuffer->GetCurrentOffset();
-
-	for (Long l = 0; l < 15; l++)
-	{
-		TRACE("%ld : %s\n", l, note->GetAt(l)->MakeString().c_str());
-	}
 }
 
 void EraseCommand::Redo() {

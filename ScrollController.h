@@ -15,6 +15,9 @@ public:
 
 	virtual void Update(Subject* subject, string interest);
 	
+	bool IsOnVScrollRange();
+	bool IsOnHScrollRange();
+
 	void ResizeVRange(Long max, Long min = 0);
 	Long ResizeVPage(Long page);
 	void ResizeHRange(Long max, Long min = 0);
