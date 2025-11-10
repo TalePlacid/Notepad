@@ -57,19 +57,23 @@ void RightArrowAction::Perform() {
 			rowIndex = note->GetCurrent();
 		}
 
-		//2.2. 노트에서 다음 줄로 이동한다.
-		rowIndex = note->Next();
-		row = note->GetAt(rowIndex);
-		columnIndex = row->First();
-		scrollController->MoveHScroll(0);
-
-		//2.3. 페이징 버퍼에서 다음 줄로 이동한다.
-		pagingBuffer->NextRow();
-
-		//2.4. 수직스크롤이 넘어갔다면, 조정한다.
-		if (!scrollController->IsOnVScrollRange())
+		//2.2. 마지막 줄이 아니라면,
+		if (rowIndex < note->GetLength() - 1)
 		{
-			scrollController->Down();
+			//2.2.1. 노트에서 다음 줄로 이동한다.
+			rowIndex = note->Next();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
+			scrollController->MoveHScroll(0);
+
+			//2.2.2. 페이징 버퍼에서 다음 줄로 이동한다.
+			pagingBuffer->NextRow();
+
+			//2.2.3. 수직스크롤이 넘어갔다면, 조정한다.
+			if (!scrollController->IsOnVScrollRange())
+			{
+				scrollController->Down();
+			}
 		}
 	}
 

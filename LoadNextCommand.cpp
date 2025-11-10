@@ -29,16 +29,16 @@ void LoadNextCommand::Execute() {
 	pagingBuffer->NextRow(rowIndex - currentRowIndex);
 	row = note->GetAt(rowIndex);
 	Long columnIndex = row->Last();
-	pagingBuffer->Last();
+	Long lastOffset = pagingBuffer->Last();
 
 	//3. 뒷 부분을 로드한다.
-	if (currentOffset > 0)
+	if (lastOffset > 0 && lastOffset < pagingBuffer->GetFileEndOffset())
 	{
 		pagingBuffer->NextRow();
 		pagingBuffer->First();
 	}
 	Glyph* loadedNote = pagingBuffer->LoadNext();
-
+	
 	//4. 로드된 뒷 부분을 기존의 분량에 합친다.
 	note->AppendFromRear(loadedNote);
 	if (loadedNote != NULL)
