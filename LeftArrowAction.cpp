@@ -5,6 +5,8 @@
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "ScrollController.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -21,36 +23,64 @@ void LeftArrowAction::Perform() {
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-
 	Long columnIndex = row->GetCurrent();
+
+	//1. 줄의 처음이 아니라면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	if (columnIndex > 0)
 	{
-		row->Previous();
+		//1.1. 노트에서 이전 칸으로 이동한다.
+		columnIndex = row->Previous();
+
+		//1.2. 페이징버퍼에서 이전 칸으로 이동한다.
 		pagingBuffer->Previous();
-	}
-	else
-	{
-		if (rowIndex > 0)
+
+		//1.3. 수평 스크롤 범위를 넘어선다면, 조정한다.
+		if (!scrollController->IsOnHScrollRange())
 		{
-			rowIndex = note->Previous();
-			pagingBuffer->PreviousRow();
-			if (!pagingBuffer->IsBelowTopLine())
-			{
-				pagingBuffer->Load();
-				note = ((NotepadForm*)(this->parent))->note;
-				rowIndex = note->GetCurrent();
-			}
-			row = note->GetAt(rowIndex);
-			row->Last();
-			pagingBuffer->Last();
+			Long characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(columnIndex)));
+			scrollController->Left(characterWidth);
 		}
 	}
+	else //2. 줄의 처음이라면,
+	{
+		//2.1. 이전 줄이 유효범위를 넘어서면, 적재한다.
+		if (note->IsAboveTopLine(rowIndex - 1))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			rowIndex = note->GetCurrent();
+		}
 
+		//2.2. 첫번째 줄이 아니라면,
+		if (rowIndex > 0)
+		{
+			//2.2.1. 노트에서 이전 줄로 이동한다.
+			rowIndex = note->Previous();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->Last();
+
+			//2.2.2. 페이징 버퍼에서 이전줄로 이동한다.
+			pagingBuffer->PreviousRow();
+			pagingBuffer->Last();
+
+			//2.2.3. 스크롤 영역을 넘어섰다면, 조정한다.
+			if (!scrollController->IsOnHScrollRange())
+			{
+				Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+				Long pos = rowWidth - scrollController->GetHScroll().GetPage();
+				scrollController->MoveHScroll(pos);
+			}
+
+			if (!scrollController->IsOnVScrollRange())
+			{
+				scrollController->Up();
+			}
+		}
+	}
 	note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
 }

@@ -64,12 +64,12 @@ void RightArrowAction::Perform() {
 			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
-			scrollController->MoveHScroll(0);
 
 			//2.2.2. 페이징 버퍼에서 다음 줄로 이동한다.
 			pagingBuffer->NextRow();
 
 			//2.2.3. 수직스크롤이 넘어갔다면, 조정한다.
+			scrollController->MoveHScroll(0);
 			if (!scrollController->IsOnVScrollRange())
 			{
 				scrollController->Down();
