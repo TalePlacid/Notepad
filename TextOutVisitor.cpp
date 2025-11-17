@@ -30,8 +30,6 @@ TextOutVisitor::TextOutVisitor(CWnd* parent, CDC* dc)
 
 	this->logicalX = 0;
 	this->logicalY = yOffset;
-	this->drawingX = 0;
-	this->drawingY = 0;
 }
 
 TextOutVisitor::~TextOutVisitor() {
@@ -42,13 +40,6 @@ TextOutVisitor::~TextOutVisitor() {
 }
 
 void TextOutVisitor::VisitRow(Glyph* row) {
-	this->drawingX = 0;
-	if (this->logicalY >= this->drawingArea.top
-		&& this->logicalY <= this->drawingArea.bottom)
-	{
-		this->drawingY += ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight();
-	}
-
 	this->logicalX = 0;
 	this->logicalY += ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight();
 }
@@ -63,16 +54,20 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 	}
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long characterWidth = sizeCalculator->GetCharacterWidth((char*)(*character));
+	Long rowHeight = sizeCalculator->GetRowHeight();
 
-	if (this->logicalX >= this->drawingArea.left
-		&& this->logicalX <= this->drawingArea.right
-		&& this->logicalY >= this->drawingArea.top
-		&& this->logicalY <= this->drawingArea.bottom)
+	if (this->logicalX + characterWidth > this->drawingArea.left
+		&& this->logicalX < this->drawingArea.right
+		&& this->logicalY + rowHeight >= this->drawingArea.top
+		&& this->logicalY < this->drawingArea.bottom)
 	{
 		this->selectionVisitor->VisitCharacter(character);
 
+		Long drawingX = logicalX - this->drawingArea.left;
+		Long drawingY = logicalY - this->drawingArea.top;
+
 		dc->TextOut(drawingX, drawingY, CString(character->MakeString().c_str()));
-		this->drawingX += notepadForm->sizeCalculator->GetCharacterWidth((char*)(*character));
 	}
 
 	this->logicalX += notepadForm->sizeCalculator->GetCharacterWidth((char*)(*character));

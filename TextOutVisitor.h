@@ -22,8 +22,6 @@ private:
 	Visitor* selectionVisitor;
 	Long logicalX;
 	Long logicalY;
-	Long drawingX;
-	Long drawingY;
 	RECT drawingArea;
 };
 
