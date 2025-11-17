@@ -45,8 +45,23 @@ void Row::Accept(Visitor& visitor) {
 }
 
 Long Row::TruncateAfter(Long index) {
-	index--;
-	Long count = Composite::TruncateAfter(index);
+	Long count = 0;
+	while (this->length > index)
+	{
+		if (this->glyphs[index] != NULL)
+		{
+			delete this->glyphs[index];
+		}
+		this->glyphs.Delete(index);
+		(this->length)--;
+		(this->capacity)--;
+		count++;
+	}
+
+	if (this->current > index)
+	{
+		this->current = index;
+	}
 
 	return count;
 }

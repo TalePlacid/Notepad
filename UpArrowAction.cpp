@@ -71,15 +71,7 @@ void UpArrowAction::Perform() {
 	pagingBuffer->Move(i);
 	row->Move(i);
 
-	//3. 스크롤을 조정한다.
-	Long currentHeight = (pagingBuffer->GetRowStartIndex() + rowIndex) * sizeCalculator->GetRowHeight();
-	if (currentHeight < vScroll.GetPos() && vScroll.GetPos() > 0)
-	{
-		scrollController->Up();
-	}
-
 	((NotepadForm*)(this->parent))->note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
-	this->parent->Invalidate();
 }

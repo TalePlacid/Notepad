@@ -36,13 +36,6 @@ void LeftArrowAction::Perform() {
 
 		//1.2. 페이징버퍼에서 이전 칸으로 이동한다.
 		pagingBuffer->Previous();
-
-		//1.3. 수평 스크롤 범위를 넘어선다면, 조정한다.
-		if (!scrollController->IsOnHScrollRange())
-		{
-			Long characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(columnIndex)));
-			scrollController->Left(characterWidth);
-		}
 	}
 	else //2. 줄의 처음이라면,
 	{
@@ -64,23 +57,9 @@ void LeftArrowAction::Perform() {
 			//2.2.2. 페이징 버퍼에서 이전줄로 이동한다.
 			pagingBuffer->PreviousRow();
 			pagingBuffer->Last();
-
-			//2.2.3. 스크롤 영역을 넘어섰다면, 조정한다.
-			if (!scrollController->IsOnHScrollRange())
-			{
-				Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-				Long pos = rowWidth - scrollController->GetHScroll().GetPage();
-				scrollController->MoveHScroll(pos);
-			}
-
-			if (!scrollController->IsOnVScrollRange())
-			{
-				scrollController->Up();
-			}
 		}
 	}
 	note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
-	this->parent->Invalidate();
 }

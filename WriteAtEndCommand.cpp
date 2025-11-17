@@ -56,13 +56,6 @@ void WriteAtEndCommand::Execute() {
 	Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
-		if (scrollController->HasHScroll() && rowWidth == max)
-		{
-			Long width = sizeCalculator->GetCharacterWidth((char*)(*(row->GetAt(columnIndex - 1))));
-			max -= width;
-			scrollController->ResizeHRange(max);
-			scrollController->Left(width);
-		}
 		row->Remove();
 	}
 
@@ -74,29 +67,16 @@ void WriteAtEndCommand::Execute() {
 		{
 			pagingBuffer->Add((char*)(*glyph));
 		}
-
-		rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-		if (scrollController->HasHScroll() && rowWidth > max)
-		{
-			Long width = rowWidth - max;
-			max = rowWidth;
-			scrollController->ResizeHRange(max);
-			scrollController->Right(width);
-		}
 	}
 	else
 	{
 		note->Add(glyph);
-		TCHAR contents[2];
-		contents[0] = '\r';
-		contents[1] = '\n';
-		pagingBuffer->Add(contents);
+		pagingBuffer->Add(this->character);
 
 		if (scrollController->HasVScroll())
 		{
 			max = scrollController->GetVScroll().GetMax() + sizeCalculator->GetRowHeight();
 			scrollController->ResizeVRange(max);
-			scrollController->Down();
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
@@ -114,18 +94,9 @@ void WriteAtEndCommand::Undo() {
 
 	//2. Áö¿î´Ù.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	Long max = scrollController->GetHScroll().GetMax();
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
 	if (columnIndex > 0)
 	{
-		if (scrollController->HasHScroll() && rowWidth == max)
-		{
-			Long width = sizeCalculator->GetCharacterWidth(this->character);
-			max -= width;
-			scrollController->ResizeHRange(max);
-			scrollController->Left(width);
-		}
 		row->Remove();
 	}
 	else
@@ -137,9 +108,8 @@ void WriteAtEndCommand::Undo() {
 
 		if (scrollController->HasVScroll())
 		{
-			max = scrollController->GetVScroll().GetMax();
+			Long max = scrollController->GetVScroll().GetMax();
 			scrollController->ResizeVRange(max - sizeCalculator->GetRowHeight());
-			scrollController->Up();
 		}
 		note->Remove();
 	}
@@ -178,15 +148,6 @@ void WriteAtEndCommand::Redo() {
 		{
 			pagingBuffer->Add((char*)(*glyph));
 		}
-
-		Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-		if (scrollController->HasHScroll() && rowWidth > max)
-		{
-			Long width = rowWidth - max;
-			max = rowWidth;
-			scrollController->ResizeHRange(max);
-			scrollController->Right(width);
-		}
 	}
 	else
 	{
@@ -200,7 +161,6 @@ void WriteAtEndCommand::Redo() {
 		{
 			max = scrollController->GetVScroll().GetMax() + sizeCalculator->GetRowHeight();
 			scrollController->ResizeVRange(max);
-			scrollController->Down();
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();

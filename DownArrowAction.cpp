@@ -71,16 +71,7 @@ void DownArrowAction::Perform() {
 	pagingBuffer->Move(i);
 	nextRow->Move(i);
 
-	//3. 스크롤을 조정한다.
-	Long currentHeight = (pagingBuffer->GetRowStartIndex() + rowIndex + 1) * sizeCalculator->GetRowHeight();
-	if (currentHeight > vScroll.GetPos() + vScroll.GetPage() && vScroll.GetPos() + vScroll.GetPage() < vScroll.GetMax())
-	{
-		scrollController->Down();
-	}
-
 	note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
-
-	this->parent->Invalidate();
 }

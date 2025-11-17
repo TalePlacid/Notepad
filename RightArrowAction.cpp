@@ -36,17 +36,6 @@ void RightArrowAction::Perform() {
 
 		//1.2. 페이징버퍼에서 다음으로 이동한다.
 		pagingBuffer->Next();
-
-		//1.3. 수평스크롤 범위를 넘어갔다면, 조정한다.
-		if (!scrollController->IsOnHScrollRange())
-		{
-			Long characterWidth = 0;
-			if (columnIndex < row->GetLength() - 1)
-			{
-				characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(columnIndex)));
-			}
-			scrollController->Right(characterWidth);
-		}
 	}
 	else //2. 줄의 마지막이라면,
 	{
@@ -67,18 +56,10 @@ void RightArrowAction::Perform() {
 
 			//2.2.2. 페이징 버퍼에서 다음 줄로 이동한다.
 			pagingBuffer->NextRow();
-
-			//2.2.3. 수직스크롤이 넘어갔다면, 조정한다.
-			scrollController->MoveHScroll(0);
-			if (!scrollController->IsOnVScrollRange())
-			{
-				scrollController->Down();
-			}
 		}
 	}
 
 	((NotepadForm*)(this->parent))->note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
-	this->parent->Invalidate();
 }

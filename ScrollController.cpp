@@ -19,7 +19,9 @@ ScrollController::ScrollController(CWnd* parent) {
 	Long clientAreaHeight = clientArea.bottom - clientArea.top;
 
 	this->vScroll.ResizePage(clientAreaHeight);
+	this->vScroll.ResizeRange(clientAreaHeight);
 	this->hScroll.ResizePage(clientAreaWidth);
+	this->hScroll.ResizeRange(clientAreaWidth);
 }
 
 ScrollController::~ScrollController() {
@@ -63,11 +65,11 @@ void ScrollController::Update(Subject* subject, string interest) {
 		scrollInfo.fMask = SIF_ALL;
 
 		// 2. 수직 스크롤바가 필요하면,
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		if (vScrollNeeded)
 		{
 			if (!this->hasVScroll)
 			{
-				PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 				Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
 
 				this->vScroll.ResizeRange(rowCount * sizeCalculator->GetRowHeight());
@@ -86,6 +88,9 @@ void ScrollController::Update(Subject* subject, string interest) {
 		else // 3. 수직 스크롤바가 필요없으면,
 		{
 			// 3.1. 수직 스크롤바 스타일을 없앤다.
+			this->vScroll.ResizePage(clientAreaHeight);
+			this->vScroll.ResizeRange(clientAreaHeight);
+			this->vScroll.Move(0);
 			this->parent->ModifyStyle(WS_VSCROLL, 0);
 			this->hasVScroll = false;
 		}
@@ -136,10 +141,95 @@ void ScrollController::Update(Subject* subject, string interest) {
 		else // 5. 수평 스크롤바가 필요없으면,
 		{
 			// 5.1. 수평 스크롤바 스타일을 없앤다.
+			this->hScroll.ResizePage(clientAreaWidth);
+			this->hScroll.ResizeRange(clientAreaWidth);
+			this->hScroll.Move(0);
 			this->parent->ModifyStyle(WS_HSCROLL, 0);
 			this->hasHScroll = false;
 		}
-		
+
+		//6. 수직 스크롤바가 있으면,
+		if (this->hasVScroll)
+		{
+			//6.1. 수직 스크롤 범위를 벗어났으면, 수직 스크롤 위치를 조정한다.
+			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+			Long rowHeight = sizeCalculator->GetRowHeight();
+			Long pos = (rowStartIndex + currentRow) * rowHeight;
+
+			Long rangeStart = this->vScroll.GetPos();
+			Long rangeEnd = rangeStart + this->vScroll.GetPage();
+			if (pos < rangeStart)
+			{
+				this->vScroll.Move(pos);
+				SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+			}
+
+			if (pos + rowHeight > rangeEnd)
+			{
+				this->vScroll.Move(pos + rowHeight - vScroll.GetPage());
+				SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos + rowHeight - vScroll.GetPage(), TRUE);
+			}
+		}
+
+		//7. 수평 스크롤이 있으면,
+		if (this->hasHScroll)
+		{
+			//7.1. 이전줄, 현재줄, 다음줄의 수평 최대값의 계산한다.
+			Long rowWidth;
+			Long max = hScroll.GetMax();
+			Long i = currentRow - 1;
+			if (i < 0)
+			{
+				i = 0;
+			}
+			while (i <= currentRow + 1 && i < note->GetLength())
+			{
+				rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());
+				if (rowWidth > max)
+				{
+					max = rowWidth;
+				}
+				i++;
+			}
+
+			//7.2. 수평 스크롤바 최댓값을 갱신한다.
+			this->hScroll.ResizeRange(max);
+			scrollInfo.fMask = SIF_RANGE;
+			scrollInfo.nMin = this->hScroll.GetMin();
+			scrollInfo.nMax = this->hScroll.GetMax();
+			SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
+
+			//7.3. 수평 스크롤 범위를 벗어났으면, 수평 스크롤 위치를 조정한다.
+			Long width = 0;
+			i = 0;
+			while (i < currentColumn)
+			{
+				width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
+				i++;
+			}
+
+			Long characterWidth = 0;
+			if (currentColumn < row->GetLength())
+			{
+				characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(currentColumn)));
+			}
+
+			Long rangeStart = this->hScroll.GetPos();
+			Long rangeEnd = rangeStart + this->hScroll.GetPage();
+			if (width < rangeStart)
+			{
+				this->hScroll.Move(width);
+				SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, width, TRUE);
+			}
+
+			if (width + characterWidth > rangeEnd)
+			{
+				this->hScroll.Move(width + characterWidth - hScroll.GetPage());
+				SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, width + characterWidth - hScroll.GetPage(), TRUE);
+			}
+
+		}
+
 		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
 }
@@ -209,99 +299,137 @@ bool ScrollController::IsOnHScrollRange() {
 void ScrollController::ResizeVRange(Long max, Long min) {
 	this->vScroll.ResizeRange(max, min);
 
-	SCROLLINFO scrollInfo = { 0, };
-	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_RANGE;
-	scrollInfo.nMin = min;
-	scrollInfo.nMax = max;
-	SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+	if (this->hasVScroll)
+	{
+		SCROLLINFO scrollInfo = { 0, };
+		scrollInfo.cbSize = sizeof(SCROLLINFO);
+		scrollInfo.fMask = SIF_RANGE;
+		scrollInfo.nMin = min;
+		scrollInfo.nMax = max;
+		SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+	}
 }
 
 Long ScrollController::ResizeVPage(Long page) {
-	this->vScroll.ResizePage(page);
+	Long resized = this->vScroll.ResizePage(page);
 
-	SCROLLINFO scrollInfo = { 0, };
-	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_PAGE;
-	scrollInfo.nPage = page;
-	SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+	if (this->hasVScroll)
+	{
+		SCROLLINFO scrollInfo = { 0, };
+		scrollInfo.cbSize = sizeof(SCROLLINFO);
+		scrollInfo.fMask = SIF_PAGE;
+		scrollInfo.nPage = page;
+		SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
 
-	GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+		GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+		resized = scrollInfo.nPage;
+	}
 
-	return scrollInfo.nPage;
+	return resized;
 }
 
 void ScrollController::ResizeHRange(Long max, Long min) {
 	this->hScroll.ResizeRange(max, min);
 
-	SCROLLINFO scrollInfo = { 0, };
-	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_RANGE;
-	scrollInfo.nMin = min;
-	scrollInfo.nMax = max;
-	SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
+	if (this->hasHScroll)
+	{
+		SCROLLINFO scrollInfo = { 0, };
+		scrollInfo.cbSize = sizeof(SCROLLINFO);
+		scrollInfo.fMask = SIF_RANGE;
+		scrollInfo.nMin = min;
+		scrollInfo.nMax = max;
+		SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
+	}
 }
 
 Long ScrollController::ResizeHPage(Long page) {
-	this->hScroll.ResizePage(page);
+	Long resized = this->hScroll.ResizePage(page);
 
-	SCROLLINFO scrollInfo = { 0, };
-	scrollInfo.cbSize = sizeof(SCROLLINFO);
-	scrollInfo.fMask = SIF_PAGE;
-	scrollInfo.nPage = page;
-	SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
+	if (this->hasHScroll)
+	{
+		SCROLLINFO scrollInfo = { 0, };
+		scrollInfo.cbSize = sizeof(SCROLLINFO);
+		scrollInfo.fMask = SIF_PAGE;
+		scrollInfo.nPage = page;
+		SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 
-	GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
+		GetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo);
+		resized = scrollInfo.nPage;
+	}
 
-	return scrollInfo.nPage;
+	return resized;
 }
 
 Long ScrollController::Up() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long pos = this->vScroll.LineUp(sizeCalculator->GetRowHeight());
 
-	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+	if (this->hasVScroll)
+	{
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	}
 
-	return GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	return pos;
 }
 
 Long ScrollController::Down() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long pos = this->vScroll.LineDown(sizeCalculator->GetRowHeight());
 
-	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+	if (this->hasVScroll)
+	{
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	}
 
-	return GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	return pos;
 }
 
 Long ScrollController::Left(Long distance) {
 	Long pos = this->hScroll.LineUp(distance);
 
-	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+	if (this->hasHScroll)
+	{
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	}
 
-	return GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	return pos;
 }
 
 Long ScrollController::Right(Long distance) {
 	Long pos = this->hScroll.LineDown(distance);
 
-	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+	if (this->hasHScroll)
+	{
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	}
 
-	return GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	return pos;
 }
 
 Long ScrollController::MoveVScroll(Long pos) {
 	pos = this->vScroll.Move(pos);
 
-	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+	if (this->hasVScroll)
+	{
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
+		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	}
 
-	return GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	return pos;
 }
 
 Long ScrollController::MoveHScroll(Long pos) {
 	pos = this->hScroll.Move(pos);
 
-	SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+	if (this->hasHScroll)
+	{
+		SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
+		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	}
 
-	return GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
+	return pos;
 }

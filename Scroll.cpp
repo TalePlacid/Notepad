@@ -50,6 +50,16 @@ Long Scroll::ResizePage(Long page) {
 Long Scroll::Move(Long pos) {
 	this->pos = pos;
 
+	if (this->pos < 0)
+	{
+		this->pos = 0;
+	}
+
+	if (this->pos > this->max - this->page)
+	{
+		this->pos = this->max - this->page;
+	}
+
 	return this->pos;
 }
 

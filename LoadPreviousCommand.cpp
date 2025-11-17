@@ -3,6 +3,8 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "ScrollController.h"
+#include "SizeCalculator.h"
 
 #pragma warning(disable:4996)
 
@@ -52,4 +54,21 @@ void LoadPreviousCommand::Execute() {
 	//6. 노트에서 아랫 부분을 지운다.
 	Long belowIndex = currentRowIndex + PAGE_ROWCOUNT;
 	note->TruncateAfter(belowIndex);
+
+	//7. 수평 스크롤바 최대값을 갱신한다.
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Long rowWidth = 0;
+	Long max = scrollController->GetHScroll().GetMax();
+	Long i = 0;
+	while (i < note->GetLength())
+	{
+		rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());
+		if (rowWidth > max)
+		{
+			max = rowWidth;
+		}
+		i++;
+	}
+	scrollController->ResizeHRange(max);
 }

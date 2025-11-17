@@ -54,18 +54,8 @@ void EraseCommand::Execute() {
 			this->character[1] = letter->MakeString()[1];
 		}
 
-		Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-		Long max = scrollController->GetHScroll().GetMax();
 		row->Remove(columnIndex - 1);
 		pagingBuffer->Remove();
-
-		if (scrollController->HasHScroll() && max == rowWidth)
-		{
-			Long width = sizeCalculator->GetCharacterWidth(this->character);
-			max -= width;
-			scrollController->ResizeHRange(max);
-			scrollController->Left(width);
-		}
 	}
 	else
 	{
@@ -94,7 +84,6 @@ void EraseCommand::Execute() {
 			SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 			Long max = scrollController->GetVScroll().GetMax() - sizeCalculator->GetRowHeight();
 			scrollController->ResizeVRange(max);
-			scrollController->Up();
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();	
@@ -119,15 +108,6 @@ void EraseCommand::Undo() {
 	{
 		glyph = glyphFactory.Create(this->character);
 		row->Add(columnIndex, glyph);
-		Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-		Long max = scrollController->GetHScroll().GetMax();
-		if (scrollController->HasHScroll() && rowWidth > max)
-		{
-			Long width = rowWidth - max;
-			max = rowWidth;
-			scrollController->ResizeHRange(max);
-			scrollController->Right(width);
-		}
 	}
 	else
 	{
@@ -149,12 +129,6 @@ void EraseCommand::Undo() {
 			Scroll vScroll = scrollController->GetVScroll();
 			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
 			scrollController->ResizeVRange(max);
-
-			Long pos = (pagingBuffer->GetRowStartIndex() + rowIndex + 1) * sizeCalculator->GetRowHeight();
-			if (pos > vScroll.GetPos() + vScroll.GetPage())
-			{
-				scrollController->Down();
-			}
 		}
 	}
 	pagingBuffer->Add(character);
