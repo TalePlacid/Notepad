@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
+#include "ScrollController.h"
 
 #pragma warning(disable:4996)
 
@@ -90,40 +91,36 @@ void CaretController::Update(Subject *subject, string interest) {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
-		//3. 노트의 시작높이를 구한다.
+		//3. 캐럿의 y좌표를 구한다.
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long startRowHeight = pagingBuffer->GetRowStartIndex() *sizeCalculator->GetRowHeight();
 
-		//4. 노트에서의 높이를 구한다.
-		Long nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
-		Long height = nPos - startRowHeight;
-		Long y = rowIndex * sizeCalculator->GetRowHeight() - height;
-		
-		//5. 현재 위치까지의 너비를 구한다.
-		Glyph* character = NULL;
+		Long startRowIndex = pagingBuffer->GetRowStartIndex();
+		Long rowHeight = sizeCalculator->GetRowHeight();
+		Long y = (startRowIndex + rowIndex) * rowHeight - scrollController->GetVScroll().GetPos();
+
+		//4. 캐럿의 x좌표를 구한다.
 		Long width = 0;
 		Long i = 0;
 		while (i < columnIndex)
 		{
-			character = row->GetAt(i);
-			width += sizeCalculator->GetCharacterWidth((char*)(*character));
+			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
 			i++;
 		}
+		Long x = width - scrollController->GetHScroll().GetPos();
 
-		nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
-		Long x = width - nPos;
-
-		//6. 캐럿 너비를 구한다.
+		//5. 캐럿 너비를 구한다.
 		Long caretWidth = 1;
 		if (columnIndex < row->GetLength())
 		{
-			character = row->GetAt(columnIndex);
-			if (character->IsMultiByteCharacter())
+			if (row->GetAt(columnIndex)->IsMultiByteCharacter())
 			{
-				caretWidth = sizeCalculator->GetMultiByteWidth();
+				caretWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(columnIndex)));
 			}
 		}
-		this->caret = new Caret(this->parent, x, y, caretWidth, ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight());
+
+		//6. 새 캐럿을 만든다.
+		this->caret = new Caret(this->parent, x, y, caretWidth, rowHeight);
 	}
 }
