@@ -36,7 +36,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 		bool vScrollNeeded;
 		bool hScrollNeeded;
 		scrollBarNecessityChecker.Check(vScrollNeeded, hScrollNeeded);
-
+		
 		RECT clientArea;
 		GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 		Long clientAreaHeight = clientArea.bottom - clientArea.top;
@@ -177,12 +177,12 @@ void ScrollController::Update(Subject* subject, string interest) {
 			//7.1. 이전줄, 현재줄, 다음줄의 수평 최대값의 계산한다.
 			Long rowWidth;
 			Long max = hScroll.GetMax();
-			Long i = currentRow - 1;
+			Long i = currentRow - PAGE_ROWCOUNT;
 			if (i < 0)
 			{
 				i = 0;
 			}
-			while (i <= currentRow + 1 && i < note->GetLength())
+			while (i <= currentRow + PAGE_ROWCOUNT && i < note->GetLength())
 			{
 				rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());
 				if (rowWidth > max)

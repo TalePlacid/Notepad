@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
+#include "ScrollController.h"
 
 #pragma warning(disable:4996)
 
@@ -23,21 +24,54 @@ void ScrollBarNecessityChecker::Check(bool& vScrollNeeded, bool& hScrollNeeded) 
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+
 	Long contentsHeight = note->GetLength() * sizeCalculator->GetRowHeight();
 	Long contentsWidth = 0;
 	Long width;
 	Glyph* row;
-	Long i = 0;
-	while (i < note->GetLength())
+	Long i;
+	if (scrollController->HasHScroll())
 	{
-		row = note->GetAt(i);
-		width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-		if (width > contentsWidth)
+		Long rowIndex = note->GetCurrent();
+		i = rowIndex - PAGE_ROWCOUNT;
+		if (i < 0)
 		{
-			contentsWidth = width;
+			i = 0;
 		}
-		i++;
+
+		Long j = rowIndex + PAGE_ROWCOUNT;
+		if (j > note->GetLength() - 1)
+		{
+			j = note->GetLength() - 1;
+		}
+
+		while (i <= j)
+		{
+			row = note->GetAt(i);
+			width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+			if (width > contentsWidth)
+			{
+				contentsWidth = width;
+			}
+			i++;
+		}
 	}
+	else
+	{
+		i = 0;
+		while (i < note->GetLength())
+		{
+			row = note->GetAt(i);
+			width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+			if (width > contentsWidth)
+			{
+				contentsWidth = width;
+			}
+			i++;
+		}
+	}
+
 
 	vScrollNeeded = contentsHeight > clientAreaHeight;
 	hScrollNeeded = contentsWidth > clientAreaWidth;
