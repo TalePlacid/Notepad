@@ -1,22 +1,25 @@
 #include <afxwin.h>
-#include "ScrollBarNecessityChecker.h"
 #include "NotepadForm.h"
+#include "ScrollBarAnalyzer.h"
 #include "Glyph.h"
-#include "PagingBuffer.h"
-#include "SizeCalculator.h"
 #include "ScrollController.h"
+#include "SizeCalculator.h"
 
 #pragma warning(disable:4996)
 
-ScrollBarNecessityChecker::ScrollBarNecessityChecker(CWnd *parent) {
+ScrollBarAnalyzer::ScrollBarAnalyzer(CWnd *parent) {
 	this->parent = parent;
+	this->vScrollNeeded = false;
+	this->hScrollNeeded = false;
+	this->contentsHeight = 0;
+	this->contentsWidth = 0;
 }
 
-ScrollBarNecessityChecker::~ScrollBarNecessityChecker() {
+ScrollBarAnalyzer::~ScrollBarAnalyzer() {
 
 }
 
-void ScrollBarNecessityChecker::Check(bool& vScrollNeeded, bool& hScrollNeeded) {
+void ScrollBarAnalyzer::Analyze() {
 	RECT clientArea;
 	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 	Long clientAreaWidth = clientArea.right - clientArea.left;
@@ -26,21 +29,28 @@ void ScrollBarNecessityChecker::Check(bool& vScrollNeeded, bool& hScrollNeeded) 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 
-	Long contentsHeight = note->GetLength() * sizeCalculator->GetRowHeight();
-	Long contentsWidth = 0;
+	Long rowHeight = sizeCalculator->GetRowHeight();
+	Long rowCount = clientAreaHeight / rowHeight;
+	if (rowCount == 0)
+	{
+		rowCount = 1;
+	}
+
+	this->contentsHeight = note->GetLength() * rowHeight;
+	this->contentsWidth = 0;
 	Long width;
 	Glyph* row;
 	Long i;
 	if (scrollController->HasHScroll())
 	{
 		Long rowIndex = note->GetCurrent();
-		i = rowIndex - PAGE_ROWCOUNT;
+		i = rowIndex - rowCount;
 		if (i < 0)
 		{
 			i = 0;
 		}
 
-		Long j = rowIndex + PAGE_ROWCOUNT;
+		Long j = rowIndex + rowCount;
 		if (j > note->GetLength() - 1)
 		{
 			j = note->GetLength() - 1;
@@ -50,9 +60,9 @@ void ScrollBarNecessityChecker::Check(bool& vScrollNeeded, bool& hScrollNeeded) 
 		{
 			row = note->GetAt(i);
 			width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-			if (width > contentsWidth)
+			if (width > this->contentsWidth)
 			{
-				contentsWidth = width;
+				this->contentsWidth = width;
 			}
 			i++;
 		}
@@ -64,31 +74,30 @@ void ScrollBarNecessityChecker::Check(bool& vScrollNeeded, bool& hScrollNeeded) 
 		{
 			row = note->GetAt(i);
 			width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-			if (width > contentsWidth)
+			if (width > this->contentsWidth)
 			{
-				contentsWidth = width;
+				this->contentsWidth = width;
 			}
 			i++;
 		}
 	}
 
-
-	vScrollNeeded = contentsHeight > clientAreaHeight;
-	hScrollNeeded = contentsWidth > clientAreaWidth;
+	this->vScrollNeeded = this->contentsHeight > clientAreaHeight;
+	this->hScrollNeeded = this->contentsWidth > clientAreaWidth;
 
 	Long scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
 	for (Long i = 1; i <= 2; i++)
 	{
-		if (vScrollNeeded)
+		if (this->vScrollNeeded)
 		{
 			Long updatedClientAreaWidth = clientAreaWidth - scrollBarThickness;
-			hScrollNeeded = contentsWidth > updatedClientAreaWidth;
+			this->hScrollNeeded = this->contentsWidth > updatedClientAreaWidth;
 		}
 
-		if (hScrollNeeded)
+		if (this->hScrollNeeded)
 		{
 			Long updatedClientAreaHeight = clientAreaHeight - scrollBarThickness;
-			vScrollNeeded = contentsHeight > updatedClientAreaHeight;
+			this->vScrollNeeded = this->contentsHeight > updatedClientAreaHeight;
 		}
 	}
 }

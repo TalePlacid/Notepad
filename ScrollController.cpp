@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include "ScrollController.h"
-#include "ScrollBarNecessityChecker.h"
+#include "ScrollBarAnalyzer.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
@@ -32,10 +32,8 @@ void ScrollController::Update(Subject* subject, string interest) {
 	if (interest == "UpdateScrollBars")
 	{
 		// 1. 스크롤바 필요 여부를 체크한다.
-		ScrollBarNecessityChecker scrollBarNecessityChecker(this->parent);
-		bool vScrollNeeded;
-		bool hScrollNeeded;
-		scrollBarNecessityChecker.Check(vScrollNeeded, hScrollNeeded);
+		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
+		scrollBarAnalyzer.Analyze();
 		
 		RECT clientArea;
 		GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
@@ -43,12 +41,12 @@ void ScrollController::Update(Subject* subject, string interest) {
 		Long clientAreaWidth = clientArea.right - clientArea.left;
 		Long scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
 
-		if (vScrollNeeded)
+		if (scrollBarAnalyzer.GetVScrollNeeded())
 		{
 			clientAreaWidth -= scrollBarThickness;
 		}
 
-		if (hScrollNeeded)
+		if (scrollBarAnalyzer.GetHScrollNeeded())
 		{
 			clientAreaHeight -= scrollBarThickness;
 		}
@@ -66,7 +64,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 
 		// 2. 수직 스크롤바가 필요하면,
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		if (vScrollNeeded)
+		if (scrollBarAnalyzer.GetVScrollNeeded())
 		{
 			if (!this->hasVScroll)
 			{
@@ -96,36 +94,13 @@ void ScrollController::Update(Subject* subject, string interest) {
 		}
 
 		// 4. 수평 스크롤바가 필요하면,
-		if (hScrollNeeded)
+		if (scrollBarAnalyzer.GetVScrollNeeded())
 		{
 			// 4.1. 현재 수평 스크롤바가 없으면,
 			if (!this->hasHScroll)
 			{
 				// 4.1.1. 수평 스크롤바 스타일을 설정한다.
-				Long maxWidth = clientAreaWidth;
-				Glyph* line;
-				Long width;
-				Long i = 0;
-				while (i < note->GetLength())
-				{
-					line = note->GetAt(i);
-					width = sizeCalculator->GetRowWidth(line->MakeString().c_str());
-					if (width > maxWidth)
-					{
-						maxWidth = width;
-					}
-					i++;
-				}
-
-				width = 0;
-				i = 0;
-				while (i < currentColumn)
-				{
-					width += sizeCalculator->GetCharacterWidth((char*)(*(row->GetAt(i))));
-					i++;
-				}
-
-				this->hScroll.ResizeRange(maxWidth);
+				this->hScroll.ResizeRange(scrollBarAnalyzer.GetCOntentsWidth());
 				this->hScroll.ResizePage(clientAreaWidth);
 
 				scrollInfo.nMin = this->hScroll.GetMin();
