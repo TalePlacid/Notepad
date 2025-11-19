@@ -11,6 +11,8 @@ ScrollBarAnalyzer::ScrollBarAnalyzer(CWnd *parent) {
 	this->parent = parent;
 	this->vScrollNeeded = false;
 	this->hScrollNeeded = false;
+	this->clientAreaHeight = 0;
+	this->clientAreaWidth = 0;
 	this->contentsHeight = 0;
 	this->contentsWidth = 0;
 }
@@ -22,15 +24,15 @@ ScrollBarAnalyzer::~ScrollBarAnalyzer() {
 void ScrollBarAnalyzer::Analyze() {
 	RECT clientArea;
 	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
-	Long clientAreaWidth = clientArea.right - clientArea.left;
-	Long clientAreaHeight = clientArea.bottom - clientArea.top;
+	this->clientAreaWidth = clientArea.right - clientArea.left;
+	this->clientAreaHeight = clientArea.bottom - clientArea.top;
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 
 	Long rowHeight = sizeCalculator->GetRowHeight();
-	Long rowCount = clientAreaHeight / rowHeight;
+	Long rowCount = this->clientAreaHeight / rowHeight;
 	if (rowCount == 0)
 	{
 		rowCount = 1;
@@ -40,7 +42,18 @@ void ScrollBarAnalyzer::Analyze() {
 	this->contentsWidth = 0;
 	Long width;
 	Glyph* row;
-	Long i;
+	Long i = 0;
+	while (i < note->GetLength())
+	{
+		row = note->GetAt(i);
+		width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+		if (width > this->contentsWidth)
+		{
+			this->contentsWidth = width;
+		}
+		i++;
+	}
+#if 0
 	if (scrollController->HasHScroll())
 	{
 		Long rowIndex = note->GetCurrent();
@@ -81,23 +94,33 @@ void ScrollBarAnalyzer::Analyze() {
 			i++;
 		}
 	}
+#endif
+	this->vScrollNeeded = this->contentsHeight > this->clientAreaHeight;
+	this->hScrollNeeded = this->contentsWidth > this->clientAreaWidth;
 
-	this->vScrollNeeded = this->contentsHeight > clientAreaHeight;
-	this->hScrollNeeded = this->contentsWidth > clientAreaWidth;
-
-	Long scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
+	this->scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
 	for (Long i = 1; i <= 2; i++)
 	{
 		if (this->vScrollNeeded)
 		{
-			Long updatedClientAreaWidth = clientAreaWidth - scrollBarThickness;
+			Long updatedClientAreaWidth = this->clientAreaWidth - this->scrollBarThickness;
 			this->hScrollNeeded = this->contentsWidth > updatedClientAreaWidth;
 		}
 
 		if (this->hScrollNeeded)
 		{
-			Long updatedClientAreaHeight = clientAreaHeight - scrollBarThickness;
+			Long updatedClientAreaHeight = this->clientAreaHeight - this->scrollBarThickness;
 			this->vScrollNeeded = this->contentsHeight > updatedClientAreaHeight;
 		}
+	}
+
+	if (this->vScrollNeeded)
+	{
+		this->clientAreaWidth -= this->scrollBarThickness;
+	}
+
+	if (this->hScrollNeeded)
+	{
+		this->clientAreaHeight -= this->scrollBarThickness;
 	}
 }
