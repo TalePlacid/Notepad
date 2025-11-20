@@ -24,36 +24,41 @@ Long PagingNavigator::MoveTo(Long offset) {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->First();
 	Long currentOffset = pagingBuffer->First();
-
+	Long previousOffset = -1;
 	if (currentOffset > offset)
 	{
-		while (currentOffset <= offset)
+		while (currentOffset > offset && previousOffset != currentOffset)
 		{
 			if (note->IsAboveTopLine(rowIndex - 1))
 			{
 				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 			}
 			rowIndex = note->Previous();
+			previousOffset = currentOffset;
 			currentOffset = pagingBuffer->PreviousRow();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 		}
 	}
-	else if (currentOffset > offset)
+	else if (currentOffset < offset)
 	{
-		while (currentOffset >= offset)
+		while (currentOffset < offset && previousOffset != currentOffset)
 		{
 			if (note->IsBelowBottomLine(rowIndex + 1))
 			{
 				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 			}
 			rowIndex = note->Next();
+			previousOffset = currentOffset;
 			currentOffset = pagingBuffer->NextRow();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 		}
 
-		currentOffset = pagingBuffer->PreviousRow();
+		if (previousOffset != currentOffset && currentOffset < offset)
+		{
+			currentOffset = pagingBuffer->PreviousRow();
+		}
 	}
 
 	while (currentOffset < offset)

@@ -86,6 +86,11 @@ Long FilePointerCalculator::Next(Long offset) {
 		}
 	}
 
+	if (feof(file))
+	{
+		nextOffset = ftell(file);
+	}
+
 	fseek(file, currentOffset, SEEK_SET);
 
 	return nextOffset;
