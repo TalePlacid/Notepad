@@ -42,8 +42,6 @@ void EraseCommand::Execute() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex > 0)
 	{
@@ -79,11 +77,6 @@ void EraseCommand::Execute() {
 
 			pagingBuffer->Remove();
 			previousRow->Move(previousCurrent);
-			
-			ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-			SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-			Long max = scrollController->GetVScroll().GetMax() - sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();	
@@ -102,8 +95,6 @@ void EraseCommand::Undo() {
 	Long columnIndex = row->GetCurrent();
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	if (this->character[0] != '\r')
 	{
 		glyph = glyphFactory.Create(this->character);

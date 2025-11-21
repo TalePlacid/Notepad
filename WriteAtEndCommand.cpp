@@ -50,10 +50,6 @@ void WriteAtEndCommand::Execute() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 	
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	Long max = scrollController->GetHScroll().GetMax();
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowWidth = sizeCalculator->GetRowWidth(row->MakeString().c_str());
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove();
@@ -72,12 +68,6 @@ void WriteAtEndCommand::Execute() {
 	{
 		note->Add(glyph);
 		pagingBuffer->Add(this->character);
-
-		if (scrollController->HasVScroll())
-		{
-			max = scrollController->GetVScroll().GetMax() + sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
-		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
@@ -93,8 +83,6 @@ void WriteAtEndCommand::Undo() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. Áö¿î´Ù.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	if (columnIndex > 0)
 	{
 		row->Remove();
@@ -104,12 +92,6 @@ void WriteAtEndCommand::Undo() {
 		if (note->IsAboveTopLine(rowIndex - 1))
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
-		}
-
-		if (scrollController->HasVScroll())
-		{
-			Long max = scrollController->GetVScroll().GetMax();
-			scrollController->ResizeVRange(max - sizeCalculator->GetRowHeight());
 		}
 		note->Remove();
 	}
@@ -137,10 +119,7 @@ void WriteAtEndCommand::Redo() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	Long max = scrollController->GetHScroll().GetMax();
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
@@ -156,12 +135,6 @@ void WriteAtEndCommand::Redo() {
 		contents[0] = '\r';
 		contents[1] = '\n';
 		pagingBuffer->Add(contents);
-
-		if (scrollController->HasVScroll())
-		{
-			max = scrollController->GetVScroll().GetMax() + sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
-		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
