@@ -22,84 +22,68 @@ Long PagingNavigator::MoveTo(Long offset) {
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
+
+	//1. 줄의 처음으로 이동한다.
 	Long columnIndex = row->First();
 	Long currentOffset = pagingBuffer->First();
+
+	//2. 목표가 위이면,
 	Long previousOffset = -1;
 	if (currentOffset > offset)
 	{
+		//2.1. 목표보다 크고, 이전위치랑 현재위치가 다르면, 반복한다.
 		while (currentOffset > offset && previousOffset != currentOffset)
 		{
+			//2.1.1. 이전 줄이 적재범위에서 벗어나면 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1))
 			{
 				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 			}
+
+			//2.1.2. 이전 줄로 이동한다.
 			rowIndex = note->Previous();
-			previousOffset = currentOffset;
-			currentOffset = pagingBuffer->PreviousRow();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
+			previousOffset = currentOffset;
+			currentOffset = pagingBuffer->PreviousRow();
 		}
 	}
-	else if (currentOffset < offset)
+	else if (currentOffset < offset) // 3. 목표가 아래이면,
 	{
-		while (currentOffset < offset && previousOffset != currentOffset)
+		// 3.1. 목표보다 작고, 이전 위치와 현재 위치가 다르면, 반복한다.
+		while (currentOffset <= offset && previousOffset != currentOffset)
 		{
+			// 3.1.1. 아랫줄이 적재범위를 넘어서면, 재적재한다.
 			if (note->IsBelowBottomLine(rowIndex + 1))
 			{
 				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 			}
+
+			// 3.1.2. 다음 줄로 이동한다.
 			rowIndex = note->Next();
-			previousOffset = currentOffset;
-			currentOffset = pagingBuffer->NextRow();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
+			previousOffset = currentOffset;
+			currentOffset = pagingBuffer->NextRow();
 		}
 
-		if (previousOffset != currentOffset && currentOffset < offset)
+		// 3.2. 이전 위치와 현재 위치가 다르면, 이전 줄로 이동한다.
+		if (previousOffset != currentOffset)
 		{
+			rowIndex = note->Previous();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
+			previousOffset = currentOffset;
 			currentOffset = pagingBuffer->PreviousRow();
 		}
 	}
 
+	// 4. 목표와 같아질 때까지 반복한다.
 	while (currentOffset < offset)
 	{
-		currentOffset = pagingBuffer->Next();
+		// 4.1. 다음으로 이동한다.
 		columnIndex = row->Next();
-	}
-
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-
-	if (scrollController->HasVScroll())
-	{
-		Scroll vScroll = scrollController->GetVScroll();
-		Long rowHeight = sizeCalculator->GetRowHeight();
-		Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-		Long height = (rowStartIndex + rowIndex) * rowHeight;
-		if (height + rowHeight < vScroll.GetPos() || height > vScroll.GetPos() + vScroll.GetPage())
-		{
-			Long pos = height + rowHeight * 2 - vScroll.GetPage();
-			scrollController->MoveVScroll(pos);
-		}
-	}
-
-	if (scrollController->HasHScroll())
-	{
-		Scroll hScroll = scrollController->GetHScroll();
-		Long width = 0;
-		Long i = 0;
-		while (i < columnIndex)
-		{
-			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
-			i++;
-		}
-
-		Long multiCharacterWidth = sizeCalculator->GetMultiByteWidth();
-		if (width < hScroll.GetPos() || width + multiCharacterWidth > hScroll.GetPos() + hScroll.GetPage())
-		{
-			Long pos = width + multiCharacterWidth * 2 - hScroll.GetPage();
-			scrollController->MoveHScroll(pos);
-		}
+		currentOffset = pagingBuffer->Next();
 	}
 
 	return pagingBuffer->GetCurrentOffset();
