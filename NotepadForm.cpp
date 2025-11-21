@@ -120,7 +120,12 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if ((nChar > 31 && nChar < 127) || nChar == 9 || nChar == 13)
 	{
-		char character = nChar;
+		char character[2];
+		character[0] = nChar;
+		if (character[0] == '\r')
+		{
+			character[1] = '\n';
+		}
 
 		Long rowIndex = this->note->GetCurrent();
 		Glyph* row = this->note->GetAt(rowIndex);
@@ -129,11 +134,11 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		Command* command;
 		if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
 		{
-			command = new WriteAtEndCommand(this, &character);
+			command = new WriteAtEndCommand(this, character);
 		}
 		else
 		{
-			command = new InsertAtCaretCommand(this, &character);
+			command = new InsertAtCaretCommand(this, character);
 		}
 
 		if (command != NULL)
@@ -143,6 +148,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			{
 				command = this->undoHistoryBook->Bind(command);
 				this->undoHistoryBook->Push(command);
+				this->redoHistoryBook->Clear();
 			}
 			else
 			{
@@ -297,6 +303,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 		{
 			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
+			this->redoHistoryBook->Clear();
 		}
 		else
 		{
@@ -343,6 +350,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		{
 			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
+			this->redoHistoryBook->Clear();
 		}
 		else
 		{
@@ -361,6 +369,10 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		keyAction->Perform();
 		delete keyAction;
 	}
+
+	this->Notify("UpdateScrollBars");
+
+	this->Invalidate();
 }
 
 void NotepadForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
@@ -399,6 +411,7 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 			this->undoHistoryBook->Update(command, true);
 			this->redoHistoryBook->Update(command, true);
 			this->undoHistoryBook->Push(command);
+			this->redoHistoryBook->Clear();
 		}
 		else
 		{

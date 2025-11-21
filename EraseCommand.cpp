@@ -123,13 +123,6 @@ void EraseCommand::Undo() {
 			glyph = glyphFactory.Create(this->character);
 			rowIndex = note->Add(rowIndex + 1, glyph);
 		}
-
-		if (scrollController->HasVScroll())
-		{
-			Scroll vScroll = scrollController->GetVScroll();
-			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
-		}
 	}
 	pagingBuffer->Add(character);
 

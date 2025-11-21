@@ -35,22 +35,6 @@ void ScrollController::Update(Subject* subject, string interest) {
 		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
 		scrollBarAnalyzer.Analyze();
 		
-		RECT clientArea;
-		GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
-		Long clientAreaHeight = clientArea.bottom - clientArea.top;
-		Long clientAreaWidth = clientArea.right - clientArea.left;
-		Long scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
-
-		if (scrollBarAnalyzer.GetVScrollNeeded())
-		{
-			clientAreaWidth -= scrollBarThickness;
-		}
-
-		if (scrollBarAnalyzer.GetHScrollNeeded())
-		{
-			clientAreaHeight -= scrollBarThickness;
-		}
-
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long currentRow = note->GetCurrent();
 		Glyph* row = note->GetAt(currentRow);
@@ -66,12 +50,14 @@ void ScrollController::Update(Subject* subject, string interest) {
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		if (scrollBarAnalyzer.GetVScrollNeeded())
 		{
+			//2.1. 현재 수직 스크롤바가 없으면,
 			if (!this->hasVScroll)
 			{
+				//2.1.1. 수직 스크롤바를 만든다.
 				Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
 
 				this->vScroll.ResizeRange(rowCount * sizeCalculator->GetRowHeight());
-				this->vScroll.ResizePage(clientAreaHeight);
+				this->vScroll.ResizePage(scrollBarAnalyzer.GetClientAreaHeight());
 
 				scrollInfo.nMin = this->vScroll.GetMin();
 				scrollInfo.nMax = this->vScroll.GetMax();
@@ -86,22 +72,22 @@ void ScrollController::Update(Subject* subject, string interest) {
 		else // 3. 수직 스크롤바가 필요없으면,
 		{
 			// 3.1. 수직 스크롤바 스타일을 없앤다.
-			this->vScroll.ResizePage(clientAreaHeight);
-			this->vScroll.ResizeRange(clientAreaHeight);
+			this->vScroll.ResizePage(scrollBarAnalyzer.GetClientAreaHeight());
+			this->vScroll.ResizeRange(scrollBarAnalyzer.GetClientAreaHeight());
 			this->vScroll.Move(0);
 			this->parent->ModifyStyle(WS_VSCROLL, 0);
 			this->hasVScroll = false;
 		}
 
 		// 4. 수평 스크롤바가 필요하면,
-		if (scrollBarAnalyzer.GetVScrollNeeded())
+		if (scrollBarAnalyzer.GetHScrollNeeded())
 		{
 			// 4.1. 현재 수평 스크롤바가 없으면,
 			if (!this->hasHScroll)
 			{
 				// 4.1.1. 수평 스크롤바 스타일을 설정한다.
-				this->hScroll.ResizeRange(scrollBarAnalyzer.GetCOntentsWidth());
-				this->hScroll.ResizePage(clientAreaWidth);
+				this->hScroll.ResizeRange(scrollBarAnalyzer.GetContentsWidth());
+				this->hScroll.ResizePage(scrollBarAnalyzer.GetClientAreaWidth());
 
 				scrollInfo.nMin = this->hScroll.GetMin();
 				scrollInfo.nMax = this->hScroll.GetMax();
@@ -116,8 +102,8 @@ void ScrollController::Update(Subject* subject, string interest) {
 		else // 5. 수평 스크롤바가 필요없으면,
 		{
 			// 5.1. 수평 스크롤바 스타일을 없앤다.
-			this->hScroll.ResizePage(clientAreaWidth);
-			this->hScroll.ResizeRange(clientAreaWidth);
+			this->hScroll.ResizePage(scrollBarAnalyzer.GetClientAreaWidth());
+			this->hScroll.ResizeRange(scrollBarAnalyzer.GetClientAreaWidth());
 			this->hScroll.Move(0);
 			this->parent->ModifyStyle(WS_HSCROLL, 0);
 			this->hasHScroll = false;
@@ -126,7 +112,13 @@ void ScrollController::Update(Subject* subject, string interest) {
 		//6. 수직 스크롤바가 있으면,
 		if (this->hasVScroll)
 		{
-			//6.1. 수직 스크롤 범위를 벗어났으면, 수직 스크롤 위치를 조정한다.
+			//6.1. 수직 스크롤 페이지를 갱신한다.
+			this->vScroll.ResizePage(scrollBarAnalyzer.GetClientAreaHeight());
+			scrollInfo.fMask = SIF_PAGE;
+			scrollInfo.nPage = scrollBarAnalyzer.GetClientAreaHeight();
+			SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+
+			//6.2. 수직 스크롤 범위를 벗어났으면, 수직 스크롤 위치를 조정한다.
 			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 			Long rowHeight = sizeCalculator->GetRowHeight();
 			Long pos = (rowStartIndex + currentRow) * rowHeight;
@@ -149,34 +141,19 @@ void ScrollController::Update(Subject* subject, string interest) {
 		//7. 수평 스크롤이 있으면,
 		if (this->hasHScroll)
 		{
-			//7.1. 이전줄, 현재줄, 다음줄의 수평 최대값의 계산한다.
-			Long rowWidth;
-			Long max = hScroll.GetMax();
-			Long i = currentRow - PAGE_ROWCOUNT;
-			if (i < 0)
-			{
-				i = 0;
-			}
-			while (i <= currentRow + PAGE_ROWCOUNT && i < note->GetLength())
-			{
-				rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());
-				if (rowWidth > max)
-				{
-					max = rowWidth;
-				}
-				i++;
-			}
-
-			//7.2. 수평 스크롤바 최댓값을 갱신한다.
-			this->hScroll.ResizeRange(max);
-			scrollInfo.fMask = SIF_RANGE;
+			//7.1. 수평 스크롤바 페이지 크기와 최댓값을 갱신한다.
+			this->hScroll.ResizePage(scrollBarAnalyzer.GetClientAreaWidth());
+			this->hScroll.ResizeRange(scrollBarAnalyzer.GetContentsWidth());
+			scrollInfo.fMask = SIF_ALL;
 			scrollInfo.nMin = this->hScroll.GetMin();
 			scrollInfo.nMax = this->hScroll.GetMax();
+			scrollInfo.nPage = this->hScroll.GetPage();
+			scrollInfo.nPos = this->hScroll.GetPos();
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 
-			//7.3. 수평 스크롤 범위를 벗어났으면, 수평 스크롤 위치를 조정한다.
+			//7.2. 수평 스크롤 범위를 벗어났으면, 수평 스크롤 위치를 조정한다.
 			Long width = 0;
-			i = 0;
+			Long i = 0;
 			while (i < currentColumn)
 			{
 				width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
@@ -202,7 +179,6 @@ void ScrollController::Update(Subject* subject, string interest) {
 				this->hScroll.Move(width + characterWidth - hScroll.GetPage());
 				SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, width + characterWidth - hScroll.GetPage(), TRUE);
 			}
-
 		}
 
 		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
