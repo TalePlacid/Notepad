@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -20,19 +21,15 @@ void CtrlLeftAction::Perform() {
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Long columnIndex = row->GetCurrent();
 	if (columnIndex > 0)
 	{
 		Long i = columnIndex - 1;
 		Glyph* character = row->GetAt(i);
 		BOOL isWordCharacter = character->IsWordCharacter();
-		BOOL inWord = FALSE;
-		if (isWordCharacter)
-		{
-			inWord = TRUE;
-		}
+		BOOL inWord = isWordCharacter;
 
 		while (i >= 0 && (!inWord || isWordCharacter))
 		{
@@ -56,19 +53,17 @@ void CtrlLeftAction::Perform() {
 	}
 	else
 	{
+		if (note->IsAboveTopLine(rowIndex - 1))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+		}
+
 		if (rowIndex > 0)
 		{
 			rowIndex = note->Previous();
 			pagingBuffer->PreviousRow();
-			if (!pagingBuffer->IsBelowTopLine())
-			{
-				pagingBuffer->Load();
-				note = ((NotepadForm*)(this->parent))->note;
-				rowIndex = note->GetCurrent();
-			}
-
-			Glyph* previousRow = note->GetAt(rowIndex);
-			previousRow->Last();
+			row = note->GetAt(rowIndex);
+			row->Last();
 			pagingBuffer->Last();
 		}
 	}
@@ -76,7 +71,4 @@ void CtrlLeftAction::Perform() {
 	note->Select(false);
 	MarkingHelper markingHelper(this->parent);
 	markingHelper.Unmark();
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
 }
