@@ -26,18 +26,20 @@ void CtrlEndAction::Perform() {
 	TCHAR character[2];
 	character[0] = '\r';
 	character[1] = '\n';
-	pagingBuffer->Add(character);
+	Long last = pagingBuffer->Add(character);
 
 	//3. 페이징 버퍼에서 이전 부분을 적재한다.
 	Glyph* loadedNote = pagingBuffer->LoadPrevious();
 
 	//4. 페이지버퍼에서 추가했던 줄을 지운다.
+	pagingBuffer->MoveOffset(last);
 	pagingBuffer->Remove();
 
 	//5. 페이징버퍼에서 캐싱한다.
 	Long fileEndOffset = pagingBuffer->GetFileEndOffset();
 	Long totalRowCount = pagingBuffer->CountRow(fileEndOffset);
-	pagingBuffer->CacheRowStartIndex(totalRowCount - loadedNote->GetLength());
+	Long difference = totalRowCount - loadedNote->GetLength() - pagingBuffer->GetRowStartIndex();
+	pagingBuffer->CacheRowStartIndex(difference);
 
 	//6. 노트를 교체한다.
 	if (((NotepadForm*)(this->parent))->note != NULL)
