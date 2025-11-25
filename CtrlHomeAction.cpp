@@ -17,6 +17,25 @@ CtrlHomeAction::~CtrlHomeAction() {
 }
 
 void CtrlHomeAction::Perform() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->FirstRow();
+
+	Glyph* loadedNote = pagingBuffer->LoadNext();
+	
+	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+	pagingBuffer->CacheRowStartIndex(-rowStartIndex);
+
+	if (((NotepadForm*)(this->parent))->note != NULL)
+	{
+		delete ((NotepadForm*)(this->parent))->note;
+	}
+	((NotepadForm*)(this->parent))->note = loadedNote;
+
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->First();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->First();
+#if 0
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->FirstRow();
@@ -38,4 +57,5 @@ void CtrlHomeAction::Perform() {
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
+#endif
 }
