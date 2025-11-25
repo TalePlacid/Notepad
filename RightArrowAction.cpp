@@ -58,8 +58,4 @@ void RightArrowAction::Perform() {
 			pagingBuffer->NextRow();
 		}
 	}
-
-	((NotepadForm*)(this->parent))->note->Select(false);
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
 }

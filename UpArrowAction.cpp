@@ -70,8 +70,4 @@ void UpArrowAction::Perform() {
 
 	pagingBuffer->Move(i);
 	row->Move(i);
-
-	((NotepadForm*)(this->parent))->note->Select(false);
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
 }

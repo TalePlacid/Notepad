@@ -70,8 +70,4 @@ void DownArrowAction::Perform() {
 
 	pagingBuffer->Move(i);
 	nextRow->Move(i);
-
-	note->Select(false);
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
 }

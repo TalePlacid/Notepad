@@ -146,7 +146,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			command->Execute();
 			if (command->IsUndoable())
 			{
-				command = this->undoHistoryBook->Bind(command);
+				//command = this->undoHistoryBook->Bind(command);
 				this->undoHistoryBook->Push(command);
 				this->redoHistoryBook->Clear();
 			}
@@ -301,7 +301,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
-			command = this->undoHistoryBook->Bind(command);
+			//command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
 			this->redoHistoryBook->Clear();
 		}
@@ -348,7 +348,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
-			command = this->undoHistoryBook->Bind(command);
+			//command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
 			this->redoHistoryBook->Clear();
 		}
@@ -367,11 +367,17 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if (keyAction != NULL)
 	{
 		keyAction->Perform();
+
+		if (!keyAction->ShouldKeepSelection())
+		{
+			this->note->Select(false);
+			MarkingHelper markingHelper(this);
+			markingHelper.Unmark();
+		}
 		delete keyAction;
 	}
 
 	this->Notify("UpdateScrollBars");
-
 	this->Invalidate();
 }
 

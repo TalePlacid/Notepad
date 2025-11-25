@@ -67,8 +67,4 @@ void CtrlLeftAction::Perform() {
 			pagingBuffer->Last();
 		}
 	}
-
-	note->Select(false);
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
 }

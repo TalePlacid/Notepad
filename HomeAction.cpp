@@ -23,11 +23,4 @@ void HomeAction::Perform() {
 	row->First();
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->First();
-
-	note->Select(false);
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
 }

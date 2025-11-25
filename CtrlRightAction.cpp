@@ -66,8 +66,4 @@ void CtrlRightAction::Perform() {
 			pagingBuffer->First();
 		}
 	}
-
-	note->Select(false);
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
 }
