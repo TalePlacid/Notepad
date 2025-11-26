@@ -39,6 +39,32 @@ void LoadPreviousCommand::Execute() {
 	//4. 로드된 분량을 붙인다.
 	Long count = note->AppendFromFront(loadedNote);
 	pagingBuffer->CacheRowStartIndex(-count);
+	
+	//5. 선택여부를 반영한다.
+	Long previousRowIndex = -1;
+	rowIndex += count;
+	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+	Long i = pagingBuffer->GetCurrentOffset();
+	if (count > 0)
+	{
+		i = pagingBuffer->NextRow();
+	}
+	while (rowIndex >= 0 && previousRowIndex != rowIndex && i > selectionBeginOffset)
+	{
+		while (columnIndex > 0 && i > selectionBeginOffset)
+		{
+			row->GetAt(columnIndex - 1)->Select(true);
+			columnIndex = row->Previous();
+			i = pagingBuffer->Previous();
+		}
+
+		previousRowIndex = rowIndex;
+		rowIndex = note->Previous();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->Last();
+		i = pagingBuffer->PreviousRow();
+		i = pagingBuffer->Last();
+	}
 
 	//5. 현재 위치로 돌아온다.
 	currentRowIndex = note->Move(currentRowIndex + count);
@@ -60,7 +86,7 @@ void LoadPreviousCommand::Execute() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Long rowWidth = 0;
 	Long max = scrollController->GetHScroll().GetMax();
-	Long i = 0;
+	i = 0;
 	while (i < note->GetLength())
 	{
 		rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());

@@ -48,13 +48,33 @@ void LoadNextCommand::Execute() {
 		delete loadedNote;
 	}
 
-	//5. 현재 위치로 돌아온다.
+	//5. 로드된 뒷 부분의 선택여부를 반영한다.
+	Long previousRowIndex = -1;
+	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+	Long i = pagingBuffer->GetCurrentOffset();
+	while (rowIndex < note->GetLength() && previousRowIndex != rowIndex && i < selectionBeginOffset)
+	{
+		while (columnIndex < row->GetLength() && i < selectionBeginOffset)
+		{
+			row->GetAt(columnIndex)->Select(true);
+			columnIndex = row->Next();
+			i = pagingBuffer->Next();
+		}
+
+		previousRowIndex = rowIndex;
+		rowIndex = note->Next();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->First();
+		i = pagingBuffer->NextRow();
+	}
+
+	//6. 현재 위치로 돌아온다.
 	currentRowIndex = note->Move(currentRowIndex);
 	row = note->GetAt(currentRowIndex);
 	currentColumnIndex = row->Move(currentColumnIndex);
 	pagingBuffer->MoveOffset(currentOffset);
 
-	//6. 노트에서 윗 부분을 지운다.
+	//7. 노트에서 윗 부분을 지운다.
 	Long upperIndex = currentRowIndex - PAGE_ROWCOUNT;
 	if (upperIndex < 0)
 	{
@@ -63,12 +83,12 @@ void LoadNextCommand::Execute() {
 	note->TruncateBefore(upperIndex);
 	pagingBuffer->CacheRowStartIndex(upperIndex);
 
-	//7. 수평 스크롤바 최대값을 갱신한다.
+	//8. 수평 스크롤바 최대값을 갱신한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Long rowWidth = 0;
 	Long max = scrollController->GetHScroll().GetMax();
-	Long i = 0;
+	i = 0;
 	while (i < note->GetLength())
 	{
 		rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());

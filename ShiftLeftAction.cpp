@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -49,30 +50,31 @@ void ShiftLeftAction::Perform() {
 			}
 		}
 	}
-	else if (rowIndex > 0)
+	else
 	{
-		if (markingHelper.IsUnmarked())
+		if (note->IsAboveTopLine(rowIndex - 1))
 		{
-			markingHelper.Mark();
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			rowIndex = note->GetCurrent();
 		}
 
-		rowIndex = note->Previous();
-		pagingBuffer->PreviousRow();
-		row = note->GetAt(rowIndex);
-		row->Last();
-		pagingBuffer->Last();
-
-		if (markingHelper.HasReturnedToSelectionBegin())
+		if (rowIndex > 0)
 		{
-			markingHelper.Unmark();
-		}
+			if (markingHelper.IsUnmarked())
+			{
+				markingHelper.Mark();
+			}
 
-		if (!pagingBuffer->IsBelowTopLine())
-		{
-			pagingBuffer->Load();
+			rowIndex = note->Previous();
+			pagingBuffer->PreviousRow();
+			row = note->GetAt(rowIndex);
+			row->Last();
+			pagingBuffer->Last();
+
+			if (markingHelper.HasReturnedToSelectionBegin())
+			{
+				markingHelper.Unmark();
+			}
 		}
 	}
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
 }
