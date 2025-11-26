@@ -51,7 +51,4 @@ void ShiftEndAction::Perform() {
 		}
 		i++;
 	}
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
 }
