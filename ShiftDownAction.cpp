@@ -5,6 +5,7 @@
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -24,10 +25,16 @@ void ShiftDownAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	//2. 현재 위치가 마지막 페이지의 마지막줄이 아니라면,
+	//2. 다음 줄이 적재범위에서 벗어났다면 재적재한다.
+	if (note->IsBelowBottomLine(rowIndex + 1))
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+	}
+
+	//3. 현재 위치가 마지막 줄이 아니라면,
 	MarkingHelper markingHelper(this->parent);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (pagingBuffer->GetEndOffset() < pagingBuffer->GetFileEndOffset() || rowIndex < note->GetLength() - 1)
+	if (rowIndex < note->GetLength() - 1)
 	{
 		//2.1. 현재 위치까지의 너비를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -84,14 +91,11 @@ void ShiftDownAction::Perform() {
 
 		//2.3. 노트에서 다음 줄로 이동한다.
 		rowIndex = note->Next();
-		pagingBuffer->NextRow();
-
-		//2.4. 줄에서 첫번째 칸으로 이동한다.
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
-		pagingBuffer->First();
+		pagingBuffer->NextRow();
 
-		//2.5. 기존 너비와 가장 가까운 위치를 찾는다.
+		//2.4. 기존 너비와 가장 가까운 위치를 찾는다.
 		Long previousWidth = 0;
 		Long width = 0;
 		i = 0;
@@ -109,39 +113,39 @@ void ShiftDownAction::Perform() {
 			index--;
 		}
 
-		//2.6. 찾은 위치까지 반복한다.
+		//2.5. 찾은 위치까지 반복한다.
 		i = 0;
 		while (i < index)
 		{
-			//2.6.1. 문자를 읽는다.
+			//2.5.1. 문자를 읽는다.
 			character = row->GetAt(i);
 
-			//2.6.2. 문자가 선택되어 있지 않다면,
+			//2.5.2. 문자가 선택되어 있지 않다면,
 			if (!character->IsSelected())
 			{
-				//2.6.2.1. 문자를 선택한다.
+				//2.5.2.1. 문자를 선택한다.
 				character->Select(TRUE);
 
-				//2.6.2.2. 페이징 버퍼에서 선택시작위치가 표시되어 있지 않다면, 표시한다.
+				//2.5.2.2. 페이징 버퍼에서 선택시작위치가 표시되어 있지 않다면, 표시한다.
 				if (markingHelper.IsUnmarked())
 				{
 					markingHelper.Mark();
 				}
 
-				//2.6.2.3. 다음칸으로 이동한다.
+				//2.5.2.3. 다음칸으로 이동한다.
 				row->Next();
 				pagingBuffer->Next();
 			}
-			else //2.6.3. 문자가 선택되어 있다면,
+			else //2.5.3. 문자가 선택되어 있다면,
 			{
-				//2.6.3.1. 문자를 선택취소한다.
+				//2.5.3.1. 문자를 선택취소한다.
 				character->Select(FALSE);
 
-				//2.6.3.2. 다음 칸으로 이동한다.
+				//2.5.3.2. 다음 칸으로 이동한다.
 				row->Next();
 				pagingBuffer->Next();
 
-				//2.6.3.3. 페이징버퍼에서 현재위치랑 선택시작위치가 같으면, 표시를 지운다.
+				//2.5.3.3. 페이징버퍼에서 현재위치랑 선택시작위치가 같으면, 표시를 지운다.
 				if (markingHelper.HasReturnedToSelectionBegin())
 				{
 					markingHelper.Unmark();
@@ -150,14 +154,5 @@ void ShiftDownAction::Perform() {
 
 			i++;
 		}
-
-		//2.7. 범위를 벗어났으면, 재적재한다.
-		if (!pagingBuffer->IsAboveBottomLine())
-		{
-			pagingBuffer->Load();
-		}
-
-		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-		this->parent->Invalidate();
 	}
 }

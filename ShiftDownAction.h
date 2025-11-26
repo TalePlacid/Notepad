@@ -12,6 +12,11 @@ public:
 	virtual ~ShiftDownAction();
 
 	virtual void Perform();
+	virtual bool ShouldKeepSelection() const;
 };
+
+inline bool ShiftDownAction::ShouldKeepSelection() const {
+	return true;
+}
 
 #endif // !_SHIFTDOWNACTION_H
