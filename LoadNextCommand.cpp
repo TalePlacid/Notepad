@@ -51,6 +51,9 @@ void LoadNextCommand::Execute() {
 	//5. 로드된 뒷 부분의 선택여부를 반영한다.
 	Long previousRowIndex = -1;
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+	rowIndex = note->Next();
+	row = note->GetAt(rowIndex);
+	columnIndex = row->First();
 	Long i = pagingBuffer->GetCurrentOffset();
 	while (rowIndex < note->GetLength() && previousRowIndex != rowIndex && i < selectionBeginOffset)
 	{

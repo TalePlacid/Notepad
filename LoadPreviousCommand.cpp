@@ -45,10 +45,6 @@ void LoadPreviousCommand::Execute() {
 	rowIndex += count;
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 	Long i = pagingBuffer->GetCurrentOffset();
-	if (count > 0)
-	{
-		i = pagingBuffer->NextRow();
-	}
 	while (rowIndex >= 0 && previousRowIndex != rowIndex && i > selectionBeginOffset)
 	{
 		while (columnIndex > 0 && i > selectionBeginOffset)
@@ -66,7 +62,7 @@ void LoadPreviousCommand::Execute() {
 		i = pagingBuffer->Last();
 	}
 
-	//5. 현재 위치로 돌아온다.
+	//6. 현재 위치로 돌아온다.
 	currentRowIndex = note->Move(currentRowIndex + count);
 	row = note->GetAt(currentRowIndex);
 	currentColumnIndex = row->Move(currentColumnIndex);
@@ -77,11 +73,11 @@ void LoadPreviousCommand::Execute() {
 		delete loadedNote;
 	}
 
-	//6. 노트에서 아랫 부분을 지운다.
+	//7. 노트에서 아랫 부분을 지운다.
 	Long belowIndex = currentRowIndex + PAGE_ROWCOUNT;
 	note->TruncateAfter(belowIndex);
 
-	//7. 수평 스크롤바 최대값을 갱신한다.
+	//8. 수평 스크롤바 최대값을 갱신한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Long rowWidth = 0;

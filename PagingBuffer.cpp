@@ -101,6 +101,9 @@ Glyph* PagingBuffer::LoadPrevious() {
 		delete[] contents;
 	}
 
+	//6. 원래 위치로 돌아간다.
+	fseek(this->file, currentOffset, SEEK_SET);
+
 	return note;
 }
 
