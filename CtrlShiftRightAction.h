@@ -12,6 +12,11 @@ public:
 	virtual ~CtrlShiftRightAction();
 
 	virtual void Perform();
+	virtual bool ShouldKeepSelection() const;
 };
+
+inline bool CtrlShiftRightAction::ShouldKeepSelection() const {
+	return true;
+}
 
 #endif // !_CTRLSHIFTRIGHTACTION_H

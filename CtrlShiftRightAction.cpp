@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -26,57 +27,70 @@ void CtrlShiftRightAction::Perform() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex < row->GetLength())
 	{
-		columnIndex = row->Next();
-		pagingBuffer->Next();
-		Glyph* character = row->GetAt(columnIndex - 1);
+		Glyph* character = row->GetAt(columnIndex);
 		BOOL isWordCharacter = character->IsWordCharacter();
-		BOOL inBoundary = FALSE;
-		if (!isWordCharacter)
+		BOOL inBoundary = !isWordCharacter;
+		while (columnIndex < row->GetLength() && !(inBoundary && isWordCharacter))
 		{
-			inBoundary = TRUE;
-		}
-
-		Long i = columnIndex;
-		while ((i <= row->GetLength()) && !(inBoundary && isWordCharacter))
-		{
-			if (!character->IsSelected())
-			{
-				character->Select(TRUE);
-				if (markingHelper.IsUnmarked())
-				{
-					markingHelper.Mark();
-				}
-				columnIndex = row->Next();
-				pagingBuffer->Next();
-			}
-			else
-			{
-				character->Select(FALSE);
-				columnIndex = row->Next();
-				pagingBuffer->Next();
-				if (markingHelper.HasReturnedToSelectionBegin())
-				{
-					markingHelper.Unmark();
-				}
-			}
-
-			character = row->GetAt(columnIndex - 1);
+			character = row->GetAt(columnIndex);
 			isWordCharacter = character->IsWordCharacter();
 			if (!isWordCharacter)
 			{
 				inBoundary = TRUE;
 			}
-			i++;
+
+			if (!character->IsSelected())
+			{
+				character->Select(true);
+				if (markingHelper.IsUnmarked())
+				{
+					markingHelper.Mark();
+				}
+			}
+			else
+			{
+				character->Select(false);
+			}
+
+			columnIndex = row->Next();
+			pagingBuffer->Next();
+			if (markingHelper.HasReturnedToSelectionBegin())
+			{
+				markingHelper.Unmark();
+			}
 		}
 
-		if (i <= row->GetLength())
+		if (inBoundary && isWordCharacter)
 		{
-			row->Previous();
+			columnIndex = row->Previous();
+			character = row->GetAt(columnIndex);
+			if (!character->IsSelected())
+			{
+				character->Select(true);
+				if (markingHelper.IsUnmarked())
+				{
+					markingHelper.Mark();
+				}
+			}
+			else
+			{
+				character->Select(false);
+				if (markingHelper.HasReturnedToSelectionBegin())
+				{
+					markingHelper.Unmark();
+				}
+			}
+			
 			pagingBuffer->Previous();
 		}
 	}
 	else
 	{
+		if (note->IsBelowBottomLine(rowIndex + 1))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		}
+
 		if (rowIndex < note->GetLength() - 1)
 		{
 			rowIndex = note->Next();
@@ -84,14 +98,6 @@ void CtrlShiftRightAction::Perform() {
 			row = note->GetAt(rowIndex);
 			row->First();
 			pagingBuffer->First();
-
-			if (!pagingBuffer->IsAboveBottomLine())
-			{
-				pagingBuffer->Load();
-			}
 		}
 	}
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
 }
