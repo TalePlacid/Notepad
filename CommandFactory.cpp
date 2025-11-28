@@ -24,6 +24,7 @@
 #include "LoadNextCommand.h"
 #include "LoadPreviousCommand.h"
 #include "LoadLastCommand.h"
+#include "LoadFirstCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -104,15 +105,19 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	case ID_COMMAND_FINDNEXT:
 		command = new FindNextCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
-	case ID_COMMAND_LOADNEXT:
-		command = new LoadNextCommand(parent);
-		break;
+	case ID_COMMAND_LOADFIRST:
+		command = new LoadFirstCommand(parent);
+		break;	
 	case ID_COMMAND_LOADPREVIOUS:
 		command = new LoadPreviousCommand(parent);
+		break;
+	case ID_COMMAND_LOADNEXT:
+		command = new LoadNextCommand(parent);
 		break;
 	case ID_COMMAND_LOADLAST:
 		command = new LoadLastCommand(parent);
 		break;
+
 	default:
 		break;
 	}
