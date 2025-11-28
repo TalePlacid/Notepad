@@ -23,6 +23,7 @@
 #include "PreviewCommand.h"
 #include "LoadNextCommand.h"
 #include "LoadPreviousCommand.h"
+#include "LoadLastCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -108,6 +109,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 		break;
 	case ID_COMMAND_LOADPREVIOUS:
 		command = new LoadPreviousCommand(parent);
+		break;
+	case ID_COMMAND_LOADLAST:
+		command = new LoadLastCommand(parent);
 		break;
 	default:
 		break;

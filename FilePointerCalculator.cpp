@@ -42,7 +42,7 @@ Long FilePointerCalculator::Previous(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
 	Long currentOffset = ftell(file);
 
-	Long previousOffset = 0;
+	Long previousOffset = offset;
 	if (offset > 0)
 	{
 		TCHAR character;

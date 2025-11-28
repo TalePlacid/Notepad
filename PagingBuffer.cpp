@@ -530,53 +530,7 @@ Long PagingBuffer::UnmarkSelectionBegin() {
 }
 
 Long PagingBuffer::MoveOffset(Long offset) {
-	Long currentOffset = ftell(this->file);
-	Long oldCurrentOffset = -1;
-
-	FilePointerCalculator filePointerCalculator(this);
-	if (currentOffset > offset)
-	{
-		oldCurrentOffset = currentOffset;
-		currentOffset = filePointerCalculator.First(currentOffset);
-		fseek(this->file, currentOffset, SEEK_SET);
-
-		while (currentOffset > offset)
-		{
-			oldCurrentOffset = currentOffset;
-			currentOffset = filePointerCalculator.PreviousRow(currentOffset);
-			fseek(this->file, currentOffset, SEEK_SET);
-		}
-
-		while (currentOffset < offset)
-		{
-			oldCurrentOffset = currentOffset;
-			currentOffset = filePointerCalculator.Next(currentOffset);
-			fseek(this->file, currentOffset, SEEK_SET);
-		}
-	}
-	else if (currentOffset < offset)
-	{
-		while (currentOffset < offset && oldCurrentOffset != currentOffset)
-		{
-			oldCurrentOffset = currentOffset;
-			currentOffset = filePointerCalculator.NextRow(currentOffset);
-			fseek(this->file, currentOffset, SEEK_SET);
-		}
-
-		if (currentOffset > offset)
-		{
-			oldCurrentOffset = currentOffset;
-			currentOffset = filePointerCalculator.PreviousRow(currentOffset);
-			fseek(this->file, currentOffset, SEEK_SET);
-		}
-
-		while (currentOffset < offset)
-		{
-			oldCurrentOffset = currentOffset;
-			currentOffset = filePointerCalculator.Next(currentOffset);
-			fseek(this->file, currentOffset, SEEK_SET);
-		}
-	}
+	fseek(this->file, offset, SEEK_SET);
 
 	return ftell(this->file);
 }
