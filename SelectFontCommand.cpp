@@ -1,8 +1,11 @@
+#include <afxdlgs.h>
 #include "SelectFontCommand.h"
 #include "Font.h"
 #include "NotepadForm.h"
 #include "SizeCalculator.h"
-#include <afxdlgs.h>
+#include "ScrollBarAnalyzer.h"
+#include "ScrollController.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -62,7 +65,37 @@ void SelectFontCommand::Execute() {
 		}
 
 		((NotepadForm*)(this->parent))->sizeCalculator = new SizeCalculator(this->parent);
-		this->parent->Invalidate();
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+
+		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
+		scrollBarAnalyzer.Analyze();
+
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		if (scrollBarAnalyzer.GetVScrollNeeded())
+		{
+			scrollController->ShowVScroll();
+
+			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+			Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
+			Long max = rowCount * sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+			scrollController->ResizeVPage(scrollBarAnalyzer.GetClientAreaHeight());
+		}
+		else
+		{
+			scrollController->ShowVScroll(false);
+		}
+
+		if (scrollBarAnalyzer.GetHScrollNeeded())
+		{
+			scrollController->ShowHScroll();
+			scrollController->ResizeHRange(scrollBarAnalyzer.GetContentsWidth());
+			scrollController->ResizeHPage(scrollBarAnalyzer.GetClientAreaWidth());
+		}
+		else
+		{
+			scrollController->ShowHScroll(false);
+		}
 	}
 }
 

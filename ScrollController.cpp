@@ -247,6 +247,38 @@ bool ScrollController::IsOnHScrollRange() {
 	return ret;
 }
 
+bool ScrollController::ShowVScroll(bool visible) {
+	bool ret;
+	if (visible)
+	{
+		ret = this->parent->ModifyStyle(0, WS_VSCROLL);
+		this->hasVScroll = true;
+	}
+	else
+	{
+		ret = this->parent->ModifyStyle(WS_VSCROLL, 0);
+		this->hasVScroll = false;
+	}
+
+	return ret;
+}
+
+bool ScrollController::ShowHScroll(bool visible) {
+	bool ret;
+	if (visible)
+	{
+		ret = this->parent->ModifyStyle(0, WS_HSCROLL);
+		this->hasVScroll = true;
+	}
+	else
+	{
+		ret = this->parent->ModifyStyle(WS_HSCROLL, 0);
+		this->hasVScroll = false;
+	}
+
+	return ret;
+}
+
 void ScrollController::ResizeVRange(Long max, Long min) {
 	this->vScroll.ResizeRange(max, min);
 

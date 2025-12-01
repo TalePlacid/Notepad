@@ -18,6 +18,9 @@ public:
 	bool IsOnVScrollRange();
 	bool IsOnHScrollRange();
 
+	bool ShowVScroll(bool visible = true);
+	bool ShowHScroll(bool visible = true);
+
 	void ResizeVRange(Long max, Long min = 0);
 	Long ResizeVPage(Long page);
 	void ResizeHRange(Long max, Long min = 0);
