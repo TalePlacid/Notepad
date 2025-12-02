@@ -38,6 +38,11 @@ void ShiftUpAction::Perform() {
 	if (rowIndex > 0)
 	{
 		//3.1. 기존 줄에서 첫번째 위치까지 반복한다.
+		if (markingHelper.IsUnmarked())
+		{
+			markingHelper.Mark();
+		}
+
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Glyph* character;
 		Long originalWidth = 0;
