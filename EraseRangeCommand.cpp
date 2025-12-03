@@ -49,7 +49,6 @@ void EraseRangeCommand::Execute() {
 	}
 	else
 	{
-
 		this->frontOffset = currentOffset;
 		this->rearOffset = selectionBeginOffset;
 	}
@@ -97,8 +96,11 @@ void EraseRangeCommand::Execute() {
 		this->rearOffset += 2;
 	}
 	pagingBuffer->Remove(this->rearOffset);
-	pagingBuffer->PreviousRow();
-	pagingBuffer->Last();
+	if (i > this->frontOffset)
+	{
+		pagingBuffer->PreviousRow();
+		pagingBuffer->Last();
+	}
 
 	rowIndex = note->Move(rowIndex);
 	row = note->GetAt(rowIndex);
@@ -113,11 +115,61 @@ void EraseRangeCommand::Execute() {
 			pagingBuffer->NextRow();
 			pagingBuffer->Remove();
 			note->MergeRows(rowIndex);
+			row->Move(columnIndex);
 		}
 	}
 }
 
 void EraseRangeCommand::Undo() {
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->frontOffset);
+
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
+	Glyph* glyph;
+	ByteChecker byteChecker;
+	TCHAR character[2];
+	GlyphFactory glyphFactory;
+	Long i = 0;
+	while (i < this->contents.GetLength())
+	{
+		character[0] = this->contents[i];
+		if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
+		{
+			character[1] = this->contents[++i];
+		}
+
+		if (character[0] != '\r')
+		{
+			glyph = glyphFactory.Create(character);
+			row->Add(columnIndex, glyph);
+			columnIndex = row->GetCurrent();
+		}
+		else
+		{
+			if (columnIndex < row->GetLength())
+			{
+				note->SplitRows(rowIndex, columnIndex);
+				rowIndex = note->Next();
+				row = note->GetAt(rowIndex);
+				columnIndex = row->First();
+			}
+			else
+			{
+				glyph = glyphFactory.Create(character);
+				rowIndex = note->Add(rowIndex + 1, glyph);
+				row = note->GetAt(rowIndex);
+				columnIndex = row->First();
+			}
+		}
+		i++;
+	}
+
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->Add(this->contents);
 #if 0
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->MoveOffset(this->frontOffset);
