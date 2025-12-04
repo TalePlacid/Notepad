@@ -1,5 +1,3 @@
-#include <cstring>
-using namespace std;
 #include "PasteCommand.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
@@ -9,6 +7,9 @@ using namespace std;
 #include "resource.h"
 #include "ByteChecker.h"
 #include "MarkingHelper.h"
+#include "ScrollController.h"
+#include "SizeCalculator.h"
+#include "RowCounter.h"
 
 #pragma warning(disable:4996)
 
@@ -70,7 +71,6 @@ void PasteCommand::Execute() {
 				glyph = glyphFactory.Create(letters);
 				glyph->Select(true);
 				columnIndex = row->Add(columnIndex, glyph);
-				pagingBuffer->Add((char*)(*glyph));
 			}
 			else
 			{
@@ -78,24 +78,29 @@ void PasteCommand::Execute() {
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
 				columnIndex = row->First();
-
-				pagingBuffer->Add(letters);
+				
 			}
 			columnIndex = row->GetCurrent();
 			i++;
 		}
-		
-		if (!pagingBuffer->IsAboveBottomLine())
-		{
-			pagingBuffer->Load();
-		}
 
-		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-		this->parent->Invalidate();
+		pagingBuffer->Add(this->contents);
+
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		if (scrollController->HasVScroll())
+		{
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() + RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+		}
 	}
 }
 
 void PasteCommand::Undo() {
+
+
+#if 0
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->MoveOffset(this->offset);
 	if (!pagingBuffer->IsOnPage(this->offset))
@@ -170,9 +175,11 @@ void PasteCommand::Undo() {
 	row->Move(columnIndex);
 
 	pagingBuffer->Remove(this->offset + this->contents.GetLength());
+#endif
 }
 
 void PasteCommand::Redo() {
+#if 0
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->MoveOffset(this->offset);
 	if (!pagingBuffer->IsOnPage(this->offset))
@@ -229,6 +236,7 @@ void PasteCommand::Redo() {
 
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
+#endif
 }
 
 Command* PasteCommand::Clone() {
