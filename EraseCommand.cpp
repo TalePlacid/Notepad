@@ -77,10 +77,19 @@ void EraseCommand::Execute() {
 
 			pagingBuffer->Remove();
 			previousRow->Move(previousCurrent);
+
+			ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+			SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+			if (scrollController->HasVScroll())
+			{
+				Scroll vScroll = scrollController->GetVScroll();
+				Long max = vScroll.GetMax() - sizeCalculator->GetRowHeight();
+				scrollController->ResizeVRange(max);
+			}
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();	
-}
+ }
 
 void EraseCommand::Undo() {
 	GlyphFactory glyphFactory;
@@ -113,6 +122,15 @@ void EraseCommand::Undo() {
 		{
 			glyph = glyphFactory.Create(this->character);
 			rowIndex = note->Add(rowIndex + 1, glyph);
+		}
+
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		if (scrollController->HasVScroll())
+		{
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
 		}
 	}
 	pagingBuffer->Add(character);
@@ -154,6 +172,15 @@ void EraseCommand::Redo() {
 
 			pagingBuffer->Remove();
 			previousRow->Move(previousCurrent);
+
+			ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+			SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+			if (scrollController->HasVScroll())
+			{
+				Scroll vScroll = scrollController->GetVScroll();
+				Long max = vScroll.GetMax() - sizeCalculator->GetRowHeight();
+				scrollController->ResizeVRange(max);
+			}
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();

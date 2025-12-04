@@ -4,13 +4,16 @@
 #include "GlyphFactory.h"
 #include "PagingBuffer.h"
 #include "resource.h"
+#include "ScrollController.h"
+#include "SizeCalculator.h"
+#include "pagingNavigator.h"
 
 #pragma warning(disable:4996)
 
 InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, char(*character), BOOL onChar)
 	:Command(parent) {
 	this->character[0] = character[0];
-	if (character[0] & 0x80)
+	if (character[0] & 0x80 || character[0] == '\r')
 	{
 		this->character[1] = character[1];
 	}
@@ -49,7 +52,7 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 
 void InsertAtCaretCommand::Execute() {
 	GlyphFactory glyphFactory;
-	Glyph* glyph = glyphFactory.Create(this->character);
+	Glyph* glyph;
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
@@ -59,12 +62,14 @@ void InsertAtCaretCommand::Execute() {
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
+		columnIndex = row->GetCurrent();
 	}
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (this->character[0] != '\r')
 	{
-		row->Add(row->GetCurrent(), glyph);
+		glyph = glyphFactory.Create(this->character);
+		row->Add(columnIndex, glyph);
 		if (this->onChar)
 		{
 			pagingBuffer->Add(this->character);
@@ -72,39 +77,40 @@ void InsertAtCaretCommand::Execute() {
 	}
 	else
 	{
-		this->character[0] = '\r';
-		this->character[1] = '\n';
-
-		if (this->onChar)
+		if (columnIndex < row->GetLength())
 		{
-			pagingBuffer->Add(this->character);
+			note->SplitRows(rowIndex, columnIndex);
+			rowIndex = note->Next();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
 		}
-
-		rowIndex = note->SplitRows(rowIndex, columnIndex);
-		rowIndex = note->Move(rowIndex);
-		row = note->GetAt(rowIndex);
-		row->First();
-
-		if (!pagingBuffer->IsAboveBottomLine())
+		else
 		{
-			pagingBuffer->Load();
+			glyph = glyphFactory.Create(this->character);
+			rowIndex = note->Add(rowIndex + 1, glyph);
+		}
+		pagingBuffer->Add(this->character);
+
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		if (scrollController->HasVScroll())
+		{
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 void InsertAtCaretCommand::Undo() {
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->offset);
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->Load();
-	}
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->offset);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+	Long columnIndex = row->GetCurrent();
 
 	if (columnIndex > 0)
 	{
@@ -112,37 +118,48 @@ void InsertAtCaretCommand::Undo() {
 	}
 	else
 	{
+		if (note->IsAboveTopLine(rowIndex - 1))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			rowIndex = note->GetCurrent();
+		}
 		if (rowIndex > 0)
 		{
 			Glyph* previousRow = note->GetAt(rowIndex - 1);
-			Long  previousLastIndex = previousRow->GetLength();
+			columnIndex = previousRow->Last();
 			rowIndex = note->MergeRows(rowIndex - 1);
 			rowIndex = note->Move(rowIndex);
 			row = note->GetAt(rowIndex);
-			row->Move(previousLastIndex);
+			columnIndex = row->Move(columnIndex);
+
+			ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+			SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+			if (scrollController->HasVScroll())
+			{
+				Scroll vScroll = scrollController->GetVScroll();
+				Long max = vScroll.GetMax() - sizeCalculator->GetRowHeight();
+				scrollController->ResizeVRange(max);
+			}
 		}
 	}
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Remove();
 
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 void InsertAtCaretCommand::Redo() {
-	GlyphFactory glyphFactory;
-	Glyph* glyph = glyphFactory.Create(this->character);
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->offset);
 
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->offset);
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->Load();
-	}
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+	Long columnIndex = row->GetCurrent();
 
+	GlyphFactory glyphFactory;
+	Glyph* glyph;
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
@@ -150,34 +167,38 @@ void InsertAtCaretCommand::Redo() {
 
 	if (this->character[0] != '\r')
 	{
-		row->Add(row->GetCurrent(), glyph);
-		if (this->onChar)
-		{
-			pagingBuffer->Add(this->character);
-		}
+		glyph = glyphFactory.Create(this->character);
+		row->Add(columnIndex, glyph);
 	}
 	else
 	{
-		this->character[0] = '\r';
-		this->character[1] = '\n';
-
-		if (this->onChar)
+		if (columnIndex < row->GetLength())
 		{
-			pagingBuffer->Add(this->character);
+			note->SplitRows(rowIndex, columnIndex);
+			rowIndex = note->Next();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
+		}
+		else
+		{
+			glyph = glyphFactory.Create(this->character);
+			rowIndex = note->Add(rowIndex + 1, glyph);
 		}
 
-		rowIndex = note->SplitRows(rowIndex, columnIndex);
-		rowIndex = note->Move(rowIndex);
-		row = note->GetAt(rowIndex);
-		row->First();
-
-		if (!pagingBuffer->IsAboveBottomLine())
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		if (scrollController->HasVScroll())
 		{
-			pagingBuffer->Load();
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
 		}
 	}
-	this->offset = pagingBuffer->GetCurrentOffset();
 
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->Add(this->character);
+	
+	this->offset = pagingBuffer->GetCurrentOffset();
 }
 
 Command* InsertAtCaretCommand::Clone() {

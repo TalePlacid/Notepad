@@ -7,6 +7,9 @@
 #include "GlyphFactory.h"
 #include "ByteChecker.h"
 #include "PagingNavigator.h"
+#include "ScrollController.h"
+#include "RowCounter.h"
+#include "SizeCalculator.h"
 
 #pragma warning(disable:4996)
 
@@ -107,7 +110,17 @@ void EraseRangeCommand::Execute() {
 	row = note->GetAt(rowIndex);
 	columnIndex = row->Move(columnIndex);
 	
-	//4. 적재량이 부족하면 재적재한다.
+	//4. 수직 스크롤바를 반영한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() - RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
+	}
+
+	//5. 적재량이 부족하면 재적재한다.
 	if (note->IsBelowBottomLine(rowIndex))
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
@@ -171,7 +184,16 @@ void EraseRangeCommand::Undo() {
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Add(this->contents);
-}
+
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() + RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
+	}
+}   
 
 void EraseRangeCommand::Redo() {
 	PagingNavigator pagingNavigator(this->parent);
@@ -229,7 +251,17 @@ void EraseRangeCommand::Redo() {
 	row = note->GetAt(rowIndex);
 	columnIndex = row->Move(columnIndex);
 
-	//4. 적재량이 부족하면 재적재한다.
+	//4. 수직 스크롤바를 반영한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() - RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
+	}
+
+	//5. 적재량이 부족하면 재적재한다.
 	if (note->IsBelowBottomLine(rowIndex))
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);

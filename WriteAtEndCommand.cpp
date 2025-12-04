@@ -68,6 +68,15 @@ void WriteAtEndCommand::Execute() {
 	{
 		note->Add(glyph);
 		pagingBuffer->Add(this->character);
+
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		if (scrollController->HasVScroll())
+		{
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
@@ -94,6 +103,15 @@ void WriteAtEndCommand::Undo() {
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 		}
 		note->Remove();
+
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		if (scrollController->HasVScroll())
+		{
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() - sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+		}
 	}
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -135,6 +153,15 @@ void WriteAtEndCommand::Redo() {
 		contents[0] = '\r';
 		contents[1] = '\n';
 		pagingBuffer->Add(contents);
+
+		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		if (scrollController->HasVScroll())
+		{
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+			scrollController->ResizeVRange(max);
+		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
 }
