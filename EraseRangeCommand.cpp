@@ -90,12 +90,13 @@ void EraseRangeCommand::Execute() {
 	}
 
 	//3. 페이징버퍼에서 삭제한다.
+	Long rearOffset = this->rearOffset;
 	if (i > this->frontOffset)
 	{
 		pagingBuffer->Add(CString("\r\n"));
-		this->rearOffset += 2;
+		rearOffset += 2;
 	}
-	pagingBuffer->Remove(this->rearOffset);
+	pagingBuffer->Remove(rearOffset);
 	if (i > this->frontOffset)
 	{
 		pagingBuffer->PreviousRow();
@@ -170,161 +171,76 @@ void EraseRangeCommand::Undo() {
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Add(this->contents);
-#if 0
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->frontOffset);
-	if (!pagingBuffer->IsOnPage(this->frontOffset))
-	{
-		pagingBuffer->Load();
-	}
-
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
-
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Mark();
-
-	Long rowCount = 0;
-	Glyph* glyph;
-	GlyphFactory glyphFactory;
-	ByteChecker byteChecker;
-	TCHAR character[2];
-	Long i = 0;
-	while (i < this->contents.GetLength())
-	{
-		character[0] = this->contents.GetAt(i);
-		if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
-		{
-			character[1] = this->contents.GetAt(++i);
-		}
-
-		if (character[0] == '\r' && columnIndex < row->GetLength())
-		{
-			note->SplitRows(rowIndex, columnIndex);
-			rowIndex = note->Next();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->First();
-			rowCount++;
-		}
-		else
-		{
-			if (character[0] != '\r')
-			{
-				glyph = glyphFactory.Create(character);
-				glyph->Select(true);
-				row->Add(columnIndex, glyph);
-				columnIndex = row->GetCurrent();
-			}
-			else
-			{
-				note->SplitRows(rowIndex, columnIndex);
-				rowIndex = note->Next();
-				row = note->GetAt(rowIndex);
-				columnIndex = row->First();
-				rowCount++;
-			}
-		}
-		i++;
-	}
-
-	pagingBuffer->Add(this->contents);
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
-#endif
 }
 
 void EraseRangeCommand::Redo() {
-#if 0
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->frontOffset);
-	if (!pagingBuffer->IsOnPage(this->frontOffset))
-	{
-		pagingBuffer->Load();
-	}
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->frontOffset);
 
+	//2. 노트에서 선택범위를 삭제한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+	Long columnIndex = row->GetCurrent();
 
-	TCHAR character[2];
-	Long lastIndex = 0;
-	Long rowCount = 0;
-	Long i = 0;
-	while (i < this->contents.GetLength())
+	ByteChecker byteChecker;
+	Glyph* character;
+	BOOL hasNextRow = TRUE;
+	Long i = this->rearOffset;
+	while (hasNextRow && i > this->frontOffset)
 	{
-		character[0] = this->contents.GetAt(i);
-		if (character[0] == '\n')
+		hasNextRow = FALSE;
+		while (row->GetLength() > columnIndex && i > this->frontOffset)
 		{
-			lastIndex = i;
-			rowCount++;
-		}
-		i++;
-	}
-
-	while (row->GetLength() > columnIndex && row->GetAt(columnIndex)->IsSelected())
-	{
-		row->Remove(columnIndex);
-	}
-
-	i = 0;
-	while (i < rowCount - 1)
-	{
-		note->Remove(rowIndex + 1);
-		i++;
-	}
-
-	if (rowCount > 0)
-	{
-		ByteChecker byteChecker;
-		Long count = 0;
-		i = lastIndex + 1;
-		while (i < this->contents.GetLength())
-		{
-			character[0] = this->contents.GetAt(i);
-			if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
+			character = row->GetAt(columnIndex);
+			i--;
+			if (byteChecker.IsLeadByte(*(char*)(*character)))
 			{
-				character[1] = this->contents.GetAt(++i);
+				i--;
 			}
-
-			count++;
-			i++;
+			row->Remove(columnIndex);
 		}
 
-		Glyph* nextRow = NULL;
-		if (rowIndex + 1 < note->GetLength())
+		if (rowIndex + 1 < note->GetLength() && i > this->frontOffset)
 		{
-			nextRow = note->GetAt(rowIndex + 1);
-		}
-
-		i = 1;
-		while (i <= count)
-		{
-			nextRow->Remove(0);
-			i++;
-		}
-
-		if (character[0] != '\r' && rowIndex < note->GetLength() - 1)
-		{
+			hasNextRow = TRUE;
+			i -= 2;
 			note->MergeRows(rowIndex);
+			columnIndex = row->Move(columnIndex);
 		}
+	}
+
+	//3. 페이징버퍼에서 삭제한다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long rearOffset = this->rearOffset;
+	if (i > this->frontOffset)
+	{
+		pagingBuffer->Add(CString("\r\n"));
+		rearOffset += 2;
+	}
+	pagingBuffer->Remove(rearOffset);
+	if (i > this->frontOffset)
+	{
+		pagingBuffer->PreviousRow();
+		pagingBuffer->Last();
 	}
 
 	rowIndex = note->Move(rowIndex);
 	row = note->GetAt(rowIndex);
-	row->Move(columnIndex);
+	columnIndex = row->Move(columnIndex);
 
-	pagingBuffer->Remove(this->rearOffset);
-
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
-
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
-#endif
+	//4. 적재량이 부족하면 재적재한다.
+	if (note->IsBelowBottomLine(rowIndex))
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		if (i > this->frontOffset)
+		{
+			pagingBuffer->NextRow();
+			pagingBuffer->Remove();
+			note->MergeRows(rowIndex);
+			row->Move(columnIndex);
+		}
+	}
 }
 
 Command* EraseRangeCommand::Clone() {
