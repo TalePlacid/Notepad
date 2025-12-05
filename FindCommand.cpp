@@ -16,6 +16,7 @@ using namespace std;
 #include "MarkingHelper.h"
 #include "ByteChecker.h"
 #include "FindReplaceOption.h"
+#include "PagingNavigator.h"
 
 #pragma warning(disable:4996)
 
@@ -100,18 +101,8 @@ void FindCommand::Execute() {
 		if (nearestIndex > -1)
 		{
 			Long offset = searchResultController->GetAt(nearestIndex).GetOffset();
-			pagingBuffer->MoveOffset(offset);
-			if (pagingBuffer->IsOnPage(offset))
-			{
-				rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-				row = note->GetAt(rowIndex);
-				row->Move(pagingBuffer->GetCurrent().GetColumn());
-			}
-			else
-			{
-				pagingBuffer->Load();
-				note = ((NotepadForm*)(this->parent))->note;
-			}
+			PagingNavigator pagingNavigator(this->parent);
+			pagingNavigator.MoveTo(offset);
 
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
@@ -136,9 +127,6 @@ void FindCommand::Execute() {
 				pagingBuffer->Next();
 				i++;
 			}
-
-			((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-			this->parent->Invalidate();
 		}
 	}
 

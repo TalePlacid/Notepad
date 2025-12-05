@@ -7,6 +7,7 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "MarkingHelper.h"
+#include "PagingNavigator.h"
 
 #pragma warning(disable:4996)
 
@@ -45,18 +46,8 @@ void FindNextCommand::Execute() {
 		Long rowIndex;
 		Long offset = searchResultController->GetAt(current).GetOffset();
 
-		pagingBuffer->MoveOffset(offset);
-		if (pagingBuffer->IsOnPage(offset))
-		{
-			rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
-			row = note->GetAt(rowIndex);
-			row->Move(pagingBuffer->GetCurrent().GetColumn());
-		}
-		else
-		{
-			pagingBuffer->Load();
-			note = ((NotepadForm*)(this->parent))->note;
-		}
+		PagingNavigator pagingNavigator(this->parent);
+		pagingNavigator.MoveTo(offset);
 
 		rowIndex = note->GetCurrent();
 		row = note->GetAt(rowIndex);
@@ -81,9 +72,6 @@ void FindNextCommand::Execute() {
 			pagingBuffer->Next();
 			i++;
 		}
-
-		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-		this->parent->Invalidate();
 	}
 	else if (!this->findReplaceDialog->ReplaceAll())
 	{
