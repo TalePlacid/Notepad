@@ -50,9 +50,6 @@ void PasteCommand::Execute() {
 		this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
 		this->offset = pagingBuffer->GetCurrentOffset();
 
-		MarkingHelper markingHelper(this->parent);
-		markingHelper.Mark();
-
 		TCHAR letters[2];
 		Glyph* glyph;
 		GlyphFactory glyphFactory;
@@ -178,21 +175,17 @@ void PasteCommand::Undo() {
 }
 
 void PasteCommand::Redo() {
-#if 0
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->offset);
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->Load();
-	}
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->offset);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
+	Long columnIndex = row->GetCurrent();
 
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Mark();
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
+	this->offset = pagingBuffer->GetCurrentOffset();
 
 	TCHAR letters[2];
 	Glyph* glyph;
@@ -213,7 +206,6 @@ void PasteCommand::Redo() {
 			glyph = glyphFactory.Create(letters);
 			glyph->Select(true);
 			columnIndex = row->Add(columnIndex, glyph);
-			pagingBuffer->Add((char*)(*glyph));
 		}
 		else
 		{
@@ -222,20 +214,21 @@ void PasteCommand::Redo() {
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 
-			pagingBuffer->Add(letters);
 		}
 		columnIndex = row->GetCurrent();
 		i++;
 	}
 
-	if (!pagingBuffer->IsAboveBottomLine())
-	{
-		pagingBuffer->Load();
-	}
+	pagingBuffer->Add(this->contents);
 
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	this->parent->Invalidate();
-#endif
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() + RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
+	}
 }
 
 Command* PasteCommand::Clone() {
