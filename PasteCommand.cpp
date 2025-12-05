@@ -10,6 +10,7 @@
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "RowCounter.h"
+#include "PagingNavigator.h"
 
 #pragma warning(disable:4996)
 
@@ -98,84 +99,82 @@ void PasteCommand::Execute() {
 }
 
 void PasteCommand::Undo() {
+	PagingNavigator pagingNavigator(this->parent);
+	pagingNavigator.MoveTo(this->offset);
 
-
-#if 0
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MoveOffset(this->offset);
-	if (!pagingBuffer->IsOnPage(this->offset))
-	{
-		pagingBuffer->Load();
-	}
+	Long rearOffset = this->offset + this->contents.GetLength();
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->Move(pagingBuffer->GetCurrent().GetRow());
+	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->Move(pagingBuffer->GetCurrent().GetColumn());
-
-	Long last = 0;
-	Long count = 0;
-	Long i = 0;
-	while (i < this->contents.GetLength())
-	{
-		if (this->contents.GetAt(i) == '\n')
-		{
-			count++;
-			last = i;
-		}
-		i++;
-	}
+	Long columnIndex = row->GetCurrent();
 
 	ByteChecker byteChecker;
-	if (count > 0)
+	Glyph* character;
+	BOOL hasNextRow = TRUE;
+	Long i = rearOffset;
+	while (hasNextRow && i > this->offset)
 	{
-		row->TruncateAfter(columnIndex);
-		
-		i = 1;
-		while (i < count && note->GetLength() - 1 > rowIndex + 1)
+		hasNextRow = FALSE;
+		while (row->GetLength() > columnIndex && i > this->offset)
 		{
-			note->Remove(rowIndex+1);
-			i++;
-		}
-
-		if (rowIndex + 1 < note->GetLength())
-		{
-			row = note->GetAt(rowIndex + 1);
-			Long index = 0;
-			i = last + 1;
-			while (i < this->contents.GetLength())
+			character = row->GetAt(columnIndex);
+			i--;
+			if (byteChecker.IsLeadByte(*(char*)(*character)))
 			{
-				if (byteChecker.IsLeadByte(this->contents.GetAt(i)))
-				{
-					i++;
-				}
-				index++;
-				i++;
-			}
-
-			row->TruncateBefore(index);
-			note->MergeRows(rowIndex);
-		}
-	}
-	else
-	{
-		i = 0;
-		while (i < this->contents.GetLength() && row->GetLength() > columnIndex)
-		{
-			if (byteChecker.IsLeadByte(this->contents.GetAt(i)))
-			{
-				i++;
+				i--;
 			}
 			row->Remove(columnIndex);
-			i++;
+		}
+
+		if (rowIndex + 1 < note->GetLength() && i > this->offset)
+		{
+			hasNextRow = TRUE;
+			i -= 2;
+			note->MergeRows(rowIndex);
+			columnIndex = row->Move(columnIndex);
 		}
 	}
-	note->Move(rowIndex);
-	row = note->GetAt(rowIndex);
-	row->Move(columnIndex);
 
-	pagingBuffer->Remove(this->offset + this->contents.GetLength());
-#endif
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	if (i > this->offset)
+	{
+		pagingBuffer->Add(CString("\r\n"));
+		rearOffset += 2;
+	}
+	pagingBuffer->Remove(rearOffset);
+	if (i > this->offset)
+	{
+		pagingBuffer->PreviousRow();
+		pagingBuffer->Last();
+	}
+
+	rowIndex = note->Move(rowIndex);
+	row = note->GetAt(rowIndex);
+	columnIndex = row->Move(columnIndex);
+
+	//4. 수직 스크롤바를 반영한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() - RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
+	}
+
+	//5. 적재량이 부족하면 재적재한다.
+	if (note->IsBelowBottomLine(rowIndex))
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		if (i > this->offset)
+		{
+			pagingBuffer->NextRow();
+			pagingBuffer->Remove();
+			note->MergeRows(rowIndex);
+			row->Move(columnIndex);
+		}
+	}
 }
 
 void PasteCommand::Redo() {
