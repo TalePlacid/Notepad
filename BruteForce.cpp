@@ -28,6 +28,10 @@ void BruteForce::DoAlgorithm(Long* (*offsets), Long* count) {
 		else
 		{
 			j = 0;
+			if (this->comparer->Compare(this->contents[i], this->key[j]) == true)
+			{
+				j++;
+			}
 		}
 
 		if (j == this->key.length())
