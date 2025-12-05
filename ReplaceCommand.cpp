@@ -9,6 +9,7 @@
 #include "MarkingHelper.h"
 #include "SearchResultController.h"
 #include "resource.h"
+#include "PagingNavigator.h"
 
 #pragma warning(disable:4996)
 
@@ -42,6 +43,120 @@ ReplaceCommand& ReplaceCommand::operator=(const ReplaceCommand& source) {
 }
 
 void ReplaceCommand::Execute() {
+	//1. 검색한 위치로 이동한다.
+	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	PagingNavigator pagingNavigator(this->parent);
+
+	Long currentIndex = searchResultController->GetCurrent();
+	this->offset = searchResultController->GetAt(currentIndex).GetOffset();
+	pagingNavigator.MoveTo(this->offset);
+
+	this->source = CString(searchResultController->GetKey().c_str());
+	this->replaced = this->findReplaceDialog->GetReplaceString();
+
+	//2. 노트에서 교체한다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
+	ByteChecker byteChecker;
+	Long sourceCount = byteChecker.CountCharacters(this->source);
+	Long replacedCount = byteChecker.CountCharacters(this->replaced);
+	TCHAR letter[2];
+	GlyphFactory glyphFactory;
+	Glyph* glyph;
+	Long k = columnIndex;
+	Long j = 0;
+	Long i = 0;
+	if (sourceCount < replacedCount) //원본 문자열이 더 짧으면,
+	{
+		//원본 문자열 길이만큼 교체한다.
+		while (i < sourceCount)
+		{
+			letter[0] = this->replaced.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->replaced.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Replace(k, glyph);
+			k++;
+			j++;
+			i++;
+		}
+
+		//남은 길이만큼 추가한다.
+		while (i < replacedCount)
+		{
+			letter[0] = this->replaced.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->replaced.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Add(k, glyph);
+			k++;
+			j++;
+			i++;
+		}
+	}
+	else // 교체 문자열이 더 짧거나 같으면,
+	{
+		//교체 문자열 길이만큼 교체한다.
+		while (i < replacedCount)
+		{
+			letter[0] = this->replaced.GetAt(j);
+			if (byteChecker.IsLeadByte(letter[0]))
+			{
+				letter[1] = this->replaced.GetAt(++j);
+			}
+			glyph = glyphFactory.Create(letter);
+
+			row->Replace(k, glyph);
+			k++;
+			j++;
+			i++;
+		}
+
+		//남은 길이만큼 삭제한다.
+		j = 1;
+		while (j <= sourceCount - replacedCount && row->GetLength() > k)
+		{
+			row->Remove(k);
+			j++;
+		}
+	}
+	row->Move(k);
+
+	//3. 페이징 버퍼에서 교체한다.
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	if (this->source.GetLength() < this->replaced.GetLength())
+	{
+		pagingBuffer->Replace(currentOffset, this->replaced.Left(this->source.GetLength()));
+		pagingBuffer->Add(this->replaced.Right(this->replaced.GetLength() - this->source.GetLength()));
+	}
+	else
+	{
+		pagingBuffer->Replace(currentOffset, this->replaced);
+		pagingBuffer->Remove(currentOffset + this->source.GetLength());
+	}
+
+	//4. 이후 검색결과들에 편차를 반영한다.
+	Long difference = this->replaced.GetLength() - this->source.GetLength();
+	SearchResult searchResult;
+	i = searchResultController->GetCurrent() + 1;
+	while (i < searchResultController->GetLength())
+	{
+		searchResult = searchResultController->GetAt(i);
+		searchResultController->Replace(i, searchResult.OffsetBy(difference));
+		i++;
+	}
+
+#if 0
 	//1. 재실행이 아니면, 기록한다.
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -160,9 +275,11 @@ void ReplaceCommand::Execute() {
 	//6. 클라이언트 영역을 갱신한다.
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
+#endif
 }
 
 void ReplaceCommand::Undo() {
+#if 0
 	//1. 위치로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->MoveOffset(this->offset);
@@ -270,9 +387,11 @@ void ReplaceCommand::Undo() {
 	//4. 클라이언트 영역을 갱신한다.
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
+#endif
 }
 
 void ReplaceCommand::Redo() {
+#if 0
 	//1. 위치로 이동한다.
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -391,6 +510,7 @@ void ReplaceCommand::Redo() {
 	//6. 클라이언트 영역을 갱신한다.
 	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
 	this->parent->Invalidate();
+#endif
 }
 
 UINT ReplaceCommand::GetId() {
