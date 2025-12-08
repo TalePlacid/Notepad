@@ -117,7 +117,13 @@ void ReplaceAllCommand::Update(Command* command, bool isDone) {
 }
 
 bool ReplaceAllCommand::IsUndoable() {
-	return true;
+	bool ret = false;
+	if (this->length > 0)
+	{
+		ret = true;
+	}
+
+	return ret;
 }
 
 CString ReplaceAllCommand::GetSource() {
