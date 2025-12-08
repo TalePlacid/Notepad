@@ -9,7 +9,6 @@ public:
 	ByteChecker();
 	~ByteChecker();
 
-	Long CountCharacters(CString str);
 	bool IsASCII(char character);
 	bool IsLeadByte(char character);
 	bool IsTailByte(char character);

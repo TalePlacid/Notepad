@@ -10,6 +10,7 @@ public:
 	~RowCounter();
 
 	static Long CountRow(CString contents);
+	static Long CountCharacters(CString row);
 };
 
 #endif // !_ROWCOUNTER_H
