@@ -235,7 +235,7 @@ Long Note::AppendFromFront(const Glyph* other) {
 
 Long Note::AppendFromRear(const Glyph* other) {
 	Long i = 0;
-	if (const_cast<Glyph*>(other)->GetAt(i)->GetLength() == 0)
+	if (other->GetLength() == 1 && const_cast<Glyph*>(other)->GetAt(i)->GetLength() == 0)
 	{
 		i++;
 	}
