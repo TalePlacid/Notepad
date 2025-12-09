@@ -5,7 +5,7 @@
 #include "Glyph.h"
 #include "SizeCalculator.h"
 #include "ScrollController.h"
-#include "MarkingHelper.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -19,91 +19,97 @@ PageUpAction::~PageUpAction() {
 }
 
 void PageUpAction::Perform() {
-#if 0
-	//1. 수직 스크롤바가 있으면,
-	ScrollBarAdapter* scrollBarAdapter = ((NotepadForm*)(this->parent))->scrollBarAdapter;
-	if (scrollBarAdapter->HasVScrollBar())
+	//1. 수직스크롤바가 있고, 처음 위치가 아니라면,
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Scroll vScroll = scrollController->GetVScroll();
+	if (scrollController->HasVScroll() && vScroll.GetPos() > 0)
 	{
-		//1.1. 수직 스크롤바 정보를 읽는다.
-		SCROLLINFO scrollInfo = {};
-		scrollInfo.cbSize = sizeof(SCROLLINFO);
-		scrollInfo.fMask = SIF_ALL;
-		GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
-
-		//1.2. 현재 위치가 스크롤바의 최소보다 크면,
-		if (scrollInfo.nPos > 0)
+		//1.1. 올라갈 줄 수를 구한다.
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		Long rowHeight = sizeCalculator->GetRowHeight();
+		Long rowCount = vScroll.GetPage() / rowHeight;
+		if (vScroll.GetPage() % rowHeight > 0)
 		{
-			//1.2.1. 현재 줄의 너비를 구한다.
-			Glyph* note = ((NotepadForm*)(this->parent))->note;
-			Long rowIndex = note->GetCurrent();
-			Glyph* row = note->GetAt(rowIndex);
-			Long columnIndex = row->GetCurrent();
-
-			SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-			Glyph* character;
-			Long originalWidth = 0;
-			Long i = 0;
-			while (i < columnIndex)
-			{
-				character = row->GetAt(i);
-				originalWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
-				i++;
-			}
-
-			//1.2.2. 페이지당 줄수를 구한다.
-			Long pageRowCount = scrollInfo.nPage / sizeCalculator->GetRowHeight();
-
-			//1.2.3. 페이징 버퍼에서 이동한다.
-			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-			Position current = pagingBuffer->GetCurrent();
-			Long movingRowIndex = current.GetRow() - pageRowCount;
-			if (movingRowIndex < 0)
-			{
-				movingRowIndex = 0;
-			}
-			pagingBuffer->MoveRow(movingRowIndex);
-
-			//1.2.4. 페이지 범위에서 벗어났다면, 재적재한다.
-			if (!pagingBuffer->IsBelowTopLine())
-			{
-				pagingBuffer->Load();
-				note = ((NotepadForm*)(this->parent))->note;
-			}
-
-			//1.2.5. 줄에서 너비와 가장 가까운 칸으로 이동한다.
-			rowIndex = pagingBuffer->GetCurrent().GetRow();
-			rowIndex = note->Move(rowIndex);
-			row = note->GetAt(rowIndex);
-
-			Long previousWidth = 0;
-			Long width = 0;
-			i = 0;
-			while (i < row->GetLength() && width < originalWidth)
-			{
-				character = row->GetAt(i);
-				previousWidth = width;
-				width += sizeCalculator->GetCharacterWidth((char*)(*character));
-				i++;
-			}
-
-			if (width - originalWidth > originalWidth - previousWidth)
-			{
-				i--;
-			}
-
-			row->Move(i);
-			pagingBuffer->Move(i);
-
-			//1.2.6. 스크롤바 위치를 조정한다.
-			((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-
-			//1.2.7. 클라이언트 영역을 갱신한다.
-			note->Select(FALSE);
-			MarkingHelper markingHelper(this->parent);
-			markingHelper.Unmark();
-			this->parent->Invalidate();
+			rowCount++;
 		}
 
+		//1.2. 노트에서 현재 줄의 너비를 구한다.
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		Long originalRowWidth = 0;
+		Long i = 0;
+		while (i < columnIndex)
+		{
+			originalRowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
+			i++;
+		}
+
+		//1.3. 노트와 페이징버퍼에서 줄 수 만큼 올라간다.
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+
+		Long restedRowCount = 0;
+		if (rowIndex - rowCount < 0)
+		{
+			restedRowCount = rowCount - rowIndex;
+			rowCount = rowIndex;
+		}
+		rowIndex = note->Move(rowIndex - rowCount);
+		row = note->GetAt(rowIndex);
+		row->First();
+		pagingBuffer->PreviousRow(rowCount);
+
+		//1.4. 줄 수가 충분치 않다면,
+		if (restedRowCount > 0)
+		{
+			//1.4.1. 적재한다.
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+
+			//1.4.2. 나머지 줄 수 만큼 내려간다.
+			rowIndex = note->GetCurrent() - restedRowCount;
+			if (rowIndex < 0)
+			{
+				rowIndex = 0;
+			}
+			rowIndex = note->Move(rowIndex);
+			row = note->GetAt(rowIndex);
+			row->First();
+			pagingBuffer->PreviousRow(restedRowCount);
+		}
+
+		//1.5. 줄에서 너비와 가장 가까운 위치로 이동한다.
+		Long previousWidth = 0;
+		Long width = 0;
+		i = 0;
+		while (width < originalRowWidth && i < row->GetLength())
+		{
+			previousWidth = width;
+			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
+			i++;
+		}
+
+		columnIndex = i;
+		if (originalRowWidth - previousWidth < width - originalRowWidth)
+		{
+			columnIndex = i - 1;
+		}
+
+		columnIndex = row->Move(columnIndex);
+
+		//1.6. 적재범위를 벗어났으면 재적재한다.
+		if (note->IsAboveTopLine(rowIndex))
+		{
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+		}
+
+		//1.7. 스크롤을 올린다.
+		Long pos = vScroll.GetPos() - vScroll.GetPage();
+		if (pos < 0)
+		{
+			pos = 0;
+		}
+		scrollController->MoveVScroll(pos);
 	}
-#endif
 }

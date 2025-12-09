@@ -19,13 +19,13 @@ PageDownAction::~PageDownAction() {
 }
 
 void PageDownAction::Perform() {
-	//1. 수직 스크롤바가 존재하면,
+	//1. 수직 스크롤바가 존재하고, 마지막 위치가 아니라면,
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll = scrollController->GetVScroll();
 	Long posLimit = vScroll.GetMax() - vScroll.GetPage();
 	if (scrollController->HasVScroll() && vScroll.GetPos() < posLimit)
 	{
-		//1. 내려갈 만큼의 줄 수를 구한다.
+		//1.1 내려갈 만큼의 줄 수를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Long rowHeight = sizeCalculator->GetRowHeight();
 		Long rowCount = vScroll.GetPage() / rowHeight;
@@ -34,7 +34,7 @@ void PageDownAction::Perform() {
 			rowCount++;
 		}
 
-		//2. 노트에서 현재 줄의 너비를 구한다.
+		//1.2. 노트에서 현재 줄의 너비를 구한다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(rowIndex);
@@ -48,7 +48,7 @@ void PageDownAction::Perform() {
 			i++;
 		}
 		
-		//3. 노트에서 줄 수 만큼 내려간다.
+		//1.3. 노트와 페이징버퍼에서 줄 수 만큼 내려간다.
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 
 		Long restedRowCount = 0;
@@ -62,13 +62,13 @@ void PageDownAction::Perform() {
 		row->First();
 		pagingBuffer->NextRow(rowCount);
 
-		//4. 줄 수가 충분치 않다면,
+		//1.4. 줄 수가 충분치 않다면,
 		if (restedRowCount > 0)
 		{
-			//4.1. 적재한다.
+			//1.4.1. 적재한다.
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 
-			//4.2. 나머지 줄 수 만큼 내려간다.
+			//1.4.2. 나머지 줄 수 만큼 내려간다.
 			rowIndex = note->GetCurrent() + restedRowCount;
 			if (rowIndex >= note->GetLength())
 			{
@@ -80,7 +80,7 @@ void PageDownAction::Perform() {
 			pagingBuffer->NextRow(restedRowCount);
 		}
 
-		//5. 줄에서 너비와 가장 가까운 위치로 이동한다.
+		//1.5. 줄에서 너비와 가장 가까운 위치로 이동한다.
 		Long previousWidth = 0;
 		Long width = 0;
 		i = 0;
@@ -99,13 +99,13 @@ void PageDownAction::Perform() {
 
 		columnIndex = row->Move(columnIndex);
 
-		//6. 적재범위를 벗어났으면 재적재한다.
+		//1.6. 적재범위를 벗어났으면 재적재한다.
 		if (note->IsBelowBottomLine(rowIndex))
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 		}
 
-		//7. 스크롤을 내린다.
+		//1.7. 스크롤을 내린다.
 		Long pos = vScroll.GetPos() + vScroll.GetPage();
 		if (pos > posLimit)
 		{
