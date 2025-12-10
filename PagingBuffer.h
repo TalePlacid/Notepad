@@ -24,8 +24,8 @@ public:
 	Long CountRow(Long offset);
 
 	Long First();
-	Long Previous();
-	Long Next();
+	Long Previous(Long count = 1);
+	Long Next(Long count = 1);
 	Long Last();
 	Long Move(Long index);
 

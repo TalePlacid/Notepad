@@ -437,20 +437,28 @@ Long PagingBuffer::First() {
 	return ftell(this->file);
 }
 
-Long PagingBuffer::Previous() {
+Long PagingBuffer::Previous(Long count) {
 	Long currentOffset = ftell(this->file);
 	
 	FilePointerCalculator filePointerCalculator(this);
-	fseek(this->file, filePointerCalculator.Previous(currentOffset), SEEK_SET);
+	for (Long i = 1; i <= count; i++)
+	{
+		fseek(this->file, filePointerCalculator.Previous(currentOffset), SEEK_SET);
+		currentOffset = ftell(this->file);
+	}
 
 	return ftell(this->file);
 }
 
-Long PagingBuffer::Next() {
+Long PagingBuffer::Next(Long count) {
 	Long currentOffset = ftell(this->file);
 
 	FilePointerCalculator filePointerCalculator(this);
-	fseek(this->file, filePointerCalculator.Next(currentOffset), SEEK_SET);
+	for (Long i = 1; i <= count; i++)
+	{
+		fseek(this->file, filePointerCalculator.Next(currentOffset), SEEK_SET);
+		currentOffset = ftell(this->file);
+	}
 
 	return ftell(this->file);
 }
