@@ -37,7 +37,7 @@ public:
 	virtual Long TruncateBefore(Long index);
 	virtual Long MergeRows(Long index);
 	virtual Long SplitRows(Long rowIndex, Long columnIndex, bool IsDummyRow = false);
-	virtual void SelectRange(Position start, Position end);
+	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
 	virtual Long Mark(Long index);
 	virtual Long Unmark();
 	virtual Long AppendFromFront(const Glyph* ohter);

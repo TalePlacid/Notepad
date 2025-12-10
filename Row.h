@@ -19,6 +19,7 @@ public:
 	virtual Glyph* Clone();
 	virtual void Accept(Visitor& visitor);
 	virtual Long TruncateAfter(Long index);
+	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
 };
 
 #endif // !_ROW_H

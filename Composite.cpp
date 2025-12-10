@@ -246,6 +246,19 @@ bool Composite::Select(bool isSelecting) {
 	return isSelecting;
 }
 
+Long Composite::SelectRange(Long start, Long end, bool isSelecting) {
+	Long count = 0;
+	Long i = start;
+	while (i <= end && i < this->length)
+	{
+		this->glyphs[i]->Select(isSelecting);
+		count++;
+		i++;
+	}
+
+	return count;
+}
+
 Long Composite::Mark(Long index) {
 	this->marked = index;
 

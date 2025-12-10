@@ -66,6 +66,10 @@ Long Row::TruncateAfter(Long index) {
 	return count;
 }
 
+Long Row::SelectRange(Long start, Long end, bool isSelecting) {
+	return Composite::SelectRange(start, end - 1, isSelecting);
+}
+
 #if 0
 
 #include <iostream>
