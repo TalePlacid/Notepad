@@ -5,6 +5,8 @@
 
 typedef signed long int Long;
 
+class Glyph;
+
 class SizeCalculator{
 public:
 	SizeCalculator(CWnd* parent);
@@ -12,6 +14,8 @@ public:
 
 	Long GetCharacterWidth(char(*character));
 	Long GetRowWidth(CString contents);
+	Long GetRowWidth(Glyph* row, Long columnIndex);
+	Long GetNearestColumnIndex(Glyph* row, Long width);
 
 	Long GetMultiByteWidth() const;
 	Long GetRowHeight() const;

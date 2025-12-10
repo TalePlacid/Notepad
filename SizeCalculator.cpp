@@ -1,6 +1,8 @@
 #include "SizeCalculator.h"
 #include "NotepadForm.h"
 #include "Font.h"
+#include "Glyph.h"
+#include "ByteChecker.h"
 
 #pragma warning(disable:4996)
 
@@ -93,4 +95,64 @@ Long SizeCalculator::GetRowWidth(CString contents) {
 	ReleaseDC(parent->GetSafeHwnd(), cdc->GetSafeHdc());
 
 	return rowWidth;
+}
+
+Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
+	ByteChecker byteChecker;
+	char(*character);
+	Long width = 0;
+	Long i = 0;
+	while (i < columnIndex && i < row->GetLength())
+	{
+		character = (char*)(*row->GetAt(i));
+		if (byteChecker.IsLeadByte(*character))
+		{
+			width += this->multiByteWidth;
+		}
+		else if (*character != '\t')
+		{
+			width += this->singleByteWidths[*character - 32];
+		}
+		else
+		{
+			width += this->singleByteWidths[0] * 8;
+		}
+		i++;
+	}
+
+	return width;
+}
+
+Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
+	ByteChecker byteChecker;
+	char(*character);
+	Long previousRowWidth = 0;
+	Long rowWidth = 0;
+	Long i = 0;
+	while (i < row->GetLength() && rowWidth < width)
+	{
+		previousRowWidth = rowWidth;
+		character = (char*)(*row->GetAt(i));
+		if (byteChecker.IsLeadByte(*character))
+		{
+			rowWidth += this->multiByteWidth;
+		}
+		else if (*character != '\t')
+		{
+			rowWidth += this->singleByteWidths[*character - 32];
+		}
+		else
+		{
+			rowWidth += this->singleByteWidths[0] * 8;
+		}
+		i++;
+	}
+
+	Long index = i;
+	if (width - previousRowWidth < rowWidth - width)
+	{
+		index = i - 1;
+	}
+
+	return index;
 }
