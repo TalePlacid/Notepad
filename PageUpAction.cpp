@@ -39,13 +39,7 @@ void PageUpAction::Perform() {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
-		Long originalRowWidth = 0;
-		Long i = 0;
-		while (i < columnIndex)
-		{
-			originalRowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
-			i++;
-		}
+		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
 		//1.3. 노트와 페이징버퍼에서 줄 수 만큼 올라간다.
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -80,36 +74,14 @@ void PageUpAction::Perform() {
 		}
 
 		//1.5. 줄에서 너비와 가장 가까운 위치로 이동한다.
-		Long previousWidth = 0;
-		Long width = 0;
-		i = 0;
-		while (width < originalRowWidth && i < row->GetLength())
-		{
-			previousWidth = width;
-			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
-			i++;
-		}
-
-		columnIndex = i;
-		if (originalRowWidth - previousWidth < width - originalRowWidth)
-		{
-			columnIndex = i - 1;
-		}
-
+		columnIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
 		columnIndex = row->Move(columnIndex);
+		pagingBuffer->Next(columnIndex);
 
 		//1.6. 적재범위를 벗어났으면 재적재한다.
 		if (note->IsAboveTopLine(rowIndex))
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 		}
-
-		//1.7. 스크롤을 올린다.
-		Long pos = vScroll.GetPos() - vScroll.GetPage();
-		if (pos < 0)
-		{
-			pos = 0;
-		}
-		scrollController->MoveVScroll(pos);
 	}
 }

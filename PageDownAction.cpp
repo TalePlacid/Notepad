@@ -77,19 +77,12 @@ void PageDownAction::Perform() {
 		//1.5. 줄에서 너비와 가장 가까운 위치로 이동한다.
 		columnIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
 		columnIndex = row->Move(columnIndex);
+		pagingBuffer->Next(columnIndex);
 
 		//1.6. 적재범위를 벗어났으면 재적재한다.
 		if (note->IsBelowBottomLine(rowIndex))
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 		}
-
-		//1.7. 스크롤을 내린다.
-		Long pos = vScroll.GetPos() + vScroll.GetPage();
-		if (pos > posLimit)
-		{
-			pos = posLimit;
-		}
-		scrollController->MoveVScroll(pos);
 	}
 }
