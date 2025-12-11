@@ -19,137 +19,95 @@ ShiftUpAction::~ShiftUpAction() {
 }
 
 void ShiftUpAction::Perform() {
-	//1. 노트에서 현재 위치를 읽는다.
+	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	//2. 이전 줄이 적재 범위를 벗어난다면, 재적재한다.
+	//2. 이전 줄이 적재범위에서 벗어났다면 재적재한다.
 	if (note->IsAboveTopLine(rowIndex - 1))
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 		rowIndex = note->GetCurrent();
 	}
 
-	//3. 첫번째 페이지의 첫번째 줄이 아니면,
-	MarkingHelper markingHelper(this->parent);
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	//3. 현재 위치가 첫번째 줄이 아니라면,
 	if (rowIndex > 0)
 	{
-		//3.1. 기존 줄에서 첫번째 위치까지 반복한다.
-		if (markingHelper.IsUnmarked())
-		{
-			markingHelper.Mark();
-		}
-
+		//3.1. 현재 위치까지의 너비를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Glyph* character;
-		Long originalWidth = 0;
-		Long i = columnIndex - 1;
-		while (i >= 0)
+		Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+
+		//3.2. 현재 줄의 앞부분을 처리한다.
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Long selectionBeginOffset;
+		Long previousOffset = -1;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
+		while (previousOffset != currentOffset)
 		{
-			//3.1.1. 문자를 읽는다.
-			character = row->GetAt(i);
-
-			//3.1.2. 문자가 선택되지 않았다면,
-			if (!character->IsSelected())
+			//3.2.1. 페이징 버퍼에서 마킹한다.
+			selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+			if (selectionBeginOffset < 0)
 			{
-				//3.1.2.1. 문자를 선택한다.
-				character->Select(TRUE);
-
-				//3.1.2.2. 페이징버퍼에서 선택시작위치가 표시되지 않았다면, 표시한다.
-				if (markingHelper.IsUnmarked())
-				{
-					markingHelper.Mark();
-				}
-
-				//3.1.2.3. 이전 칸으로 이동한다.
-				row->Previous();
-				pagingBuffer->Previous();
+				pagingBuffer->MarkSelectionBegin();
 			}
-			else //3.1.3. 문자가 선택되어있다면,
+			else if (currentOffset == selectionBeginOffset)
 			{
-				//3.1.3.1. 문자를 선택취소한다.
-				character->Select(FALSE);
-
-				//3.1.3.2. 이전 칸으로 이동한다.
-				row->Previous();
-				pagingBuffer->Previous();
-
-				//3.1.3.3. 페이징 버퍼의 현재 위치가 선택시작위치와 같으면, 표시를 지운다.
-				if (markingHelper.HasReturnedToSelectionBegin())
-				{
-					markingHelper.Unmark();
-				}
+				pagingBuffer->UnmarkSelectionBegin();
 			}
 
-			originalWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
+			//3.2.2. 노트에서 선택반전한다.
+			if (columnIndex > 0)
+			{
+				row->GetAt(columnIndex - 1)->ToggleSelection();
+			}
 
-			i--;
+			previousOffset = currentOffset;
+			currentOffset = pagingBuffer->Previous();
+			if (currentOffset == selectionBeginOffset)
+			{
+				pagingBuffer->UnmarkSelectionBegin();
+			}
+			columnIndex = row->Previous();
 		}
 
-		//3.2. 노트에서 이전 줄로 이동한다.
+		//3.3. 이전 줄로 이동한다.
+		currentOffset = pagingBuffer->PreviousRow();
+		currentOffset = pagingBuffer->Last();
 		rowIndex = note->Previous();
-		pagingBuffer->PreviousRow();
-
-		//3.3. 줄에서 너비와 가장 가까운 위치를 찾는다.
 		row = note->GetAt(rowIndex);
-		Long previousWidth = 0;
-		Long width = 0;
-		i = 0;
-		while (i < row->GetLength() && width < originalWidth)
-		{
-			character = row->GetAt(i);
-			previousWidth = width;
-			width += sizeCalculator->GetCharacterWidth((char*)(*character));
-			i++;
-		}
-		Long index = i;
-
-		//3.4. 줄에서 끝으로 이동한다.
 		columnIndex = row->Last();
-		pagingBuffer->Last();
 
-		//3.5. 위치까지 반복한다.
-		i = columnIndex - 1;
-		while (i >= index)
+		//3.4. 너비에 근접한 열부터 뒷부분을 선택한다.
+		Long nearestColumnIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
+		Long i = row->GetLength();
+		while (previousOffset != currentOffset && i > nearestColumnIndex)
 		{
-			//3.5.1. 문자를 읽는다.
-			character = row->GetAt(i);
-
-			//3.5.2. 문자가 선택되어 있지 않다면,
-			if (!character->IsSelected())
+			//3.4.1. 페이징 버퍼에서 마킹한다.
+			selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+			if (selectionBeginOffset < 0)
 			{
-				//3.5.2.1. 문자를 선택한다.
-				character->Select(TRUE);
-
-				//3.5.2.2. 페이징 버퍼에서 선택시작위치가 표시되지 않았다면, 표시한다.
-				if (markingHelper.IsUnmarked())
-				{
-					markingHelper.Mark();
-				}
-
-				//3.5.2.3. 줄에서 이전 칸으로 이동한다.
-				row->Previous();
-				pagingBuffer->Previous();
+				pagingBuffer->MarkSelectionBegin();
 			}
-			else //3.5.3. 문자가 선택되어 있다면,
+			else if (currentOffset == selectionBeginOffset)
 			{
-				//3.5.3.1. 문자를 선택취소한다.
-				character->Select(FALSE);
-
-				//3.5.3.2. 줄에서 이전 칸으로 이동한다.
-				row->Previous();
-				pagingBuffer->Previous();
-
-				//3.5.3.3. 페이징버퍼의 현재위치가 선택시작위치와 같다면, 표시를 지운다.
-				if (markingHelper.HasReturnedToSelectionBegin())
-				{
-					markingHelper.Unmark();
-				}
+				pagingBuffer->UnmarkSelectionBegin();
 			}
 
+			//3.4.2. 노트에서 선택반전한다.
+			if (columnIndex > 0)
+			{
+				row->GetAt(columnIndex - 1)->ToggleSelection();
+			}
+
+			previousOffset = currentOffset;
+			currentOffset = pagingBuffer->Previous();
+			if (currentOffset == selectionBeginOffset)
+			{
+				pagingBuffer->UnmarkSelectionBegin();
+			}
+			columnIndex = row->Previous();
 			i--;
 		}
 	}
