@@ -246,6 +246,19 @@ bool Composite::Select(bool isSelecting) {
 	return isSelecting;
 }
 
+Long Composite::ToggleSelection() {
+	Long count = 0;
+	Long i = 0;
+	while (i < this->length)
+	{
+		this->glyphs[i]->ToggleSelection();
+		count++;
+		i++;
+	}
+
+	return count;
+}
+
 Long Composite::SelectRange(Long start, Long end, bool isSelecting) {
 	Long count = 0;
 	Long i = start;

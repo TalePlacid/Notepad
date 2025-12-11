@@ -31,6 +31,7 @@ public:
 
 	virtual void Accept(Visitor& visitor);
 	virtual bool Select(bool isSelecting);
+	virtual Long ToggleSelection();
 	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
 
 	virtual Long Mark(Long index);

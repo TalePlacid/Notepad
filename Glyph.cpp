@@ -86,6 +86,18 @@ bool Glyph::Select(bool isSelecting) {
 	return this->isSelected;
 }
 
+Long Glyph::ToggleSelection() {
+	this->isSelected = !this->isSelected;
+
+	Long ret = 0;
+	if (this->isSelected)
+	{
+		ret = 1;
+	}
+
+	return ret;
+}
+
 Long Glyph::TruncateAfter(Long index) {
 	return 0;
 }
