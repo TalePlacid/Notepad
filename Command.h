@@ -15,10 +15,13 @@ public:
 	virtual void Undo();
 	virtual void Redo();
 	virtual Command* Clone();
-	virtual bool IsUndoable();
 	virtual Long Add(Command* command);
 	virtual Command* GetAt(Long index);
+
+	virtual bool IsUndoable();
 	virtual bool IsMacroCommand();
+	virtual bool NeedScrollBarUpdate();
+
 	virtual UINT GetId();
 	virtual Long GetOffset();
 	virtual CString GetSource();
@@ -36,6 +39,10 @@ inline CWnd* Command::GetParent() const {
 
 inline Long Command::GetLength() const {
 	return 0;
+}
+
+inline bool Command::NeedScrollBarUpdate() {
+	return true;
 }
 
 #endif // !_COMMAND_H

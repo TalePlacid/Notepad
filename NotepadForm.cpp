@@ -49,7 +49,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_LOADPREVIOUS, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_LOADLAST, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -346,6 +346,12 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 	if (command != NULL)
 	{
 		command->Execute();
+
+		if (command->NeedScrollBarUpdate())
+		{
+			this->Notify("UpdateScrollBars");
+		}
+
 		if (command->IsUndoable())
 		{
 			//command = this->undoHistoryBook->Bind(command);
@@ -357,7 +363,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 			delete command;
 		}
 	}
-	this->Notify("UpdateScrollBars");
+
 	this->Invalidate();
 }
 
@@ -424,6 +430,9 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 			delete command;
 		}
 	}
+
+	this->Notify("UpdateScrollBars");
+	this->Invalidate();
 
 	return 0;
 }
