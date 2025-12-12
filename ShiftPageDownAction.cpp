@@ -53,10 +53,10 @@ void ShiftPageDownAction::Perform() {
 		Long i = 1;
 		while (i <= rowCount && rowIndex != previousRowIndex)
 		{
-			//1.3.2. 현재줄에서 선택한다.
+			//1.3.1. 현재줄에서 선택한다.
 			while (previousOffset != currentOffset)
 			{
-				//1.3.2.1. 페이징 버퍼에서 마킹한다.
+				//1.3.1.1. 페이징 버퍼에서 마킹한다.
 				selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 				if (selectionBeginOffset < 0)
 				{
@@ -67,7 +67,7 @@ void ShiftPageDownAction::Perform() {
 					pagingBuffer->UnmarkSelectionBegin();
 				}
 
-				//1.3.2.2. 노트에서 선택반전한다.
+				//1.3.1.2. 노트에서 선택반전한다.
 				if (columnIndex < row->GetLength())
 				{
 					row->GetAt(columnIndex)->ToggleSelection();
@@ -82,31 +82,31 @@ void ShiftPageDownAction::Perform() {
 				columnIndex = row->Next();
 			}
 
-			//1.3.3. 다음 줄이 적재범위를 넘어서면 재적재한다.
+			//1.3.2. 다음 줄이 적재범위를 넘어서면 재적재한다.
 			if (note->IsBelowBottomLine(rowIndex + 1))
 			{
 				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 				rowIndex = note->GetCurrent();
 			}
-			
+
+			//1.3.3. 다음줄로 이동한다.
+			previousOffset = currentOffset;
+			currentOffset = pagingBuffer->NextRow();
+			previousRowIndex = rowIndex;
+			rowIndex = note->Next();
+			i++;
+
 			//1.3.4. 다음줄이 있다면,
-			if (rowIndex < note->GetLength() - 1)
+			if (previousRowIndex != rowIndex)
 			{
-				//1.3.4.1. 다음줄로 이동한다.
-				previousOffset = currentOffset;
-				currentOffset = pagingBuffer->NextRow();
-				previousRowIndex = rowIndex;
-				rowIndex = note->Next();
-				i++;
+				//1.3.3.2. 너비에 근접한 열까지 반복한다.
 				row = note->GetAt(rowIndex);
 				columnIndex = row->First();
-
-				//1.3.4.2. 너비에 근접한 열까지 반복한다.
 				Long nearestColumnIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
-				Long i = 0;
-				while (previousOffset != currentOffset && i < nearestColumnIndex)
+				Long j = 0;
+				while (previousOffset != currentOffset && j < nearestColumnIndex)
 				{
-					//1.3.4.2.1. 페이징 버퍼에서 마킹한다.
+					//1.3.3.2.1. 페이징 버퍼에서 마킹한다.
 					selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 					if (selectionBeginOffset < 0)
 					{
@@ -117,7 +117,7 @@ void ShiftPageDownAction::Perform() {
 						pagingBuffer->UnmarkSelectionBegin();
 					}
 
-					//1.3.4.2.2. 노트에서 선택반전한다.
+					//1.3.3.2.2. 노트에서 선택반전한다.
 					if (columnIndex < row->GetLength())
 					{
 						row->GetAt(columnIndex)->ToggleSelection();
@@ -130,7 +130,7 @@ void ShiftPageDownAction::Perform() {
 						pagingBuffer->UnmarkSelectionBegin();
 					}
 					columnIndex = row->Next();
-					i++;
+					j++;
 				}
 			}
 		}
