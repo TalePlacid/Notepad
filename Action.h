@@ -9,8 +9,13 @@ public:
 	virtual ~Action() = 0;
 
 	virtual void Perform() = 0;
+	virtual bool NeedScrollBarUpdate();
 protected:
 	CWnd* parent;
 };
+
+inline bool Action::NeedScrollBarUpdate() {
+	return true;
+}
 
 #endif // !_ACTION_H
