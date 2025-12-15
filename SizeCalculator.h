@@ -17,6 +17,7 @@ public:
 	Long GetRowWidth(Glyph* row, Long columnIndex);
 	Long GetNearestColumnIndex(Glyph* row, Long width);
 
+	Long GetAverageCharacterWidth() const;
 	Long GetMultiByteWidth() const;
 	Long GetRowHeight() const;
 	Long GetMaxCharacterWidth() const;
@@ -24,9 +25,14 @@ private:
 	CWnd* parent;
 	Long(*singleByteWidths);
 	Long multiByteWidth;
+	Long averageCharacterWidth;
 	Long rowHeight;
 	Long maxCharacterWidth;
 };
+
+inline Long SizeCalculator::GetAverageCharacterWidth() const {
+	return this->averageCharacterWidth;
+}
 
 inline Long SizeCalculator::GetMultiByteWidth() const {
 	return this->multiByteWidth;

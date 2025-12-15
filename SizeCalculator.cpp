@@ -42,6 +42,7 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	HDC hdc = cdc->GetSafeHdc();
 	GetTextMetrics(hdc, &tm);
 
+	this->averageCharacterWidth = tm.tmAveCharWidth;
 	this->rowHeight = tm.tmHeight;
 
 	if (((NotepadForm*)parent)->font != NULL)
