@@ -45,6 +45,8 @@ public:
 	virtual Long AppendFromRear(const Glyph* other);
 	virtual bool IsAboveTopLine(Long index);
 	virtual bool IsBelowBottomLine(Long index);
+	virtual Long FindPreviousWordStart(Long columnIndex);
+	virtual Long FindNextWordStart(Long columnIndex);
 
 	virtual Glyph* operator[](Long index);
 	virtual operator char*() const;

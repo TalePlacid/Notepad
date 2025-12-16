@@ -134,6 +134,14 @@ Long Glyph::AppendFromRear(const Glyph* other) {
 	return 0;
 }
 
+Long Glyph::FindPreviousWordStart(Long columnIndex) {
+	return -1;
+}
+
+Long Glyph::FindNextWordStart(Long columnIndex) {
+	return -1;
+}
+
 Glyph* Glyph::operator[](Long index) {
 	return 0;
 }

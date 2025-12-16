@@ -70,59 +70,87 @@ Long Row::SelectRange(Long start, Long end, bool isSelecting) {
 	return Composite::SelectRange(start, end - 1, isSelecting);
 }
 
+Long Row::FindPreviousWordStart(Long columnIndex) {
+	Long ret = 0;
+	bool previous = false;
+	bool next = false;
+	Long i = columnIndex - 1;
+	while (i > 0 && (previous || !next))
+	{
+		previous = this->glyphs[i - 1]->IsWordCharacter();
+		next = this->glyphs[i]->IsWordCharacter();
+		i--;
+	}
+
+	if (!previous && next)
+	{
+		ret = i + 1;
+	}
+
+	return ret;
+}
+
+Long Row::FindNextWordStart(Long columnIndex) {
+	Long ret = 0;
+	bool previous = false;
+	bool next = false;
+	Long i = columnIndex + 1;
+	while (i < this->length && (previous || !next))
+	{
+		previous = this->glyphs[i - 1]->IsWordCharacter();
+		next = this->glyphs[i]->IsWordCharacter();
+		i++;
+	}
+
+	if (!previous && next)
+	{
+		ret = i - 1;
+	}
+	else if (i >= this->length)
+	{
+		ret = this->length;
+	}
+
+	return ret;
+}
+
 #if 0
 
 #include <iostream>
 using namespace std;
+#include <string>
+#include "GlyphFactory.h"
+#include "Glyph.h"
 
 int main(int argc, char* argv[]) {
+	string str("this is    test");
+	GlyphFactory factory;
+	Glyph* glyph;
 	Row row;
-	Character* character = new SingleByteCharacter('a');
-	Long index = row.WriteAtEnd(character);
-	cout << dynamic_cast<SingleByteCharacter*>(row.GetAt(index))->GetContent()
-		<< endl;
 
-	character = new MultiByteCharacter(const_cast<char*>("°¡"));
-	index = row.WriteAtEnd(character);
-	cout << dynamic_cast<MultiByteCharacter*>(row.GetAt(index))->GetContent()
-		<< endl;
+	cout << row.FindPreviousWordStart(0) << endl;
+	cout << row.FindNextWordStart(0) << endl << endl;
 
-	Row copy(row);
+	char content;
 	Long i = 0;
-	while (i < copy.GetLength())
+	while (i < str.length())
 	{
-		if (dynamic_cast<SingleByteCharacter*>(copy[i]))
-		{
-			cout << dynamic_cast<SingleByteCharacter*>(copy[i])->GetContent();
-		}
-		else if (dynamic_cast<MultiByteCharacter*>(copy[i]))
-		{
-			cout << dynamic_cast<MultiByteCharacter*>(copy[i])->GetContent();
-		}
+		content = str.at(i);
+		glyph = factory.Create(&content);
+		row.Add(glyph);
 		i++;
 	}
-	cout <<endl;
+	cout << row.MakeString() << endl << endl;
 
-	character = new MultiByteCharacter(const_cast<char*>("³ª"));
-	row.WriteAtEnd(character);
+	cout << row.FindPreviousWordStart(15) << endl;
+	cout << row.FindPreviousWordStart(11) << endl;
+	cout << row.FindPreviousWordStart(0) << endl << endl;
 
-	copy = row;
-	i = 0;
-	while (i < copy.GetLength())
-	{
-		if (dynamic_cast<SingleByteCharacter*>(copy[i]))
-		{
-			cout << dynamic_cast<SingleByteCharacter*>(copy[i])->GetContent();
-		}
-		else if (dynamic_cast<MultiByteCharacter*>(copy[i]))
-		{
-			cout << dynamic_cast<MultiByteCharacter*>(copy[i])->GetContent();
-		}
-		i++;
-	}
-	cout << endl;
-
-	return 0;
+	cout << row.FindNextWordStart(0) << endl;
+	cout << row.FindNextWordStart(3) << endl;
+	cout << row.FindNextWordStart(8) << endl;
+	cout << row.FindNextWordStart(14) << endl;
+	cout << row.FindNextWordStart(15) << endl;
 }
 
 #endif

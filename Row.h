@@ -20,6 +20,8 @@ public:
 	virtual void Accept(Visitor& visitor);
 	virtual Long TruncateAfter(Long index);
 	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
+	virtual Long FindPreviousWordStart(Long columnIndex);
+	virtual Long FindNextWordStart(Long columnIndex);
 };
 
 #endif // !_ROW_H
