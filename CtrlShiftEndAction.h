@@ -12,10 +12,10 @@ public:
 	virtual ~CtrlShiftEndAction();
 
 	virtual void Perform();
-	virtual bool ShouldKeepSelection() const;
+	virtual bool ShouldKeepSelection();
 };
 
-inline bool CtrlShiftEndAction::ShouldKeepSelection() const {
+inline bool CtrlShiftEndAction::ShouldKeepSelection() {
 	return true;
 }
 

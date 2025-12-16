@@ -40,7 +40,7 @@ void LoadNextCommand::Execute() {
 		pagingBuffer->First();
 	}
 	Glyph* loadedNote = pagingBuffer->LoadNext();
-	
+
 	//4. 로드된 뒷 부분을 기존의 분량에 합친다.
 	note->AppendFromRear(loadedNote);
 	if (loadedNote != NULL)

@@ -1,9 +1,5 @@
 #include <afxwin.h>
 #include "CtrlEndAction.h"
-#include "NotepadForm.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
-#include "MarkingHelper.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)

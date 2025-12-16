@@ -10,10 +10,10 @@ public:
 	virtual ~CtrlCAction();
 
 	virtual void Perform();
-	virtual bool ShouldKeepSelection() const;
+	virtual bool ShouldKeepSelection();
 };
 
-inline bool CtrlCAction::ShouldKeepSelection() const {
+inline bool CtrlCAction::ShouldKeepSelection() {
 	return true;
 }
 

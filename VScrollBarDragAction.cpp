@@ -2,16 +2,21 @@
 #include "VScrollBarDragAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
-#include "Caret.h"
-#include "CaretController.h"
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
+#include "ScrollController.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
 VScrollBarDragAction::VScrollBarDragAction(CWnd* parent, int nPos)
 	:ScrollBarAction(parent) {
-	this->nPos = nPos;
+	SCROLLINFO scrollInfo = { 0, };
+	scrollInfo.cbSize = sizeof(SCROLLINFO);
+	scrollInfo.fMask = SIF_TRACKPOS;
+	GetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo);
+
+	this->nPos = scrollInfo.nTrackPos;
 }
 
 VScrollBarDragAction::~VScrollBarDragAction() {
@@ -19,91 +24,83 @@ VScrollBarDragAction::~VScrollBarDragAction() {
 }
 
 void VScrollBarDragAction::Perform() {
-	Long originalPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
+	//1. 현재 줄의 너비를 구한다.
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+	Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
-	SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, nPos, TRUE);
-	
-	RECT rect;
-	GetClientRect(this->parent->GetSafeHwnd(), &rect);
-	Long clientAreaHeight = rect.bottom - rect.top;
+	//2. 현재 페이지의 pos범위를 구한다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long rowHeight = sizeCalculator->GetRowHeight();
+	Long pageStart = pagingBuffer->GetRowStartIndex() * rowHeight;
+	Long pageEnd = pageStart + note->GetLength() * rowHeight;
 
-	Caret* caret = ((NotepadForm*)(this->parent))->caretController->GetCaret();
-	Long y = caret->GetY() + (originalPos - this->nPos);
-
-	if (y < 0 || y > clientAreaHeight)
+	//3. 페이지끝이 추적위치보다 작다면 반복한다.
+	while (pageEnd < this->nPos)
 	{
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* originalRow = note->GetAt(rowIndex);
-		Long columnIndex = originalRow->GetCurrent();
+		//3.1. 페이지의 가장 아랫줄로 이동한다.
+		pagingBuffer->NextRow(note->GetLength() - (rowIndex + 1));
+		pagingBuffer->First();
+		rowIndex = note->Move(note->GetLength() - 1);
+		row = note->GetAt(rowIndex);
+		columnIndex = row->First();
 
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Glyph* character;
-		Long originalWidth = 0;
-		Long i = 0;
-		while (i < columnIndex)
-		{
-			character = originalRow->GetAt(i);
-			originalWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
-			i++;
-		}
-
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		if (y < 0)
-		{
-			i = 0;
-			while (i < note->GetLength() && y < 0)
-			{
-				rowIndex = note->Next();
-				pagingBuffer->NextRow();
-				if (!pagingBuffer->IsAboveBottomLine())
-				{
-					pagingBuffer->Load();
-					note = ((NotepadForm*)(this->parent))->note;
-					rowIndex = note->GetCurrent();
-				}
-				y += sizeCalculator->GetRowHeight();
-				i++;
-			}
-		}
-		else if (y > clientAreaHeight)
-		{
-			i = rowIndex;
-			while (i >= 0 && y > clientAreaHeight - sizeCalculator->GetRowHeight())
-			{
-				rowIndex = note->Previous();
-				pagingBuffer->PreviousRow();
-				if (!pagingBuffer->IsBelowTopLine())
-				{
-					pagingBuffer->Load();
-					note = ((NotepadForm*)(this->parent))->note;
-					rowIndex = note->GetCurrent();
-				}
-				y -= sizeCalculator->GetRowHeight();
-				i--;
-			}
-		}
-
-		Glyph* row = note->GetAt(rowIndex);
-		Long previousWidth = 0;
-		Long width = 0;
-		i = 0;
-		while (i < row->GetLength() && width < originalWidth)
-		{
-			character = row->GetAt(i);
-			previousWidth = width;
-			width += sizeCalculator->GetCharacterWidth((char*)(*character));
-			i++;
-		}
-
-		if (width - originalWidth > originalWidth - previousWidth)
-		{
-			i--;
-		}
-
-		row->Move(i);
-		pagingBuffer->Move(i);
+		//3.2. 아랫부분을 재적재한다.
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		rowIndex = note->GetCurrent();
+		pageStart = pagingBuffer->GetRowStartIndex() * rowHeight;
+		pageEnd = pageStart + note->GetLength() * rowHeight;
 	}
 
-	this->parent->Invalidate();
+	//4. 페이지시작이 추적위치보다 크다면 반복한다.
+	while (pageStart > this->nPos)
+	{
+		//4.1. 페이지의 가장 윗줄로 이동한다.
+		pagingBuffer->PreviousRow(rowIndex);
+		pagingBuffer->First();
+		rowIndex = note->Move(0);
+		row = note->GetAt(rowIndex);
+		columnIndex = row->First();
+
+		//4.2. 윗부분을 재적재한다.
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+		rowIndex = note->GetCurrent();
+		pageStart = pagingBuffer->GetRowStartIndex() * rowHeight;
+		pageEnd = pageStart + note->GetLength() * rowHeight;
+	}
+
+	//5. 위치로 이동한다.
+	Long rowIndexToMove = this->nPos / rowHeight - pagingBuffer->GetRowStartIndex();
+
+	if (rowIndex < rowIndexToMove)
+	{
+		pagingBuffer->NextRow(rowIndexToMove - rowIndex);
+	}
+	else if (rowIndex > rowIndexToMove)
+	{
+		pagingBuffer->PreviousRow(rowIndex - rowIndexToMove);
+	}
+
+	rowIndex = note->Move(rowIndexToMove);
+	row = note->GetAt(rowIndex);
+	columnIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
+	pagingBuffer->Next(columnIndex);
+	columnIndex = row->Move(columnIndex);
+
+	//6. 적재범위를 넘어섰다면 재적재한다.
+	if (note->IsAboveTopLine(rowIndex))
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+	}
+	else if (note->IsBelowBottomLine(rowIndex))
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);\
+	}
+
+	//7. 스크롤을 조정한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	scrollController->MoveVScroll(this->nPos);
 }

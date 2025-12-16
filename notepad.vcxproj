@@ -153,10 +153,12 @@
     <ClInclude Include="CtrlHAction.h" />
     <ClInclude Include="CtrlHomeAction.h" />
     <ClInclude Include="CtrlLeftAction.h" />
+    <ClInclude Include="CtrlPageUpAction.h" />
     <ClInclude Include="CtrlRightAction.h" />
     <ClInclude Include="CtrlShiftEndAction.h" />
     <ClInclude Include="CtrlShiftHomeAction.h" />
     <ClInclude Include="CtrlShiftLeftAction.h" />
+    <ClInclude Include="CtrlPageDownAction.h" />
     <ClInclude Include="CtrlShiftRightAction.h" />
     <ClInclude Include="CtrlShiftTAction.h" />
     <ClInclude Include="CtrlTAction.h" />
@@ -192,7 +194,8 @@
     <ClInclude Include="KeyAction.h" />
     <ClInclude Include="KeyActionFactory.h" />
     <ClInclude Include="LeftArrowAction.h" />
-    <ClInclude Include="LoadCommand.h" />
+    <ClInclude Include="LoadFirstCommand.h" />
+    <ClInclude Include="LoadLastCommand.h" />
     <ClInclude Include="LoadNextCommand.h" />
     <ClInclude Include="LoadPreviousCommand.h" />
     <ClInclude Include="MacroCommand.h" />
@@ -212,6 +215,7 @@
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageUpAction.h" />
     <ClInclude Include="PagingBuffer.h" />
+    <ClInclude Include="PagingNavigator.h" />
     <ClInclude Include="Paper.h" />
     <ClInclude Include="PaperCalculator.h" />
     <ClInclude Include="PasteCommand.h" />
@@ -225,11 +229,12 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="RightArrowAction.h" />
     <ClInclude Include="Row.h" />
+    <ClInclude Include="RowCounter.h" />
     <ClInclude Include="SaveCommand.h" />
     <ClInclude Include="Scroll.h" />
     <ClInclude Include="ScrollBarAction.h" />
     <ClInclude Include="ScrollBarActionFactory.h" />
-    <ClInclude Include="ScrollBarNecessityChecker.h" />
+    <ClInclude Include="ScrollBarAnalyzer.h" />
     <ClInclude Include="ScrollController.h" />
     <ClInclude Include="SearchingAlgorithm.h" />
     <ClInclude Include="SearchingAlgorithmFactory.h" />
@@ -241,6 +246,8 @@
     <ClInclude Include="ShiftEndAction.h" />
     <ClInclude Include="ShiftHomeAction.h" />
     <ClInclude Include="ShiftLeftAction.h" />
+    <ClInclude Include="ShiftPageDownAction.h" />
+    <ClInclude Include="ShiftPageUpAction.h" />
     <ClInclude Include="ShiftRightAction.h" />
     <ClInclude Include="ShiftUpAction.h" />
     <ClInclude Include="SingleByteCharacter.h" />
@@ -250,7 +257,6 @@
     <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="UndoCommand.h" />
     <ClInclude Include="UpArrowAction.h" />
-    <ClInclude Include="UpArrowAction_Fixed.h" />
     <ClInclude Include="Visitor.h" />
     <ClInclude Include="VScrollBarDownClickAction.h" />
     <ClInclude Include="VScrollBarDragAction.h" />
@@ -285,6 +291,8 @@
     <ClCompile Include="CtrlHAction.cpp" />
     <ClCompile Include="CtrlHomeAction.cpp" />
     <ClCompile Include="CtrlLeftAction.cpp" />
+    <ClCompile Include="CtrlPageDownAction.cpp" />
+    <ClCompile Include="CtrlPageUpAction.cpp" />
     <ClCompile Include="CtrlRightAction.cpp" />
     <ClCompile Include="CtrlShiftEndAction.cpp" />
     <ClCompile Include="CtrlShiftHomeAction.cpp" />
@@ -323,7 +331,8 @@
     <ClCompile Include="KeyAction.cpp" />
     <ClCompile Include="KeyActionFactory.cpp" />
     <ClCompile Include="LeftArrowAction.cpp" />
-    <ClCompile Include="LoadCommand.cpp" />
+    <ClCompile Include="LoadFirstCommand.cpp" />
+    <ClCompile Include="LoadLastCommand.cpp" />
     <ClCompile Include="LoadNextCommand.cpp" />
     <ClCompile Include="LoadPreviousCommand.cpp" />
     <ClCompile Include="MacroCommand.cpp" />
@@ -342,6 +351,7 @@
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageUpAction.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />
+    <ClCompile Include="PagingNavigator.cpp" />
     <ClCompile Include="Paper.cpp" />
     <ClCompile Include="PaperCalculator.cpp" />
     <ClCompile Include="PasteCommand.cpp" />
@@ -354,11 +364,12 @@
     <ClCompile Include="ReplaceCommand.cpp" />
     <ClCompile Include="RightArrowAction.cpp" />
     <ClCompile Include="Row.cpp" />
+    <ClCompile Include="RowCounter.cpp" />
     <ClCompile Include="SaveCommand.cpp" />
     <ClCompile Include="Scroll.cpp" />
     <ClCompile Include="ScrollBarAction.cpp" />
     <ClCompile Include="ScrollBarActionFactory.cpp" />
-    <ClCompile Include="ScrollBarNecessityChecker.cpp" />
+    <ClCompile Include="ScrollBarAnalyzer.cpp" />
     <ClCompile Include="ScrollController.cpp" />
     <ClCompile Include="SearchingAlgorithm.cpp" />
     <ClCompile Include="SearchingAlgorithmFactory.cpp" />
@@ -370,6 +381,8 @@
     <ClCompile Include="ShiftEndAction.cpp" />
     <ClCompile Include="ShiftHomeAction.cpp" />
     <ClCompile Include="ShiftLeftAction.cpp" />
+    <ClCompile Include="ShiftPageDownAction.cpp" />
+    <ClCompile Include="ShiftPageUpAction.cpp" />
     <ClCompile Include="ShiftRightAction.cpp" />
     <ClCompile Include="ShiftUpAction.cpp" />
     <ClCompile Include="SingleByteCharacter.cpp" />
@@ -379,7 +392,6 @@
     <ClCompile Include="TextOutVisitor.cpp" />
     <ClCompile Include="UndoCommand.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
-    <ClCompile Include="UpArrowAction_Fixed.cpp" />
     <ClCompile Include="Visitor.cpp" />
     <ClCompile Include="VScrollBarDownClickAction.cpp" />
     <ClCompile Include="VScrollBarDragAction.cpp" />

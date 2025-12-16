@@ -12,10 +12,10 @@ public:
 	virtual ~CtrlShiftHomeAction();
 
 	virtual void Perform();
-	virtual bool ShouldKeepSelection() const;
+	virtual bool ShouldKeepSelection();
 };
 
-inline bool CtrlShiftHomeAction::ShouldKeepSelection() const {
+inline bool CtrlShiftHomeAction::ShouldKeepSelection() {
 	return true;
 }
 

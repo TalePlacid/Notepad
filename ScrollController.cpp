@@ -154,7 +154,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 			//7.2. 수평 스크롤 범위를 벗어났으면, 수평 스크롤 위치를 조정한다.
 			Long width = 0;
 			Long i = 0;
-			while (i < currentColumn)
+			while (i < currentColumn && i < row->GetLength())
 			{
 				width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
 				i++;

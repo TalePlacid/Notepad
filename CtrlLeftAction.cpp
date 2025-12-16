@@ -56,6 +56,7 @@ void CtrlLeftAction::Perform() {
 		if (note->IsAboveTopLine(rowIndex - 1))
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			rowIndex = note->GetCurrent();
 		}
 
 		if (rowIndex > 0)

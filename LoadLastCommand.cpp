@@ -58,12 +58,12 @@ void LoadLastCommand::Execute() {
 	Long offset = pagingBuffer->GetCurrentOffset();
 	Long previousColumnIndex;
 	Long previousRowIndex = -1;
-	while (rowIndex != previousRowIndex && offset > selectionBeginOffset)
+	while (rowIndex != previousRowIndex && offset >= selectionBeginOffset)
 	{
 		previousColumnIndex = columnIndex;
 		columnIndex = row->Previous();
 		offset = pagingBuffer->Previous();
-		while (columnIndex != previousColumnIndex && offset > selectionBeginOffset)
+		while (columnIndex != previousColumnIndex && offset >= selectionBeginOffset)
 		{
 			row->GetAt(columnIndex)->Select(true);
 			previousColumnIndex = columnIndex;

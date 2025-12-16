@@ -373,7 +373,12 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if (keyAction != NULL)
 	{
 		keyAction->Perform();
-
+		
+		if (keyAction->NeedScrollBarUpdate())
+		{
+			this->Notify("UpdateScrollBars");
+		}
+		
 		if (!keyAction->ShouldKeepSelection())
 		{
 			this->note->Select(false);
@@ -382,8 +387,6 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 		delete keyAction;
 	}
-
-	this->Notify("UpdateScrollBars");
 	this->Invalidate();
 }
 
@@ -393,8 +396,16 @@ void NotepadForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 	if (scrollBarAction != NULL)
 	{
 		scrollBarAction->Perform();
+		if (!scrollBarAction->ShouldKeepSelection())
+		{
+			this->note->Select(false);
+			MarkingHelper markingHelper(this);
+			markingHelper.Unmark();
+		}
 		delete scrollBarAction;
 	}
+
+	this->Invalidate();
 }
 
 void NotepadForm::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
@@ -405,6 +416,8 @@ void NotepadForm::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 		scrollBarAction->Perform();
 		delete scrollBarAction;
 	}
+
+	this->Invalidate();
 }
 
 BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){

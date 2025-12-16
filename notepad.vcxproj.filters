@@ -392,25 +392,43 @@
     <ClInclude Include="SingleByteWrappingPolicy.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="LoadCommand.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ScrollBarNecessityChecker.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Scroll.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ScrollController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="UpArrowAction_Fixed.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="LoadNextCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="LoadPreviousCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PagingNavigator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBarAnalyzer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadLastCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadFirstCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RowCounter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ShiftPageDownAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ShiftPageUpAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlPageDownAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlPageUpAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -775,25 +793,43 @@
     <ClCompile Include="SingleByteWrappingPolicy.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="LoadCommand.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ScrollBarNecessityChecker.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Scroll.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ScrollController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UpArrowAction_Fixed.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="LoadNextCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="LoadPreviousCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PagingNavigator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollBarAnalyzer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadLastCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadFirstCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RowCounter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ShiftPageDownAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ShiftPageUpAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlPageDownAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlPageUpAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

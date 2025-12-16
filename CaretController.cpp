@@ -103,7 +103,7 @@ void CaretController::Update(Subject *subject, string interest) {
 		//4. 캐럿의 x좌표를 구한다.
 		Long width = 0;
 		Long i = 0;
-		while (i < columnIndex)
+		while (i < columnIndex && i < row->GetLength())
 		{
 			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
 			i++;
