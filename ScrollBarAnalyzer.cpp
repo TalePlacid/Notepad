@@ -27,9 +27,20 @@ void ScrollBarAnalyzer::Analyze() {
 	this->clientAreaWidth = clientArea.right - clientArea.left;
 	this->clientAreaHeight = clientArea.bottom - clientArea.top;
 
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	this->scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
+	if (scrollController->HasVScroll())
+	{
+		this->clientAreaWidth += this->scrollBarThickness;
+	}
+
+	if (scrollController->HasHScroll())
+	{
+		this->clientAreaHeight += this->scrollBarThickness;
+	}
+
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 
 	Long rowHeight = sizeCalculator->GetRowHeight();
 	Long rowCount = this->clientAreaHeight / rowHeight;
@@ -98,7 +109,6 @@ void ScrollBarAnalyzer::Analyze() {
 	this->vScrollNeeded = this->contentsHeight > this->clientAreaHeight;
 	this->hScrollNeeded = this->contentsWidth > this->clientAreaWidth;
 
-	this->scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
 	for (Long i = 1; i <= 2; i++)
 	{
 		if (this->vScrollNeeded)
