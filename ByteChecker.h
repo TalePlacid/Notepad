@@ -12,6 +12,7 @@ public:
 	bool IsASCII(char character);
 	bool IsLeadByte(char character);
 	bool IsTailByte(char character);
+	bool IsAlphabet(char* character);
 	bool IsCapital(char character);
 	bool IsWordCharacter(char character);
 };

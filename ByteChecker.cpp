@@ -24,6 +24,19 @@ bool ByteChecker::IsTailByte(char character) {
 	return (character_ > 0x7F) && !(character_ & 0x80);
 }
 
+bool ByteChecker::IsAlphabet(char* character) {
+	bool ret = false;
+	unsigned char character_ = static_cast<unsigned char>(*character);
+
+	if ((character_ >= 65 && character_ <= 90) // 소문자
+		|| (character_ >= 97 && character_ <= 122)) //대문자
+	{
+		ret = true;
+	}
+
+	return ret;
+}
+
 bool ByteChecker::IsCapital(char character) {
 	unsigned char character_ = static_cast<unsigned char>(character);
 	
