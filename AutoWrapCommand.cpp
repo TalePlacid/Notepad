@@ -1,8 +1,8 @@
 #include <afxwin.h>
 #include "AutoWrapCommand.h"
 #include "NotepadForm.h"
-#include "NoteWrapper.h"
 #include "resource.h"
+#include "NoteWrapper.h"
 
 #pragma warning(disable:4996)
 
@@ -17,21 +17,18 @@ AutoWrapCommand::~AutoWrapCommand() {
 
 void AutoWrapCommand::Execute() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
+	notepadForm->isAutoWrapped = !notepadForm->isAutoWrapped;
+
 	NoteWrapper noteWrapper(this->parent);
-	UINT isChecked = notepadForm->menu.GetMenuState(ID_MENU_AUTOWRAP, MF_BYCOMMAND);
-
-	if (isChecked == MF_UNCHECKED)
+	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADFIRST, 0);
+	if (notepadForm->isAutoWrapped)
 	{
+		noteWrapper.Wrap(notepadForm->note);
 		notepadForm->menu.CheckMenuItem(ID_MENU_AUTOWRAP, MF_CHECKED);
-		RECT rect;
-		this->parent->GetClientRect(&rect);
-		noteWrapper.InsertDummyRows(rect.right - rect.left);
 	}
-	else if (isChecked == MF_CHECKED)
+	else
 	{
+		noteWrapper.Unwrap();
 		notepadForm->menu.CheckMenuItem(ID_MENU_AUTOWRAP, MF_UNCHECKED);
-		noteWrapper.DeleteDummyRows();
 	}
-
-	this->parent->Invalidate();
 }
