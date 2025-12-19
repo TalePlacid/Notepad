@@ -107,6 +107,7 @@ Long Note::Last() {
 
 Long Note::MergeRows(Long index) {
 	Glyph* row = this->glyphs[index];
+	Long current = row->GetCurrent();
 	Glyph* nextRow = this->glyphs[index + 1];
 
 	Long i = 0;
@@ -115,6 +116,7 @@ Long Note::MergeRows(Long index) {
 		row->Add(nextRow->GetAt(i)->Clone());
 		i++;
 	}
+	row->Move(current);
 
 	if (this->glyphs[index+1] != NULL)
 	{
