@@ -4,14 +4,16 @@
 typedef signed long int Long;
 
 class CWnd;
+class Glyph;
 
 class NoteWrapper {
 public:
 	NoteWrapper(CWnd* parent);
 	~NoteWrapper();
 
-	void InsertDummyRows(Long width);
-	void DeleteDummyRows();
+	Long Wrap(Glyph* note);
+	Long Rewrap();
+	Long Unwrap();
 private:
 	CWnd* parent;
 };
