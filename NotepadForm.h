@@ -35,6 +35,7 @@ public:
 	HistoryBook* undoHistoryBook;
 	HistoryBook* redoHistoryBook;
 	BOOL hasFindReplaceDialog;
+	BOOL isAutoWrapped;
 public:
 	BOOL IsCompositing() const;
 	CString GetPath() const;
@@ -43,6 +44,7 @@ protected:
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void OnSize(UINT nType, int cx, int cy);
+	void OnExitSizeMove();
 	void OnPaint();
 	LRESULT OnImeStartComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeComposition(WPARAM wParam, LPARAM lParam);
@@ -55,13 +57,14 @@ protected:
 	void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	virtual BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnFindReplaceFocused(WPARAM wParam, LPARAM lParam);
+	LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
+	LRESULT OnFindReplaceFocused(WPARAM wParam, LPARAM lParam);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
 	BOOL isCompositing;
 	CString path;
+	BOOL nextIsLastOnSize;
 };
 
 inline BOOL NotepadForm::IsCompositing() const {

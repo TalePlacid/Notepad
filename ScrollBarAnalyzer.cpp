@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
+#include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
@@ -21,7 +22,7 @@ ScrollBarAnalyzer::~ScrollBarAnalyzer() {
 
 }
 
-void ScrollBarAnalyzer::Analyze() {
+void ScrollBarAnalyzer::AnalyzeWithoutWrap() {
 	RECT clientArea;
 	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 	this->clientAreaWidth = clientArea.right - clientArea.left;
@@ -51,6 +52,7 @@ void ScrollBarAnalyzer::Analyze() {
 
 	this->contentsHeight = note->GetLength() * rowHeight;
 	this->contentsWidth = 0;
+
 	Long width;
 	Glyph* row;
 	Long i = 0;
@@ -127,10 +129,69 @@ void ScrollBarAnalyzer::Analyze() {
 	if (this->vScrollNeeded)
 	{
 		this->clientAreaWidth -= this->scrollBarThickness;
+		if (!scrollController->HasVScroll())
+		{
+			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+			Long fileRowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
+			this->contentsHeight = fileRowCount * rowHeight;
+		}
 	}
 
 	if (this->hScrollNeeded)
 	{
 		this->clientAreaHeight -= this->scrollBarThickness;
+	}
+}
+
+void ScrollBarAnalyzer::AnalyzeWithWrap() {
+	RECT clientArea;
+	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
+	this->clientAreaWidth = clientArea.right - clientArea.left;
+	this->clientAreaHeight = clientArea.bottom - clientArea.top;
+
+	this->hScrollNeeded = false;
+	this->contentsWidth = this->clientAreaWidth;
+
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	this->scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
+	if (scrollController->HasVScroll())
+	{
+		this->clientAreaWidth += this->scrollBarThickness;
+	}
+
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+
+	Long rowHeight = sizeCalculator->GetRowHeight();
+	Long rowCount = this->clientAreaHeight / rowHeight;
+	if (rowCount == 0)
+	{
+		rowCount = 1;
+	}
+
+	this->contentsHeight = note->GetLength() * rowHeight;
+	this->vScrollNeeded = this->contentsHeight > this->clientAreaHeight;
+
+	if (this->vScrollNeeded)
+	{
+		this->clientAreaWidth -= this->scrollBarThickness;
+		if (!scrollController->HasVScroll())
+		{
+			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+			Long fileRowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
+
+			Long dummyRowCount = 0;
+			Long i = 0;
+			while (i < note->GetLength())
+			{
+				if (note->GetAt(i)->IsDummyRow())
+				{
+					dummyRowCount++;
+				}
+				i++;
+			}
+
+			this->contentsHeight = (fileRowCount + dummyRowCount) * rowHeight;
+		}
 	}
 }

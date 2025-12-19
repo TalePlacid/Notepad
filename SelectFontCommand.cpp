@@ -68,7 +68,7 @@ void SelectFontCommand::Execute() {
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 
 		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
-		scrollBarAnalyzer.Analyze();
+		scrollBarAnalyzer.AnalyzeWithoutWrap();
 
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		if (scrollBarAnalyzer.GetVScrollNeeded())

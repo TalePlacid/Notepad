@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_CHAR()
 	ON_WM_SIZE()
+	ON_WM_EXITSIZEMOVE()
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_IME_STARTCOMPOSITION, OnImeStartComposition)
 	ON_MESSAGE(WM_IME_COMPOSITION, OnImeComposition)
@@ -73,7 +74,9 @@ NotepadForm::NotepadForm() {
 	this->undoHistoryBook = NULL;
 	this->redoHistoryBook = NULL;
 	this->hasFindReplaceDialog = FALSE;
-
+	this->isCompositing = FALSE;
+	this->isAutoWrapped = FALSE;
+	
 	TCHAR buffer[256];
 	GetCurrentDirectory(256, buffer);
 	CString path(buffer);
@@ -106,13 +109,16 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->clipboardController = new ClipboardController(this);
 
-	this->isCompositing = FALSE;
 	this->menu.LoadMenu(MAKEINTRESOURCE(IDR_MENU_MAIN));
 	this->SetMenu(&(this->menu));
 
 	this->searchResultController = new SearchResultController;
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
+	
+	this->nextIsLastOnSize = FALSE;
+
+	this->Notify("UpdateScrollBars");
 
 	return 0;
 }
@@ -153,22 +159,22 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			else
 			{
 				delete command;
-			}
+			}                 
 		}
 
 		this->note->Select(false);
 		MarkingHelper markingHelper(this);
 		markingHelper.Unmark();
 	
-		NoteWrapper noteWrapper(this);
-		noteWrapper.DeleteDummyRows();
+		//NoteWrapper noteWrapper(this);
+		//noteWrapper.DeleteDummyRows();
 
 		UINT isChecked = this->menu.GetMenuState(ID_MENU_AUTOWRAP, MF_BYCOMMAND);
 		if (isChecked == MF_CHECKED)
 		{
 			RECT rect;
 			this->GetClientRect(&rect);
-			noteWrapper.InsertDummyRows(rect.right - rect.left);
+			//noteWrapper.InsertDummyRows(rect.right - rect.left);
 		}
 
 		this->Notify("ChangeCaret");
@@ -178,18 +184,21 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
-	NoteWrapper noteWrapper(this);
-	noteWrapper.DeleteDummyRows();
-
-	UINT isChecked = this->menu.GetMenuState(ID_MENU_AUTOWRAP, MF_BYCOMMAND);
-	if (isChecked == MF_CHECKED)
+	if (this->isAutoWrapped)
 	{
-		RECT rect;
-		this->GetClientRect(&rect);
-		noteWrapper.InsertDummyRows(rect.right - rect.left);
+		NoteWrapper noteWrapper(this);
+		noteWrapper.Unwrap();
+		noteWrapper.Wrap(this->note);
 	}
 
-	this->Notify("UpdateScrollBars");
+	if (this->nextIsLastOnSize)
+	{
+		this->Notify("UpdateScrollBars");
+	}
+}
+
+void NotepadForm::OnExitSizeMove() {
+	this->nextIsLastOnSize = TRUE;
 }
 
 void NotepadForm::OnPaint() {

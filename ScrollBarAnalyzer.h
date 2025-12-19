@@ -10,7 +10,8 @@ public:
 	ScrollBarAnalyzer(CWnd* parent);
 	~ScrollBarAnalyzer();
 
-	void Analyze();
+	void AnalyzeWithoutWrap();
+	void AnalyzeWithWrap();
 
 	bool GetVScrollNeeded() const;
 	bool GetHScrollNeeded() const;

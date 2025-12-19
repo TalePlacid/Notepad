@@ -33,8 +33,15 @@ void ScrollController::Update(Subject* subject, string interest) {
 	{
 		// 1. 스크롤바 필요 여부를 체크한다.
 		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
-		scrollBarAnalyzer.Analyze();
-		
+		if (!((NotepadForm*)(this->parent))->isAutoWrapped)
+		{
+			scrollBarAnalyzer.AnalyzeWithoutWrap();
+		}
+		else
+		{
+			scrollBarAnalyzer.AnalyzeWithWrap();
+		}
+
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long currentRow = note->GetCurrent();
 		Glyph* row = note->GetAt(currentRow);
@@ -54,9 +61,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 			if (!this->hasVScroll)
 			{
 				//2.1.1. 수직 스크롤바를 만든다.
-				Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
-
-				this->vScroll.ResizeRange(rowCount * sizeCalculator->GetRowHeight());
+				this->vScroll.ResizeRange(scrollBarAnalyzer.GetContentsHeight());
 				this->vScroll.ResizePage(scrollBarAnalyzer.GetClientAreaHeight());
 
 				scrollInfo.nMin = this->vScroll.GetMin();
@@ -122,7 +127,6 @@ void ScrollController::Update(Subject* subject, string interest) {
 			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 			Long rowHeight = sizeCalculator->GetRowHeight();
 			Long pos = (rowStartIndex + currentRow) * rowHeight;
-
 			Long rangeStart = this->vScroll.GetPos();
 			Long rangeEnd = rangeStart + this->vScroll.GetPage();
 			if (pos < rangeStart)
