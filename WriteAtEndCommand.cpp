@@ -6,6 +6,7 @@
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "PagingNavigator.h"
+#include "NoteWrapper.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -56,12 +57,26 @@ void WriteAtEndCommand::Execute() {
 	}
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	if (this->character[0] != '\r')
 	{
-		row->Add(glyph);
+		rowIndex = row->Add(glyph);
 		if (this->onChar)
 		{
 			pagingBuffer->Add((char*)(*glyph));
+		}
+
+		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		{
+			NoteWrapper noteWrapper(this->parent);
+			Long dummied = noteWrapper.Rewrap();
+			if (scrollController->HasVScroll())
+			{
+				Scroll vScroll = scrollController->GetVScroll();
+				Long max = vScroll.GetMax() + dummied * sizeCalculator->GetRowHeight();
+				scrollController->ResizeVRange(max);
+			}
 		}
 	}
 	else
@@ -69,8 +84,6 @@ void WriteAtEndCommand::Execute() {
 		note->Add(glyph);
 		pagingBuffer->Add(this->character);
 
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		if (scrollController->HasVScroll())
 		{
 			Scroll vScroll = scrollController->GetVScroll();

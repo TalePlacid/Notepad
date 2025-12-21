@@ -5,6 +5,7 @@
 #include "PagingBuffer.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
+#include "NoteWrapper.h"
 
 #pragma warning(disable:4996)
 

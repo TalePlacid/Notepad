@@ -3,6 +3,7 @@
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
 #include "Glyph.h"
+#include "NoteWrapper.h"
 
 #pragma warning(disable:4996)
 

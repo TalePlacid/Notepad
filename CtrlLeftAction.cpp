@@ -62,9 +62,9 @@ void CtrlLeftAction::Perform() {
 		if (rowIndex > 0)
 		{
 			rowIndex = note->Previous();
-			pagingBuffer->PreviousRow();
 			row = note->GetAt(rowIndex);
 			row->Last();
+			pagingBuffer->PreviousRow();
 			pagingBuffer->Last();
 		}
 	}

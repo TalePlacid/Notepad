@@ -6,6 +6,7 @@
 #include "resource.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
+#include "NoteWrapper.h"
 
 #pragma warning(disable:4996)
 
@@ -18,6 +19,8 @@ PagingNavigator::~PagingNavigator() {
 }
 
 Long PagingNavigator::MoveTo(Long offset) {
+	NoteWrapper noteWrapper(this->parent);
+
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
