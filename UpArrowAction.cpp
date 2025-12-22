@@ -21,11 +21,10 @@ UpArrowAction::~UpArrowAction() {
 
 void UpArrowAction::Perform() {
 	//1. 이전 줄이 재적재범위에 들어가면, 재적재한다.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	Scroll vScroll = scrollController->GetVScroll();
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
-	if (note->IsAboveTopLine(rowIndex - 1) && vScroll.GetPos() > 0)
+	if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, ID_COMMAND_LOADPREVIOUS, 0);
 		rowIndex = note->GetCurrent();
@@ -35,39 +34,40 @@ void UpArrowAction::Perform() {
 	Glyph* originalRow = note->GetAt(rowIndex);
 	Long columnIndex = originalRow->GetCurrent();
 
-	Glyph* character;
-	Long originalWidth = 0;
-
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long i = 0;
-	while (i < columnIndex)
+	Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
+
+	Long previousRowIndex = note->Previous();
+	Glyph* previousRow = note->GetAt(previousRowIndex);
+
+	Long nearestIndex = sizeCalculator->GetNearestColumnIndex(previousRow, originalWidth);
+	previousRow->Move(nearestIndex);
+
+	//3.  페이징 버퍼에서 이동한다.
+	Long characters;
+	if (!originalRow->IsDummyRow())
 	{
-		character = originalRow->GetAt(i);
-		originalWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
-		i++;
+		pagingBuffer->PreviousRow();
+		
+		Long i = rowIndex - 1;
+		while (i >= 0 && note->GetAt(i)->IsDummyRow())
+		{
+			i--;
+		}
+
+		characters = 0;
+		while (i < rowIndex - 1)
+		{
+			characters += note->GetAt(i)->GetLength();
+			i++;
+		}
+		characters += nearestIndex;
+
+		pagingBuffer->Next(characters);
 	}
-
-	rowIndex = note->Previous();
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->PreviousRow();
-
-	Glyph* row = note->GetAt(rowIndex);
-	Long previousWidth = 0;
-	Long widthSum = 0;
-	i = 0;
-	while (i < row->GetLength() && widthSum < originalWidth)
+	else
 	{
-		character = row->GetAt(i);
-		previousWidth = widthSum;
-		widthSum += sizeCalculator->GetCharacterWidth((char*)(*character));
-		i++;
+		characters = columnIndex + previousRow->GetLength() - nearestIndex;
+		pagingBuffer->Previous(characters);
 	}
-
-	if (widthSum - originalWidth > originalWidth - previousWidth)
-	{
-		i--;
-	}
-
-	pagingBuffer->Move(i);
-	row->Move(i);
 }
