@@ -32,42 +32,29 @@ void DownArrowAction::Perform() {
 	}
 
 	//2. 다음 줄로 이동한다.
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Glyph* originalRow = note->GetAt(rowIndex);
 	Long columnIndex = originalRow->GetCurrent();
-
-	Glyph* character;
-	Long originalWidth = 0;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-
-	Long i = 0;
-	while (i < columnIndex)
-	{
-		character = originalRow->GetAt(i);
-		originalWidth += sizeCalculator->GetCharacterWidth((char*)(*character));
-		i++;
-	}
+	Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
 
 	rowIndex = note->Next();
 	Glyph* nextRow = note->GetAt(rowIndex);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->NextRow();
-
-	Long previousWidth = 0;
-	Long width = 0;
-	i = 0;
-	while (width < originalWidth && i < nextRow->GetLength())
+	if (!nextRow->IsDummyRow())
 	{
-		character = nextRow->GetAt(i);
-		previousWidth = width;
-		width += sizeCalculator->GetCharacterWidth((char*)(*character));
-		i++;
+		pagingBuffer->NextRow();
 	}
 
-	if (width - originalWidth > originalWidth - previousWidth)
-	{
-		i--;
-	}
+	Long nearestIndex = sizeCalculator->GetNearestColumnIndex(nextRow, originalWidth);
+	nextRow->Move(nearestIndex);
 
-	pagingBuffer->Move(i);
-	nextRow->Move(i);
+
+	if (!nextRow->IsDummyRow())
+	{
+		pagingBuffer->Move(nearestIndex);
+	}
+	else
+	{
+		pagingBuffer->Next(nearestIndex);
+	}
 }
