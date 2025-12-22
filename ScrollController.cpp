@@ -97,7 +97,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 				scrollInfo.nMin = this->hScroll.GetMin();
 				scrollInfo.nMax = this->hScroll.GetMax();
 				scrollInfo.nPage = this->hScroll.GetPage();
-				scrollInfo.nPos = this->hScroll.GetPos();
+				scrollInfo.nPos = scrollBarAnalyzer.GetContentsHeight();
 
 				SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 				this->parent->ModifyStyle(0, WS_HSCROLL);
@@ -120,7 +120,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 			//6.1. 수직 스크롤 페이지를 갱신한다.
 			this->vScroll.ResizePage(scrollBarAnalyzer.GetClientAreaHeight());
 			scrollInfo.fMask = SIF_PAGE;
-			scrollInfo.nPage = scrollBarAnalyzer.GetClientAreaHeight();
+			scrollInfo.nPage = this->vScroll.GetPage();
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
 
 			//6.2. 수직 스크롤 범위를 벗어났으면, 수직 스크롤 위치를 조정한다.
