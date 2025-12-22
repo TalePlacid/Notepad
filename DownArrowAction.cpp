@@ -43,20 +43,18 @@ void DownArrowAction::Perform() {
 
 	rowIndex = note->Next();
 	Glyph* nextRow = note->GetAt(rowIndex);
-	if (!nextRow->IsDummyRow())
-	{
-		pagingBuffer->NextRow();
-	}
-
 	Long nearestIndex = sizeCalculator->GetNearestColumnIndex(nextRow, originalWidth);
 	nextRow->Move(nearestIndex);
 
+	//3. 페이징 버퍼에서 이동한다.
 	if (!nextRow->IsDummyRow())
 	{
+		pagingBuffer->NextRow();
 		pagingBuffer->Move(nearestIndex);
 	}
 	else
 	{
-		pagingBuffer->Next(nearestIndex);
+		Long characters = originalRow->GetLength() - columnIndex + nearestIndex;
+		pagingBuffer->Next(characters);
 	}
 }
