@@ -5,7 +5,7 @@
 #include "PagingBuffer.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
-#include "NoteWrapper.h"
+#include "SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
@@ -19,6 +19,9 @@ LoadPreviousCommand::~LoadPreviousCommand() {
 }
 
 void LoadPreviousCommand::Execute() {
+	//자동개행시 임시 개행 풀기
+	SuspendAutoWrap suspendAutoWrap(this->parent);
+
 	//1. 노트에서 현재 위치를 기억한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
@@ -46,7 +49,7 @@ void LoadPreviousCommand::Execute() {
 	rowIndex += count;
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 	Long i = pagingBuffer->GetCurrentOffset();
-	while (rowIndex >= 0 && previousRowIndex != rowIndex && i > selectionBeginOffset)
+	while (rowIndex >= 0 && previousRowIndex != rowIndex && selectionBeginOffset >= 0 && i > selectionBeginOffset)
 	{
 		while (columnIndex > 0 && i > selectionBeginOffset)
 		{

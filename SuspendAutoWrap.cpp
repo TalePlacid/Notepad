@@ -49,8 +49,10 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 		scrollController->ResizeVRange(max);
 	
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
 		Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-		Long pos = (rowStartIndex + this->viewRowIndex) * rowHeight;
+		Long pos = (rowStartIndex + rowIndex - this->viewRowIndex) * rowHeight;
 		scrollController->MoveVScroll(pos);
 	}
 }
