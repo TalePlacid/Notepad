@@ -5,7 +5,7 @@
 #include "PagingBuffer.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
-#include "NoteWrapper.h"
+#include "SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
@@ -19,6 +19,9 @@ LoadNextCommand::~LoadNextCommand() {
 }
 
 void LoadNextCommand::Execute() {
+	//자동개행시 임시 개행 풀기
+	SuspendAutoWrap suspendAutoWrap(this->parent);
+
 	//1. 노트에서 현재 위치를 기억한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
@@ -88,9 +91,9 @@ void LoadNextCommand::Execute() {
 	pagingBuffer->CacheRowStartIndex(upperIndex);
 
 	//8. 수평 스크롤바 최대값을 갱신한다.
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Long rowWidth = 0;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long max = scrollController->GetHScroll().GetMax();
 	i = 0;
 	while (i < note->GetLength())

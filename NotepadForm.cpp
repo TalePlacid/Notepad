@@ -188,7 +188,7 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 	{
 		NoteWrapper noteWrapper(this);
 		noteWrapper.Unwrap();
-		noteWrapper.Wrap(this->note);
+		noteWrapper.Wrap();
 	}
 
 	if (this->nextIsLastOnSize)

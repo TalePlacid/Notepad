@@ -17,10 +17,11 @@ NoteWrapper::~NoteWrapper() {
 
 }
 
-Long NoteWrapper::Wrap(Glyph* note) {
+Long NoteWrapper::Wrap() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	ByteChecker byteChecker;
 
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
@@ -78,6 +79,7 @@ Long NoteWrapper::Wrap(Glyph* note) {
 }
 
 Long NoteWrapper::Rewrap() {
+	Long count = 0;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
@@ -85,6 +87,7 @@ Long NoteWrapper::Rewrap() {
 	while (note->GetLength() > rowIndex + 1 && note->GetAt(rowIndex+1)->IsDummyRow())
 	{
 		note->MergeRows(rowIndex);
+		count--;
 	}
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -94,7 +97,6 @@ Long NoteWrapper::Rewrap() {
 	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 	Long clientAreaWidth = clientArea.Width();
 
-	Long count = 0;
 	BOOL flag = TRUE;
 	Long previousWordStart;
 	Long cuttingIndex;

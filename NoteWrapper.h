@@ -11,7 +11,7 @@ public:
 	NoteWrapper(CWnd* parent);
 	~NoteWrapper();
 
-	Long Wrap(Glyph* note);
+	Long Wrap();
 	Long Rewrap();
 	Long Unwrap();
 private:
