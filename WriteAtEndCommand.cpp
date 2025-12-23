@@ -92,6 +92,7 @@ void WriteAtEndCommand::Execute() {
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
+	TRACE("%ld, %ld\n", note->GetCurrent(), note->GetAt(note->GetCurrent())->GetCurrent());
 }
 
 void WriteAtEndCommand::Undo() {
@@ -105,9 +106,23 @@ void WriteAtEndCommand::Undo() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. Áö¿î´Ù.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	if (columnIndex > 0)
 	{
 		row->Remove();
+
+		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		{
+			NoteWrapper noteWrapper(this->parent);
+			Long dummied = noteWrapper.Rewrap();
+			if (scrollController->HasVScroll())
+			{
+				Scroll vScroll = scrollController->GetVScroll();
+				Long max = vScroll.GetMax() + dummied * sizeCalculator->GetRowHeight();
+				scrollController->ResizeVRange(max);
+			}
+		}
 	}
 	else
 	{
@@ -117,8 +132,6 @@ void WriteAtEndCommand::Undo() {
 		}
 		note->Remove();
 
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		if (scrollController->HasVScroll())
 		{
 			Scroll vScroll = scrollController->GetVScroll();
@@ -151,12 +164,26 @@ void WriteAtEndCommand::Redo() {
 	Long columnIndex = row->GetCurrent();
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
 		if (this->onChar)
 		{
 			pagingBuffer->Add((char*)(*glyph));
+		}
+
+		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		{
+			NoteWrapper noteWrapper(this->parent);
+			Long dummied = noteWrapper.Rewrap();
+			if (scrollController->HasVScroll())
+			{
+				Scroll vScroll = scrollController->GetVScroll();
+				Long max = vScroll.GetMax() + dummied * sizeCalculator->GetRowHeight();
+				scrollController->ResizeVRange(max);
+			}
 		}
 	}
 	else

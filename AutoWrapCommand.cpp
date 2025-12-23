@@ -44,7 +44,6 @@ void AutoWrapCommand::Execute() {
 
 	if (scrollController->HasVScroll())
 	{
-
 		scrollController->ResizeVRange(max);
 	}
 }

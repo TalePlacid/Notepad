@@ -431,6 +431,9 @@
     <ClInclude Include="CtrlPageUpAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SuspendAutoWrap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -830,6 +833,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CtrlPageUpAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SuspendAutoWrap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

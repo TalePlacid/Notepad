@@ -254,6 +254,7 @@
     <ClInclude Include="SingleByteWrappingPolicy.h" />
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="Subject.h" />
+    <ClInclude Include="SuspendAutoWrap.h" />
     <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="UndoCommand.h" />
     <ClInclude Include="UpArrowAction.h" />
@@ -389,6 +390,7 @@
     <ClCompile Include="SingleByteWrappingPolicy.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="SuspendAutoWrap.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
     <ClCompile Include="UndoCommand.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
