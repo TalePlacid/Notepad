@@ -61,7 +61,7 @@ void WriteAtEndCommand::Execute() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	if (this->character[0] != '\r')
 	{
-		rowIndex = row->Add(glyph);
+		columnIndex = row->Add(glyph);
 		if (this->onChar)
 		{
 			pagingBuffer->Add((char*)(*glyph));
@@ -92,7 +92,6 @@ void WriteAtEndCommand::Execute() {
 		}
 	}
 	this->offset = pagingBuffer->GetCurrentOffset();
-	TRACE("%ld, %ld\n", note->GetCurrent(), note->GetAt(note->GetCurrent())->GetCurrent());
 }
 
 void WriteAtEndCommand::Undo() {
