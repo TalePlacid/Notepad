@@ -58,47 +58,5 @@ void RightArrowAction::Perform() {
 				columnIndex = row->First();
 			}
 		}
-		TRACE("Right : %ld, %ld\n", rowIndex, columnIndex);
 	}
-
-#if 0
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	//1. 줄의 마지막이 아니라면,
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	if (columnIndex < row->GetLength())
-	{
-		//1.1. 노트에서 다음 칸으로 이동한다.
-		columnIndex = row->Next();
-
-		//1.2. 페이징버퍼에서 다음으로 이동한다.
-		pagingBuffer->Next();
-	}
-	else //2. 줄의 마지막이라면,
-	{
-		//2.1. 다음 줄이 유효범위를 벗어난 다면 재적재한다.
-		if (note->IsBelowBottomLine(rowIndex + 1))
-		{
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
-			rowIndex = note->GetCurrent();
-		}
-
-		//2.2. 마지막 줄이 아니라면,
-		if (rowIndex < note->GetLength() - 1)
-		{
-			//2.2.1. 노트에서 다음 줄로 이동한다.
-			rowIndex = note->Next();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->First();
-
-			//2.2.2. 페이징 버퍼에서 다음 줄로 이동한다.
-			pagingBuffer->NextRow();
-		}
-	}
-#endif
 }

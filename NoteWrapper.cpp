@@ -65,7 +65,7 @@ Long NoteWrapper::Wrap() {
 			{
 				rowIndex = note->Next();
 			}
-			else if (i == rowIndex && columnIndex >= cuttingIndex) // 현재 줄 위치     
+			else if (i == rowIndex && columnIndex > cuttingIndex) // 현재 줄 위치     
 			{
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
@@ -130,7 +130,7 @@ Long NoteWrapper::Rewrap() {
 
 			note->SplitRows(i, cuttingIndex, true);
 			count++;
-			if (columnIndex >= cuttingIndex)
+			if (i == rowIndex && columnIndex > cuttingIndex)
 			{
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);

@@ -1,4 +1,4 @@
- #ifndef _INSERTATCARETCOMMAND_H //guard
+#ifndef _INSERTATCARETCOMMAND_H //guard
 #define _INSERTATCARETCOMMAND_H
 #include <afxwin.h>
 #include "Command.h"
