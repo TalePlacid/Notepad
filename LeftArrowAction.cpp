@@ -20,43 +20,43 @@ LeftArrowAction::~LeftArrowAction() {
 }
 
 void LeftArrowAction::Perform() {
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	//1. 줄의 처음이 아니라면,
+	//1. 페이징 버퍼에서 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	if (columnIndex > 0)
+	Long previousOffset = pagingBuffer->GetCurrentOffset();
+	Long currentOffset = pagingBuffer->Previous();
+	if (previousOffset == currentOffset)
 	{
-		//1.1. 노트에서 이전 칸으로 이동한다.
-		columnIndex = row->Previous();
-
-		//1.2. 페이징버퍼에서 이전 칸으로 이동한다.
-		pagingBuffer->Previous();
+		currentOffset = pagingBuffer->PreviousRow();
+		currentOffset = pagingBuffer->Last();
 	}
-	else //2. 줄의 처음이라면,
+
+	//2. 페이징 버퍼에서 이동했다면,
+	if (previousOffset != currentOffset)
 	{
-		//2.1. 이전 줄이 유효범위를 넘어서면, 적재한다.
-		if (note->IsAboveTopLine(rowIndex - 1))
+		//2.1. 노트에서 이동한다.
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		if (columnIndex > 0)
 		{
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
-			rowIndex = note->GetCurrent();
+			columnIndex = row->Previous();
 		}
-
-		//2.2. 첫번째 줄이 아니라면,
-		if (rowIndex > 0)
+		else
 		{
-			//2.2.1. 노트에서 이전 줄로 이동한다.
-			rowIndex = note->Previous();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->Last();
+			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
+			{
+				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+				rowIndex = note->GetCurrent();
+			}
 
-			//2.2.2. 페이징 버퍼에서 이전줄로 이동한다.
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			if (rowIndex > 0)
+			{
+				rowIndex = note->Previous();
+				row = note->GetAt(rowIndex);
+				columnIndex = row->Last();
+			}
 		}
 	}
 }
