@@ -130,9 +130,36 @@ Long PagingNavigator::MoveTo(Long offset) {
 			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
-			columnIndex = row->Next();
+
+			if (row->IsDummyRow())
+			{
+				columnIndex = row->Next();
+			}
 		}
 	}
 
 	return pagingBuffer->GetCurrentOffset();
+}
+
+void PagingNavigator::NormalizeColumn(Long columnIndex) {
+	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	{
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long currentRowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(currentRowIndex);
+		Long currentColumnIndex = row->GetCurrent();
+
+		if (columnIndex < currentColumnIndex)
+		{
+			currentRowIndex = note->Next();
+			row = note->GetAt(currentRowIndex);
+			currentColumnIndex = row->First();
+		}
+		else if (columnIndex > currentColumnIndex)
+		{
+			currentRowIndex = note->Previous();
+			row = note->GetAt(currentRowIndex);
+			currentColumnIndex = row->Last();
+		}
+	}
 }

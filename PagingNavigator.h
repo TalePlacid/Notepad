@@ -10,7 +10,8 @@ public:
 	PagingNavigator(CWnd* parent);
 	~PagingNavigator();
 
-	Long MoveTo(Long offset);
+	Long MoveTo(Long offset); 
+	void NormalizeColumn(Long columnIndex);
 private:
 	CWnd* parent;
 };
