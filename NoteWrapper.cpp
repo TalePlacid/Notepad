@@ -80,10 +80,27 @@ Long NoteWrapper::Wrap() {
 
 Long NoteWrapper::Rewrap() {
 	Long count = 0;
+
+	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
+
+    //2. 더미 줄들을 위로 합친다.
+	Glyph* previousRow;
+	while (row->IsDummyRow() && rowIndex > 0)
+	{
+		previousRow = note->GetAt(rowIndex - 1);
+		columnIndex += previousRow->GetLength();
+		note->MergeRows(rowIndex - 1);
+
+		rowIndex = note->Previous();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->Move(columnIndex);
+	}
+
+	//3. 더미 줄들을 아래로 합친다.
 	while (note->GetLength() > rowIndex + 1 && note->GetAt(rowIndex+1)->IsDummyRow())
 	{
 		note->MergeRows(rowIndex);
@@ -97,6 +114,7 @@ Long NoteWrapper::Rewrap() {
 	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
 	Long clientAreaWidth = clientArea.Width();
 
+	//4. 다시 개행한다.
 	BOOL flag = TRUE;
 	Long previousWordStart;
 	Long cuttingIndex;
