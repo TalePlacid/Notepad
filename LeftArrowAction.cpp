@@ -20,42 +20,41 @@ LeftArrowAction::~LeftArrowAction() {
 }
 
 void LeftArrowAction::Perform() {
-	//1. 페이징 버퍼에서 이동한다.
+	//1. 현재 위치를 읽는다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
+	//2. 줄의 처음이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Long previousOffset = pagingBuffer->GetCurrentOffset();
-	Long currentOffset = pagingBuffer->Previous();
-	if (previousOffset == currentOffset)
+	if (columnIndex > 0)
 	{
-		currentOffset = pagingBuffer->PreviousRow();
-		currentOffset = pagingBuffer->Last();
+		columnIndex = row->Previous();
+		pagingBuffer->Previous();
 	}
-
-	//2. 페이징 버퍼에서 이동했다면,
-	if (previousOffset != currentOffset)
+	else //3. 줄의 처음이면,
 	{
-		//2.1. 노트에서 이동한다.
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
-
-		if (columnIndex > 0)
+		//3.1. 적재범위를 넘어서면 적재한다.
+		if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 		{
-			columnIndex = row->Previous();
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			rowIndex = note->GetCurrent();
 		}
-		else
-		{
-			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
-			{
-				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
-				rowIndex = note->GetCurrent();
-			}
 
-			if (rowIndex > 0)
+		//3.2. 첫번째 줄이 아니면,
+		if (rowIndex > 0)
+		{
+			//3.2.1. 노트에서 이동한다.
+			rowIndex = note->Previous();
+			Glyph* previousRow = note->GetAt(rowIndex);
+			columnIndex = previousRow->Last();
+
+			//3.2.2. 원래 줄이 더미 줄이 아니면,
+			if (!row->IsDummyRow())
 			{
-				rowIndex = note->Previous();
-				row = note->GetAt(rowIndex);
-				columnIndex = row->Last();
+				pagingBuffer->PreviousRow();
+				pagingBuffer->Last();
 			}
 		}
 	}
