@@ -269,7 +269,6 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="AutoWrapCommand.cpp" />
-    <ClCompile Include="AutoWrappingPolicy.cpp" />
     <ClCompile Include="BackspaceAction.cpp" />
     <ClCompile Include="BruteForce.cpp" />
     <ClCompile Include="BruteForceWhole.cpp" />
@@ -339,7 +338,6 @@
     <ClCompile Include="MacroCommand.cpp" />
     <ClCompile Include="MarkingHelper.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
-    <ClCompile Include="MultiByteWrappingPolicy.cpp" />
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="NoteConverter.cpp" />
@@ -387,7 +385,6 @@
     <ClCompile Include="ShiftRightAction.cpp" />
     <ClCompile Include="ShiftUpAction.cpp" />
     <ClCompile Include="SingleByteCharacter.cpp" />
-    <ClCompile Include="SingleByteWrappingPolicy.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="SuspendAutoWrap.cpp" />

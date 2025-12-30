@@ -21,6 +21,7 @@ public:
 private:
 	char character[2];
 	Long offset;
+	Long columnIndex;
 };
 
 #endif // !_ERASECOMMAND_H

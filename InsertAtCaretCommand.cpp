@@ -69,6 +69,7 @@ void InsertAtCaretCommand::Execute() {
 
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long vScrollChanged = 0;
 	if (this->character[0] != '\r') //3. 줄바꿈 문자가 아니면,
 	{
 		//3.1. 노트에서 더한다.
@@ -82,18 +83,10 @@ void InsertAtCaretCommand::Execute() {
 		{
 			//3.2.1. 재개행한다.
 			NoteWrapper noteWrapper(this->parent);
-			Long dummied = noteWrapper.Rewrap();
+			vScrollChanged = noteWrapper.Rewrap();
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->GetCurrent();
-
-			//3.2.2. 수직 스크롤이 있다면, 반영한다.
-			if (scrollController->HasVScroll())
-			{
-				Scroll vScroll = scrollController->GetVScroll();
-				Long max = vScroll.GetMax() + dummied * sizeCalculator->GetRowHeight();
-				scrollController->ResizeVRange(max);
-			}
 		}
 
 		//3.3. 조합 확정이면, 페이징버퍼에서 적는다. 
@@ -113,13 +106,15 @@ void InsertAtCaretCommand::Execute() {
 		//4.2. 페이징버퍼에서 적는다.
 		pagingBuffer->Add(this->character);
 
-		//4.3. 수직 스크롤이 있다면, 반영한다.
-		if (scrollController->HasVScroll())
-		{
-			Scroll vScroll = scrollController->GetVScroll();
-			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
-		}
+		vScrollChanged = 1;
+	}
+
+	//5.수직 스크롤이 있다면, 반영한다.
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() + vScrollChanged * sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
 	}
 
 	this->offset = pagingBuffer->GetCurrentOffset();
@@ -142,7 +137,7 @@ void InsertAtCaretCommand::Undo() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	NoteWrapper noteWrapper(this->parent);
-	Long dummied;
+	Long vScrollChanged = 0;
 	if (columnIndex > 0) //3. 줄의 처음이 아니면,
 	{
 		//3.1. 노트에서 지운다.
@@ -153,18 +148,10 @@ void InsertAtCaretCommand::Undo() {
 		if (((NotepadForm*)(this->parent))->isAutoWrapped)
 		{
 			//3.2.1. 재개행한다.
-			dummied = noteWrapper.Rewrap();
+			vScrollChanged = noteWrapper.Rewrap();
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->GetCurrent();
-
-			//3.2.2. 수직 스크롤이 있다면, 반영한다.
-			if (scrollController->HasVScroll())
-			{
-				Scroll vScroll = scrollController->GetVScroll();
-				Long max = vScroll.GetMax() + dummied * sizeCalculator->GetRowHeight();
-				scrollController->ResizeVRange(max);
-			}
 		}
 	}
 	else //4. 줄의 처음이라면,
@@ -189,7 +176,6 @@ void InsertAtCaretCommand::Undo() {
 			columnIndex = row->Move(columnIndex);
 
 			//4.2.2. 자동개행중이라면, 재개행한다.
-			Long vScrollChanged = 0;
 			if (((NotepadForm*)(this->parent))->isAutoWrapped)
 			{
 				//4.2.2.1. 재개행한다.
@@ -201,20 +187,20 @@ void InsertAtCaretCommand::Undo() {
 			else //4.2.3. 자동개행중이 아니라면,
 			{
 				vScrollChanged = -1;				
-			}
-			
-			//4.2.3. 수직 스크롤이 있다면, 반영한다.
-			if (scrollController->HasVScroll())
-			{
-				Scroll vScroll = scrollController->GetVScroll();
-				Long max = vScroll.GetMax() + vScrollChanged * sizeCalculator->GetRowHeight();
-				scrollController->ResizeVRange(max);
-			}
+			}		
 		}
 	}
 
 	//5. 페이징 버퍼에서 지운다.
 	pagingBuffer->Remove();
+
+	//6. 수직 스크롤이 있다면, 반영한다.
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() + vScrollChanged * sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
+	}
 
 	this->offset = pagingBuffer->GetCurrentOffset();
 	this->columnIndex = columnIndex;
@@ -235,6 +221,7 @@ void InsertAtCaretCommand::Redo() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long vScrollChanged = 0;
 	if (this->character[0] != '\r') //3. 줄바꿈 문자가 아니면,
 	{
 		//3.1. 노트에서 더한다.
@@ -248,18 +235,10 @@ void InsertAtCaretCommand::Redo() {
 		{
 			//3.2.1. 재개행한다.
 			NoteWrapper noteWrapper(this->parent);
-			Long dummied = noteWrapper.Rewrap();
+			vScrollChanged = noteWrapper.Rewrap();
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->GetCurrent();
-
-			//3.2.2. 수직 스크롤이 있다면, 반영한다.
-			if (scrollController->HasVScroll())
-			{
-				Scroll vScroll = scrollController->GetVScroll();
-				Long max = vScroll.GetMax() + dummied * sizeCalculator->GetRowHeight();
-				scrollController->ResizeVRange(max);
-			}
 		}
 	}
 	else //4. 줄바꿈 문자라면,
@@ -270,17 +249,19 @@ void InsertAtCaretCommand::Redo() {
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
 
-		//4.3. 수직 스크롤이 있다면, 반영한다.
-		if (scrollController->HasVScroll())
-		{
-			Scroll vScroll = scrollController->GetVScroll();
-			Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
-		}
+		vScrollChanged = 1;
 	}
 
 	//5. 페이징버퍼에서 적는다.
 	pagingBuffer->Add(this->character);
+
+	//6. 수직 스크롤이 있다면, 반영한다.
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+		scrollController->ResizeVRange(max);
+	}
 
 	this->offset = pagingBuffer->GetCurrentOffset();
 	this->columnIndex = columnIndex;

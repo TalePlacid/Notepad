@@ -787,15 +787,6 @@
     <ClCompile Include="DpiScaler.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="AutoWrappingPolicy.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="MultiByteWrappingPolicy.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SingleByteWrappingPolicy.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Scroll.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
