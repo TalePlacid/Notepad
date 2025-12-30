@@ -18,54 +18,46 @@ CtrlLeftAction::~CtrlLeftAction() {
 }
 
 void CtrlLeftAction::Perform() {
+	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	//2. 줄의 처음이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex > 0)
 	{
-		Long i = columnIndex - 1;
-		Glyph* character = row->GetAt(i);
-		BOOL isWordCharacter = character->IsWordCharacter();
-		BOOL inWord = isWordCharacter;
-
-		while (i >= 0 && (!inWord || isWordCharacter))
-		{
-			character = row->GetAt(i);
-			isWordCharacter = character->IsWordCharacter();
-			if (isWordCharacter)
-			{
-				inWord = TRUE;
-			}
-
-			row->Previous();
-			pagingBuffer->Previous();
-			i--;
-		}
-
-		if (i >= 0)
-		{
-			row->Next();
-			pagingBuffer->Next();
-		}
+		//2.1. 노트에서 이전 단어 시작으로 이동한다.
+		Long wordStart = row->FindPreviousWordStart(columnIndex);
+		Long movedIndex = row->Move(wordStart);
+		
+		//2.2. 페이징 버퍼에서 이동한다.
+		pagingBuffer->Previous(columnIndex - movedIndex);
 	}
-	else
+	else //3. 줄의 처음이면,
 	{
-		if (note->IsAboveTopLine(rowIndex - 1))
+		//3.1. 적재 범위를 벗어나면, 재적재한다.
+		if (note->IsBelowBottomLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 			rowIndex = note->GetCurrent();
 		}
 
+		//3.2. 첫번째 줄이 아니라면,
 		if (rowIndex > 0)
 		{
+			//3.2.1. 노트에서 이동한다.
 			rowIndex = note->Previous();
-			row = note->GetAt(rowIndex);
-			row->Last();
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			Glyph* previousRow = note->GetAt(rowIndex);
+			columnIndex = previousRow->Last();
+
+			//3.2.2. 원래 줄이 진짜 줄이면, 페이징 버퍼에서 이동한다.
+			if (!row->IsDummyRow())
+			{
+				pagingBuffer->PreviousRow();
+				pagingBuffer->Last();
+			}
 		}
 	}
 }
