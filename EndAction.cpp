@@ -17,10 +17,16 @@ EndAction::~EndAction() {
 }
 
 void EndAction::Perform() {
+	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
-	row->Last();
+	Long columnIndex = row->GetCurrent();
+
+	//2. 노트에서 이동한다.
+	Long lastColumnIndex = row->Last();
+
+	//3. 페이징 버퍼에서 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->Last();
+	pagingBuffer->Next(lastColumnIndex - columnIndex);
 }
