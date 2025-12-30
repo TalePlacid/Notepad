@@ -10,6 +10,11 @@ public:
 	virtual ~LoadFirstCommand();
 
 	virtual void Execute();
+	virtual bool NeedScrollBarUpdate();
 };
+
+inline bool LoadFirstCommand::NeedScrollBarUpdate() {
+	return false;
+}
 
 #endif // !_LOADFIRSTCOMMAND_H

@@ -4,6 +4,7 @@
 #include "PagingBuffer.h"
 #include "Glyph.h"
 #include "NoteWrapper.h"
+#include "SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
@@ -17,6 +18,8 @@ LoadFirstCommand::~LoadFirstCommand() {
 }
 
 void LoadFirstCommand::Execute() {
+	SuspendAutoWrap suspendAutoWrap(this->parent);
+
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->FirstRow();
 
