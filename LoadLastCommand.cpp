@@ -4,6 +4,7 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "NoteWrapper.h"
+#include "SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
@@ -17,6 +18,9 @@ LoadLastCommand::~LoadLastCommand() {
 }
 
 void LoadLastCommand::Execute() {
+	//자동개행 일시 정지
+	SuspendAutoWrap suspendAutoWrap(this->parent);
+
 	//1. 페이징버퍼에서 마지막위치로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->LastRow();

@@ -53,6 +53,13 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 		Long rowIndex = note->GetCurrent();
 		Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 		Long pos = (rowStartIndex + rowIndex - this->viewRowIndex) * rowHeight;
+		
+		Scroll vScroll = scrollController->GetVScroll();
+		Long posLimit = vScroll.GetMax() - vScroll.GetPage();
+		if (pos > posLimit)
+		{
+			pos = posLimit;
+		}
 		scrollController->MoveVScroll(pos);
 	}
 }
