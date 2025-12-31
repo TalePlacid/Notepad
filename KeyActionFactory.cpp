@@ -33,6 +33,7 @@
 #include "ShiftPageUpAction.h"
 #include "CtrlPageDownAction.h"
 #include "CtrlPageUpAction.h"
+#include "CtrlAAction.h"
 
 #pragma warning(disable:4996)
 
@@ -173,6 +174,12 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 		else
 		{
 			keyAction = new PageDownAction(parent);
+		}
+		break;
+	case 'A':
+		if (onCtrlKey)
+		{
+			keyAction = new CtrlAAction(parent);
 		}
 		break;
 	case 'C':

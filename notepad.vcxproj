@@ -147,6 +147,7 @@
     <ClInclude Include="Comparer.h" />
     <ClInclude Include="Composite.h" />
     <ClInclude Include="CopyCommand.h" />
+    <ClInclude Include="CtrlAAction.h" />
     <ClInclude Include="CtrlCAction.h" />
     <ClInclude Include="CtrlEndAction.h" />
     <ClInclude Include="CtrlFAction.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="Comparer.cpp" />
     <ClCompile Include="Composite.cpp" />
     <ClCompile Include="CopyCommand.cpp" />
+    <ClCompile Include="CtrlAAction.cpp" />
     <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
     <ClCompile Include="CtrlFAction.cpp" />
