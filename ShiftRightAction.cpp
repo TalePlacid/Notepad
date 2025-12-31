@@ -54,6 +54,7 @@ void ShiftRightAction::Perform() {
 		if (note->IsBelowBottomLine(rowIndex+1))
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+			rowIndex = note->GetCurrent();
 		}
 
 		if (rowIndex < note->GetLength() - 1)

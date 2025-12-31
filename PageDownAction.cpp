@@ -19,13 +19,17 @@ PageDownAction::~PageDownAction() {
 }
 
 void PageDownAction::Perform() {
-	//1. 수직 스크롤바가 존재하고, 마지막 위치가 아니라면,
+	//1. 수직 스크롤바가 존재하고, 마지막 위치가 이니라면,
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll = scrollController->GetVScroll();
 	Long posLimit = vScroll.GetMax() - vScroll.GetPage();
 	if (scrollController->HasVScroll() && vScroll.GetPos() < posLimit)
 	{
-		//1.1 내려갈 만큼의 줄 수를 구한다.
+		if (vScroll.GetPos() == 17016)
+		{
+			TRACE("[pos = 17016]\n");
+		}
+		//1.1. 내려갈 줄 수를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Long rowHeight = sizeCalculator->GetRowHeight();
 		Long rowCount = vScroll.GetPage() / rowHeight;
@@ -41,48 +45,47 @@ void PageDownAction::Perform() {
 		Long columnIndex = row->GetCurrent();
 
 		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
-		
-		//1.3. 노트와 페이징버퍼에서 줄 수 만큼 내려간다.
+
+		//1.3. 처음위치로 이동한다.
+		Long movedIndex = row->First();
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		pagingBuffer->Previous(columnIndex - movedIndex);
 
-		Long restedRowCount = 0;
-		if (rowIndex + rowCount >= note->GetLength())
+		//1.4. 줄수 만큼, 마지막 줄이 아니면 반복한다.
+		Glyph* previousRow;
+		Long i = 0;
+		while (i < rowCount && rowIndex < note->GetLength() - 1)
 		{
-			restedRowCount = rowIndex + rowCount - note->GetLength() + 1;
-			rowCount -= restedRowCount;
-		}
-		rowIndex = note->Move(rowIndex + rowCount);
-		row = note->GetAt(rowIndex);
-		row->First();
-		pagingBuffer->NextRow(rowCount);
-
-		//1.4. 줄 수가 충분치 않다면,
-		if (restedRowCount > 0)
-		{
-			//1.4.1. 적재한다.
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
-
-			//1.4.2. 나머지 줄 수 만큼 내려간다.
-			rowIndex = note->GetCurrent() + restedRowCount;
-			if (rowIndex >= note->GetLength())
+			//1.4.1. 적재범위에서 벗어났으면, 재적재한다.
+			Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
+			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
 			{
-				rowIndex = note->GetLength() - 1;
+				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+				rowIndex = note->GetCurrent();
 			}
-			rowIndex = note->Move(rowIndex);
+
+			//1.4.2. 노트에서 이동한다.
+			previousRow = note->GetAt(rowIndex);
+			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
-			row->First();
-			pagingBuffer->NextRow(restedRowCount);
+			columnIndex = row->First();
+
+			//1.4.3. 줄이 가짜 줄이면,
+			if (row->IsDummyRow())
+			{
+				pagingBuffer->Next(previousRow->GetLength());
+			}
+			else
+			{
+				pagingBuffer->NextRow();
+			}
+
+			i++;
 		}
 
-		//1.5. 줄에서 너비와 가장 가까운 위치로 이동한다.
-		columnIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
-		columnIndex = row->Move(columnIndex);
-		pagingBuffer->Next(columnIndex);
-
-		//1.6. 적재범위를 벗어났으면 재적재한다.
-		if (note->IsBelowBottomLine(rowIndex))
-		{
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
-		}
+		//1.5. 줄 너비와 가장 가까운 위치로 이동한다.
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
+		movedIndex = row->Move(nearestIndex);
+		pagingBuffer->Next(movedIndex);
 	}
 }

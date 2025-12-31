@@ -46,6 +46,7 @@ void CtrlRightAction::Perform() {
 		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+			rowIndex = note->GetCurrent();
 		}
 
 		//3.2. 마지막 줄이 아니면,

@@ -97,7 +97,8 @@ void VScrollBarDragAction::Perform() {
 	}
 	else if (note->IsBelowBottomLine(rowIndex))
 	{
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);\
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		rowIndex = note->GetCurrent();
 	}
 
 	//7. 스크롤을 조정한다.

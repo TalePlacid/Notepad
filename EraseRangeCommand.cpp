@@ -124,6 +124,7 @@ void EraseRangeCommand::Execute() {
 	if (note->IsBelowBottomLine(rowIndex))
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		rowIndex = note->GetCurrent();
 		if (i > this->frontOffset)
 		{
 			pagingBuffer->NextRow();
@@ -265,6 +266,7 @@ void EraseRangeCommand::Redo() {
 	if (note->IsBelowBottomLine(rowIndex))
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		rowIndex = note->GetCurrent();
 		if (i > this->frontOffset)
 		{
 			pagingBuffer->NextRow();

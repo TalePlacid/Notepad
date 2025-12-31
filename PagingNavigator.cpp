@@ -76,6 +76,7 @@ Long PagingNavigator::MoveTo(Long offset) {
 			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 			{
 				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+				rowIndex = note->GetCurrent();
 			}
 
 			// 3.1.2. 다음 줄로 이동한다.
