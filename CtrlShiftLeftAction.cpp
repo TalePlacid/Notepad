@@ -3,7 +3,6 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
-#include "MarkingHelper.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -23,7 +22,6 @@ void CtrlShiftLeftAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	MarkingHelper markingHelper(this->parent);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex > 0)
 	{
@@ -42,9 +40,9 @@ void CtrlShiftLeftAction::Perform() {
 			if (!character->IsSelected())
 			{
 				character->Select(TRUE);
-				if (markingHelper.IsUnmarked())
+				if (pagingBuffer->GetSelectionBeginOffset() < 0)
 				{
-					markingHelper.Mark();
+					pagingBuffer->MarkSelectionBegin();
 				}
 			}
 			else
@@ -53,9 +51,9 @@ void CtrlShiftLeftAction::Perform() {
 			}
 			columnIndex = row->Previous();
 			pagingBuffer->Previous();
-			if (markingHelper.HasReturnedToSelectionBegin())
+			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
 			{
-				markingHelper.Unmark();
+				pagingBuffer->UnmarkSelectionBegin();
 			}
 		}
 
@@ -67,17 +65,17 @@ void CtrlShiftLeftAction::Perform() {
 			if (!character->IsSelected())
 			{
 				character->Select(TRUE);
-				if (markingHelper.IsUnmarked())
+				if (pagingBuffer->GetSelectionBeginOffset() < 0)
 				{
-					markingHelper.Mark();
+					pagingBuffer->MarkSelectionBegin();
 				}
 			}
 			else
 			{
 				character->Select(FALSE);
-				if (markingHelper.HasReturnedToSelectionBegin())
+				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
 				{
-					markingHelper.Unmark();
+					pagingBuffer->UnmarkSelectionBegin();
 				}
 			}
 		}

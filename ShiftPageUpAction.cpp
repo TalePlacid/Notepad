@@ -6,7 +6,6 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "resource.h"
-#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -159,7 +158,7 @@ void ShiftPageUpAction::Perform() {
 		//1.3. 현재줄의 앞을 선택한다.
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		MarkingHelper markingHelper(this->parent);
-		markingHelper.Mark();
+		pagingBuffer->MarkSelectionBegin();
 		bool isSelecting = true;
 		if (pagingBuffer->GetCurrentOffset() > pagingBuffer->GetSelectionBeginOffset())
 		{

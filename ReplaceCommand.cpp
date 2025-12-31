@@ -6,7 +6,6 @@
 #include "Glyph.h"
 #include "GlyphFactory.h"
 #include "ByteChecker.h"
-#include "MarkingHelper.h"
 #include "SearchResultController.h"
 #include "resource.h"
 #include "PagingNavigator.h"
@@ -162,8 +161,7 @@ void ReplaceCommand::Execute() {
 		}
 
 		//1.5. 다음 검색결과로 이동한다.
-		MarkingHelper markingHelper(this->parent);
-		markingHelper.Unmark();
+		pagingBuffer->UnmarkSelectionBegin();
 		
 		Long previousIndex = currentIndex;
 		currentIndex = searchResultController->Next();
@@ -174,7 +172,11 @@ void ReplaceCommand::Execute() {
 			row = note->GetAt(rowIndex);
 			columnIndex = row->GetCurrent();
 
-			markingHelper.Mark();
+			if (pagingBuffer->GetSelectionBeginOffset() < 0)
+			{
+				pagingBuffer->MarkSelectionBegin();
+			}
+
 			Long count = RowCounter::CountCharacters(this->source);
 			i = 1;
 			while (i <= count)
@@ -199,11 +201,11 @@ void ReplaceCommand::Undo() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. 선택여부를 갱신한다.
-	MarkingHelper markingHelper(this->parent);
-	markingHelper.Unmark();
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->UnmarkSelectionBegin();
 	note->Select(false);
 
-	markingHelper.Mark();
+	pagingBuffer->MarkSelectionBegin();
 
 	//3. 노트에서 교체한다.
 	ByteChecker byteChecker;
@@ -278,7 +280,6 @@ void ReplaceCommand::Undo() {
 	row->Move(k);
 
 	//4. 페이징버퍼에서 교체한다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (this->source.GetLength() <= this->replaced.GetLength())
 	{

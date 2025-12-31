@@ -59,12 +59,6 @@
     <ClInclude Include="CtrlRightAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CtrlShiftTAction.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CtrlTAction.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DownArrowAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -269,9 +263,6 @@
     <ClInclude Include="PositionCalculator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MarkingHelper.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CutCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -470,12 +461,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CtrlRightAction.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CtrlShiftTAction.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CtrlTAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DownArrowAction.cpp">
@@ -677,9 +662,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PositionCalculator.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="MarkingHelper.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CutCommand.cpp">

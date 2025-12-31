@@ -13,7 +13,6 @@ using namespace std;
 #include "SearchResultController.h"
 #include "SearchResult.h"
 #include "Glyph.h"
-#include "MarkingHelper.h"
 #include "ByteChecker.h"
 #include "FindReplaceOption.h"
 #include "PagingNavigator.h"
@@ -94,8 +93,7 @@ void FindCommand::Execute() {
 		}
 
 		note->Select(false);
-		MarkingHelper markingHelper(this->parent);
-		markingHelper.Unmark();
+		pagingBuffer->UnmarkSelectionBegin();
 
 		nearestIndex = searchResultController->Move(nearestIndex);
 		if (nearestIndex > -1)
@@ -116,7 +114,10 @@ void FindCommand::Execute() {
 				character = row->GetAt(columnIndex);
 				character->Select(true);
 
-				markingHelper.Mark();
+				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				{
+					pagingBuffer->MarkSelectionBegin();
+				}
 
 				if (byteChecker.IsLeadByte(key[i]))
 				{

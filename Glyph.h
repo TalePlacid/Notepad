@@ -39,8 +39,6 @@ public:
 	virtual Long MergeRows(Long index);
 	virtual Long SplitRows(Long rowIndex, Long columnIndex, bool IsDummyRow = false);
 	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
-	virtual Long Mark(Long index);
-	virtual Long Unmark();
 	virtual Long AppendFromFront(const Glyph* ohter);
 	virtual Long AppendFromRear(const Glyph* other);
 	virtual bool IsAboveTopLine(Long index);
@@ -55,7 +53,6 @@ public:
 	virtual Long GetLength() const;
 	virtual Long GetCurrent() const;
 	virtual bool IsSelected() const;
-	virtual Long GetMarked() const;
 protected:
 	bool isSelected;
 };
@@ -74,10 +71,6 @@ inline Long Glyph::GetCurrent() const {
 
 inline bool Glyph::IsSelected() const {
 	return this->isSelected;
-}
-
-inline Long Glyph::GetMarked() const {
-	return -1;
 }
 
 inline bool Glyph::IsAboveTopLine(Long index) {

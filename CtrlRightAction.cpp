@@ -3,7 +3,6 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
-#include "MarkingHelper.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "resource.h"

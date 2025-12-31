@@ -2,7 +2,6 @@
 #include "CtrlShiftEndAction.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
-#include "MarkingHelper.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -22,10 +21,9 @@ void CtrlShiftEndAction::Perform() {
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 
 	//2. 선택시작위치가 없으면, 선택 표시한다.
-	MarkingHelper markingHelper(this->parent);
 	if (selectionBeginOffset < 0)
 	{
-		markingHelper.Mark();
+		pagingBuffer->MarkSelectionBegin();
 	}
 
 	//3. 마지막 페이지를 적재한다.

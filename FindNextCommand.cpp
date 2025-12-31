@@ -6,7 +6,6 @@
 #include "ByteChecker.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
-#include "MarkingHelper.h"
 #include "PagingNavigator.h"
 
 #pragma warning(disable:4996)
@@ -39,8 +38,8 @@ void FindNextCommand::Execute() {
 	{
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		note->Select(false);
-		MarkingHelper markingHelper(this->parent);
-		markingHelper.Unmark();
+
+		pagingBuffer->UnmarkSelectionBegin();
 
 		Glyph* row;
 		Long rowIndex;
@@ -61,7 +60,10 @@ void FindNextCommand::Execute() {
 			character = row->GetAt(columnIndex);
 			character->Select(true);
 
-			markingHelper.Mark();
+			if (pagingBuffer->GetSelectionBeginOffset() < 0)
+			{
+				pagingBuffer->MarkSelectionBegin();
+			}
 
 			if (byteChecker.IsLeadByte(key[i]))
 			{

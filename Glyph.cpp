@@ -118,14 +118,6 @@ Long Glyph::SelectRange(Long start, Long end, bool isSelecting) {
 	return 0;
 }
 
-Long Glyph::Mark(Long index) {
-	return -1;
-}
-
-Long Glyph::Unmark() {
-	return -1;
-}
-
 Long Glyph::AppendFromFront(const Glyph* other) {
 	return 0;
 }

@@ -4,7 +4,6 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
-#include "MarkingHelper.h"
 #include "resource.h"
 #include "ScrollController.h"
 

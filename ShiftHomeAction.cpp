@@ -3,7 +3,6 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
-#include "MarkingHelper.h"
 
 #pragma warning(disable:4996)
 
@@ -22,7 +21,6 @@ void ShiftHomeAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	MarkingHelper markingHelper(this->parent);
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* character;
 	Long i = columnIndex - 1;
@@ -32,9 +30,9 @@ void ShiftHomeAction::Perform() {
 		if (!character->IsSelected())
 		{
 			character->Select(TRUE);
-			if (markingHelper.IsUnmarked())
+			if (pagingBuffer->GetSelectionBeginOffset() < 0)
 			{
-				markingHelper.Mark();
+				pagingBuffer->MarkSelectionBegin();
 			}
 			row->Previous();
 			pagingBuffer->Previous();
@@ -44,9 +42,9 @@ void ShiftHomeAction::Perform() {
 			character->Select(FALSE);
 			row->Previous();
 			pagingBuffer->Previous();
-			if (markingHelper.HasReturnedToSelectionBegin())
+			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
 			{
-				markingHelper.Unmark();
+				pagingBuffer->UnmarkSelectionBegin();
 			}
 		}
 		i--;

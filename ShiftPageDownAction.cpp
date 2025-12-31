@@ -3,7 +3,6 @@
 #include "PageDownAction.h"
 #include "ScrollController.h"
 #include "NotepadForm.h"
-#include "MarkingHelper.h"
 #include "Glyph.h"
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
@@ -264,7 +263,7 @@ void ShiftPageDownAction::Perform() {
 		//1.3. 노트에서 뒷부분을 선택한다.
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		MarkingHelper markingHelper(this->parent);
-		markingHelper.Mark();
+		pagingBuffer->MarkSelectionBegin();
 		bool isSelecting = true;
 		if (pagingBuffer->GetCurrentOffset() < pagingBuffer->GetSelectionBeginOffset())
 		{

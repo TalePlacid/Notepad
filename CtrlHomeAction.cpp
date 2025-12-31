@@ -1,6 +1,5 @@
 #include <afxwin.h>
 #include "CtrlHomeAction.h"
-#include "MarkingHelper.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)

@@ -27,7 +27,6 @@
 #include "ClipboardController.h"
 #include "PagingBuffer.h"
 #include "Observer.h"
-#include "MarkingHelper.h"
 #include "SearchResultController.h"
 #include "message.h"
 #include "FindReplaceCommandFactory.h"
@@ -163,8 +162,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 
 		this->note->Select(false);
-		MarkingHelper markingHelper(this);
-		markingHelper.Unmark();
+		this->pagingBuffer->UnmarkSelectionBegin();
 	
 		//NoteWrapper noteWrapper(this);
 		//noteWrapper.DeleteDummyRows();
@@ -274,8 +272,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		}
 
 		this->note->Select(false);
-		MarkingHelper markingHelper(this);
-		markingHelper.Unmark();
+		this->pagingBuffer->UnmarkSelectionBegin();
 		this->Invalidate();
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
@@ -321,8 +318,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	}
 
 	this->note->Select(false);
-	MarkingHelper markingHelper(this);
-	markingHelper.Unmark();
+	this->pagingBuffer->UnmarkSelectionBegin();
 	this->Invalidate();
 	this->Notify("UpdateScrollBars");
 
@@ -391,8 +387,7 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		if (!keyAction->ShouldKeepSelection())
 		{
 			this->note->Select(false);
-			MarkingHelper markingHelper(this);
-			markingHelper.Unmark();
+			this->pagingBuffer->UnmarkSelectionBegin();
 		}
 		delete keyAction;
 	}
@@ -408,8 +403,7 @@ void NotepadForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 		if (!scrollBarAction->ShouldKeepSelection())
 		{
 			this->note->Select(false);
-			MarkingHelper markingHelper(this);
-			markingHelper.Unmark();
+			this->pagingBuffer->UnmarkSelectionBegin();
 		}
 		delete scrollBarAction;
 	}
