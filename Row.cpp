@@ -66,6 +66,19 @@ Long Row::TruncateAfter(Long index) {
 	return count;
 }
 
+Long Row::ToggleSelection(Long start, Long end) {
+	Long count = 0;
+	Long i = start;
+	while (i < end && i < this->length)
+	{
+		this->glyphs[i]->ToggleSelection();
+		count++;
+		i++;
+	}
+
+	return count;
+}
+
 Long Row::SelectRange(Long start, Long end, bool isSelecting) {
 	return Composite::SelectRange(start, end - 1, isSelecting);
 }

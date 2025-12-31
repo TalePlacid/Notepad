@@ -98,6 +98,10 @@ Long Glyph::ToggleSelection() {
 	return ret;
 }
 
+Long Glyph::ToggleSelection(Long start, Long end) {
+	return 0;
+}
+
 Long Glyph::TruncateAfter(Long index) {
 	return 0;
 }

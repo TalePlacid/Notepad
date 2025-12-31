@@ -32,6 +32,7 @@ public:
 	virtual void Accept(Visitor& visitor);
 	virtual bool Select(bool isSelecting);
 	virtual Long ToggleSelection();
+	virtual Long ToggleSelection(Long start, Long end);
 	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
 
 	virtual Glyph* operator[](Long index);

@@ -19,6 +19,7 @@ public:
 	virtual Glyph* Clone();
 	virtual void Accept(Visitor& visitor);
 	virtual Long TruncateAfter(Long index);
+	virtual Long ToggleSelection(Long start, Long end);
 	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
 	virtual Long FindPreviousWordStart(Long columnIndex);
 	virtual Long FindNextWordStart(Long columnIndex);
