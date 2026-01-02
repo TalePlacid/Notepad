@@ -391,6 +391,7 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 		delete keyAction;
 	}
+	TRACE("%ld\n", this->pagingBuffer->GetCurrentOffset());
 	this->Invalidate();
 }
 

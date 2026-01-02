@@ -62,27 +62,31 @@ void ShiftRightAction::Perform() {
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 		}
 
-		//3.2. 노트에서 이동한다.
-		rowIndex = note->Next();
-		row = note->GetAt(rowIndex);
-		columnIndex = row->First();
-
-		//3.3. 줄이 진짜이면,
-		if (!row->IsDummyRow())
+		//3.2. 마지막줄이 아니면,
+		if (rowIndex + 1 < note->GetLength())
 		{
-			//3.3.1. 페이징 버퍼에서 마킹되어 있지 않으면, 마킹한다.
-			if (pagingBuffer->GetSelectionBeginOffset() < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
+			//3.2.1. 노트에서 이동한다.
+			rowIndex = note->Next();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
 
-			//3.3.2. 페이징 버퍼에서 이동한다. 
-			currentOffset = pagingBuffer->NextRow();
-
-			//3.3.3. 마킹되어 있던 위치로 돌아왔으면, 마킹을 지운다.
-			if (currentOffset == pagingBuffer->GetSelectionBeginOffset())
+			//3.2.2. 줄이 진짜이면,
+			if (!row->IsDummyRow())
 			{
-				pagingBuffer->UnmarkSelectionBegin();
+				//3.2.2.1. 페이징 버퍼에서 마킹되어 있지 않으면, 마킹한다.
+				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				{
+					pagingBuffer->MarkSelectionBegin();
+				}
+
+				//3.2.2.2. 페이징 버퍼에서 이동한다. 
+				currentOffset = pagingBuffer->NextRow();
+
+				//3.2.2.3. 마킹되어 있던 위치로 돌아왔으면, 마킹을 지운다.
+				if (currentOffset == pagingBuffer->GetSelectionBeginOffset())
+				{
+					pagingBuffer->UnmarkSelectionBegin();
+				}
 			}
 		}
 	}
