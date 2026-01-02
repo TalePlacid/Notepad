@@ -27,7 +27,6 @@ void ShiftRightAction::Perform() {
 
 	//2. 줄의 끝이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Long currentOffset;
 	if (columnIndex < row->GetLength())
 	{
 		//2.1. 노트에서 선택한다.
@@ -36,20 +35,10 @@ void ShiftRightAction::Perform() {
 		//2.2. 노트에서 이동한다.
 		columnIndex = row->Next();
 
-		//2.3. 페이징 버퍼에서 마킹되어 있지 않으면, 마킹한다.
-		if (pagingBuffer->GetSelectionBeginOffset() < 0)
-		{
-			pagingBuffer->MarkSelectionBegin();
-		}
-
-		//2.4. 페이징 버퍼에서 이동한다. 
-		currentOffset = pagingBuffer->Next();
-
-		//2.5. 마킹되어 있던 위치로 돌아왔으면, 마킹을 지운다.
-		if (currentOffset == pagingBuffer->GetSelectionBeginOffset())
-		{
-			pagingBuffer->UnmarkSelectionBegin();
-		}
+		//2.3. 페이징 버퍼에서 선택과 이동한다.
+		pagingBuffer->BeginSelectionIfNeeded();
+		pagingBuffer->Next();
+		pagingBuffer->EndSelectionIfCollapsed();
 	}
 	else //3. 줄의 끝이면,
 	{
@@ -70,23 +59,12 @@ void ShiftRightAction::Perform() {
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 
-			//3.2.2. 줄이 진짜이면,
+			//3.2.2. 줄이 진짜이면, 페이징 버퍼에서 선택과 이동한다.
 			if (!row->IsDummyRow())
 			{
-				//3.2.2.1. 페이징 버퍼에서 마킹되어 있지 않으면, 마킹한다.
-				if (pagingBuffer->GetSelectionBeginOffset() < 0)
-				{
-					pagingBuffer->MarkSelectionBegin();
-				}
-
-				//3.2.2.2. 페이징 버퍼에서 이동한다. 
-				currentOffset = pagingBuffer->NextRow();
-
-				//3.2.2.3. 마킹되어 있던 위치로 돌아왔으면, 마킹을 지운다.
-				if (currentOffset == pagingBuffer->GetSelectionBeginOffset())
-				{
-					pagingBuffer->UnmarkSelectionBegin();
-				}
+				pagingBuffer->BeginSelectionIfNeeded();
+				pagingBuffer->NextRow();
+				pagingBuffer->EndSelectionIfCollapsed();
 			}
 		}
 	}
