@@ -30,34 +30,25 @@ void ShiftRightAction::Perform() {
 	Long currentOffset;
 	if (columnIndex < row->GetLength())
 	{
-		//2.1. 노트에서 다음 단어 시작으로 이동한다.
-		Long wordStart = row->FindNextWordStart(columnIndex);
-		Long movedIndex = row->Move(wordStart);
+		//2.1. 노트에서 선택한다.
+		row->GetAt(columnIndex)->ToggleSelection();
 
-		//2.2. 노트에서 범위만큼 선택한다.
-		row->ToggleSelection(columnIndex, movedIndex);
+		//2.2. 노트에서 이동한다.
+		columnIndex = row->Next();
 
-		//2.3. 차이만큼 반복한다.
-		Long difference = movedIndex - columnIndex;
-		Long i = 0;
-		while (i < difference)
+		//2.3. 페이징 버퍼에서 마킹되어 있지 않으면, 마킹한다.
+		if (pagingBuffer->GetSelectionBeginOffset() < 0)
 		{
-			//2.3.1. 페이징 버퍼에서 마킹되어 있지 않으면, 마킹한다.
-			if (pagingBuffer->GetSelectionBeginOffset() < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
+			pagingBuffer->MarkSelectionBegin();
+		}
 
-			//2.3.2. 페이징 버퍼에서 이동한다. 
-			currentOffset = pagingBuffer->Next();
+		//2.4. 페이징 버퍼에서 이동한다. 
+		currentOffset = pagingBuffer->Next();
 
-			//2.3.3. 마킹되어 있던 위치로 돌아왔으면, 마킹을 지운다.
-			if (currentOffset == pagingBuffer->GetSelectionBeginOffset())
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-
-			i++;
+		//2.5. 마킹되어 있던 위치로 돌아왔으면, 마킹을 지운다.
+		if (currentOffset == pagingBuffer->GetSelectionBeginOffset())
+		{
+			pagingBuffer->UnmarkSelectionBegin();
 		}
 	}
 	else //3. 줄의 끝이면,
@@ -95,64 +86,4 @@ void ShiftRightAction::Perform() {
 			}
 		}
 	}
-#if 0
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (columnIndex < row->GetLength())
-	{
-		Glyph* character = row->GetAt(columnIndex);
-		if (!character->IsSelected())
-		{
-			character->Select(TRUE);
-			if (pagingBuffer->GetSelectionBeginOffset() < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
-			row->Next();
-			pagingBuffer->Next();
-		}
-		else
-		{
-			character->Select(FALSE);
-			row->Next();
-			pagingBuffer->Next();
-			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-		}
-	}
-	else
-	{
-		if (note->IsBelowBottomLine(rowIndex+1))
-		{
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
-			rowIndex = note->GetCurrent();
-		}
-
-		if (rowIndex < note->GetLength() - 1)
-		{
-			if (pagingBuffer->GetSelectionBeginOffset() < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
-
-			rowIndex = note->Next();
-			pagingBuffer->NextRow();
-
-			row = note->GetAt(rowIndex);
-			row->First();
-			pagingBuffer->First();
-
-			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-		}
-	}
-#endif
 }
