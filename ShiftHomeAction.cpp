@@ -16,37 +16,21 @@ ShiftHomeAction::~ShiftHomeAction() {
 }
 
 void ShiftHomeAction::Perform() {
+	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	//2. 줄에서 앞까지 반복한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Glyph* character;
-	Long i = columnIndex - 1;
-	while (i >= 0)
+	while (columnIndex > 0)
 	{
-		character = row->GetAt(i);
-		if (!character->IsSelected())
-		{
-			character->Select(TRUE);
-			if (pagingBuffer->GetSelectionBeginOffset() < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
-			row->Previous();
-			pagingBuffer->Previous();
-		}
-		else
-		{
-			character->Select(FALSE);
-			row->Previous();
-			pagingBuffer->Previous();
-			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-		}
-		i--;
+		columnIndex = row->Previous();
+		row->GetAt(columnIndex)->ToggleSelection();
+
+		pagingBuffer->BeginSelectionIfNeeded();
+		pagingBuffer->Previous();
+		pagingBuffer->EndSelectionIfCollapsed();
 	}
 }
