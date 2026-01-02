@@ -24,90 +24,58 @@ void ShiftUpAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	//2. 이전 줄이 적재범위에서 벗어났다면 재적재한다.
-	if (note->IsAboveTopLine(rowIndex - 1))
+	//2. 적재범위를 넘어서면, 적재한다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 		rowIndex = note->GetCurrent();
 	}
 
-	//3. 현재 위치가 첫번째 줄이 아니라면,
+	//3. 첫번째 줄이 아니면,
 	if (rowIndex > 0)
 	{
 		//3.1. 현재 위치까지의 너비를 구한다.
+		row = note->GetAt(rowIndex);
+		columnIndex = row->GetCurrent();
+
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
-		//3.2. 현재 줄의 앞부분을 처리한다.
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		Long selectionBeginOffset;
-		Long previousOffset = -1;
-		Long currentOffset = pagingBuffer->GetCurrentOffset();
-		while (previousOffset != currentOffset)
+		//3.2. 줄의 처음까지 반복한다.
+		while (columnIndex > 0)
 		{
-			//3.2.1. 페이징 버퍼에서 마킹한다.
-			selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-			if (selectionBeginOffset < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
-			else if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-
-			//3.2.2. 노트에서 선택반전한다.
-			if (columnIndex > 0)
-			{
-				row->GetAt(columnIndex - 1)->ToggleSelection();
-			}
-
-			previousOffset = currentOffset;
-			currentOffset = pagingBuffer->Previous();
-			if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
 			columnIndex = row->Previous();
+			row->GetAt(columnIndex)->ToggleSelection();
+
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->Previous();
+			pagingBuffer->EndSelectionIfCollapsed();
 		}
 
 		//3.3. 이전 줄로 이동한다.
-		currentOffset = pagingBuffer->PreviousRow();
-		currentOffset = pagingBuffer->Last();
 		rowIndex = note->Previous();
-		row = note->GetAt(rowIndex);
-		columnIndex = row->Last();
+		Glyph* movedRow = note->GetAt(rowIndex);
+		columnIndex = movedRow->Last();
 
-		//3.4. 너비에 근접한 열부터 뒷부분을 선택한다.
-		Long nearestColumnIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
-		Long i = row->GetLength();
-		while (previousOffset != currentOffset && i > nearestColumnIndex)
+		if (!row->IsDummyRow())
 		{
-			//3.4.1. 페이징 버퍼에서 마킹한다.
-			selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-			if (selectionBeginOffset < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
-			else if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->PreviousRow();
+			pagingBuffer->Last();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
 
-			//3.4.2. 노트에서 선택반전한다.
-			if (columnIndex > 0)
-			{
-				row->GetAt(columnIndex - 1)->ToggleSelection();
-			}
+		//3.4. 가장 가까운 위치까지 반복한다.
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(movedRow, originalRowWidth);
+		while (columnIndex > nearestIndex && columnIndex > 0)
+		{
+			columnIndex = movedRow->Previous();
+			movedRow->GetAt(columnIndex)->ToggleSelection();
 
-			previousOffset = currentOffset;
-			currentOffset = pagingBuffer->Previous();
-			if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-			columnIndex = row->Previous();
-			i--;
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->Previous();
+			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}
 }
