@@ -537,6 +537,30 @@ Long PagingBuffer::UnmarkSelectionBegin() {
 	return this->selectionBeginOffset;
 }
 
+bool PagingBuffer::BeginSelectionIfNeeded() {
+	bool ret = false;
+
+	if (this->selectionBeginOffset < 0)
+	{
+		this->selectionBeginOffset = ftell(this->file);
+		ret = true;
+	}
+
+	return ret;
+}
+
+bool PagingBuffer::EndSelectionIfCollapsed() {
+	bool ret = false;
+
+	if (ftell(this->file) == this->selectionBeginOffset)
+	{
+		this->selectionBeginOffset = -1;
+		ret = true;
+	}
+
+	return ret;
+}
+
 Long PagingBuffer::MoveOffset(Long offset) {
 	fseek(this->file, offset, SEEK_SET);
 

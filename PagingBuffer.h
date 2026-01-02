@@ -36,6 +36,8 @@ public:
 
 	Long MarkSelectionBegin();
 	Long UnmarkSelectionBegin();
+	bool BeginSelectionIfNeeded();
+	bool EndSelectionIfCollapsed();
 
 	Long MoveOffset(Long offset);
 
