@@ -6,6 +6,7 @@
 #include "PagingBuffer.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
+#include "Glyph.h"
 
 #pragma warning(disable:4996)
 
@@ -46,4 +47,7 @@ void AutoWrapCommand::Execute() {
 	{
 		scrollController->ResizeVRange(max);
 	}
+
+	pagingBuffer->UnmarkSelectionBegin();
+	notepadForm->note->Select(false);
 }
