@@ -2,6 +2,7 @@
 #include "ShiftDownAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
+#include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"
 #include "resource.h"
@@ -24,90 +25,58 @@ void ShiftDownAction::Perform() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	//2. 다음 줄이 적재범위에서 벗어났다면 재적재한다.
-	if (note->IsBelowBottomLine(rowIndex + 1))
+	//2. 적재 범위에서 벗어나면 적재한다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * sizeCalculator->GetRowHeight();
+	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
 		rowIndex = note->GetCurrent();
 	}
 
-	//3. 현재 위치가 마지막 줄이 아니라면,
-	if (rowIndex < note->GetLength() - 1)
+	//3. 마지막 줄이 아니라면,
+	if (rowIndex + 1 < note->GetLength())
 	{
 		//3.1. 현재 위치까지의 너비를 구한다.
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+		row = note->GetAt(rowIndex);
+		columnIndex = row->GetCurrent();
+		Long originalWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
-		//3.2. 현재 줄의 뒷부분을 선택한다.
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		Long selectionBeginOffset;
-		Long previousOffset = -1;
-		Long currentOffset = pagingBuffer->GetCurrentOffset();
-		while (previousOffset != currentOffset)
+		//3.2. 줄의 끝까지 반복한다.
+		while (columnIndex < row->GetLength())
 		{
-			//3.2.1. 페이징 버퍼에서 마킹한다.
-			selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-			if (selectionBeginOffset < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
-			else if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-
-			//3.2.2. 노트에서 선택반전한다.
-			if (columnIndex < row->GetLength())
-			{
-				row->GetAt(columnIndex)->ToggleSelection();
-			}
-
-			previousOffset = currentOffset;
-			currentOffset = pagingBuffer->Next();
-			if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
+			row->GetAt(columnIndex)->ToggleSelection();
 			columnIndex = row->Next();
+
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->Next();
+			pagingBuffer->EndSelectionIfCollapsed();
 		}
 
-		//3.3. 다음줄로 이동한다.
-		previousOffset = currentOffset;
-		currentOffset = pagingBuffer->NextRow();
+		//3.3. 노트에서 이동한다.
 		rowIndex = note->Next();
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
 
-		//3.4. 너비에 근접한 열까지 반복한다.
-		Long nearestColumnIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
-		Long i = 0;
-		while (previousOffset != currentOffset && i < nearestColumnIndex)
+		if (!row->IsDummyRow())
 		{
-			//3.4.1. 페이징 버퍼에서 마킹한다.
-			selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-			if (selectionBeginOffset < 0)
-			{
-				pagingBuffer->MarkSelectionBegin();
-			}
-			else if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->NextRow();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
 
-			//3.4.2. 노트에서 선택반전한다.
-			if (columnIndex < row->GetLength())
-			{
-				row->GetAt(columnIndex)->ToggleSelection();
-			}
-
-			previousOffset = currentOffset;
-			currentOffset = pagingBuffer->Next();
-			if (currentOffset == selectionBeginOffset)
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
+		//3.4. 가장 비슷한 위치까지 반복한다.
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(row, originalWidth);
+		while (columnIndex < nearestIndex)
+		{
+			row->GetAt(columnIndex)->ToggleSelection();
 			columnIndex = row->Next();
-			i++;
+
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->Next();
+			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}
 }
