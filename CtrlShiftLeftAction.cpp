@@ -17,84 +17,60 @@ CtrlShiftLeftAction::~CtrlShiftLeftAction() {
 }
 
 void CtrlShiftLeftAction::Perform() {
+	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	//2. 줄의 처음이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (columnIndex > 0)
 	{
-		Glyph* character = row->GetAt(columnIndex - 1);
-		BOOL isWordCharacter = character->IsWordCharacter();
-		BOOL inWord = isWordCharacter;
-		while ((columnIndex > 0) && (!inWord || isWordCharacter))
-		{
-			character = row->GetAt(columnIndex - 1);
-			isWordCharacter = character->IsWordCharacter();
-			if (isWordCharacter)
-			{
-				inWord = TRUE;
-			}
+		//2.1. 노트에서 이동한다.
+		Long wordStart = row->FindPreviousWordStart(columnIndex);
+		Long moved = row->Move(wordStart);
 
-			if (!character->IsSelected())
-			{
-				character->Select(TRUE);
-				if (pagingBuffer->GetSelectionBeginOffset() < 0)
-				{
-					pagingBuffer->MarkSelectionBegin();
-				}
-			}
-			else
-			{
-				character->Select(FALSE);
-			}
-			columnIndex = row->Previous();
+		//2.2. 노트에서 선택한다.
+		row->SelectRange(moved, columnIndex);
+
+		//2.3. 페이징버퍼에서 선택하며 이동한다.
+		Long count = columnIndex - moved;
+		Long i = 0;
+		while (i < count)
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
 			pagingBuffer->Previous();
-			if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
-			{
-				pagingBuffer->UnmarkSelectionBegin();
-			}
-		}
-
-		if (columnIndex > 0)
-		{
-			columnIndex = row->Next();
-			pagingBuffer->Next();
-			character = row->GetAt(columnIndex - 1);
-			if (!character->IsSelected())
-			{
-				character->Select(TRUE);
-				if (pagingBuffer->GetSelectionBeginOffset() < 0)
-				{
-					pagingBuffer->MarkSelectionBegin();
-				}
-			}
-			else
-			{
-				character->Select(FALSE);
-				if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetSelectionBeginOffset())
-				{
-					pagingBuffer->UnmarkSelectionBegin();
-				}
-			}
+			pagingBuffer->EndSelectionIfCollapsed();
+			i++;
 		}
 	}
-	else
+	else //3. 줄의 처음이면,
 	{
-		if (note->IsAboveTopLine(rowIndex + 1))
+		//3.1. 적재범위를 벗어났으면, 재적재한다.
+		if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 		{
 			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
 			rowIndex = note->GetCurrent();
 		}
 
+		//3.2. 첫번째 줄이 아니면,
 		if (rowIndex > 0)
 		{
-			rowIndex = note->Previous();
+			//3.2.1. 노트에서 이동한다.
 			row = note->GetAt(rowIndex);
-			row->Last();
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			rowIndex = note->Previous();
+			Glyph* movedRow = note->GetAt(rowIndex);
+			columnIndex = movedRow->Last();
+
+			//3.2.2. 원래줄이 진짜줄이면, 페이징버퍼에서 선택하며 이동한다.
+			if (!row->IsDummyRow())
+			{
+				pagingBuffer->BeginSelectionIfNeeded();
+				pagingBuffer->PreviousRow();
+				pagingBuffer->Last();
+				pagingBuffer->EndSelectionIfCollapsed();
+			}
 		}
 	}
 }
