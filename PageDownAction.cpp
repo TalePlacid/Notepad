@@ -2,8 +2,8 @@
 #include "PageDownAction.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
-#include "ScrollController.h"
 #include "PagingBuffer.h"
+#include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "resource.h"
 
@@ -25,10 +25,6 @@ void PageDownAction::Perform() {
 	Long posLimit = vScroll.GetMax() - vScroll.GetPage();
 	if (scrollController->HasVScroll() && vScroll.GetPos() < posLimit)
 	{
-		if (vScroll.GetPos() == 17016)
-		{
-			TRACE("[pos = 17016]\n");
-		}
 		//1.1. 내려갈 줄 수를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Long rowHeight = sizeCalculator->GetRowHeight();
