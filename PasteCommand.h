@@ -22,6 +22,7 @@ public:
 	virtual bool IsUndoable();
 private:
 	Long offset;
+	Long columnIndex;
 	CString contents;
 };
 

@@ -17,8 +17,14 @@ CtrlVAction::~CtrlVAction() {
 }
 
 void CtrlVAction::Perform() {
-	((NotepadForm*)(this->parent))->note->Select(false);
-	((NotepadForm*)(this->parent))->pagingBuffer->UnmarkSelectionBegin();
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	if (pagingBuffer->GetSelectionBeginOffset() >= 0)
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_ERASERANGE, 0);
+	}
 
-	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_PASTE, NULL);
+	((NotepadForm*)(this->parent))->note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
+	
+	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_PASTE, 0);
 }

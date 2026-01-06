@@ -10,6 +10,7 @@
 #include "SizeCalculator.h"
 #include "RowCounter.h"
 #include "PagingNavigator.h"
+#include "NoteWrapper.h"
 
 #pragma warning(disable:4996)
 
@@ -37,9 +38,11 @@ PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
 }
 
 void PasteCommand::Execute() {
+	//1. 클립보드에서 붙여넣기가 됐으면,
 	BOOL isPasted = ((NotepadForm*)(this->parent))->clipboardController->Paste();
 	if (isPasted)
 	{
+		//1.1. 현재위치를 읽는다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(rowIndex);
@@ -47,186 +50,224 @@ void PasteCommand::Execute() {
 
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
+		this->columnIndex = columnIndex;
 		this->offset = pagingBuffer->GetCurrentOffset();
 
-		TCHAR letters[2];
-		Glyph* glyph;
+		//1.2. 복사할 내용의 끝까지 반복한다.
 		GlyphFactory glyphFactory;
 		ByteChecker byteChecker;
-		Long length = strlen((LPCTSTR)(this->contents));
+		NoteWrapper noteWrapper(this->parent);
+		Glyph* glyph;
+		TCHAR character[2];
+		Long dummied = 0;
 		Long i = 0;
-		while (i < length)
+		while (i < this->contents.GetLength())
 		{
-			letters[0] = this->contents.GetAt(i);
-			if (byteChecker.IsLeadByte(letters[0]) || letters[0] == '\r')
+			//1.2.1. 문자를 읽는다.
+			character[0] = this->contents.GetAt(i);
+			if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
 			{
-				letters[1] = this->contents.GetAt(++i);
+				character[1] = this->contents.GetAt(++i);
 			}
 
-			if (letters[0] != '\r')
+			//1.2.2. 줄바꿈 문자가 아니라면,
+			if (character[0] != '\r')
 			{
-				glyph = glyphFactory.Create(letters);
+				//1.2.2.1. 줄에서 쓴다.
+				glyph = glyphFactory.Create(character);
 				glyph->Select(true);
-				columnIndex = row->Add(columnIndex, glyph);
+				row->Add(columnIndex, glyph);
+				columnIndex = row->GetCurrent();
 			}
-			else
+			else //1.2.3. 줄바꿈 문자라면, 줄을 나눈다.
 			{
 				note->SplitRows(rowIndex, columnIndex);
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
 				columnIndex = row->First();
-				
 			}
-			columnIndex = row->GetCurrent();
+
+			//1.2.3. 자동개행중이면, 재개행한다.
+			if (((NotepadForm*)(this->parent))->isAutoWrapped)
+			{
+				dummied += noteWrapper.Rewrap();
+				rowIndex = note->GetCurrent();
+				row = note->GetAt(rowIndex);
+				columnIndex = row->GetCurrent();
+			}
 			i++;
 		}
 
+		//1.3. 페이징 버퍼에서 쓴다.
+		pagingBuffer->MarkSelectionBegin();
 		pagingBuffer->Add(this->contents);
 
+		//1.4. 수직 스크롤바에서 최대값을 조정한다.
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		if (scrollController->HasVScroll())
 		{
 			Scroll vScroll = scrollController->GetVScroll();
-			Long max = vScroll.GetMax() + RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+			Long max = vScroll.GetMax() + (RowCounter::CountRow(this->contents) + dummied) * sizeCalculator->GetRowHeight();
 			scrollController->ResizeVRange(max);
 		}
 	}
 }
 
 void PasteCommand::Undo() {
+	//1. 위치로 이동한다.
 	PagingNavigator pagingNavigator(this->parent);
 	pagingNavigator.MoveTo(this->offset);
+	pagingNavigator.NormalizeColumn(this->columnIndex);
 
-	Long rearOffset = this->offset + this->contents.GetLength();
-
+	//2. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	//3. 컨텐츠 바이트 수만큼 반복한다.
 	ByteChecker byteChecker;
-	Glyph* character;
-	BOOL hasNextRow = TRUE;
-	Long i = rearOffset;
-	while (hasNextRow && i > this->offset)
+	Long merged = 0;
+	TCHAR* character;
+	Long characterByte;
+	Glyph* nextRow;
+	Long i = 0;
+	while (i < this->contents.GetLength())
 	{
-		hasNextRow = FALSE;
-		while (row->GetLength() > columnIndex && i > this->offset)
+		//3.1. 줄의 끝이 아니라면,
+		if (columnIndex < row->GetLength())
 		{
-			character = row->GetAt(columnIndex);
-			i--;
-			if (byteChecker.IsLeadByte(*(char*)(*character)))
+			//3.1.1. 구한다.
+			character = (char*)*row->GetAt(columnIndex);
+			characterByte = 1;
+			if (byteChecker.IsLeadByte(character[0]))
 			{
-				i--;
+				characterByte = 2;
 			}
+
+			//3.1.2. 노트에서 지운다.
 			row->Remove(columnIndex);
+			row->Move(columnIndex);
 		}
-
-		if (rowIndex + 1 < note->GetLength() && i > this->offset)
+		else //3.2. 줄의 끝이라면,
 		{
-			hasNextRow = TRUE;
-			i -= 2;
+			//3.2.1. 바이트수를 구한다.
+			nextRow = note->GetAt(rowIndex + 1);
+			if (!nextRow->IsDummyRow())
+			{
+				characterByte = 2;
+			}
+			else
+			{
+				characterByte = 0;
+			}
+
+			//3.2.2. 줄을 합친다.
 			note->MergeRows(rowIndex);
-			columnIndex = row->Move(columnIndex);
+			merged++;
 		}
+
+		i += characterByte;
+	}
+	
+	//4. 자동개행중이면, 재개행한다.
+	Long dummied = 0;
+	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	{
+		NoteWrapper noteWrapper(this->parent);
+		dummied = noteWrapper.Rewrap();
 	}
 
+	//5. 페이징버퍼에서 지운다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (i > this->offset)
-	{
-		pagingBuffer->Add(CString("\r\n"));
-		rearOffset += 2;
-	}
-	pagingBuffer->Remove(rearOffset);
-	if (i > this->offset)
-	{
-		pagingBuffer->PreviousRow();
-		pagingBuffer->Last();
-	}
+	pagingBuffer->Remove(this->offset + this->contents.GetLength());
 
-	rowIndex = note->Move(rowIndex);
-	row = note->GetAt(rowIndex);
-	columnIndex = row->Move(columnIndex);
-
-	//4. 수직 스크롤바를 반영한다.
+	//6. 수직 스크롤을 조정한다.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long rowHeight = sizeCalculator->GetRowHeight();
 	if (scrollController->HasVScroll())
 	{
 		Scroll vScroll = scrollController->GetVScroll();
-		Long max = vScroll.GetMax() - RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+		Long max = vScroll.GetMax() - (merged + dummied) * rowHeight;
 		scrollController->ResizeVRange(max);
 	}
 
-	//5. 적재량이 부족하면 재적재한다.
-	if (note->IsBelowBottomLine(rowIndex))
+	//7. 적재량이 부족하면, 재적재한다.
+	Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
+	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
-		rowIndex = note->GetCurrent();
-		if (i > this->offset)
-		{
-			pagingBuffer->NextRow();
-			pagingBuffer->Remove();
-			note->MergeRows(rowIndex);
-			row->Move(columnIndex);
-		}
 	}
 }
 
 void PasteCommand::Redo() {
+	//1. 오프셋 기반으로 이동한다.
 	PagingNavigator pagingNavigator(this->parent);
 	pagingNavigator.MoveTo(this->offset);
+	pagingNavigator.NormalizeColumn(this->columnIndex);
 
+	//2. 현재위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
-	this->offset = pagingBuffer->GetCurrentOffset();
-
-	TCHAR letters[2];
-	Glyph* glyph;
+	//3. 복사할 내용의 끝까지 반복한다.
 	GlyphFactory glyphFactory;
 	ByteChecker byteChecker;
-	Long length = strlen((LPCTSTR)(this->contents));
+	NoteWrapper noteWrapper(this->parent);
+	Glyph* glyph;
+	TCHAR character[2];
+	Long dummied = 0;
 	Long i = 0;
-	while (i < length)
+	while (i < this->contents.GetLength())
 	{
-		letters[0] = this->contents.GetAt(i);
-		if (byteChecker.IsLeadByte(letters[0]) || letters[0] == '\r')
+		//3.1. 문자를 읽는다.
+		character[0] = this->contents.GetAt(i);
+		if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
 		{
-			letters[1] = this->contents.GetAt(++i);
+			character[1] = this->contents.GetAt(++i);
 		}
 
-		if (letters[0] != '\r')
+		//3.2. 줄바꿈 문자가 아니라면, 줄에서 쓴다.
+		if (character[0] != '\r')
 		{
-			glyph = glyphFactory.Create(letters);
-			glyph->Select(true);
-			columnIndex = row->Add(columnIndex, glyph);
+			glyph = glyphFactory.Create(character);
+			row->Add(columnIndex, glyph);
+			columnIndex = row->GetCurrent();
 		}
-		else
+		else //3.3. 줄바꿈 문자라면, 줄을 나눈다.
 		{
 			note->SplitRows(rowIndex, columnIndex);
 			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
-
 		}
-		columnIndex = row->GetCurrent();
+
+		//3.4. 자동개행중이면, 재개행한다.
+		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		{
+			dummied += noteWrapper.Rewrap();
+			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->GetCurrent();
+		}
 		i++;
 	}
 
+	//4. 페이징 버퍼에서 쓴다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Add(this->contents);
 
+	//5. 수직 스크롤바에서 최대값을 조정한다.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	if (scrollController->HasVScroll())
 	{
 		Scroll vScroll = scrollController->GetVScroll();
-		Long max = vScroll.GetMax() + RowCounter::CountRow(this->contents) * sizeCalculator->GetRowHeight();
+		Long max = vScroll.GetMax() + (RowCounter::CountRow(this->contents) + dummied) * sizeCalculator->GetRowHeight();
 		scrollController->ResizeVRange(max);
 	}
 }
