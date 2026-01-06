@@ -8,6 +8,11 @@ public:
 	virtual ~CtrlZAction();
 
 	virtual void Perform();
+	virtual bool ShouldKeepSelection();
 };
+
+inline bool CtrlZAction::ShouldKeepSelection() {
+	return true;
+}
 
 #endif // !_CTRLZACTION_H

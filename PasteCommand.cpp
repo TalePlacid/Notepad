@@ -75,7 +75,6 @@ void PasteCommand::Execute() {
 			{
 				//1.2.2.1. 줄에서 쓴다.
 				glyph = glyphFactory.Create(character);
-				glyph->Select(true);
 				row->Add(columnIndex, glyph);
 				columnIndex = row->GetCurrent();
 			}
@@ -99,7 +98,6 @@ void PasteCommand::Execute() {
 		}
 
 		//1.3. 페이징 버퍼에서 쓴다.
-		pagingBuffer->MarkSelectionBegin();
 		pagingBuffer->Add(this->contents);
 
 		//1.4. 수직 스크롤바에서 최대값을 조정한다.
@@ -182,6 +180,7 @@ void PasteCommand::Undo() {
 	//5. 페이징버퍼에서 지운다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Remove(this->offset + this->contents.GetLength());
+	pagingBuffer->UnmarkSelectionBegin();
 
 	//6. 수직 스크롤을 조정한다.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
@@ -235,6 +234,7 @@ void PasteCommand::Redo() {
 		if (character[0] != '\r')
 		{
 			glyph = glyphFactory.Create(character);
+			glyph->Select(true);
 			row->Add(columnIndex, glyph);
 			columnIndex = row->GetCurrent();
 		}
@@ -259,6 +259,7 @@ void PasteCommand::Redo() {
 
 	//4. 페이징 버퍼에서 쓴다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->MarkSelectionBegin();
 	pagingBuffer->Add(this->contents);
 
 	//5. 수직 스크롤바에서 최대값을 조정한다.

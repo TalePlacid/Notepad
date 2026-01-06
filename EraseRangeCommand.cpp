@@ -58,7 +58,7 @@ void EraseRangeCommand::Execute() {
 
 	PagingNavigator pagingNavigator(this->parent);
 	pagingNavigator.MoveTo(this->frontOffset);
-
+	
 	//2. 노트에서 선택범위를 삭제한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

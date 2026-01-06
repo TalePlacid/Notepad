@@ -10,6 +10,11 @@ public:
 	virtual ~CtrlYAction();
 
 	virtual void Perform();
+	virtual bool ShouldKeepSelection();
 };
+
+inline bool CtrlYAction::ShouldKeepSelection() {
+	return true;
+}
 
 #endif // !_CTRLYACTION_H
