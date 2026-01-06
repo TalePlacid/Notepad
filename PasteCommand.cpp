@@ -17,6 +17,7 @@
 PasteCommand::PasteCommand(CWnd* parent)
 	:Command(parent), contents("") {
 	this->offset = -1;
+	this->columnIndex = 0;
 }
 
 PasteCommand::~PasteCommand() {
@@ -26,6 +27,7 @@ PasteCommand::~PasteCommand() {
 PasteCommand::PasteCommand(const PasteCommand& source)
 	:Command(source), contents(source.contents) {
 	this->offset = source.offset;
+	this->columnIndex = source.columnIndex;
 }
 
 PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
@@ -33,6 +35,7 @@ PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
 
 	this->contents = source.contents;
 	this->offset = source.offset;
+	this->columnIndex = source.columnIndex;
 
 	return *this;
 }
@@ -131,12 +134,15 @@ void PasteCommand::Undo() {
 	Long characterByte;
 	Glyph* nextRow;
 	Long i = 0;
-	while (i < this->contents.GetLength())
+	BOOL flag = TRUE;
+	while (i < this->contents.GetLength() && flag)
 	{
+		flag = FALSE;
 		//3.1. 줄의 끝이 아니라면,
 		if (columnIndex < row->GetLength())
 		{
-			//3.1.1. 구한다.
+			flag = TRUE;
+			//3.1.1. 바이트수를 구한다.
 			character = (char*)*row->GetAt(columnIndex);
 			characterByte = 1;
 			if (byteChecker.IsLeadByte(character[0]))
@@ -148,8 +154,9 @@ void PasteCommand::Undo() {
 			row->Remove(columnIndex);
 			row->Move(columnIndex);
 		}
-		else //3.2. 줄의 끝이라면,
+		else if (rowIndex + 1 < note->GetLength())//3.2. 줄의 끝이고 다음 줄이 있다면,
 		{
+			flag = TRUE;
 			//3.2.1. 바이트수를 구한다.
 			nextRow = note->GetAt(rowIndex + 1);
 			if (!nextRow->IsDummyRow())
@@ -194,10 +201,20 @@ void PasteCommand::Undo() {
 	}
 
 	//7. 적재량이 부족하면, 재적재한다.
-	Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
-	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
+	if (note->IsBelowBottomLine(rowIndex + 1))
 	{
+		if (!row->IsDummyRow() && columnIndex == 0)
+		{
+			pagingBuffer->Add(CString("\r\n"));
+			pagingBuffer->PreviousRow();
+		}
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		if (!row->IsDummyRow() && columnIndex == 0)
+		{
+			note->MergeRows(rowIndex);
+			pagingBuffer->NextRow();
+			pagingBuffer->Remove();
+		}
 	}
 }
 

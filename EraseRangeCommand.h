@@ -21,6 +21,7 @@ public:
 private:
 	Long frontOffset;
 	Long rearOffset;
+	Long columnIndex;
 	CString contents;
 };
 
