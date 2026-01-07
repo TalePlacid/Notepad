@@ -5,7 +5,7 @@
 #include "ScrollController.h"
 #include "PagingBuffer.h"
 #include "Glyph.h"
-#include "UpArrowAction.h"
+#include "CaretNavigator.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -37,6 +37,7 @@ void VScrollBarUpClickAction::Perform() {
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
+	Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
@@ -45,7 +46,7 @@ void VScrollBarUpClickAction::Perform() {
 	//3. 보이는 영역을 벗어났다면, 한 줄 올린다.
 	if (currentPos + rowHeight > pos + vScroll.GetPage())
 	{
-		UpArrowAction upArrowAction(this->parent);
-		upArrowAction.Perform();
+		CaretNavigator caretNavigator(this->parent);
+		caretNavigator.AdjustCaretDownToVScroll(rowWidth);
 	}
 }

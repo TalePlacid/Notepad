@@ -5,7 +5,7 @@
 #include "ScrollController.h"
 #include "PagingBuffer.h"
 #include "Glyph.h"
-#include "DownArrowAction.h"
+#include "CaretNavigator.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -38,15 +38,16 @@ void VScrollBarDownClickAction::Perform() {
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
+	Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
 
-	//3. 현재 줄의 위치가 보이는 영역을 벗어났으면, 한 줄 아래로 이동한다.
+	//3. 현재 줄의 위치가 보이는 영역을 벗어났으면,
 	if (currentPos < pos)
 	{
-		DownArrowAction downArrowAction(this->parent);
-		downArrowAction.Perform();
+		CaretNavigator caretNavigator(this->parent);
+		caretNavigator.AdjustCaretUpToVScroll(rowWidth);
 	}
 }
