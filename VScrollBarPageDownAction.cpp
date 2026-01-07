@@ -74,7 +74,7 @@ void VScrollBarPageDownAction::Perform() {
 		Long nearestIndex;
 		Long rowCount = rowIndexToMove - rowIndex;
 		Long i = 0;
-		while (i < rowCount)
+		while (i < rowCount && rowIndex + 1< note->GetLength())
 		{
 			//3.4.1. 줄의 끝까지 반복한다.
 			while (columnIndex < row->GetLength())
