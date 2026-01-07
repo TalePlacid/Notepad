@@ -5,6 +5,7 @@
 #include "Glyph.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
+#include "PageDownAction.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -19,6 +20,7 @@ VScrollBarPageDownAction::~VScrollBarPageDownAction() {
 }
 
 void VScrollBarPageDownAction::Perform() {
+	//1. 스크롤 크기만큼 페이지를 내린다.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll = scrollController->GetVScroll();
 	Long pos = vScroll.GetPos() + vScroll.GetPage();
@@ -29,28 +31,22 @@ void VScrollBarPageDownAction::Perform() {
 	}
 	pos = scrollController->MoveVScroll(pos);
 
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowHeight = sizeCalculator->GetRowHeight();
-	Long rowIndexToMove = pos / rowHeight - pagingBuffer->GetRowStartIndex();
-
+	//2. 현재위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
-	Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
-	if (note->IsBelowBottomLine(rowIndexToMove))
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+	Long rowHeight = sizeCalculator->GetRowHeight();
+	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
+
+	//3. 현재 줄의 위치가 보이는 영역을 벗어났으면, 한 줄 아래로 이동한다.
+	if (currentPos < pos)
 	{
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
-		rowIndex = note->GetCurrent();
-		rowIndexToMove = pos / rowHeight - pagingBuffer->GetRowStartIndex();
+		PageDownAction pageDownAction(this->parent);
+		pageDownAction.Perform();
 	}
-
-	pagingBuffer->NextRow(rowIndexToMove - rowIndex);
-	rowIndex = note->Move(rowIndexToMove);
-	row = note->GetAt(rowIndex);
-	columnIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
-	pagingBuffer->Next(columnIndex);
-	columnIndex = row->Move(columnIndex);
 }
