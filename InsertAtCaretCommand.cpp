@@ -6,7 +6,7 @@
 #include "resource.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
-#include "pagingNavigator.h"
+#include "caretNavigator.h"
 #include "NoteWrapper.h"
 
 #pragma warning(disable:4996)
@@ -123,9 +123,9 @@ void InsertAtCaretCommand::Execute() {
 
 void InsertAtCaretCommand::Undo() {
 	//1. 오프셋 기반으로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->offset);
-	pagingNavigator.NormalizeColumn(this->columnIndex);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
+	caretNavigator.NormalizeColumn(this->columnIndex);
 
 	//2. 현재 위치룰 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -208,9 +208,9 @@ void InsertAtCaretCommand::Undo() {
 
 void InsertAtCaretCommand::Redo() {
 	//1. 오프셋 기반으로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->offset);
-	pagingNavigator.NormalizeColumn(this->columnIndex);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
+	caretNavigator.NormalizeColumn(this->columnIndex);
 
 	//2. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;

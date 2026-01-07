@@ -5,10 +5,10 @@ typedef signed long int Long;
 
 class CWnd;
 
-class PagingNavigator {
+class CaretNavigator {
 public:
-	PagingNavigator(CWnd* parent);
-	~PagingNavigator();
+	CaretNavigator(CWnd* parent);
+	~CaretNavigator();
 
 	Long MoveTo(Long offset); 
 	void NormalizeColumn(Long columnIndex);

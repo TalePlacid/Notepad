@@ -8,7 +8,7 @@
 #include "ByteChecker.h"
 #include "SearchResultController.h"
 #include "resource.h"
-#include "PagingNavigator.h"
+#include "CaretNavigator.h"
 #include "CommandFactory.h"
 #include "RowCounter.h"
 
@@ -53,11 +53,11 @@ void ReplaceCommand::Execute() {
 	if (pagingBuffer->MakeSelectedString() == this->source)
 	{
 		//1.1. 검색한 위치로 이동한다.
-		PagingNavigator pagingNavigator(this->parent);
+		CaretNavigator caretNavigator(this->parent);
 
 		Long currentIndex = searchResultController->GetCurrent();
 		this->offset = searchResultController->GetAt(currentIndex).GetOffset();
-		pagingNavigator.MoveTo(this->offset);
+		caretNavigator.MoveTo(this->offset);
 
 		//1.2. 노트에서 교체한다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -167,7 +167,7 @@ void ReplaceCommand::Execute() {
 		currentIndex = searchResultController->Next();
 		if (previousIndex != currentIndex)
 		{
-			pagingNavigator.MoveTo(searchResultController->GetAt(currentIndex).GetOffset());
+			caretNavigator.MoveTo(searchResultController->GetAt(currentIndex).GetOffset());
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->GetCurrent();
@@ -192,8 +192,8 @@ void ReplaceCommand::Execute() {
 
 void ReplaceCommand::Undo() {
 	//1. 위치로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->offset);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
@@ -307,8 +307,8 @@ void ReplaceCommand::Undo() {
 
 void ReplaceCommand::Redo() {
 	//1. 검색한 위치로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->offset);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
 
 	//2. 노트에서 교체한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;

@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "PagingNavigator.h"
+#include "CaretNavigator.h"
 #include "PagingBuffer.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
@@ -10,15 +10,15 @@
 
 #pragma warning(disable:4996)
 
-PagingNavigator::PagingNavigator(CWnd* parent) {
+CaretNavigator::CaretNavigator(CWnd* parent) {
 	this->parent = parent;
 }
 
-PagingNavigator::~PagingNavigator() {
+CaretNavigator::~CaretNavigator() {
 
 }
 
-Long PagingNavigator::MoveTo(Long offset) {
+Long CaretNavigator::MoveTo(Long offset) {
 	//1. 줄의 처음으로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long currentOffset = pagingBuffer->First();
@@ -142,7 +142,7 @@ Long PagingNavigator::MoveTo(Long offset) {
 	return pagingBuffer->GetCurrentOffset();
 }
 
-void PagingNavigator::NormalizeColumn(Long columnIndex) {
+void CaretNavigator::NormalizeColumn(Long columnIndex) {
 	if (((NotepadForm*)(this->parent))->isAutoWrapped)
 	{
 		Glyph* note = ((NotepadForm*)(this->parent))->note;

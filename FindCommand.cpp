@@ -15,7 +15,7 @@ using namespace std;
 #include "Glyph.h"
 #include "ByteChecker.h"
 #include "FindReplaceOption.h"
-#include "PagingNavigator.h"
+#include "CaretNavigator.h"
 
 #pragma warning(disable:4996)
 
@@ -99,8 +99,8 @@ void FindCommand::Execute() {
 		if (nearestIndex > -1)
 		{
 			Long offset = searchResultController->GetAt(nearestIndex).GetOffset();
-			PagingNavigator pagingNavigator(this->parent);
-			pagingNavigator.MoveTo(offset);
+			CaretNavigator caretNavigator(this->parent);
+			caretNavigator.MoveTo(offset);
 
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);

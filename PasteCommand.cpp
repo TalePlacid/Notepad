@@ -9,7 +9,7 @@
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "RowCounter.h"
-#include "PagingNavigator.h"
+#include "CaretNavigator.h"
 #include "NoteWrapper.h"
 
 #pragma warning(disable:4996)
@@ -117,9 +117,9 @@ void PasteCommand::Execute() {
 
 void PasteCommand::Undo() {
 	//1. 위치로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->offset);
-	pagingNavigator.NormalizeColumn(this->columnIndex);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
+	caretNavigator.NormalizeColumn(this->columnIndex);
 
 	//2. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -220,9 +220,9 @@ void PasteCommand::Undo() {
 
 void PasteCommand::Redo() {
 	//1. 오프셋 기반으로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->offset);
-	pagingNavigator.NormalizeColumn(this->columnIndex);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
+	caretNavigator.NormalizeColumn(this->columnIndex);
 
 	//2. 현재위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;

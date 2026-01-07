@@ -5,7 +5,7 @@
 #include "PagingBuffer.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
-#include "PagingNavigator.h"
+#include "CaretNavigator.h"
 #include "NoteWrapper.h"
 #include "resource.h"
 
@@ -96,8 +96,8 @@ void WriteAtEndCommand::Execute() {
 
 void WriteAtEndCommand::Undo() {
 	//1. 이전 위치로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->offset);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
@@ -153,8 +153,8 @@ void WriteAtEndCommand::Redo() {
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
 
-	PagingNavigator pagingNavigator(parent);
-	pagingNavigator.MoveTo(this->offset);
+	CaretNavigator caretNavigator(parent);
+	caretNavigator.MoveTo(this->offset);
 
 	//2. 다시 쓴다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;

@@ -6,7 +6,7 @@
 #include "ByteChecker.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
-#include "PagingNavigator.h"
+#include "CaretNavigator.h"
 
 #pragma warning(disable:4996)
 
@@ -45,8 +45,8 @@ void FindNextCommand::Execute() {
 		Long rowIndex;
 		Long offset = searchResultController->GetAt(current).GetOffset();
 
-		PagingNavigator pagingNavigator(this->parent);
-		pagingNavigator.MoveTo(offset);
+		CaretNavigator caretNavigator(this->parent);
+		caretNavigator.MoveTo(offset);
 
 		rowIndex = note->GetCurrent();
 		row = note->GetAt(rowIndex);

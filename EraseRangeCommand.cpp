@@ -6,7 +6,7 @@
 #include "resource.h"
 #include "GlyphFactory.h"
 #include "ByteChecker.h"
-#include "PagingNavigator.h"
+#include "CaretNavigator.h"
 #include "ScrollController.h"
 #include "RowCounter.h"
 #include "SizeCalculator.h"
@@ -60,8 +60,8 @@ void EraseRangeCommand::Execute() {
 		this->rearOffset = selectionBeginOffset;
 	}
 
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->frontOffset);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->frontOffset);
 
 	//2. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -165,9 +165,9 @@ void EraseRangeCommand::Execute() {
 
 void EraseRangeCommand::Undo() {
 	//1. 오프셋 기반으로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->frontOffset);
-	pagingNavigator.NormalizeColumn(this->columnIndex);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->frontOffset);
+	caretNavigator.NormalizeColumn(this->columnIndex);
 
 	//2. 현재위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -237,9 +237,9 @@ void EraseRangeCommand::Undo() {
 
 void EraseRangeCommand::Redo() {
 	//1. 앞 위치로 이동한다.
-	PagingNavigator pagingNavigator(this->parent);
-	pagingNavigator.MoveTo(this->frontOffset);
-	pagingNavigator.NormalizeColumn(this->columnIndex);
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->frontOffset);
+	caretNavigator.NormalizeColumn(this->columnIndex);
 
 	//2. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;

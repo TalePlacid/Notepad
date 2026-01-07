@@ -213,7 +213,7 @@
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageUpAction.h" />
     <ClInclude Include="PagingBuffer.h" />
-    <ClInclude Include="PagingNavigator.h" />
+    <ClInclude Include="CaretNavigator.h" />
     <ClInclude Include="Paper.h" />
     <ClInclude Include="PaperCalculator.h" />
     <ClInclude Include="PasteCommand.h" />
@@ -346,7 +346,7 @@
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageUpAction.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />
-    <ClCompile Include="PagingNavigator.cpp" />
+    <ClCompile Include="CaretNavigator.cpp" />
     <ClCompile Include="Paper.cpp" />
     <ClCompile Include="PaperCalculator.cpp" />
     <ClCompile Include="PasteCommand.cpp" />
