@@ -43,7 +43,7 @@ void VScrollBarPageUpAction::Perform() {
 	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
 
 	//3. 보이는 영역을 벗어났다면,
-	if (currentPos + rowHeight > pos + vScroll.GetPage())
+	if (currentPos + rowHeight > pos + page)
 	{
 		//3.1. 현재 줄 너비를 구한다.
 		Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
