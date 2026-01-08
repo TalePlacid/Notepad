@@ -4,11 +4,15 @@
 
 struct FindReplaceOption {
 	CString findString;
+	CString replaceString;
 	BOOL isMatchWhole;
 	BOOL isMatchCase;
 	BOOL isSearchDown;
 
-	FindReplaceOption(CString findString = "", BOOL isMatchWhole = FALSE, BOOL isMatchCase = FALSE, BOOL isSearchDown = FALSE);
+	FindReplaceOption(CString findString = "", CString replaceString = "", BOOL isMatchWhole = FALSE, BOOL isMatchCase = FALSE, BOOL isSearchDown = FALSE);
+	~FindReplaceOption();
+	FindReplaceOption(const FindReplaceOption& source);	
+	FindReplaceOption& operator=(const FindReplaceOption& source);
 
 	BOOL EqualsExceptSearchDirection(FindReplaceOption& other);
 	BOOL operator==(FindReplaceOption& other);
