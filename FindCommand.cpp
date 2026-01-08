@@ -29,6 +29,7 @@ FindCommand::~FindCommand() {
 }
 
 void FindCommand::Execute() {
+	//1.전체 파일에서 단어를 찾는다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	string contents((LPCTSTR)(pagingBuffer->GetFullText()));
 	string key((LPCTSTR)(this->findReplaceDialog->GetFindString()));
@@ -48,17 +49,19 @@ void FindCommand::Execute() {
 		comparer, SearchingAlgorithmFactory::BRUTE_FORCE, this->findReplaceDialog->MatchWholeWord());
 
 	Long(*offsets) = NULL;
-	Long count;
+	Long count = 0;
 	if (searchingAlgorithm != NULL)
 	{
 		searchingAlgorithm->DoAlgorithm(&offsets, &count);
 		delete searchingAlgorithm;
 	}
 
+	//2. 검색결과가 있으면,
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long nearestIndex = -1;
 	if (count > 0)
 	{
+		//2.1. 가장 가까운 위치를 찾는다.
 		FindReplaceOption oldOption;
 		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 		if (searchResultController != NULL)
@@ -92,45 +95,58 @@ void FindCommand::Execute() {
 			}
 		}
 
+		//2.2. 가장 가까운 위치가 있으면,
 		note->Select(false);
 		pagingBuffer->UnmarkSelectionBegin();
 
 		nearestIndex = searchResultController->Move(nearestIndex);
 		if (nearestIndex > -1)
 		{
+			//2.2.1. 가장 가까운 위치로 이동한다.
 			Long offset = searchResultController->GetAt(nearestIndex).GetOffset();
 			CaretNavigator caretNavigator(this->parent);
 			caretNavigator.MoveTo(offset);
+			caretNavigator.NormalizeColumn(0);
 
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
 			Long columnIndex = row->GetCurrent();
 
 			Glyph* character;
+			Long characterLength;
 			ByteChecker byteChecker;
 			Long i = 0;
 			while (i < key.length())
 			{
-				character = row->GetAt(columnIndex);
-				character->Select(true);
-
-				if (pagingBuffer->GetSelectionBeginOffset() < 0)
+				characterLength = 0;
+				if (columnIndex < row->GetLength())
 				{
-					pagingBuffer->MarkSelectionBegin();
+					characterLength = 1;
+					character = row->GetAt(columnIndex);
+					if (byteChecker.IsLeadByte(*(char*)*character))
+					{
+						characterLength = 2;
+					}
+
+					row->GetAt(columnIndex)->Select(true);
+					columnIndex = row->Next();
+					
+					pagingBuffer->BeginSelectionIfNeeded();
+					pagingBuffer->Next();
+				}
+				else
+				{
+					rowIndex = note->Next();
+					row = note->GetAt(rowIndex);
+					columnIndex = row->First();
 				}
 
-				if (byteChecker.IsLeadByte(key[i]))
-				{
-					i++;
-				}
-
-				columnIndex = row->Next();
-				pagingBuffer->Next();
-				i++;
+				i += characterLength;
 			}
 		}
 	}
 
+	//3. 검색결과가 없으면, 경고문을 출력한다.
 	if (count <= 0 || nearestIndex < 0)
 	{
 		CString message;
