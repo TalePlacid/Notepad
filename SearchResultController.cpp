@@ -1,11 +1,18 @@
 #include "SearchResultController.h"
+#include "NotepadForm.h"
+#include "PagingBuffer.h"
+#include "Comparer.h"
+#include "CaseSensitiveComparer.h"
+#include "CaseInsensitiveComparer.h"
+#include "SearchingAlgorithmFactory.h"
+#include "SearchingAlgorithm.h"
 
 #pragma warning(disable:4996)
 
-SearchResultController::SearchResultController(CString findString, CString replaceString, BOOL isMatchWhole, BOOL isMatchCase, BOOL isSearchDown, Long capacity)
-	:findReplaceOption(findString, replaceString, isMatchWhole, isMatchCase, isSearchDown){
-	this->searchResults = new SearchResult[capacity];
-	this->capacity = capacity;
+SearchResultController::SearchResultController(CWnd *parent){
+	this->parent = parent;
+	this->searchResults = NULL;
+	this->capacity = 0;
 	this->length = 0;
 	this->current = -1;
 }
@@ -25,7 +32,7 @@ SearchResultController::SearchResultController(const SearchResultController& sou
 		this->searchResults = 0;
 	}
 
-	this->searchResults = new SearchResult[source.capacity];
+	this->searchResults = new Long[source.capacity];
 	Long i = 0;
 	while (i < source.length)
 	{
@@ -47,7 +54,7 @@ SearchResultController& SearchResultController::operator=(const SearchResultCont
 		this->searchResults = 0;
 	}
 
-	this->searchResults = new SearchResult[source.capacity];
+	this->searchResults = new Long[source.capacity];
 	Long i = 0;
 	while (i < source.length)
 	{
@@ -62,8 +69,50 @@ SearchResultController& SearchResultController::operator=(const SearchResultCont
 	return *this;
 }
 
-Long SearchResultController::Replace(Long index, SearchResult searchResult) {
-	this->searchResults[index] = searchResult;
+Long SearchResultController::Search() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	CString contents = pagingBuffer->GetFullText();
+	
+	Comparer* comparer;
+	if (this->findReplaceOption.isMatchCase)
+	{
+		comparer = new CaseSensitiveComparer;
+	}
+	else
+	{
+		comparer = new CaseInsensitiveComparer;
+	}
+
+	Long(*offsets) = NULL;
+	Long count = 0;
+	SearchingAlgorithmFactory searchingAlgorithmFactory;
+	SearchingAlgorithm* searchingAlgorithm = searchingAlgorithmFactory.Create((LPCTSTR)(this->findReplaceOption.findString),
+		(LPCTSTR)contents, comparer, SearchingAlgorithmFactory::BRUTE_FORCE, this->findReplaceOption.isMatchWhole);
+	if (searchingAlgorithm != NULL)
+	{
+		searchingAlgorithm->DoAlgorithm(&offsets, &count);
+		delete searchingAlgorithm;
+	}
+
+	if (count > 0)
+	{
+		this->searchResults = offsets;
+		this->capacity = count;
+		this->length = count;
+	}
+	else
+	{
+		if (offsets != NULL)
+		{
+			delete[] offsets;
+		}
+	}
+
+	return this->length;
+}
+
+Long SearchResultController::Replace(Long index, Long offset) {
+	this->searchResults[index] = offset;
 
 	return index;
 }
@@ -73,15 +122,13 @@ Long SearchResultController::FindNearestIndexAbove(Long offset) {
 
 	bool flag = false;
 	Long i = 0;
-	Long searchResultOffset = this->searchResults[i].GetOffset();
-	while (i < this->length && searchResultOffset < offset)
+	while (i < this->length && this->searchResults[i] < offset)
 	{
 		flag = true;
 		i++;
-		searchResultOffset = this->searchResults[i].GetOffset();
 	}
 
-	if (flag = true)
+	if (flag && this->searchResults[i] >= offset)
 	{
 		index = i - 1;
 	}
@@ -93,11 +140,9 @@ Long SearchResultController::FindNearestIndexBelow(Long offset) {
 	Long index = -1;
 
 	Long i = 0;
-	Long searchResultOffset = this->searchResults[i].GetOffset();
-	while (i < this->length && searchResultOffset < offset)
+	while (i < this->length && this->searchResults[i] < offset)
 	{
 		i++;
-		searchResultOffset = this->searchResults[i].GetOffset();
 	}
 
 	if (i < this->length)
@@ -108,7 +153,24 @@ Long SearchResultController::FindNearestIndexBelow(Long offset) {
 	return index;
 }
 
-SearchResult& SearchResultController::GetAt(Long index) {
+void SearchResultController::Clear() {
+	if (this->searchResults != NULL)
+	{
+		delete[] this->searchResults;
+		this->searchResults = NULL;
+	}
+	this->capacity = 0;
+	this->length = 0;
+	this->current = -1;
+}
+
+FindReplaceOption& SearchResultController::ChangeFindReplaceOption(FindReplaceOption findReplaceOption) {
+	this->findReplaceOption = findReplaceOption;
+
+	return this->findReplaceOption;
+}
+
+Long SearchResultController::GetAt(Long index) {
 	return this->searchResults[index];
 }
 
@@ -144,6 +206,6 @@ Long SearchResultController::Move(Long index) {
 	return this->current;
 }
 
-SearchResult& SearchResultController::operator[](Long index) {
+Long SearchResultController::operator[](Long index) {
 	return this->searchResults[index];
 }
