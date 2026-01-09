@@ -2,6 +2,7 @@
 #define _REPLACECOMMAND_H
 #include <afxwin.h>
 #include "Command.h"
+#include "FindReplaceOption.h"
 
 class CFindReplaceDialog;
 
@@ -24,9 +25,12 @@ public:
 	virtual CString GetReplaced();
 private:
 	CFindReplaceDialog* findReplaceDialog;
+	Long index;
 	Long offset;
 	CString source;
 	CString replaced;
+	FindReplaceOption findReplaceOption;
+	BOOL unexecuted;
 };
 
 
