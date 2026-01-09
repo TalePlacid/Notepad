@@ -1,15 +1,14 @@
 #ifndef _SEARCHRESULTCONTROLLER_H //guard
 #define _SEARCHRESULTCONTROLLER_H
-#include <string>
-using namespace std;
+#include <afxwin.h>
 #include "SearchResult.h"
+#include "FindReplaceOption.h"
 
 typedef signed long int Long;
 
 class SearchResultController {
 public:
-	SearchResultController(string key = "", bool isMatchWhole = false, bool isMatchCase = false, bool isSearchDown = false, Long capacity = 128);
-	SearchResultController(string key, bool isMatchWhole, bool isMatchCase, bool isSearchDown, Long(*offsets), Long count);
+	SearchResultController(CString findString = "", CString replaceString = "", BOOL isMatchWhole = FALSE, BOOL isMatchCase = FALSE, BOOL isSearchDown = FALSE, Long capacity = 128);
 	~SearchResultController();
 	SearchResultController(const SearchResultController& source);
 	SearchResultController& operator=(const SearchResultController& source);
@@ -26,38 +25,20 @@ public:
 
 	SearchResult& operator[](Long index);
 
-	string& GetKey() const;
-	bool IsMatchWhole() const;
-	bool IsMatchCase() const;
-	bool IsSearchDown() const;
+	FindReplaceOption& GetFindReplaceOption() const;
 	Long GetCapacity() const;
 	Long GetLength() const;
 	Long GetCurrent() const;
 private:
+	FindReplaceOption findReplaceOption;
 	SearchResult(*searchResults);
-	string key;
-	bool isMatchWhole;
-	bool isMatchCase;
-	bool isSearchDown;
 	Long capacity;
 	Long length;
 	Long current;
 };
 
-inline string& SearchResultController::GetKey() const {
-	return const_cast<string&>(this->key);
-}
-
-inline bool SearchResultController::IsMatchWhole() const {
-	return this->isMatchWhole;
-}
-
-inline bool SearchResultController::IsMatchCase() const {
-	return this->isMatchCase;
-}
-
-inline bool SearchResultController::IsSearchDown() const {
-	return this->isSearchDown;
+inline FindReplaceOption& SearchResultController::GetFindReplaceOption() const {
+	return const_cast<FindReplaceOption&>(this->findReplaceOption);
 }
 
 inline Long SearchResultController::GetCapacity() const {

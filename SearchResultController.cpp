@@ -2,42 +2,12 @@
 
 #pragma warning(disable:4996)
 
-SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, bool isSearchDown, Long capacity)
-	:key(key){
-	this->isMatchWhole = isMatchWhole;
-	this->isMatchCase = isMatchCase;
-	this->isSearchDown = isSearchDown;
+SearchResultController::SearchResultController(CString findString, CString replaceString, BOOL isMatchWhole, BOOL isMatchCase, BOOL isSearchDown, Long capacity)
+	:findReplaceOption(findString, replaceString, isMatchWhole, isMatchCase, isSearchDown){
 	this->searchResults = new SearchResult[capacity];
 	this->capacity = capacity;
 	this->length = 0;
 	this->current = -1;
-}
-
-SearchResultController::SearchResultController(string key, bool isMatchWhole, bool isMatchCase, bool isSearchDown, Long(*offsets), Long count)
-	:key(key){
-	this->isMatchWhole = isMatchWhole;
-	this->isMatchCase = isMatchCase;
-	this->isSearchDown = isSearchDown;
-
-	if (count > 0)
-	{
-		this->searchResults = new SearchResult[count];
-	}
-	else
-	{
-		this->searchResults = NULL;
-	}
-	
-	Long i = 0;
-	while (i < count)
-	{
-		this->searchResults[i] = SearchResult(offsets[i]);
-		i++;
-	}
-
-	this->capacity = count;
-	this->length = count;
-	this->current = 0;
 }
 
 SearchResultController::~SearchResultController() {
@@ -48,7 +18,7 @@ SearchResultController::~SearchResultController() {
 }
 
 SearchResultController::SearchResultController(const SearchResultController& source) 
-	:key(source.key){
+	:findReplaceOption(source.findReplaceOption){
 	if (this->searchResults != NULL)
 	{
 		delete[] this->searchResults;
@@ -63,16 +33,13 @@ SearchResultController::SearchResultController(const SearchResultController& sou
 		i++;
 	}
 	
-	this->isMatchWhole = source.isMatchWhole;
-	this->isMatchCase = source.isMatchCase;
-	this->isSearchDown = source.isSearchDown;
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;
 }
 
 SearchResultController& SearchResultController::operator=(const SearchResultController& source) {
-	this->key = source.key;
+	this->findReplaceOption = source.findReplaceOption;
 
 	if (this->searchResults != NULL)
 	{
@@ -88,9 +55,6 @@ SearchResultController& SearchResultController::operator=(const SearchResultCont
 		i++;
 	}
 
-	this->isMatchWhole = source.isMatchWhole;
-	this->isMatchCase = source.isMatchCase;
-	this->isSearchDown = source.isSearchDown;
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->current = source.current;
