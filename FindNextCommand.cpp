@@ -20,10 +20,12 @@ FindNextCommand::~FindNextCommand() {
 }
 
 void FindNextCommand::Execute() {
+	//1. 검색결과 컨트롤러에서 검색방향에 따라 이동한다.
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	FindReplaceOption findReplaceOption = searchResultController->GetFindReplaceOption();
 	Long current = searchResultController->GetCurrent();
 	Long previous = current;
-	if (searchResultController->IsSearchDown())
+	if (findReplaceOption.isSearchDown)
 	{
 		current = searchResultController->Next();
 	}
@@ -32,31 +34,30 @@ void FindNextCommand::Execute() {
 		current = searchResultController->Previous();
 	}
 
+	//2. 선택해제한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	string key = searchResultController->GetKey();
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
+
+	//3. 이동했으면,
 	if (current != previous)
 	{
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		note->Select(false);
-		pagingBuffer->UnmarkSelectionBegin();
-
-		Glyph* row;
-		Long rowIndex;
-		Long offset = searchResultController->GetAt(current).GetOffset();
-
+		//2.1. 위치로 이동한다.
 		CaretNavigator caretNavigator(this->parent);
-		caretNavigator.MoveTo(offset);
+		caretNavigator.MoveTo(searchResultController->GetAt(current));
 		caretNavigator.NormalizeColumn(0);
 
-		rowIndex = note->GetCurrent();
-		row = note->GetAt(rowIndex);
+		//2.2. 선택한다.
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
 		Glyph* character;
 		Long characterLength;
 		ByteChecker byteChecker;
 		Long i = 0;
-		while (i < key.length())
+		while (i < findReplaceOption.findString.GetLength())
 		{
 			characterLength = 0;
 			if (columnIndex < row->GetLength())
@@ -84,10 +85,10 @@ void FindNextCommand::Execute() {
 			i += characterLength;
 		}
 	}
-	else if (!this->findReplaceDialog->ReplaceAll())
+	else if (!this->findReplaceDialog->ReplaceAll()) //3. 이동하지 않았고, 전체 바꾸기 도중도 아니라면,
 	{
 		CString message;
-		message.Format("\"%s\"을(를) 찾을 수 없습니다.", key.c_str());
+		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)findReplaceOption.findString);
 		this->parent->MessageBox(message);
 	}
 }

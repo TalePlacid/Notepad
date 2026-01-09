@@ -55,6 +55,7 @@ void FindCommand::Execute() {
 		pagingBuffer->UnmarkSelectionBegin();
 
 		//4.3. 위치로 이동한다.
+		searchResultController->Move(nearestIndex);
 		CaretNavigator caretNavigator(this->parent);
 		caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
 		caretNavigator.NormalizeColumn(0);
