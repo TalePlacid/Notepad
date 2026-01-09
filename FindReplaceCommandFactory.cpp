@@ -22,18 +22,11 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	CommandFactory commandFactory;
 	Command* command = NULL;
 
-	FindReplaceOption findReplaceOption(findReplaceDialog->GetFindString(),
+	FindReplaceOption currentOption(findReplaceDialog->GetFindString(), findReplaceDialog->GetReplaceString(),
 		findReplaceDialog->MatchWholeWord(), findReplaceDialog->MatchCase(), findReplaceDialog->SearchDown());
 
 	SearchResultController* searchResultController = ((NotepadForm*)parent)->searchResultController;
-	FindReplaceOption searchedOption;
-	if (searchResultController != NULL)
-	{
-		searchedOption.findString = CString(searchResultController->GetKey().c_str());
-		searchedOption.isMatchWhole = searchResultController->IsMatchWhole();
-		searchedOption.isMatchCase = searchResultController->IsMatchCase();
-		searchedOption.isSearchDown = searchResultController->IsSearchDown();
-	}
+	FindReplaceOption previousOption = searchResultController->GetFindReplaceOption();
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
 	UINT nID = 0;
@@ -47,7 +40,7 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	}
 	else if (findReplaceDialog->ReplaceCurrent())
 	{
-		if (findReplaceOption != searchedOption)
+		if (currentOption != previousOption)
 		{
 			nID = ID_COMMAND_FIND;
 		}
@@ -60,11 +53,11 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 			nID = ID_COMMAND_REPLACE;
 		}
 	}
-	else if (findReplaceOption != searchedOption)
+	else if (currentOption != previousOption)
 	{
 		nID = ID_COMMAND_FIND;
 	}
-	else if (findReplaceOption == searchedOption)
+	else if (currentOption == previousOption)
 	{
 		nID = ID_COMMAND_FINDNEXT;
 	}
