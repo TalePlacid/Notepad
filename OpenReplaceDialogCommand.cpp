@@ -20,20 +20,20 @@ OpenReplaceDialogCommand::~OpenReplaceDialogCommand() {
 void OpenReplaceDialogCommand::Execute() {
 	if (!((NotepadForm*)(this->parent))->hasFindReplaceDialog)
 	{
-		CString key("");
+		CString findString("");
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 		if (pagingBuffer->GetSelectionBeginOffset() >= 0)
 		{
-			key = pagingBuffer->MakeSelectedString();
+			findString = pagingBuffer->MakeSelectedString();
 		}
 		else if (searchResultController != NULL)
 		{
-			key = CString(searchResultController->GetKey().c_str());
+			findString = searchResultController->GetFindReplaceOption().findString;
 		}
 
 		CFindReplaceDialog* replaceDialog = new CFindReplaceDialog;
-		replaceDialog->Create(FALSE, (LPCTSTR)key, NULL, 1, this->parent);
+		replaceDialog->Create(FALSE, (LPCTSTR)findString, NULL, 1, this->parent);
 
 		if (searchResultController != NULL)
 		{
