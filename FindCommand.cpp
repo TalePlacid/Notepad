@@ -1,17 +1,9 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
-#include <string.h>
-using namespace std;
 #include "FindCommand.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
-#include "SearchingAlgorithmFactory.h"
-#include "SearchingAlgorithm.h"
-#include "Comparer.h"
-#include "CaseSensitiveComparer.h"
-#include "CaseInsensitiveComparer.h"
 #include "SearchResultController.h"
-#include "SearchResult.h"
 #include "Glyph.h"
 #include "ByteChecker.h"
 #include "FindReplaceOption.h"
@@ -29,133 +21,87 @@ FindCommand::~FindCommand() {
 }
 
 void FindCommand::Execute() {
-	//1.전체 파일에서 단어를 찾는다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	string contents((LPCTSTR)(pagingBuffer->GetFullText()));
-	string key((LPCTSTR)(this->findReplaceDialog->GetFindString()));
+	//1. 검색옵션을 최신화한다.
+	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	FindReplaceOption newOption(this->findReplaceDialog->GetFindString(), this->findReplaceDialog->GetReplaceString(),
+		this->findReplaceDialog->MatchWholeWord(), this->findReplaceDialog->MatchCase(), this->findReplaceDialog->SearchDown());
+	newOption = searchResultController->ChangeFindReplaceOption(newOption);
 
-	Comparer* comparer;
-	if (this->findReplaceDialog->MatchCase())
-	{
-		comparer = new CaseSensitiveComparer;
-	}
-	else
-	{
-		comparer = new CaseInsensitiveComparer;
-	}
+	//2. 기존의 검색결과들을 지운다.
+	searchResultController->Clear();
 
-	SearchingAlgorithmFactory searchingAlgorithmFactory;
-	SearchingAlgorithm* searchingAlgorithm = searchingAlgorithmFactory.Create(key, contents,
-		comparer, SearchingAlgorithmFactory::BRUTE_FORCE, this->findReplaceDialog->MatchWholeWord());
+	//3. 검색한다.
+	searchResultController->Search();
 
-	Long(*offsets) = NULL;
-	Long count = 0;
-	if (searchingAlgorithm != NULL)
-	{
-		searchingAlgorithm->DoAlgorithm(&offsets, &count);
-		delete searchingAlgorithm;
-	}
-
-	//2. 검색결과가 있으면,
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	//4. 검색 결과가 있으면,
 	Long nearestIndex = -1;
-	if (count > 0)
+	if (searchResultController->GetLength() > 0)
 	{
-		//2.1. 가장 가까운 위치를 찾는다.
-		FindReplaceOption oldOption;
-		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-		if (searchResultController != NULL)
-		{
-			oldOption = FindReplaceOption(searchResultController->GetKey().c_str(), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
-			delete ((NotepadForm*)(this->parent))->searchResultController;
-			((NotepadForm*)(this->parent))->searchResultController = NULL;
-		}
-
-		((NotepadForm*)(this->parent))->searchResultController = new SearchResultController(key,
-			this->findReplaceDialog->MatchWholeWord(), this->findReplaceDialog->MatchCase(), 
-			this->findReplaceDialog->SearchDown(), offsets, count);
-		searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-
-		Glyph* row;
-		Long rowIndex;
+		//4.1. 가장 가까운 위치를 찾는다.
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
 		if (this->findReplaceDialog->SearchDown())
 		{
-			nearestIndex = searchResultController->FindNearestIndexBelow(pagingBuffer->GetCurrentOffset());
+			nearestIndex = searchResultController->FindNearestIndexBelow(currentOffset);
 		}
 		else
 		{
-			FindReplaceOption currentOption(searchResultController->GetKey().c_str(), searchResultController->IsMatchWhole(), searchResultController->IsMatchCase(), searchResultController->IsSearchDown());
-			if (currentOption.EqualsExceptSearchDirection(oldOption))
-			{
-				nearestIndex = searchResultController->FindNearestIndexAbove(pagingBuffer->GetSelectionBeginOffset());
-			}
-			else
-			{
-				nearestIndex = searchResultController->FindNearestIndexAbove(pagingBuffer->GetCurrentOffset());
-			}
+			nearestIndex = searchResultController->FindNearestIndexAbove(currentOffset);
 		}
 
-		//2.2. 가장 가까운 위치가 있으면,
+		//4.2. 선택을 해제한다.
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		note->Select(false);
 		pagingBuffer->UnmarkSelectionBegin();
 
-		nearestIndex = searchResultController->Move(nearestIndex);
-		if (nearestIndex > -1)
+		//4.3. 위치로 이동한다.
+		CaretNavigator caretNavigator(this->parent);
+		caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
+		caretNavigator.NormalizeColumn(0);
+
+		//4.4. 선택한다.
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		Glyph* character;
+		Long characterLength;
+		ByteChecker byteChecker;
+		Long i = 0;
+		while (i < newOption.findString.GetLength())
 		{
-			//2.2.1. 가장 가까운 위치로 이동한다.
-			Long offset = searchResultController->GetAt(nearestIndex).GetOffset();
-			CaretNavigator caretNavigator(this->parent);
-			caretNavigator.MoveTo(offset);
-			caretNavigator.NormalizeColumn(0);
-
-			rowIndex = note->GetCurrent();
-			row = note->GetAt(rowIndex);
-			Long columnIndex = row->GetCurrent();
-
-			Glyph* character;
-			Long characterLength;
-			ByteChecker byteChecker;
-			Long i = 0;
-			while (i < key.length())
+			characterLength = 0;
+			if (columnIndex < row->GetLength())
 			{
-				characterLength = 0;
-				if (columnIndex < row->GetLength())
+				characterLength = 1;
+				character = row->GetAt(columnIndex);
+				if (byteChecker.IsLeadByte(*(char*)*character))
 				{
-					characterLength = 1;
-					character = row->GetAt(columnIndex);
-					if (byteChecker.IsLeadByte(*(char*)*character))
-					{
-						characterLength = 2;
-					}
-
-					row->GetAt(columnIndex)->Select(true);
-					columnIndex = row->Next();
-					
-					pagingBuffer->BeginSelectionIfNeeded();
-					pagingBuffer->Next();
-				}
-				else
-				{
-					rowIndex = note->Next();
-					row = note->GetAt(rowIndex);
-					columnIndex = row->First();
+					characterLength = 2;
 				}
 
-				i += characterLength;
+				row->GetAt(columnIndex)->Select(true);
+				columnIndex = row->Next();
+
+				pagingBuffer->BeginSelectionIfNeeded();
+				pagingBuffer->Next();
 			}
-		}
-	}
+			else
+			{
+				rowIndex = note->Next();
+				row = note->GetAt(rowIndex);
+				columnIndex = row->First();
+			}
 
+			i += characterLength;
+		}
+	} 
+	
 	//3. 검색결과가 없으면, 경고문을 출력한다.
-	if (count <= 0 || nearestIndex < 0)
+	if (searchResultController->GetLength() <= 0 || nearestIndex < 0)
 	{
 		CString message;
-		message.Format("\"%s\"을(를) 찾을 수 없습니다.", key.c_str());
+		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)newOption.findString);
 		this->parent->MessageBox(message);
-	}
-
-	if (offsets != NULL)
-	{
-		delete[] offsets;
 	}
 }
