@@ -22,6 +22,35 @@ ReplaceAllCommand::~ReplaceAllCommand() {
 }
 
 void ReplaceAllCommand::Execute() {
+	//1. 전체 문서의 첫 위치로 이동한다.
+	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADFIRST, 0);
+
+	//2. 찾는다.
+	CommandFactory commandFactory;
+	Command* command = commandFactory.Create(this->parent, ID_COMMAND_FIND, (LPARAM)(this->findReplaceDialog));
+	if (command != NULL)
+	{
+		command->Execute();
+		delete command;
+		command = NULL;
+	}
+
+	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	Long i = 0;
+	while (i < searchResultController->GetLength())
+	{
+		command = commandFactory.Create(this->parent, ID_COMMAND_REPLACE, (LPARAM)(this->findReplaceDialog));
+		if (command != NULL)
+		{
+			command->Execute();
+			this->Add(command);
+			command = NULL;
+		}
+		i++;
+	}
+
+
+#if 0
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->FirstRow();
 
@@ -69,6 +98,7 @@ void ReplaceAllCommand::Execute() {
 	CString message;
 	message.Format("%ld개를 바꾸었습니다.", this->length);
 	this->parent->MessageBox(message);
+#endif
 }
 
 void ReplaceAllCommand::Undo() {
@@ -88,6 +118,7 @@ void ReplaceAllCommand::Undo() {
 }
 
 void ReplaceAllCommand::Redo() {
+#if 0
 	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 	Command* command;
@@ -105,6 +136,7 @@ void ReplaceAllCommand::Redo() {
 		}
 		i++;
 	}
+#endif
 }
 
 void ReplaceAllCommand::Update(Command* command, bool isDone) {

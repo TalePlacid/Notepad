@@ -85,7 +85,7 @@ void FindNextCommand::Execute() {
 			i += characterLength;
 		}
 	}
-	else if (!this->findReplaceDialog->ReplaceAll()) //3. 이동하지 않았고, 전체 바꾸기 도중도 아니라면,
+	else //3. 이동하지 않았으면,
 	{
 		CString message;
 		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)findReplaceOption.findString);

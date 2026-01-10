@@ -236,7 +236,6 @@
     <ClInclude Include="ScrollController.h" />
     <ClInclude Include="SearchingAlgorithm.h" />
     <ClInclude Include="SearchingAlgorithmFactory.h" />
-    <ClInclude Include="SearchResult.h" />
     <ClInclude Include="SearchResultController.h" />
     <ClInclude Include="SelectFontCommand.h" />
     <ClInclude Include="SelectionVisitor.h" />
@@ -368,7 +367,6 @@
     <ClCompile Include="ScrollController.cpp" />
     <ClCompile Include="SearchingAlgorithm.cpp" />
     <ClCompile Include="SearchingAlgorithmFactory.cpp" />
-    <ClCompile Include="SearchResult.cpp" />
     <ClCompile Include="SearchResultController.cpp" />
     <ClCompile Include="SelectFontCommand.cpp" />
     <ClCompile Include="SelectionVisitor.cpp" />

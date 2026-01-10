@@ -111,7 +111,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->menu.LoadMenu(MAKEINTRESOURCE(IDR_MENU_MAIN));
 	this->SetMenu(&(this->menu));
 
-	this->searchResultController = new SearchResultController;
+	this->searchResultController = new SearchResultController(this);
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
 	
