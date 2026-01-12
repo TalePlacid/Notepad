@@ -184,9 +184,8 @@ void ReplaceCommand::Execute() {
 	}
 
 	//9. 찾기 윈도우 옵션이랑 검색결과 옵션이 일치한다면,
-	FindReplaceOption currentOption(this->findReplaceDialog->GetFindString(), this->findReplaceDialog->GetReplaceString(),
-		this->findReplaceDialog->MatchWholeWord(), this->findReplaceDialog->MatchCase(), this->findReplaceDialog->SearchDown());
-	if (currentOption == this->findReplaceOption)
+	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	if (searchResultController->GetFindReplaceOption() == this->findReplaceOption)
 	{
 		//9.1. 현재 위치로 이동한다.
 		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
