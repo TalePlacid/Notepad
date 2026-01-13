@@ -14,7 +14,9 @@ struct FindReplaceOption {
 	FindReplaceOption(const FindReplaceOption& source);	
 	FindReplaceOption& operator=(const FindReplaceOption& source);
 
+	BOOL IsEqual(const FindReplaceOption& other);
 	BOOL EqualsExceptSearchDirection(FindReplaceOption& other);
+
 	BOOL operator==(FindReplaceOption& other);
 	BOOL operator!=(FindReplaceOption& other);
 };

@@ -30,6 +30,14 @@ FindReplaceOption& FindReplaceOption::operator=(const FindReplaceOption& source)
 	return *this;
 }
 
+BOOL FindReplaceOption::IsEqual(const FindReplaceOption& other) {
+	return (this->findString == other.findString)
+		&& (this->replaceString == other.replaceString)
+		&& (this->isMatchWhole == other.isMatchWhole)
+		&& (this->isMatchCase == other.isMatchCase)
+		&& (this->isSearchDown == other.isSearchDown);
+}
+
 BOOL FindReplaceOption::EqualsExceptSearchDirection(FindReplaceOption& other) {
 	return (this->findString == other.findString)
 		&& (this->replaceString == other.replaceString)

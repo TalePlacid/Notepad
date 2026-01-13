@@ -52,10 +52,6 @@ UINT Command::GetId() {
 	return 0;
 }
 
-void Command::Update(Command *command, bool isDone) {
-
-}
-
 Long Command::GetOffset() {
 	return -1;
 }

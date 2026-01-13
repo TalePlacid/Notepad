@@ -12,7 +12,7 @@
 #include "CommandFactory.h"
 #include "RowCounter.h"
 #include "NoteWrapper.h"
-#include "FindNextCommand.h"
+#include "FindCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -65,7 +65,7 @@ void ReplaceCommand::Execute() {
 	caretNavigator.MoveTo(this->offset);
 	caretNavigator.NormalizeColumn(0);
 	
-	//2. 선택해제한다..
+	//2. 선택해제한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	note->Select(false);
@@ -183,33 +183,17 @@ void ReplaceCommand::Execute() {
 		pagingBuffer->Remove(currentOffset + this->source.GetLength());
 	}
 
-	//9. 찾기 윈도우 옵션이랑 검색결과 옵션이 일치한다면,
-	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-	if (searchResultController->GetFindReplaceOption() == this->findReplaceOption)
+	//9. 실행이면, 다시 찾는다.
+	if (this->unexecuted)
 	{
-		//9.1. 현재 위치로 이동한다.
+		this->unexecuted = FALSE;
+		FindCommand findCommand(this->parent, this->findReplaceDialog);
+		findCommand.Execute();
+	}
+	else //10. 실행이 아니면, 검색옵션을 초기화한다.
+	{
 		SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-		searchResultController->Move(this->index);
-
-		//9.2. 이후 검색결과들에 편차를 반영한다.
-		Long searchResult;
-		Long difference = this->replaced.GetLength() - this->source.GetLength();
-		i = searchResultController->GetCurrent() + 1;
-		while (i < searchResultController->GetLength())
-		{
-			searchResult = searchResultController->GetAt(i);
-			searchResultController->Replace(i, searchResult + difference);
-			i++;
-		}
-
-		//9.3. 첫 실행이라면, 다음 검색결과로 이동한다.
-		if (this->unexecuted)
-		{
-			this->unexecuted = FALSE;
-
-			FindNextCommand findNextCommand(this->parent, this->findReplaceDialog);
-			findNextCommand.Execute();
-		}
+		searchResultController->ChangeFindReplaceOption(FindReplaceOption());
 	}
 }
 
@@ -244,37 +228,6 @@ bool ReplaceCommand::IsUndoable() {
 		ret = true;
 	}
 	return ret;
-}
-
-void ReplaceCommand::Update(Command* command, bool isDone) {
-#if 0
-	Long difference;
-	if (isDone)
-	{
-		difference = this->replaced.GetLength() - this->source.GetLength();
-	}
-	else
-	{
-		difference = this->source.GetLength() - this->replaced.GetLength();
-	}
-
-	if (!command->IsMacroCommand())
-	{
-		if (this->offset > command->GetOffset())
-		{
-			this->offset += difference;
-		}
-	}
-	else
-	{
-		Long i = 0;
-		while (i < command->GetLength() && command->GetAt(i)->GetOffset() < this->offset)
-		{
-			this->offset += difference;
-			i++;
-		}
-	}
-#endif
 }
 
 Long ReplaceCommand::GetOffset() {

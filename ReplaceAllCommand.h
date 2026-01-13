@@ -5,6 +5,7 @@
 class Command;
 class CWnd;
 class CFindReplaceDialog;
+class FindReplaceOption;
 
 class ReplaceAllCommand : public MacroCommand {
 public:
@@ -14,10 +15,11 @@ public:
 	virtual void Execute();
 	virtual void Undo();
 	virtual void Redo();
-	virtual void Update(Command* command, bool isDone);
+
 	virtual bool IsUndoable();
 	virtual CString GetSource();
 	virtual CString GetReplaced();
+	virtual FindReplaceOption* GetFindReplaceOption() ;
 private:
 	CFindReplaceDialog* findReplaceDialog;
 };

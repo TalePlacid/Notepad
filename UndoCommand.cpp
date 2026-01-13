@@ -21,13 +21,8 @@ void UndoCommand::Execute() {
 	{
 		Command* history = undoHistoryBook->Pop();
 		history->Undo();
-		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
+
 		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
-		if (history->GetId() == ID_COMMAND_REPLACE)
-		{
-			undoHistoryBook->Update(history, false);
-			redoHistoryBook->Update(history, false);
-		}
 		redoHistoryBook->Push(history);
 	}
 

@@ -4,6 +4,8 @@
 
 typedef signed long int Long;
 
+class FindReplaceOption;
+
 class Command {
 public:
 	Command(CWnd* parent = NULL);
@@ -26,9 +28,9 @@ public:
 	virtual Long GetOffset();
 	virtual CString GetSource();
 	virtual CString GetReplaced();
-	virtual void Update(Command *command, bool isDone);
 	virtual CWnd* GetParent() const;
 	virtual Long GetLength() const;
+	virtual FindReplaceOption* GetFindReplaceOption();
 protected:
 	CWnd* parent;
 };
@@ -43,6 +45,10 @@ inline Long Command::GetLength() const {
 
 inline bool Command::NeedScrollBarUpdate() {
 	return true;
+}
+
+inline FindReplaceOption* Command::GetFindReplaceOption() {
+	return 0;
 }
 
 #endif // !_COMMAND_H

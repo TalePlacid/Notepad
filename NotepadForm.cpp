@@ -164,17 +164,6 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		this->note->Select(false);
 		this->pagingBuffer->UnmarkSelectionBegin();
 	
-		//NoteWrapper noteWrapper(this);
-		//noteWrapper.DeleteDummyRows();
-
-		UINT isChecked = this->menu.GetMenuState(ID_MENU_AUTOWRAP, MF_BYCOMMAND);
-		if (isChecked == MF_CHECKED)
-		{
-			RECT rect;
-			this->GetClientRect(&rect);
-			//noteWrapper.InsertDummyRows(rect.right - rect.left);
-		}
-
 		this->Notify("ChangeCaret");
 		this->Notify("UpdateScrollBars");
 		this->Invalidate();
@@ -332,7 +321,7 @@ LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnSetFocus(CWnd* pOldWnd) {
-	//this->Notify("ChangeCaret");
+	this->Notify("ChangeCaret");
 }
 
 void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
@@ -436,8 +425,6 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 		command->Execute();
 		if (command->IsUndoable())
 		{
-			this->undoHistoryBook->Update(command, true);
-			this->redoHistoryBook->Update(command, true);
 			this->undoHistoryBook->Push(command);
 			this->redoHistoryBook->Clear();
 		}

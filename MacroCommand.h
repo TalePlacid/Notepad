@@ -16,8 +16,10 @@ public:
 	virtual void Execute();
 	virtual void Undo();
 	virtual void Redo();
+
 	virtual Long Add(Command* command);
 	virtual Command* GetAt(Long index);
+	
 	virtual bool IsMacroCommand();
 	virtual UINT GetId();
 	Long GetCapacity() const;

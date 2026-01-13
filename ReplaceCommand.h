@@ -16,13 +16,15 @@ public:
 	virtual void Execute();
 	virtual void Undo();
 	virtual void Redo();
+
 	virtual Command* Clone();
 	virtual UINT GetId();
 	virtual bool IsUndoable();
-	virtual void Update(Command* command, bool isDone);
+	
 	virtual Long GetOffset();
 	virtual CString GetSource();
 	virtual CString GetReplaced();
+	virtual FindReplaceOption* GetFindReplaceOption();
 private:
 	CFindReplaceDialog* findReplaceDialog;
 	Long index;
@@ -33,5 +35,9 @@ private:
 	BOOL unexecuted;
 };
 
+
+inline FindReplaceOption* ReplaceCommand::GetFindReplaceOption() {
+	return &this->findReplaceOption;
+}
 
 #endif // !_REPLACECOMMAND_H

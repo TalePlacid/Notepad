@@ -23,12 +23,6 @@ void RedoCommand::Execute() {
 		history->Redo();
 
 		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
-		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
-		if (history->GetId() == ID_COMMAND_REPLACE)
-		{
-			undoHistoryBook->Update(history, true);
-			redoHistoryBook->Update(history, true);
-		}
 		undoHistoryBook->Push(history);
 
 		((NotepadForm*)(this->parent))->Notify("CreateScrollBars");

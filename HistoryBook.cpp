@@ -3,6 +3,7 @@
 #include "Command.h"
 #include "MacroCommand.h"
 #include "resource.h"
+#include "FindReplaceOption.h"
 
 #pragma warning(disable:4996)
 
@@ -43,39 +44,6 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 	this->latestPushTime = source.latestPushTime;
 
 	return *this;
-}
-
-Long HistoryBook::Update(Command* command, bool isDone) {
-	Command* (*commands) = new Command * [this->capacity];
-	Long count = 0;
-	Long i = 0;
-	while (!this->histories.IsEmpty() 
-		&& this->histories.Peek()->GetElement()->GetId() == ID_COMMAND_REPLACE)
-	{
-		DropOldestStack<Command*>::Node node = this->histories.Pop();
-		Command* top = node.GetElement();
-		if (top->GetSource() == command->GetSource() && top->GetReplaced() == command->GetReplaced())
-		{
-			top->Update(command, isDone);
-		}
-		commands[i] = top;
-		i++;
-		count++;
-	}
-
-	i = count - 1;
-	while (i >= 0)
-	{
-		this->histories.Push(commands[i]);
-		i--;
-	}
-
-	if (commands != NULL)
-	{
-		delete commands;
-	}
-
-	return count;
 }
 
 Command* HistoryBook::Bind(Command* command) {
