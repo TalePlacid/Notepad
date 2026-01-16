@@ -6,9 +6,9 @@ typedef signed long int Long;
 
 struct Margin {
 	Long left;
-	Long top;
 	Long right;
-	Long bottom;
+	Long up;
+	Long down;
 };
 
 struct PageSetting {

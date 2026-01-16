@@ -118,8 +118,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	Margin margin;
 	margin.left = 20;
 	margin.right = 20;
-	margin.top = 25;
-	margin.bottom = 25;
+	margin.up = 25;
+	margin.down = 25;
 	this->pageSetting = PageSetting(CString("A4"), TRUE, margin, CString(""), CString(""));
 
 	this->nextIsLastOnSize = FALSE;

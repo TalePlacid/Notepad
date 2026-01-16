@@ -6,8 +6,8 @@ PageSetting::PageSetting() {
 	this->isVertical = FALSE;
 	this->margin.left = 0;
 	this->margin.right = 0;
-	this->margin.top = 0;
-	this->margin.bottom = 0;
+	this->margin.up = 0;
+	this->margin.down = 0;
 }
 
 PageSetting::PageSetting(CString paperName, BOOL isVertical, Margin margin, CString header, CString footer)

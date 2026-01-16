@@ -10,7 +10,7 @@ const PaperSize Paper::b5 = { 176, 250 };
 const PaperSize Paper::letter = { 216, 279 };
 const PaperSize Paper::legal = { 216, 356 };
 
-const PaperSize& Paper::GetPaperSize(CString paper){
+const PaperSize Paper::GetPaperSize(CString paper){
 	PaperSize paperSize;
 	if (paper == "A4")
 	{

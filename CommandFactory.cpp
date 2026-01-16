@@ -25,6 +25,7 @@
 #include "LoadPreviousCommand.h"
 #include "LoadLastCommand.h"
 #include "LoadFirstCommand.h"
+#include "SetPageCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -53,8 +54,8 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	case ID_MENU_SAVEAS:
 		command = new SaveCommand(parent);
 		break;
-	case ID_MENU_PREVIEW:
-		command = new PreviewCommand(parent);
+	case ID_MENU_SETPAGE:
+		command = new SetPageCommand(parent);
 		break;
 	case ID_MENU_FONT:
 		command = new SelectFontCommand(parent);

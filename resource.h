@@ -3,7 +3,7 @@
 // notepad250410.rc에서 사용되고 있습니다.
 //
 #define IDR_MENU_MAIN                   101
-#define IDD_DIALOG_PREVIEW              102
+#define IDD_DIALOG_PAGESETTING          102
 #define IDC_GROUP_PAPER                 1001
 #define IDC_STATIC_SIZE                 1002
 #define IDC_STATIC_SOURCE               1003
@@ -29,11 +29,14 @@
 #define IDC_BUTTON_CANCEL               1023
 #define IDC_BUTTON_OK                   1024
 #define IDC_BUTTON_FIRST                1025
+#define IDC_BUTTON_PREVIOUS             1026
+#define IDC_BUTTON_NEXT                 1027
+#define IDC_BUTTON_LAST                 1028
+#define IDC_STATIC_PAGENUMBER           1031
 #define ID_MENU_NEW                     40003
 #define ID_MENU_OPEN                    40004
 #define ID_MENU_SAVE                    40005
 #define ID_MENU_SAVEAS                  40006
-#define ID_MENU_PREVIEW                 40007
 #define ID_MENU_PRINT                   40009
 #define ID_MENU_CLOSE                   40010
 #define ID_MENU_EXIT                    40011
@@ -59,6 +62,11 @@
 #define ID_MENU_INFO                    40052
 #define ID_MENU_ZOOMDEFAULT             40053
 #define ID_MENU_AUTOWRAP                40054
+#define ID_MENU_PAGESETTING             40055
+#define ID_MENU_SETPAGE                 40056
+#define ID_Menu                         40057
+#define ID_Menu40058                    40058
+#define ID_Menu_PREVIEW                 40059
 #define ID_COMMAND_ERASE                50001
 #define ID_COMMAND_PASTE                50002
 #define ID_COMMAND_ERASERANGE           50003
@@ -73,19 +81,19 @@
 #define ID_COMMAND_REPLACEALL           50012
 #define ID_COMMAND_FIND                 50013
 #define ID_COMMAND_FINDNEXT             50014
-#define ID_COMMAND_LOADNEXT				50015
-#define ID_COMMAND_AUTOWRAP				50016
-#define ID_COMMAND_LOADPREVIOUS			50017
-#define ID_COMMAND_LOADFIRST			50018
-#define ID_COMMAND_LOADLAST				50019
+#define ID_COMMAND_LOADNEXT             50015
+#define ID_COMMAND_AUTOWRAP             50016
+#define ID_COMMAND_LOADPREVIOUS         50017
+#define ID_COMMAND_LOADFIRST            50018
+#define ID_COMMAND_LOADLAST             50019
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        104
-#define _APS_NEXT_COMMAND_VALUE         40055
-#define _APS_NEXT_CONTROL_VALUE         1030
+#define _APS_NEXT_COMMAND_VALUE         40060
+#define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif
