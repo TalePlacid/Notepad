@@ -1,0 +1,32 @@
+#ifndef _PAGESETTINGFORM_H //guard
+#define _PAGESETTINGFORM_H
+#include <afxwin.h>
+#include "resource.h"
+
+typedef signed long int Long;
+
+class PreviewLayout;
+
+class PageSettingForm : public CDialog {
+public:
+	enum {IDD = IDD_DIALOG_PAGESETTING};
+public:
+	PreviewLayout* previewLayout;
+public:
+	PageSettingForm(CWnd* parent = NULL);
+	~PageSettingForm();
+
+	virtual BOOL OnInitDialog();
+protected:
+	void OnOptionChanged();
+	void OnPaint();
+	virtual void OnOK();
+	virtual void OnClose();
+	DECLARE_MESSAGE_MAP()
+private:
+	BOOL isInitialized;
+};
+
+
+#endif // !_PAGESETTINGFORM_H
+          

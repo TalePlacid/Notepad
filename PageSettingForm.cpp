@@ -38,11 +38,11 @@ PageSettingForm::~PageSettingForm() {
 BOOL PageSettingForm::OnInitDialog() {
 	CDialog::OnInitDialog();
 
-	//1. ÆäÀÌÁö ¼³Á¤À» ÀĞ´Â´Ù.
+	//1. í˜ì´ì§€ ì„¤ì •ì„ ì½ëŠ”ë‹¤.
 	PageSetting pageSetting = ((NotepadForm*)(this->GetParent()))->pageSetting;
 
-	//1. ÄÁÆ®·Ñµé¿¡¼­ ±âº» °ªÀ» ¼³Á¤ÇÑ´Ù.
-	CString sizes[] = { "A4", "A5", "A6", "B4", "B5", "·¹ÅÍ", "¸®°É" };
+	//1. ì»¨íŠ¸ë¡¤ë“¤ì—ì„œ ê¸°ë³¸ ê°’ì„ ì„¤ì •í•œë‹¤.
+	CString sizes[] = { "A4", "A5", "A6", "B4", "B5", "ë ˆí„°", "ë¦¬ê±¸" };
 	for (Long i = 0; i < sizeof(sizes) / sizeof(sizes[0]); i++)
 	{
 		((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->AddString(sizes[i]);
@@ -68,7 +68,7 @@ BOOL PageSettingForm::OnInitDialog() {
 	text.Format("%ld", pageSetting.margin.down);
 	this->GetDlgItem(IDC_EDIT_DOWN)->SetWindowText(text);
 
-	//2. ¹Ì¸®º¸±âÀÇ À§Ä¡¸¦ Á¤ÇÑ´Ù.
+	//2. ë¯¸ë¦¬ë³´ê¸°ì˜ ìœ„ì¹˜ë¥¼ ì •í•œë‹¤.
 	this->previewLayout = new PreviewLayout(this);
 	this->previewLayout->Locate();
 
@@ -80,7 +80,7 @@ BOOL PageSettingForm::OnInitDialog() {
 void PageSettingForm::OnOptionChanged() {
 	if (isInitialized)
 	{
-		//1. ¿ëÁöÅ©±â¿Í ¿©¹éÀ» ÀĞ´Â´Ù.
+		//1. ìš©ì§€í¬ê¸°ì™€ ì—¬ë°±ì„ ì½ëŠ”ë‹¤.
 		CString paperName;
 		this->GetDlgItem(IDC_COMBO_SIZE)->GetWindowText(paperName);
 
@@ -93,7 +93,7 @@ void PageSettingForm::OnOptionChanged() {
 		this->GetDlgItem(IDC_EDIT_UP)->GetWindowText(up);
 		this->GetDlgItem(IDC_EDIT_DOWN)->GetWindowText(down);
 
-		//2. ºó °ø°£ÀÌ ÀÖ´Ù¸é ±âº»°ªÀ¸·Î Ã¤¿ö³Ö´Â´Ù.
+		//2. ë¹ˆ ê³µê°„ì´ ìˆë‹¤ë©´ ê¸°ë³¸ê°’ìœ¼ë¡œ ì±„ì›Œë„£ëŠ”ë‹¤.
 		if (paperName == "")
 		{
 			((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->SelectString(0, "A4");
@@ -119,7 +119,7 @@ void PageSettingForm::OnOptionChanged() {
 			this->GetDlgItem(IDC_EDIT_DOWN)->SetWindowText("0");
 		}
 
-		//2. ¹Ì¸®º¸±âÀÇ À§Ä¡¸¦ Á¤ÇÑ´Ù.
+		//2. ë¯¸ë¦¬ë³´ê¸°ì˜ ìœ„ì¹˜ë¥¼ ì •í•œë‹¤.
 		this->previewLayout = new PreviewLayout(this);
 		this->previewLayout->Locate();
 
@@ -130,9 +130,9 @@ void PageSettingForm::OnOptionChanged() {
 void PageSettingForm::OnPaint() {
 	CPaintDC dc(this);
 
-	//1. Á¾ÀÌ ±×¸²ÀÚ ¿µ¿ªÀ» ±×¸°´Ù.
-	CPen solidPen(PS_SOLID, 1, RGB(0, 0, 0));   // °ËÀº»ö 1ÇÈ¼¿ Ææ
-	CBrush blackBrush(RGB(0, 0, 0));      // °ËÀº»ö Ã¤¿ò
+	//1. ì¢…ì´ ê·¸ë¦¼ì ì˜ì—­ì„ ê·¸ë¦°ë‹¤.
+	CPen solidPen(PS_SOLID, 1, RGB(0, 0, 0));   // ê²€ì€ìƒ‰ 1í”½ì…€ íœ
+	CBrush blackBrush(RGB(0, 0, 0));      // ê²€ì€ìƒ‰ ì±„ì›€
 
 	CPen* pOldPen = dc.SelectObject(&solidPen);
 	CBrush* pOldBrush = dc.SelectObject(&blackBrush);
@@ -140,26 +140,74 @@ void PageSettingForm::OnPaint() {
 	RECT paperArea = this->previewLayout->GetPaperArea();
 	dc.Rectangle(paperArea.left + 5, paperArea.top + 5, paperArea.right + 5, paperArea.bottom + 5);
 
-	//3. Á¾ÀÌ ¿µ¿ªÀ» ±×¸°´Ù.
-	CBrush* nullBrush = CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
-	dc.SelectObject(nullBrush); //Åõ¸í»ö Ã¤¿ò.
+	//2. ì¢…ì´ ì˜ì—­ì„ ê·¸ë¦°ë‹¤.
+	CBrush whiteBrush(RGB(255, 255, 255));
+	dc.SelectObject(&whiteBrush); //í°ìƒ‰ ì±„ì›€.
 
 	dc.Rectangle(paperArea.left, paperArea.top, paperArea.right, paperArea.bottom);
 
-	//4. ¾²±â ¿µ¿ªÀ» ±×¸°´Ù.
-	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // Á¡¼±, Àû»ö.
-	dc.SelectObject(&dotPen);
+	//3. í´ë¦¬í•‘ ì˜ì—­ì„ ì„¤ì •í•œë‹¤.
+	RECT writingArea = previewLayout->GetWritingArea();
+	RECT clipingArea;
+	clipingArea.left = writingArea.left;
+	clipingArea.right = writingArea.right;
+	clipingArea.top = paperArea.top;
+	clipingArea.bottom = paperArea.bottom;
 
-	RECT writingArea = this->previewLayout->GetWritingArea();
+	CRgn clipRgn;
+	clipRgn.CreateRectRgnIndirect(&clipingArea);
+	dc.SelectClipRgn(&clipRgn);
+
+	//3. í°íŠ¸ë¥¼ ì„¤ì •í•œë‹¤.
+	HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+	CFont* pFont = CFont::FromHandle(hFont);
+	LOGFONT logFont;
+	pFont->GetLogFont(&logFont);
+	logFont.lfHeight = -4;
+	CFont smallFont;
+	smallFont.CreateFontIndirectA(&logFont);
+	CFont* oldFont = dc.SelectObject(&smallFont);
+
+	TEXTMETRIC tm = {};
+	dc.GetTextMetrics(&tm);
+	Long rowHeight = tm.tmHeight;
+
+	CString header("This is example sentence.");
+	Long x = writingArea.left;
+	Long y = paperArea.top + (writingArea.top - paperArea.top) / 2;
+	dc.TextOut(x, y, header);
+
+	CString contents[4] = { CString("1234567890"), CString("abcdefghijklmnopqrstuvwxyz"), CString("Lorem ipsum collabore irum queda azulenoition rado loco kus roda aint engt deleso"), CString(" ")};
+	Long i = 0;
+	y = writingArea.top;
+	while (y < writingArea.bottom - rowHeight)
+	{
+		dc.TextOut(x, y, contents[i]);
+		i++;
+		i %= 3;
+		y += rowHeight;
+	}
+
+	CString footer("footer maybe place in here.");
+	y = writingArea.bottom + (paperArea.bottom - writingArea.bottom) / 2;
+	dc.TextOut(x, y, footer);
+
+	//4. ì“°ê¸° ì˜ì—­ì„ ê·¸ë¦°ë‹¤.
+	CBrush* nullBrush = CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
+	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // ì ì„ , ì ìƒ‰.
+	dc.SelectObject(&dotPen);
+	dc.SelectObject(nullBrush);
+
 	dc.Rectangle(writingArea.left, writingArea.top, writingArea.right, writingArea.bottom);
 
-	//5. ¿ø·¡ Ææ/ºê·¯½Ã¸¦ º¹¿øÇÑ´Ù.
+	//5. ì›ë˜ íœ/ë¸ŒëŸ¬ì‹œë¥¼ ë³µì›í•œë‹¤.
 	dc.SelectObject(pOldPen);
 	dc.SelectObject(pOldBrush);
+	dc.SelectObject(oldFont);
 }
 
 void PageSettingForm::OnOK() {
-	//1. ¿ëÁöÅ©±â¿Í ¿©¹éÀ» ÀĞ´Â´Ù.
+	//1. ìš©ì§€í¬ê¸°ì™€ ì—¬ë°±ì„ ì½ëŠ”ë‹¤.
 	CString paperName;
 	this->GetDlgItem(IDC_COMBO_SIZE)->GetWindowText(paperName);
 
@@ -180,7 +228,7 @@ void PageSettingForm::OnOK() {
 	this->GetDlgItem(IDC_EDIT_HEADER)->GetWindowText(header);
 	this->GetDlgItem(IDC_EDIT_FOOTER)->GetWindowText(footer);
 
-	//2. ¸Ş¸ğÀåÆû¿¡ Àû´Â´Ù.
+	//2. ë©”ëª¨ì¥í¼ì— ì ëŠ”ë‹¤.
 	PageSetting pageSetting;
 	pageSetting.paperName = paperName;
 	pageSetting.isVertical = isVertical;
