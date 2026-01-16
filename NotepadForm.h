@@ -2,6 +2,7 @@
 #define _NOTEPADFORM_H
 #include <afxwin.h>
 #include "Subject.h"
+#include "PageSetting.h"
 
 class Glyph;
 class CaretController;
@@ -34,6 +35,7 @@ public:
 	SearchResultController* searchResultController;
 	HistoryBook* undoHistoryBook;
 	HistoryBook* redoHistoryBook;
+	PageSetting pageSetting;
 	BOOL hasFindReplaceDialog;
 	BOOL isAutoWrapped;
 public:
