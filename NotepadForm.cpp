@@ -115,12 +115,12 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
 
-	RECT margin;
+	Margin margin;
 	margin.left = 20;
 	margin.right = 20;
 	margin.top = 25;
 	margin.bottom = 25;
-	this->pageSetting = PageSetting(Paper::GetPaperSize(CString("A4")), margin, CString(""), CString(""));
+	this->pageSetting = PageSetting(CString("A4"), TRUE, margin, CString(""), CString(""));
 
 	this->nextIsLastOnSize = FALSE;
 

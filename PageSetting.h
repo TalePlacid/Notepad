@@ -1,17 +1,24 @@
 #ifndef _PAGESETTING_H //guard
 #define _PAGESETTING_H
 #include <afxwin.h>
-#include "Paper.h"
+
+typedef signed long int Long;
+
+struct Margin {
+	Long left;
+	Long top;
+	Long right;
+	Long bottom;
+};
 
 struct PageSetting {
-public:
-	PageSetting();
-	PageSetting(Long width, Long heght, RECT margin, CString header, CString footer);
-	PageSetting(const PaperSize paperSize, RECT margin, CString header, CString footer);
+	PageSetting();	
+	PageSetting(CString paperName, BOOL isVertical, Margin margin, CString header, CString footer);
 	~PageSetting();
-private:
-	PaperSize paperSize;
-	RECT margin;
+
+	CString paperName;
+	BOOL isVertical;
+	Margin margin;
 	CString header;
 	CString footer;
 };
