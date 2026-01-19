@@ -1,18 +1,18 @@
-#include "PreviewLayout.h"
+#include "PageSettingLayout.h"
 #include "Paper.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
 
-PreviewLayout::PreviewLayout(CWnd* parent) {
+PageSettingLayout::PageSettingLayout(CWnd* parent) {
 	this->parent = parent;
 }
 
-PreviewLayout::~PreviewLayout() {
+PageSettingLayout::~PageSettingLayout() {
 
 }
 
-void PreviewLayout::Locate() {
+void PageSettingLayout::Locate() {
     //1. 미리보기 영역을 구한다.
     RECT previewArea;
     CWnd* previewControl = this->parent->GetDlgItem(IDC_GROUP_PREVIEW);

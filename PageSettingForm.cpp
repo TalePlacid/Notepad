@@ -1,5 +1,5 @@
 #include "PageSettingForm.h"
-#include "PreviewLayout.h"
+#include "PageSettingLayout.h"
 #include "NotepadForm.h"
 #include "PageSetting.h"
 
@@ -24,14 +24,14 @@ END_MESSAGE_MAP()
 
 PageSettingForm::PageSettingForm(CWnd* parent)
 	:CDialog(PageSettingForm::IDD, parent) {
-	this->previewLayout = NULL;
+	this->pageSettingLayout = NULL;
 	this->isInitialized = FALSE;
 }
 
 PageSettingForm::~PageSettingForm() {
-	if (this->previewLayout != NULL)
+	if (this->pageSettingLayout != NULL)
 	{
-		delete this->previewLayout;
+		delete this->pageSettingLayout;
 	}
 }
 
@@ -69,8 +69,8 @@ BOOL PageSettingForm::OnInitDialog() {
 	this->GetDlgItem(IDC_EDIT_DOWN)->SetWindowText(text);
 
 	//2. 미리보기의 위치를 정한다.
-	this->previewLayout = new PreviewLayout(this);
-	this->previewLayout->Locate();
+	this->pageSettingLayout = new PageSettingLayout(this);
+	this->pageSettingLayout->Locate();
 
 	this->isInitialized = TRUE;
 
@@ -120,8 +120,7 @@ void PageSettingForm::OnOptionChanged() {
 		}
 
 		//2. 미리보기의 위치를 정한다.
-		this->previewLayout = new PreviewLayout(this);
-		this->previewLayout->Locate();
+		this->pageSettingLayout->Locate();
 
 		this->Invalidate();
 	}
@@ -137,7 +136,7 @@ void PageSettingForm::OnPaint() {
 	CPen* pOldPen = dc.SelectObject(&solidPen);
 	CBrush* pOldBrush = dc.SelectObject(&blackBrush);
 
-	RECT paperArea = this->previewLayout->GetPaperArea();
+	RECT paperArea = this->pageSettingLayout->GetPaperArea();
 	dc.Rectangle(paperArea.left + 5, paperArea.top + 5, paperArea.right + 5, paperArea.bottom + 5);
 
 	//2. 종이 영역을 그린다.
@@ -147,7 +146,7 @@ void PageSettingForm::OnPaint() {
 	dc.Rectangle(paperArea.left, paperArea.top, paperArea.right, paperArea.bottom);
 
 	//3. 클리핑 영역을 설정한다.
-	RECT writingArea = previewLayout->GetWritingArea();
+	RECT writingArea = pageSettingLayout->GetWritingArea();
 	RECT clipingArea;
 	clipingArea.left = writingArea.left;
 	clipingArea.right = writingArea.right;

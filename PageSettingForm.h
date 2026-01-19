@@ -5,13 +5,13 @@
 
 typedef signed long int Long;
 
-class PreviewLayout;
+class PageSettingLayout;
 
 class PageSettingForm : public CDialog {
 public:
 	enum {IDD = IDD_DIALOG_PAGESETTING};
 public:
-	PreviewLayout* previewLayout;
+	PageSettingLayout* pageSettingLayout;
 public:
 	PageSettingForm(CWnd* parent = NULL);
 	~PageSettingForm();
