@@ -15,6 +15,7 @@ class CFindReplaceDialog;
 class SearchResultController;
 class HistoryBook;
 class PreviewForm;
+class PreviewForm;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
@@ -36,6 +37,7 @@ public:
 	HistoryBook* undoHistoryBook;
 	HistoryBook* redoHistoryBook;
 	PageSetting pageSetting;
+	PreviewForm* previewForm;
 	BOOL hasFindReplaceDialog;
 	BOOL isAutoWrapped;
 public:

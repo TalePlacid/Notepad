@@ -1,25 +1,21 @@
 #ifndef _PREVIEWFORM_H //guard
 #define _PREVIEWFORM_H
 #include <afxwin.h>
-#include "resource.h"
 
-#define INCH_TO_MM 25.4
+typedef signed long int Long;
 
-class PreviewForm : public CDialog {
+class PreviewLayout;
+class PreviewScaler;
+class PreviewPaginator;
+
+class PreviewForm : public CFrameWnd {
 public:
-	enum {IDD=IDD_DIALOG_PREVIEW};
-public:
-	PreviewForm(CWnd* parent = NULL);
-	~PreviewForm();
-
-	virtual BOOL OnInitDialog();
+	PreviewForm();
+	virtual ~PreviewForm();
 protected:
-	void OnOptionChanged();
-	void OnPaint();
-	virtual void OnClose();
+	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void OnClose();
 	DECLARE_MESSAGE_MAP()
 };
-
-
 
 #endif // !_PREVIEWFORM_H

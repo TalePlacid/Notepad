@@ -31,6 +31,7 @@
 #include "message.h"
 #include "FindReplaceCommandFactory.h"
 #include "HistoryBook.h"
+#include "PreviewForm.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -73,6 +74,7 @@ NotepadForm::NotepadForm() {
 	this->undoHistoryBook = NULL;
 	this->redoHistoryBook = NULL;
 	this->hasFindReplaceDialog = FALSE;
+	this->previewForm = NULL;
 	this->isCompositing = FALSE;
 	this->isAutoWrapped = FALSE;
 	
@@ -505,6 +507,11 @@ void NotepadForm::OnClose() {
 	if (this->redoHistoryBook != NULL)
 	{
 		delete this->redoHistoryBook;
+	}
+
+	if (this->previewForm != NULL)
+	{
+		delete this->previewForm;
 	}
 
 	CFrameWnd::OnClose();

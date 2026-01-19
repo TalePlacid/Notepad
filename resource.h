@@ -66,7 +66,7 @@
 #define ID_MENU_SETPAGE                 40056
 #define ID_Menu                         40057
 #define ID_Menu40058                    40058
-#define ID_Menu_PREVIEW                 40059
+#define ID_MENU_PREVIEW                 40059
 #define ID_COMMAND_ERASE                50001
 #define ID_COMMAND_PASTE                50002
 #define ID_COMMAND_ERASERANGE           50003

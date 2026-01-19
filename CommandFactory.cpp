@@ -57,6 +57,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	case ID_MENU_SETPAGE:
 		command = new SetPageCommand(parent);
 		break;
+	case ID_MENU_PREVIEW:
+		command = new PreviewCommand(parent);
+		break;	
 	case ID_MENU_FONT:
 		command = new SelectFontCommand(parent);
 		break;
