@@ -30,7 +30,7 @@ void PreviewCommand::Execute() {
 	{
 		delete ((NotepadForm*)(this->parent))->previewForm;
 	}
-	((NotepadForm*)(this->parent))->previewForm = new PreviewForm;
+	((NotepadForm*)(this->parent))->previewForm = new PreviewForm(this->parent);
 
 	PreviewForm* previewForm = ((NotepadForm*)(this->parent))->previewForm;
 	previewForm->Create(NULL, CString("미리보기"), WS_OVERLAPPEDWINDOW, rect, this->parent);

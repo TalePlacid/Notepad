@@ -1,4 +1,5 @@
 #include "PreviewForm.h"
+#include "NotepadForm.h"
 
 #pragma warning(disable:4996)
 
@@ -7,8 +8,8 @@ BEGIN_MESSAGE_MAP(PreviewForm, CFrameWnd)
 	END_MESSAGE_MAP()
 
 
-PreviewForm::PreviewForm() {
-
+PreviewForm::PreviewForm(CWnd *parent) {
+	this->parent = parent;
 }
 
 PreviewForm::~PreviewForm() {
@@ -22,5 +23,7 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 }
 
 void PreviewForm::OnClose() {
+	((NotepadForm*)(this->parent))->previewForm = NULL;
+
 	CFrameWnd::OnClose();
 }

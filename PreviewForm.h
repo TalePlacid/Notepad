@@ -10,12 +10,14 @@ class PreviewPaginator;
 
 class PreviewForm : public CFrameWnd {
 public:
-	PreviewForm();
+	PreviewForm(CWnd *parent);
 	virtual ~PreviewForm();
 protected:
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
+private:
+	CWnd* parent;
 };
 
 #endif // !_PREVIEWFORM_H
