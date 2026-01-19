@@ -86,6 +86,11 @@
 #define ID_COMMAND_LOADPREVIOUS         50017
 #define ID_COMMAND_LOADFIRST            50018
 #define ID_COMMAND_LOADLAST             50019
+#define IDC_BUTTON_FIRST				50020
+#define IDC_BUTTON_PREVIOUS				50021
+#define IDC_BUTTON_NEXT		            50022
+#define IDC_BUTTON_LAST			        50023
+#define IDC_STATIC_PAGENUMBER			50024
 
 // Next default values for new objects
 // 
