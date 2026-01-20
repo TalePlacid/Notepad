@@ -52,14 +52,22 @@ void PreviewLayout::Locate() {
 	this->writingArea.top = paperArea.top + upMargin;
 	this->writingArea.bottom = paperArea.bottom - downMargin;
 
-	//4. 페이지 바의 좌표를 구한다.
+	//4. 머리글 위치를 구한다.
+	Long headerY = this->paperArea.top + (this->writingArea.top - this->paperArea.top) / 2;
+	this->headerPoint.SetPoint(this->writingArea.left, headerY);
+
+	//5. 바닥글 위치를 구한다.
+	Long footerY = this->paperArea.bottom - (this->paperArea.bottom - this->writingArea.bottom) / 2;
+	this->footerPoint.SetPoint(this->writingArea.left, footerY);
+
+	//6. 페이지 바의 좌표를 구한다.
 	Long shadowAreaBottom = (this->paperArea.bottom + 5);
 	Long clientAreaDownMargin = this->clientArea.bottom - shadowAreaBottom;
 	Long pageBarTop = shadowAreaBottom + clientAreaDownMargin / 3;
 	Long pageBarBottom = this->clientArea.bottom - clientAreaDownMargin / 3;
 	Long pageBarHeight = pageBarBottom - pageBarTop;
 	
-	//5. 각 버튼의 좌료를 구한다.
+	//7. 각 버튼의 좌료를 구한다.
 	Long buttonWidth = pageBarHeight;
 	Long buttonMargin = pageBarHeight / 2;
 
@@ -83,7 +91,7 @@ void PreviewLayout::Locate() {
 	this->nextButtonArea.top = pageBarTop;
 	this->nextButtonArea.bottom = pageBarBottom;
 
-	//6. 페이지 넘버 정적 영역을 구한다.
+	//8. 페이지 넘버 정적 영역을 구한다.
 	this->pageNumberArea.left = this->previousButtonArea.right + buttonMargin;
 	this->pageNumberArea.right = this->nextButtonArea.left - buttonMargin;
 	this->pageNumberArea.top = pageBarTop;

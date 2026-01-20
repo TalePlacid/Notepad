@@ -12,6 +12,7 @@ class PreviewForm : public CFrameWnd {
 public:
 	CWnd* parent;
 	PreviewLayout* previewLayout;
+	PreviewScaler* previewScaler;
 public:
 	PreviewForm(CWnd *parent);
 	virtual ~PreviewForm();

@@ -19,6 +19,8 @@ public:
 	RECT& GetNextButtonArea() const;
 	RECT& GetLastButtonArea() const;
 	RECT& GetPageNumberArea() const;
+	CPoint& GetHeaderPoint() const;
+	CPoint& GetFooterPoint() const;
 private:
 	CWnd* parent;
 	RECT clientArea;
@@ -29,6 +31,8 @@ private:
 	RECT nextButtonArea;
 	RECT lastButtonArea;
 	RECT pageNumberArea;
+	CPoint headerPoint;
+	CPoint footerPoint;
 };
 
 inline RECT& PreviewLayout::GetClientArea() const {
@@ -61,6 +65,14 @@ inline RECT& PreviewLayout::GetLastButtonArea() const {
 
 inline RECT& PreviewLayout::GetPageNumberArea() const {
 	return const_cast<RECT&>(this->pageNumberArea);
+}
+
+inline CPoint& PreviewLayout::GetHeaderPoint() const {
+	return const_cast<CPoint&>(this->headerPoint);
+}
+
+inline CPoint& PreviewLayout::GetFooterPoint() const {
+	return const_cast<CPoint&>(this->footerPoint);
 }
 
 #endif // !_PREVIEWLAYOUT_H
