@@ -13,6 +13,7 @@ public:
 	CWnd* parent;
 	PreviewLayout* previewLayout;
 	PreviewScaler* previewScaler;
+	PreviewPaginator* previewPaginator;
 public:
 	PreviewForm(CWnd *parent);
 	virtual ~PreviewForm();
@@ -22,6 +23,7 @@ protected:
 	CButton nextButton;
 	CButton lastButton;
 	CStatic pageNumber;
+	CFont* pageNumberFont;
 protected:
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnSize(UINT nType, int cx, int cy);

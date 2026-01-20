@@ -2,6 +2,9 @@
 #include "NotepadForm.h"
 #include "PreviewLayout.h"
 #include "PreviewScaler.h"
+#include "PreviewPaginator.h"
+#include "PagingBuffer.h"
+#include "Glyph.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -18,6 +21,8 @@ PreviewForm::PreviewForm(CWnd *parent) {
 	this->parent = parent;
 	this->previewLayout = NULL;
 	this->previewScaler = NULL;
+	this->previewPaginator = NULL;
+	this->pageNumberFont = NULL;
 }
 
 PreviewForm::~PreviewForm() {
@@ -29,6 +34,16 @@ PreviewForm::~PreviewForm() {
 	if (this->previewScaler != NULL)
 	{
 		delete this->previewScaler;
+	}
+
+	if (this->previewPaginator != NULL)
+	{
+		delete this->previewPaginator;
+	}
+
+	if (this->pageNumberFont != NULL)
+	{
+		delete this->pageNumberFont;
 	}
 }
 
@@ -46,7 +61,21 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->previewScaler = new PreviewScaler(this);
 	this->previewScaler->ConvertToPreviewSize();
 
-	this->pageNumber.Create("000 / 000", WS_CHILD | WS_VISIBLE | SS_CENTER, this->previewLayout->GetPageNumberArea(), this, IDC_STATIC_PAGENUMBER);
+	this->previewPaginator = new PreviewPaginator(this);
+	this->previewPaginator->Paginate();
+
+	CString pageNumber;
+	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
+	RECT pageNumberArea = this->previewLayout->GetPageNumberArea();
+	this->pageNumber.Create(pageNumber, WS_CHILD | WS_VISIBLE | SS_CENTER, pageNumberArea, this, IDC_STATIC_PAGENUMBER);
+
+	LOGFONT logFont;
+	this->previewScaler->GetFont()->GetLogFont(&logFont);
+	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
+	logFont.lfHeight = -pageNumberHeight;
+	this->pageNumberFont = new CFont;
+	this->pageNumberFont->CreateFontIndirectA(&logFont);
+	this->pageNumber.SetFont(this->pageNumberFont);
 
 	return 0;
 }
@@ -55,6 +84,18 @@ void PreviewForm::OnSize(UINT nType, int cx, int cy) {
 	this->previewLayout->Locate();
 	this->previewScaler->ConvertToPreviewSize();
 
+	LOGFONT logFont;
+	this->previewScaler->GetFont()->GetLogFont(&logFont);
+	RECT pageNumberArea = this->previewLayout->GetPageNumberArea();
+	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
+	logFont.lfHeight = -pageNumberHeight;
+	if (this->pageNumberFont != NULL)
+	{
+		delete this->pageNumberFont;
+	}
+	this->pageNumberFont = new CFont;
+	this->pageNumberFont->CreateFontIndirectA(&logFont);
+	this->pageNumber.SetFont(this->pageNumberFont);
 }
 
 void PreviewForm::OnPaint() {
@@ -73,12 +114,14 @@ void PreviewForm::OnPaint() {
 	dc.SelectObject(&whiteBrush);
 	dc.Rectangle(&paperArea);
 
-	//3. 쓰기 영역을 그린다.
-	CBrush* nullBrush = CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
-	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // 점선, 적색.           
-	dc.SelectObject(&dotPen);
-	dc.SelectObject(nullBrush);
-	dc.Rectangle(&this->previewLayout->GetWritingArea());
+	//3. 클리핑 영역을 설정한다.
+	RECT writingArea = this->previewLayout->GetWritingArea();
+	RECT clipRect;
+	clipRect.left = writingArea.left;
+	clipRect.right = paperArea.right;
+	clipRect.top = paperArea.top;
+	clipRect.bottom = paperArea.bottom;
+	dc.IntersectClipRect(&clipRect);
 
 	//4. 머리글과 바닥글을 적는다.
 	PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
@@ -89,14 +132,40 @@ void PreviewForm::OnPaint() {
 	CPoint footerPoint = this->previewLayout->GetFooterPoint();
 	TextOut(dc, footerPoint.x, footerPoint.y, pageSetting.footer, pageSetting.footer.GetLength());
 
-	//5. 페이지바의 컨트롤들을 이동시킨다.
+	//5. 본문 내용을 적는다.
+	Long x = writingArea.left;
+	Long y = writingArea.top;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long pageStartIndex = this->previewPaginator->GetCurrent();
+
+	Long rowHeight = this->previewScaler->GetRowHeight();
+	CString row;
+	Long i = pageStartIndex - pagingBuffer->GetRowStartIndex();
+	Long nextPageIndex = i + this->previewPaginator->GetRowCountPerPage();
+	while (i < nextPageIndex && i < note->GetLength())
+	{
+		row.Format("%s", note->GetAt(i)->MakeString().c_str());
+		TextOut(dc, x, y, (LPCSTR)row, row.GetLength());
+		y += rowHeight;
+		i++;
+	}
+
+	//6. 쓰기 영역을 그린다.
+	CBrush* nullBrush = CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
+	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // 점선, 적색.           
+	dc.SelectObject(&dotPen);
+	dc.SelectObject(nullBrush);
+	dc.Rectangle(&writingArea);
+
+	//7. 페이지바의 컨트롤들을 이동시킨다.
 	this->firstButton.MoveWindow(&this->previewLayout->GetFirstButtonArea());
 	this->previousButton.MoveWindow(&this->previewLayout->GetPreviousButtonArea());
 	this->nextButton.MoveWindow(&this->previewLayout->GetNextButtonArea());
 	this->lastButton.MoveWindow(&this->previewLayout->GetLastButtonArea());
 	this->pageNumber.MoveWindow(&this->previewLayout->GetPageNumberArea());
 
-	//6. dc 리소스를 해제한다.
+	//8. dc 리소스를 해제한다.
 	dc.SelectObject(oldBrush);
 	dc.SelectObject(oldPen);
 	dc.SelectObject(oldFont);
