@@ -28,6 +28,10 @@ protected:
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnPaint();
+	void OnFirstButtonClicked();
+	void OnPreviousButtonClicked();
+	void OnNextButtonClicked();
+	void OnLastButtonClicked();
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 };

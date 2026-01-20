@@ -13,6 +13,10 @@ BEGIN_MESSAGE_MAP(PreviewForm, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_PAINT()
+	ON_BN_CLICKED(IDC_BUTTON_FIRST, OnFirstButtonClicked)
+	ON_BN_CLICKED(IDC_BUTTON_PREVIOUS, OnPreviousButtonClicked)
+	ON_BN_CLICKED(IDC_BUTTON_NEXT, OnNextButtonClicked)
+	ON_BN_CLICKED(IDC_BUTTON_LAST, OnLastButtonClicked)
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -83,6 +87,11 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 void PreviewForm::OnSize(UINT nType, int cx, int cy) {
 	this->previewLayout->Locate();
 	this->previewScaler->ConvertToPreviewSize();
+	this->previewPaginator->Paginate();
+
+	CString pageNumber;
+	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
+	this->pageNumber.SetWindowText(pageNumber);
 
 	LOGFONT logFont;
 	this->previewScaler->GetFont()->GetLogFont(&logFont);
@@ -137,7 +146,7 @@ void PreviewForm::OnPaint() {
 	Long y = writingArea.top;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long pageStartIndex = this->previewPaginator->GetCurrent();
+	Long pageStartIndex = (this->previewPaginator->GetCurrent() - 1) * this->previewPaginator->GetRowCountPerPage();
 
 	Long rowHeight = this->previewScaler->GetRowHeight();
 	CString row;
@@ -171,8 +180,46 @@ void PreviewForm::OnPaint() {
 	dc.SelectObject(oldFont);
 }
 
+void PreviewForm::OnFirstButtonClicked() {
+	this->previewPaginator->First();
+	CString pageNumber;
+	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
+	this->pageNumber.SetWindowText(pageNumber);
+
+	this->Invalidate();
+}
+
+void PreviewForm::OnPreviousButtonClicked() {
+	this->previewPaginator->Previous();
+	CString pageNumber;
+	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
+	this->pageNumber.SetWindowText(pageNumber);
+
+	this->Invalidate();
+}
+
+void PreviewForm::OnNextButtonClicked() {
+	this->previewPaginator->Next();
+	CString pageNumber;
+	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
+	this->pageNumber.SetWindowText(pageNumber);
+
+	this->Invalidate();
+}
+
+void PreviewForm::OnLastButtonClicked() {
+	this->previewPaginator->Last();
+	CString pageNumber;
+	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
+	this->pageNumber.SetWindowText(pageNumber);
+
+	this->Invalidate();
+}
+
 void PreviewForm::OnClose() {
 	((NotepadForm*)(this->parent))->previewForm = NULL;
+	((NotepadForm*)(this->parent))->Notify("UpdateScrollBars");
+	this->parent->Invalidate();
 
 	CFrameWnd::OnClose();
 }
