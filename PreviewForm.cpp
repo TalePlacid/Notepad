@@ -74,7 +74,7 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->pageNumber.Create(pageNumber, WS_CHILD | WS_VISIBLE | SS_CENTER, pageNumberArea, this, IDC_STATIC_PAGENUMBER);
 
 	LOGFONT logFont;
-	this->previewScaler->GetFont()->GetLogFont(&logFont);
+	this->previewScaler->GetRegularFont()->GetLogFont(&logFont);
 	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
 	logFont.lfHeight = -pageNumberHeight;
 	this->pageNumberFont = new CFont;
@@ -94,7 +94,7 @@ void PreviewForm::OnSize(UINT nType, int cx, int cy) {
 	this->pageNumber.SetWindowText(pageNumber);
 
 	LOGFONT logFont;
-	this->previewScaler->GetFont()->GetLogFont(&logFont);
+	this->previewScaler->GetRegularFont()->GetLogFont(&logFont);
 	RECT pageNumberArea = this->previewLayout->GetPageNumberArea();
 	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
 	logFont.lfHeight = -pageNumberHeight;
@@ -134,7 +134,7 @@ void PreviewForm::OnPaint() {
 
 	//4. 머리글과 바닥글을 적는다.
 	PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
-	CFont* oldFont = dc.SelectObject(this->previewScaler->GetFont());
+	CFont* oldFont = dc.SelectObject(this->previewScaler->GetRegularFont());
 	CPoint headerPoint = this->previewLayout->GetHeaderPoint();
 	TextOut(dc, headerPoint.x, headerPoint.y, pageSetting.header, pageSetting.header.GetLength());
 
@@ -148,7 +148,35 @@ void PreviewForm::OnPaint() {
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long pageStartIndex = (this->previewPaginator->GetCurrent() - 1) * this->previewPaginator->GetRowCountPerPage();
 
-	Long rowHeight = this->previewScaler->GetRowHeight();
+	//큰 글자 영역
+	dc.SelectObject(this->previewScaler->GetLargeFont());
+	Long largeRowHeight = this->previewScaler->GetLargeRowHeight();
+	CString row;
+	Long j = 0;
+	Long i = pageStartIndex - pagingBuffer->GetRowStartIndex();
+	Long nextPageIndex = i + this->previewPaginator->GetRowCountPerPage();
+	while (j < this->previewScaler->GetLargeCount() && i < nextPageIndex && i < note->GetLength())
+	{
+		row.Format("%s", note->GetAt(i)->MakeString().c_str());
+		TextOut(dc, x, y, (LPCSTR)row, row.GetLength());
+		y += largeRowHeight;
+		i++;
+		j++;
+	}
+
+	//표준 글자 영역
+	dc.SelectObject(this->previewScaler->GetRegularFont());
+	Long regularRowHeight = this->previewScaler->GetRegularRowHeight();
+	while (i < nextPageIndex && i < note->GetLength())
+	{
+		row.Format("%s", note->GetAt(i)->MakeString().c_str());
+		TextOut(dc, x, y, (LPCSTR)row, row.GetLength());
+		y += regularRowHeight;
+		i++;
+	}
+
+#if 0
+	Long rowHeight = this->previewScaler->GetRegularRowHeight();
 	CString row;
 	Long i = pageStartIndex - pagingBuffer->GetRowStartIndex();
 	Long nextPageIndex = i + this->previewPaginator->GetRowCountPerPage();
@@ -159,7 +187,7 @@ void PreviewForm::OnPaint() {
 		y += rowHeight;
 		i++;
 	}
-
+#endif
 	//6. 쓰기 영역을 그린다.
 	CBrush* nullBrush = CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
 	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // 점선, 적색.           

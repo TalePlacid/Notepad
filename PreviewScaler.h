@@ -11,20 +11,37 @@ public:
 
 	void ConvertToPreviewSize();
 
-	CFont* GetFont() const;
-	Long GetRowHeight() const;
+	CFont* GetLargeFont() const;
+	CFont* GetRegularFont() const;
+	Long GetLargeRowHeight() const;
+	Long GetRegularRowHeight() const;
+	Long GetLargeCount() const;
 private:
 	CWnd* parent;
-	CFont* font;
-	Long rowHeight;
+	CFont* largeFont;
+	CFont* regularFont;
+	Long regularRowHeight;
+	Long largeCount;
 };
 
-inline CFont* PreviewScaler::GetFont() const {
-	return this->font;
+inline CFont* PreviewScaler::GetLargeFont() const {
+	return this->largeFont;
 }
 
-inline Long PreviewScaler::GetRowHeight() const {
-	return this->rowHeight;
+inline CFont* PreviewScaler::GetRegularFont() const {
+	return this->regularFont;
+}
+
+inline Long PreviewScaler::GetLargeRowHeight() const {
+	return this->regularRowHeight + 1;
+}
+
+inline Long PreviewScaler::GetRegularRowHeight() const {
+	return this->regularRowHeight;
+}
+
+inline Long PreviewScaler::GetLargeCount() const {
+	return this->largeCount;
 }
 
 #endif // !_PREVIEWSCALER_H

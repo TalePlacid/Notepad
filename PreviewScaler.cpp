@@ -11,18 +11,65 @@
 
 PreviewScaler::PreviewScaler(CWnd* parent) {
 	this->parent = parent;
-    this->font = NULL;
-    this->rowHeight = 0;
+    this->largeFont = NULL;
+    this->regularFont = NULL;
+    this->regularRowHeight = 0;
+    this->largeCount = 0;
 }
 
 PreviewScaler::~PreviewScaler() {
-    if (this->font != NULL)
+    if (this->largeFont != NULL)
     {
-        delete this->font;
+        delete this->largeFont;
+    }
+
+    if (this->regularFont != NULL)
+    {
+        delete this->regularFont;
     }
 }
 
 void PreviewScaler::ConvertToPreviewSize() {
+    //1. 쓰기 영역 픽셀 높이를 읽는다.
+    PreviewLayout* previewLayout = ((PreviewForm*)(this->parent))->previewLayout;
+    RECT writingArea = previewLayout->GetWritingArea();
+    Long writingAreaHeight = writingArea.bottom - writingArea.top;
+
+    //2. 줄 높이를 구한다.
+    PreviewPaginator* previewPaginator = ((PreviewForm*)(this->parent))->previewPaginator;
+    Long rowCountPerPage = previewPaginator->GetRowCountPerPage();
+    this->regularRowHeight = writingAreaHeight / rowCountPerPage;
+    this->largeCount = writingAreaHeight % rowCountPerPage;
+
+    //3. 폰트를 구한다.    
+    CFont* originalFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+    if (((NotepadForm*)(((PreviewForm*)(this->parent))->parent))->font != NULL)
+    {
+        originalFont = ((NotepadForm*)(((PreviewForm*)(this->parent))->parent))->font->GetCFont();
+    }
+
+    LOGFONT logFont = {};
+    originalFont->GetLogFont(&logFont);
+    logFont.lfHeight = -this->regularRowHeight;
+    if (this->regularFont != NULL)
+    {
+        delete this->regularFont;
+        this->regularFont = NULL;
+    }
+
+    this->regularFont = new CFont;
+    this->regularFont->CreateFontIndirectA(&logFont);
+
+    logFont.lfHeight -= 1;
+    if (this->largeFont != NULL)
+    {
+        delete this->largeFont;
+        this->largeFont = NULL;
+    }
+
+    this->largeFont = new CFont;
+    this->largeFont->CreateFontIndirectA(&logFont);
+#if 0
     //1. 쓰기 영역 픽셀 높이를 읽는다.
     PreviewLayout* previewLayout = ((PreviewForm*)(this->parent))->previewLayout;
     RECT writingArea = previewLayout->GetWritingArea();
@@ -51,7 +98,7 @@ void PreviewScaler::ConvertToPreviewSize() {
 
     this->font = new CFont;
     this->font->CreateFontIndirectA(&logFont);
-
+#endif
 #if 0
     //1. 페이지 설정을 읽는다.
     PageSetting pageSetting = ((NotepadForm*)(((PreviewForm*)(this->parent))->parent))->pageSetting;
