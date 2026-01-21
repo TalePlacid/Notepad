@@ -62,11 +62,11 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->nextButton.Create(">", WS_CHILD | WS_VISIBLE | SS_CENTER, this->previewLayout->GetNextButtonArea(), this, IDC_BUTTON_NEXT);
 	this->lastButton.Create(">>", WS_CHILD | WS_VISIBLE | SS_CENTER, this->previewLayout->GetLastButtonArea(), this, IDC_BUTTON_LAST);
 
-	this->previewScaler = new PreviewScaler(this);
-	this->previewScaler->ConvertToPreviewSize();
-
 	this->previewPaginator = new PreviewPaginator(this);
 	this->previewPaginator->Paginate();
+
+	this->previewScaler = new PreviewScaler(this);
+	this->previewScaler->ConvertToPreviewSize();
 
 	CString pageNumber;
 	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
@@ -86,8 +86,8 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 void PreviewForm::OnSize(UINT nType, int cx, int cy) {
 	this->previewLayout->Locate();
-	this->previewScaler->ConvertToPreviewSize();
 	this->previewPaginator->Paginate();
+	this->previewScaler->ConvertToPreviewSize();
 
 	CString pageNumber;
 	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());

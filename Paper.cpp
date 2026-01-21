@@ -43,3 +43,37 @@ const PaperSize Paper::GetPaperSize(CString paper){
 
 	return paperSize;
 }
+
+const short Paper::GetDmPaperSize(CString paper) {
+	short paperSize;
+	if (paper == "A4")
+	{
+		paperSize = DMPAPER_A4;
+	}
+	else if (paper == "A5")
+	{
+		paperSize = DMPAPER_A5;
+	}
+	else if (paper == "A6")
+	{
+		paperSize = DMPAPER_A6;
+	}
+	else if (paper == "B4")
+	{
+		paperSize = DMPAPER_B4;
+	}
+	else if (paper == "B5")
+	{
+		paperSize = DMPAPER_B5;
+	}
+	else if (paper == "레터")
+	{
+		paperSize = DMPAPER_LETTER;
+	}
+	else if (paper == "리걸")
+	{
+		paperSize = DMPAPER_LEGAL;
+	}
+
+	return paperSize;
+}

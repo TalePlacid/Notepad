@@ -168,7 +168,6 @@
     <ClInclude Include="CutCommand.h" />
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="DownArrowAction.h" />
-    <ClInclude Include="DpiScaler.h" />
     <ClInclude Include="DropOldestStack.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EndAction.h" />
@@ -309,7 +308,6 @@
     <ClCompile Include="CutCommand.cpp" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="DownArrowAction.cpp" />
-    <ClCompile Include="DpiScaler.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EndAction.cpp" />
     <ClCompile Include="EraseCommand.cpp" />

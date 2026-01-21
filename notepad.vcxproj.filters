@@ -365,9 +365,6 @@
     <ClInclude Include="Paper.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DpiScaler.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="AutoWrappingPolicy.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -776,9 +773,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Paper.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DpiScaler.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scroll.cpp">

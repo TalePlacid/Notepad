@@ -19,6 +19,7 @@ struct Paper {
 	static const PaperSize legal;
 
 	static const PaperSize GetPaperSize(CString paper);
+	static const short GetDmPaperSize(CString paper);
 };
 
 #endif // !_PAPER_H

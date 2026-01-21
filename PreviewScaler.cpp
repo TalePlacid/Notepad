@@ -2,6 +2,7 @@
 #include "Paper.h"
 #include "PreviewForm.h"
 #include "PreviewLayout.h"
+#include "PreviewPaginator.h"
 #include "NotepadForm.h"
 #include "Font.h"
 #include "resource.h"
@@ -22,6 +23,36 @@ PreviewScaler::~PreviewScaler() {
 }
 
 void PreviewScaler::ConvertToPreviewSize() {
+    //1. 쓰기 영역 픽셀 높이를 읽는다.
+    PreviewLayout* previewLayout = ((PreviewForm*)(this->parent))->previewLayout;
+    RECT writingArea = previewLayout->GetWritingArea();
+    Long writingAreaHeight = writingArea.bottom - writingArea.top;
+
+    //2. 줄 높이를 구한다.
+    PreviewPaginator* previewPaginator = ((PreviewForm*)(this->parent))->previewPaginator;
+    Long rowCountPerPage = previewPaginator->GetRowCountPerPage();
+    this->rowHeight = writingAreaHeight / rowCountPerPage;
+
+    //3. 폰트를 구한다.    
+    CFont* originalFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+    if (((NotepadForm*)(((PreviewForm*)(this->parent))->parent))->font != NULL)
+    {
+        originalFont = ((NotepadForm*)(((PreviewForm*)(this->parent))->parent))->font->GetCFont();
+    }
+
+    LOGFONT logFont = {};
+    originalFont->GetLogFont(&logFont);
+    logFont.lfHeight = -this->rowHeight;
+    if (this->font != NULL)
+    {
+        delete this->font;
+        this->font = NULL;
+    }
+
+    this->font = new CFont;
+    this->font->CreateFontIndirectA(&logFont);
+
+#if 0
     //1. 페이지 설정을 읽는다.
     PageSetting pageSetting = ((NotepadForm*)(((PreviewForm*)(this->parent))->parent))->pageSetting;
     PaperSize paperSize = Paper::GetPaperSize(pageSetting.paperName);
@@ -82,4 +113,5 @@ void PreviewScaler::ConvertToPreviewSize() {
 
     dc->SelectObject(oldFont);
     this->parent->ReleaseDC(dc);
+#endif
 }
