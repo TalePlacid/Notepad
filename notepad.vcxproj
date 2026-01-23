@@ -225,6 +225,8 @@
     <ClInclude Include="PreviewLayout.h" />
     <ClInclude Include="PreviewPaginator.h" />
     <ClInclude Include="PreviewScaler.h" />
+    <ClInclude Include="PrintCommand.h" />
+    <ClInclude Include="PrinterResourceCalculator.h" />
     <ClInclude Include="RedoCommand.h" />
     <ClInclude Include="ReplaceAllCommand.h" />
     <ClInclude Include="ReplaceCommand.h" />
@@ -362,6 +364,8 @@
     <ClCompile Include="PreviewLayout.cpp" />
     <ClCompile Include="PreviewPaginator.cpp" />
     <ClCompile Include="PreviewScaler.cpp" />
+    <ClCompile Include="PrintCommand.cpp" />
+    <ClCompile Include="PrinterResourceCalculator.cpp" />
     <ClCompile Include="RedoCommand.cpp" />
     <ClCompile Include="ReplaceAllCommand.cpp" />
     <ClCompile Include="ReplaceCommand.cpp" />

@@ -62,7 +62,7 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->nextButton.Create(">", WS_CHILD | WS_VISIBLE | SS_CENTER, this->previewLayout->GetNextButtonArea(), this, IDC_BUTTON_NEXT);
 	this->lastButton.Create(">>", WS_CHILD | WS_VISIBLE | SS_CENTER, this->previewLayout->GetLastButtonArea(), this, IDC_BUTTON_LAST);
 
-	this->previewPaginator = new PreviewPaginator(this);
+	this->previewPaginator = new PreviewPaginator(this->parent);
 	this->previewPaginator->Paginate();
 
 	this->previewScaler = new PreviewScaler(this);

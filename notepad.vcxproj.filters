@@ -440,6 +440,12 @@
     <ClInclude Include="PreviewLayout.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="PrintCommand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PrinterResourceCalculator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -839,6 +845,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PreviewLayout.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintCommand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PrinterResourceCalculator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
