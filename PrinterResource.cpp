@@ -1,32 +1,35 @@
-#include "PrinterResourceCalculator.h"
-#include <winspool.h>
+#include <afxwin.h>
+#include <afxdlgs.h>
+#include "PrinterResource.h"
 #include "NotepadForm.h"
 #include "Paper.h"
 #include "Font.h"
 
 #pragma warning(disable:4996)
 
-PrinterResourceCalculator::PrinterResourceCalculator(CWnd* parent, CPrintDialog* printDialog) {
+PrinterResource::PrinterResource(CWnd* parent, CPrintDialog* printDialog) {
 	this->parent = parent;
 	this->printDialog = printDialog;
 	this->font = NULL;
+	this->dpiX = 0;
+	this->dpiY = 0;
+	this->physicalWidth = 0;
+	this->physicalHeight = 0;
+	this->rowHeight = 0;
 }
 
-PrinterResourceCalculator::~PrinterResourceCalculator() {
+PrinterResource::~PrinterResource() {
 	if (this->font != NULL)
 	{
 		delete this->font;
 	}
 }
 
-void PrinterResourceCalculator::Calculate() {
+void PrinterResource::LoadMetrics() {
 	//1. 페이지 설정을 읽는다.
 	PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
 
-	//2. 가상 프린터 설정을 가져온다.
-	this->printDialog->GetDefaults();
-
-	//3. 가상 프린터의 설정을 변경한다.
+	//2. 프린터 설정을 변경한다.
 	DEVMODE* devMode = (DEVMODE*)GlobalLock(this->printDialog->m_pd.hDevMode);
 	devMode->dmPaperSize = Paper::GetDmPaperSize(pageSetting.paperName);
 	devMode->dmOrientation = DMORIENT_PORTRAIT;
@@ -39,25 +42,26 @@ void PrinterResourceCalculator::Calculate() {
 	HDC printHDC = CreateDC("WINSPOOL", this->printDialog->GetDeviceName(), NULL, devMode); // 설정 변경
 	GlobalUnlock(this->printDialog->m_pd.hDevMode);
 
-	//4. 프린터 dpi를 구한다.
+	//3. 프린터 dpi를 구한다.
 	CDC dc;
 	dc.Attach(printHDC);
 	this->dpiX = dc.GetDeviceCaps(LOGPIXELSX);
 	this->dpiY = dc.GetDeviceCaps(LOGPIXELSY);
 
-	//5. 물리적인 픽셀 종이 높이를 구한다.
+	//4. 물리적인 픽셀 종이 수치들을 구한다.
+	this->physicalWidth = dc.GetDeviceCaps(PHYSICALWIDTH);
 	this->physicalHeight = dc.GetDeviceCaps(PHYSICALHEIGHT);
 
-	//6. 여백을 환산한다.
+	//5. 여백을 환산한다.
 	this->pixelMargin.left = pageSetting.margin.left / 25.4 * this->dpiX;
 	this->pixelMargin.right = pageSetting.margin.right / 25.4 * this->dpiX;
 	this->pixelMargin.up = pageSetting.margin.up / 25.4 * this->dpiY;
 	this->pixelMargin.down = pageSetting.margin.down / 25.4 * this->dpiY;
 
-	//7. 쓰기 영역 높이를 구한다.
+	//6. 쓰기 영역 높이를 구한다.
 	Long writingAreaHeight = this->physicalHeight - this->pixelMargin.up - this->pixelMargin.down;
 
-	//8. 줄높이를 구한다.
+	//7. 폰트를 구한다.
 	CFont* originalFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	if (((NotepadForm*)(this->parent))->font != NULL)
 	{
@@ -75,7 +79,7 @@ void PrinterResourceCalculator::Calculate() {
 	Long screenDpi = GetDpiForWindow(this->parent->GetSafeHwnd());
 	Long printFontSize = fontSize * this->dpiY / screenDpi;
 	logFont.lfHeight = -printFontSize;
-	
+
 	if (this->font != NULL)
 	{
 		delete this->font;
@@ -86,6 +90,7 @@ void PrinterResourceCalculator::Calculate() {
 
 	CFont* oldFont = dc.SelectObject(this->font);
 
+	//8. 줄높이를 구한다.
 	TEXTMETRIC tm = { 0, };
 	dc.GetTextMetrics(&tm);
 	this->rowHeight = tm.tmHeight;

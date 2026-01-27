@@ -1,3 +1,4 @@
+#include <afxdlgs.h>
 #include "PreviewForm.h"
 #include "NotepadForm.h"
 #include "PreviewLayout.h"
@@ -5,9 +6,56 @@
 #include "PreviewPaginator.h"
 #include "PagingBuffer.h"
 #include "Glyph.h"
+#include "PrinterResource.h"
+#include "PrintRenderer.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
+
+class DebugWindow : public CFrameWnd {
+public:
+     CBitmap * m_pBitmap; // 확인할 비트맵
+     int m_nWidth;
+     int m_nHeight;
+
+     DebugWindow(CBitmap * pBitmap, int w, int h) {
+         m_pBitmap = pBitmap;
+         m_nWidth = w;
+         m_nHeight = h;
+         // 윈도우 생성 (제목: MEMDC DEBUG, 크기는 화면 절반 정도)
+         Create(NULL, "MEMDC DEBUG", WS_OVERLAPPEDWINDOW, CRect(100, 100,
+				800, 800));
+	}
+
+     afx_msg void OnPaint() {
+         CPaintDC dc(this);
+         if (!m_pBitmap) return;
+
+         // 전달받은 비트맵을 그린다.
+         CDC memDC;
+         memDC.CreateCompatibleDC(&dc);
+         CBitmap * pOld = memDC.SelectObject(m_pBitmap);
+
+         // 1:1로 그리면 너무 커서 안 보일 수 있으니,
+         // 스크롤 기능 대신 StretchBlt로 윈도우 크기에 맞춰 축소해서 보여줌
+         CRect clientRect;
+         GetClientRect(&clientRect);
+
+         dc.SetStretchBltMode(HALFTONE);
+         dc.StretchBlt(0, 0, clientRect.Width(), clientRect.Height(),
+			 & memDC, 0, 0, m_nWidth, m_nHeight, SRCCOPY);
+
+        memDC.SelectObject(pOld);
+
+	}
+    DECLARE_MESSAGE_MAP()
+};
+
+ BEGIN_MESSAGE_MAP(DebugWindow, CFrameWnd)
+     ON_WM_PAINT()
+ END_MESSAGE_MAP()
+
+
 
 BEGIN_MESSAGE_MAP(PreviewForm, CFrameWnd)
 	ON_WM_CREATE()
@@ -117,95 +165,92 @@ void PreviewForm::OnPaint() {
 	dc.Rectangle(paperArea.left + 5, paperArea.top + 5, paperArea.right + 5, paperArea.bottom + 5);
 
 	//2. 종이영역을 그린다.
-	CPen solidPen(PS_SOLID, 1, RGB(0, 0, 0));   // 검은색 1픽셀 펜
-	CPen* oldPen = dc.SelectObject(&solidPen);
 	CBrush whiteBrush(RGB(255, 255, 255));
 	dc.SelectObject(&whiteBrush);
 	dc.Rectangle(&paperArea);
 
-	//3. 클리핑 영역을 설정한다.
-	RECT writingArea = this->previewLayout->GetWritingArea();
-	RECT clipRect;
-	clipRect.left = writingArea.left;
-	clipRect.right = paperArea.right;
-	clipRect.top = paperArea.top;
-	clipRect.bottom = paperArea.bottom;
-	dc.IntersectClipRect(&clipRect);
+	//3. 프린터 자원을 읽는다.
+	CPrintDialog printDialog(FALSE);
+	printDialog.GetDefaults();
 
-	//4. 머리글과 바닥글을 적는다.
-	PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
-	CFont* oldFont = dc.SelectObject(this->previewScaler->GetRegularFont());
-	CPoint headerPoint = this->previewLayout->GetHeaderPoint();
-	TextOut(dc, headerPoint.x, headerPoint.y, pageSetting.header, pageSetting.header.GetLength());
+	PrinterResource printerResource(this->parent, &printDialog);
+	printerResource.LoadMetrics();
+	Long printWidth = printerResource.GetPhysicalWidth();
+	Long printHeight = printerResource.GetPhysicalHeight();
 
-	CPoint footerPoint = this->previewLayout->GetFooterPoint();
-	TextOut(dc, footerPoint.x, footerPoint.y, pageSetting.footer, pageSetting.footer.GetLength());
+	//4. 프린터 DC를 만든다.
+	CDC printerDC;
+	printerDC.Attach(printDialog.CreatePrinterDC());
 
-	//5. 본문 내용을 적는다.
-	Long x = writingArea.left;
-	Long y = writingArea.top;
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long pageStartIndex = (this->previewPaginator->GetCurrent() - 1) * this->previewPaginator->GetRowCountPerPage();
+	//5. 대체 DC를 만든다.
+	CDC memDC;
+	memDC.CreateCompatibleDC(&printerDC);
 
-	//큰 글자 영역
-	dc.SelectObject(this->previewScaler->GetLargeFont());
-	Long largeRowHeight = this->previewScaler->GetLargeRowHeight();
-	CString row;
-	Long j = 0;
-	Long i = pageStartIndex - pagingBuffer->GetRowStartIndex();
-	Long nextPageIndex = i + this->previewPaginator->GetRowCountPerPage();
-	while (j < this->previewScaler->GetLargeCount() && i < nextPageIndex && i < note->GetLength())
-	{
-		row.Format("%s", note->GetAt(i)->MakeString().c_str());
-		TextOut(dc, x, y, (LPCSTR)row, row.GetLength());
-		y += largeRowHeight;
-		i++;
-		j++;
-	}
+	//DIB 헤더 설정	
+	BITMAPINFO bitmapInfo;
+	ZeroMemory(&bitmapInfo, sizeof(BITMAPINFO));
+	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmapInfo.bmiHeader.biWidth = printWidth;
+	bitmapInfo.bmiHeader.biHeight = -printHeight; // Top-down 방식
+	bitmapInfo.bmiHeader.biPlanes = 1;
+	bitmapInfo.bmiHeader.biBitCount = 24; // 24비트 트루컬러 (32비트보다 25% 절약)
+	bitmapInfo.bmiHeader.biCompression = BI_RGB;
 
-	//표준 글자 영역
-	dc.SelectObject(this->previewScaler->GetRegularFont());
-	Long regularRowHeight = this->previewScaler->GetRegularRowHeight();
-	while (i < nextPageIndex && i < note->GetLength())
-	{
-		row.Format("%s", note->GetAt(i)->MakeString().c_str());
-		TextOut(dc, x, y, (LPCSTR)row, row.GetLength());
-		y += regularRowHeight;
-		i++;
-	}
+	//DIB Section 생성(시스템 힙 사용)
+	void* pBits = NULL;
+	HBITMAP hDib = CreateDIBSection(dc.GetSafeHdc(), &bitmapInfo, DIB_RGB_COLORS, &pBits, NULL, 0);
 
-#if 0
-	Long rowHeight = this->previewScaler->GetRegularRowHeight();
-	CString row;
-	Long i = pageStartIndex - pagingBuffer->GetRowStartIndex();
-	Long nextPageIndex = i + this->previewPaginator->GetRowCountPerPage();
-	while (i < nextPageIndex && i < note->GetLength())
-	{
-		row.Format("%s", note->GetAt(i)->MakeString().c_str());
-		TextOut(dc, x, y, (LPCSTR)row, row.GetLength());
-		y += rowHeight;
-		i++;
-	}
-#endif
-	//6. 쓰기 영역을 그린다.
+	CBitmap bitmap;
+	bitmap.Attach(hDib);
+
+	CBitmap* oldBitmap = memDC.SelectObject(&bitmap);
+	memDC.PatBlt(0, 0, printWidth, printHeight, WHITENESS);
+	CFont* oldFont = memDC.SelectObject(printerResource.GetFont());
+
+	//6. 대체 비트맵에 그린다.
+	PrintRenderer printRenderer(this->parent, this->previewPaginator, &printerResource);
+	printRenderer.Render(&memDC);
+	 
+	//7. 대체 비트맵을 축소해 붙인다.
+	Long paperWidth = paperArea.right - paperArea.left;
+	Long paperHeight = paperArea.bottom - paperArea.top;
+	
+	dc.SetStretchBltMode(HALFTONE);
+	StretchDIBits(dc.GetSafeHdc(),
+			paperArea.left, paperArea.top, paperWidth, paperHeight,
+			0, 0, printWidth, printHeight,
+			pBits, &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+
+	//8. 대체 비트맵 관련 리소스들을 해제한다.
+	memDC.SelectObject(oldFont);
+	memDC.SelectObject(oldBitmap);
+	bitmap.DeleteObject();
+	memDC.DeleteDC();
+	printerDC.Detach();
+
+	//9. 종이 외곽선 그리기
+	CPen solidPen(PS_SOLID, 1, RGB(0, 0, 0));   // 검은색 1픽셀 펜
 	CBrush* nullBrush = CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
+	CPen* oldPen = dc.SelectObject(&solidPen);
+	dc.SelectObject(nullBrush);
+	dc.Rectangle(&paperArea);
+
+	//10. 쓰기 영역을 그린다.
+	RECT writingArea = this->previewLayout->GetWritingArea();
 	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // 점선, 적색.           
 	dc.SelectObject(&dotPen);
-	dc.SelectObject(nullBrush);
 	dc.Rectangle(&writingArea);
 
-	//7. 페이지바의 컨트롤들을 이동시킨다.
+	//11. 페이지바의 컨트롤들을 이동시킨다.
 	this->firstButton.MoveWindow(&this->previewLayout->GetFirstButtonArea());
 	this->previousButton.MoveWindow(&this->previewLayout->GetPreviousButtonArea());
 	this->nextButton.MoveWindow(&this->previewLayout->GetNextButtonArea());
 	this->lastButton.MoveWindow(&this->previewLayout->GetLastButtonArea());
 	this->pageNumber.MoveWindow(&this->previewLayout->GetPageNumberArea());
 
-	//8. dc 리소스를 해제한다.
+	//12. dc 리소스를 해제한다.
 	dc.SelectObject(oldBrush);
 	dc.SelectObject(oldPen);
-	dc.SelectObject(oldFont);
 }
 
 void PreviewForm::OnFirstButtonClicked() {
