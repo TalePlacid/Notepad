@@ -1,7 +1,8 @@
 #include <afxwin.h>
+#include <afxdlgs.h>
 #include "PreviewPaginator.h"
 #include "NotepadForm.h"
-#include "PrinterResourceCalculator.h"
+#include "PrinterResource.h"
 #include "PagingBuffer.h"
 #include "Glyph.h"
 #include "Font.h"
@@ -23,8 +24,9 @@ PreviewPaginator::~PreviewPaginator() {
 void PreviewPaginator::Paginate() {
 	//1. 프린터 리소스를 구한다.
 	CPrintDialog printDialog(FALSE);
-	PrinterResourceCalculator printerResource(this->parent, &printDialog);
-	printerResource.Calculate();
+	printDialog.GetDefaults();
+	PrinterResource printerResource(this->parent, &printDialog);
+	printerResource.LoadMetrics();
 
 	//2. 페이지당 줄 수를 구한다.
 	Margin margin = printerResource.GetPixelMargin();

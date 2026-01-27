@@ -8,3 +8,4 @@ Release/
 *.txt
 *.zip
 *.tmp
+.gemini/

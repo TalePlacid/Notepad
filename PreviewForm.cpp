@@ -2,7 +2,6 @@
 #include "PreviewForm.h"
 #include "NotepadForm.h"
 #include "PreviewLayout.h"
-#include "PreviewScaler.h"
 #include "PreviewPaginator.h"
 #include "PagingBuffer.h"
 #include "Glyph.h"
@@ -72,7 +71,6 @@ BEGIN_MESSAGE_MAP(PreviewForm, CFrameWnd)
 PreviewForm::PreviewForm(CWnd *parent) {
 	this->parent = parent;
 	this->previewLayout = NULL;
-	this->previewScaler = NULL;
 	this->previewPaginator = NULL;
 	this->pageNumberFont = NULL;
 }
@@ -81,11 +79,6 @@ PreviewForm::~PreviewForm() {
 	if (this->previewLayout != NULL)
 	{
 		delete this->previewLayout;
-	}
-
-	if (this->previewScaler != NULL)
-	{
-		delete this->previewScaler;
 	}
 
 	if (this->previewPaginator != NULL)
@@ -113,16 +106,13 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->previewPaginator = new PreviewPaginator(this->parent);
 	this->previewPaginator->Paginate();
 
-	this->previewScaler = new PreviewScaler(this);
-	this->previewScaler->ConvertToPreviewSize();
-
 	CString pageNumber;
 	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
 	RECT pageNumberArea = this->previewLayout->GetPageNumberArea();
 	this->pageNumber.Create(pageNumber, WS_CHILD | WS_VISIBLE | SS_CENTER, pageNumberArea, this, IDC_STATIC_PAGENUMBER);
 
 	LOGFONT logFont;
-	this->previewScaler->GetRegularFont()->GetLogFont(&logFont);
+	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&logFont);
 	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
 	logFont.lfHeight = -pageNumberHeight;
 	this->pageNumberFont = new CFont;
@@ -135,14 +125,13 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 void PreviewForm::OnSize(UINT nType, int cx, int cy) {
 	this->previewLayout->Locate();
 	this->previewPaginator->Paginate();
-	this->previewScaler->ConvertToPreviewSize();
 
 	CString pageNumber;
 	pageNumber.Format("%03ld / %03ld", this->previewPaginator->GetCurrent(), this->previewPaginator->GetPageCount());
 	this->pageNumber.SetWindowText(pageNumber);
 
 	LOGFONT logFont;
-	this->previewScaler->GetRegularFont()->GetLogFont(&logFont);
+	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&logFont);
 	RECT pageNumberArea = this->previewLayout->GetPageNumberArea();
 	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
 	logFont.lfHeight = -pageNumberHeight;

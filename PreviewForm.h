@@ -12,7 +12,6 @@ class PreviewForm : public CFrameWnd {
 public:
 	CWnd* parent;
 	PreviewLayout* previewLayout;
-	PreviewScaler* previewScaler;
 	PreviewPaginator* previewPaginator;
 public:
 	PreviewForm(CWnd *parent);

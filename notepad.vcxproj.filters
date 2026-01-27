@@ -419,9 +419,6 @@
     <ClInclude Include="CtrlAAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="PreviewScaler.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="PreviewPaginator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -443,7 +440,10 @@
     <ClInclude Include="PrintCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="PrinterResourceCalculator.h">
+    <ClInclude Include="PrintRenderer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PrinterResource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -826,9 +826,6 @@
     <ClCompile Include="CtrlAAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="PreviewScaler.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="PreviewPaginator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -850,7 +847,10 @@
     <ClCompile Include="PrintCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="PrinterResourceCalculator.cpp">
+    <ClCompile Include="PrintRenderer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PrinterResource.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
