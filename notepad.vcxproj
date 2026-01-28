@@ -178,7 +178,6 @@
     <ClInclude Include="FindNextCommand.h" />
     <ClInclude Include="FindReplaceCommandFactory.h" />
     <ClInclude Include="FindReplaceOption.h" />
-    <ClInclude Include="Font.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="GlyphFactory.h" />
     <ClInclude Include="HistoryBook.h" />
@@ -269,6 +268,9 @@
     <ClInclude Include="VScrollBarPageUpAction.h" />
     <ClInclude Include="VScrollBarUpClickAction.h" />
     <ClInclude Include="WriteAtEndCommand.h" />
+    <ClInclude Include="ZoomInAction.h" />
+    <ClInclude Include="ZoomOutAction.h" />
+    <ClInclude Include="ZoomResetAction.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
@@ -319,7 +321,6 @@
     <ClCompile Include="FindNextCommand.cpp" />
     <ClCompile Include="FindReplaceCommandFactory.cpp" />
     <ClCompile Include="FindReplaceOption.cpp" />
-    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="GlyphFactory.cpp" />
     <ClCompile Include="HistoryBook.cpp" />
@@ -406,6 +407,9 @@
     <ClCompile Include="VScrollBarPageUpAction.cpp" />
     <ClCompile Include="VScrollBarUpClickAction.cpp" />
     <ClCompile Include="WriteAtEndCommand.cpp" />
+    <ClCompile Include="ZoomInAction.cpp" />
+    <ClCompile Include="ZoomOutAction.cpp" />
+    <ClCompile Include="ZoomResetAction.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

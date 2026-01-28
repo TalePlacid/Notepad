@@ -29,6 +29,8 @@ public:
 	CaretController* caretController;
 	SizeCalculator* sizeCalculator;
 	Font* font;
+	CFont* originalFont;
+	CFont* displayFont;
 	CMenu menu;
 	ScrollController* scrollController;
 	ClipboardController* clipboardController;
@@ -40,6 +42,7 @@ public:
 	PreviewForm* previewForm;
 	BOOL hasFindReplaceDialog;
 	BOOL isAutoWrapped;
+	double magnification;
 public:
 	BOOL IsCompositing() const;
 	CString GetPath() const;

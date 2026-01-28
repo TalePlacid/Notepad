@@ -5,7 +5,6 @@
 #include "PrinterResource.h"
 #include "PagingBuffer.h"
 #include "Glyph.h"
-#include "Font.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)

@@ -71,9 +71,6 @@
     <ClInclude Include="EraseCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Glyph.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -446,6 +443,15 @@
     <ClInclude Include="PrinterResource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ZoomInAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoomOutAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoomResetAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -494,9 +500,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="EraseCommand.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Font.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Glyph.cpp">
@@ -851,6 +854,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PrinterResource.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoomInAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoomOutAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoomResetAction.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

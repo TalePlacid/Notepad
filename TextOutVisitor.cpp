@@ -1,7 +1,6 @@
 #include "TextOutVisitor.h"
 #include "NotepadForm.h"
 #include "SizeCalculator.h"
-#include "Font.h"
 #include "Glyph.h"
 #include "SelectionVisitor.h"
 #include "PagingBuffer.h"
@@ -47,11 +46,7 @@ void TextOutVisitor::VisitRow(Glyph* row) {
 void TextOutVisitor::VisitCharacter(Glyph* character) {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 
-	CFont* oldFont = NULL;
-	if (notepadForm->font != NULL)
-	{
-		oldFont = dc->SelectObject(notepadForm->font->GetCFont());
-	}
+	CFont* oldFont = dc->SelectObject(notepadForm->displayFont);
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long characterWidth = sizeCalculator->GetCharacterWidth((char*)(*character));

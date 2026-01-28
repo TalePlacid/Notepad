@@ -7,7 +7,6 @@
 #include "PagingBuffer.h"
 #include "Glyph.h"
 #include "PageSetting.h"
-#include "Font.h"
 #include "PrinterResource.h"
 #include "PrintRenderer.h"
 #include "resource.h"

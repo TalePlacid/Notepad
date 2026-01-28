@@ -9,7 +9,6 @@
 #include "NoteConverter.h"
 #include "CaretController.h"
 #include "Caret.h"
-#include "Font.h"
 #include "SizeCalculator.h"
 #include "resource.h"
 #include "CommandFactory.h"
@@ -65,6 +64,8 @@ NotepadForm::NotepadForm() {
 	this->note = NULL;
 	this->isCompositing = FALSE;
 	this->font = NULL;
+	this->originalFont = NULL;
+	this->displayFont = NULL;
 	this->sizeCalculator = NULL;
 	this->caretController = NULL;
 	this->scrollController = NULL;
@@ -77,7 +78,8 @@ NotepadForm::NotepadForm() {
 	this->previewForm = NULL;
 	this->isCompositing = FALSE;
 	this->isAutoWrapped = FALSE;
-	
+	this->magnification = 1.0;
+
 	TCHAR buffer[256];
 	GetCurrentDirectory(256, buffer);
 	CString path(buffer);
@@ -97,6 +99,26 @@ BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
 
 int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CFrameWnd::OnCreate(lpCreateStruct);
+
+	//±âº» ÆùÆ®(¸¼Àº °íµñ, 10pt, º¸Åë ½ºÅ¸ÀÏ)
+	LOGFONT logFont = { 0, };
+	CClientDC dc(this);
+	logFont.lfHeight = -MulDiv(10, dc.GetDeviceCaps(LOGPIXELSY), 72);
+	logFont.lfWeight = FW_NORMAL;
+	logFont.lfCharSet = HANGUL_CHARSET;
+	_tcscpy_s(logFont.lfFaceName, "¸¼Àº °íµñ");
+
+	this->originalFont = new CFont;
+	this->originalFont->CreateFontIndirectA(&logFont);
+
+	double round = 0.5;
+	if (logFont.lfHeight < 0)
+	{
+		round = -0.5;
+	}
+	logFont.lfHeight = logFont.lfHeight * this->magnification + round;
+	this->displayFont = new CFont;
+	this->displayFont->CreateFontIndirectA(&logFont);
 
 	this->sizeCalculator = new SizeCalculator(this);
 	this->pagingBuffer = new PagingBuffer(this);
@@ -371,6 +393,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 }
 
 void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	TRACE("%c\n", nChar);
 	KeyActionFactory keyActionFactory;
 	KeyAction* keyAction = keyActionFactory.Create(this, nChar);
 	if (keyAction != NULL)
@@ -472,6 +495,16 @@ void NotepadForm::OnClose() {
 	{
 		delete this->caretController;
 		this->caretController = NULL;
+	}
+
+	if (this->originalFont != NULL)
+	{
+		delete this->originalFont;
+	}
+
+	if (this->displayFont != NULL)
+	{
+		delete this->displayFont;
 	}
 
 	if (this->sizeCalculator != NULL)

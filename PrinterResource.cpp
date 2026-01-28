@@ -3,7 +3,6 @@
 #include "PrinterResource.h"
 #include "NotepadForm.h"
 #include "Paper.h"
-#include "Font.h"
 
 #pragma warning(disable:4996)
 
@@ -62,11 +61,7 @@ void PrinterResource::LoadMetrics() {
 	Long writingAreaHeight = this->physicalHeight - this->pixelMargin.up - this->pixelMargin.down;
 
 	//7. 폰트를 구한다.
-	CFont* originalFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-	if (((NotepadForm*)(this->parent))->font != NULL)
-	{
-		originalFont = ((NotepadForm*)(this->parent))->font->GetCFont();
-	}
+	CFont* originalFont = ((NotepadForm*)(this->parent))->displayFont;
 
 	LOGFONT logFont;
 	originalFont->GetLogFont(&logFont);

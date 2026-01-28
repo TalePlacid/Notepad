@@ -1,6 +1,5 @@
 #include "SizeCalculator.h"
 #include "NotepadForm.h"
-#include "Font.h"
 #include "Glyph.h"
 #include "ByteChecker.h"
 
@@ -10,15 +9,10 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	this->parent = parent;
 	
 	CDC *cdc = this->parent->GetDC();
-	CFont* oldFont = NULL;
+	CFont* oldFont = cdc->SelectObject(((NotepadForm*)parent)->displayFont);
 	char character;
 	this->singleByteWidths = new Long[95];
 	Long maxCharacterWidth = 0;
-
-	if (((NotepadForm*)parent)->font != NULL)
-	{
-		oldFont = cdc->SelectObject(((NotepadForm*)parent)->font->GetCFont());
-	}
 
 	for (Long i = 0; i < 95; i++)
 	{
@@ -39,8 +33,7 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	this->maxCharacterWidth = maxCharacterWidth;
 
 	TEXTMETRIC tm;
-	HDC hdc = cdc->GetSafeHdc();
-	GetTextMetrics(hdc, &tm);
+	cdc->GetTextMetrics(&tm);
 
 	this->averageCharacterWidth = tm.tmAveCharWidth;
 	this->rowHeight = tm.tmHeight;
@@ -50,7 +43,7 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 		cdc->SelectObject(oldFont);
 	}
 
-	ReleaseDC(parent->GetSafeHwnd(), cdc->GetSafeHdc());
+	this->parent->ReleaseDC(cdc);
 }
 
 SizeCalculator::~SizeCalculator() {
@@ -81,18 +74,7 @@ Long SizeCalculator::GetCharacterWidth(char(*character)) {
 
 Long SizeCalculator::GetRowWidth(CString contents) {
 	CDC* cdc = this->parent->GetDC();
-	CFont* oldFont = NULL;
-	if (((NotepadForm*)parent)->font != NULL)
-	{
-		oldFont = cdc->SelectObject(((NotepadForm*)parent)->font->GetCFont());
-	}
-
 	Long rowWidth = cdc->GetTextExtent(contents).cx;
-	
-	if (((NotepadForm*)parent)->font != NULL)
-	{
-		cdc->SelectObject(oldFont);
-	}
 	ReleaseDC(parent->GetSafeHwnd(), cdc->GetSafeHdc());
 
 	return rowWidth;
