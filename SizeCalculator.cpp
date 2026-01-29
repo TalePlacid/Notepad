@@ -38,10 +38,7 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	this->averageCharacterWidth = tm.tmAveCharWidth;
 	this->rowHeight = tm.tmHeight;
 
-	if (((NotepadForm*)parent)->font != NULL)
-	{
-		cdc->SelectObject(oldFont);
-	}
+	cdc->SelectObject(oldFont);
 
 	this->parent->ReleaseDC(cdc);
 }

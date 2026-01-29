@@ -256,6 +256,7 @@
     <ClInclude Include="SingleByteCharacter.h" />
     <ClInclude Include="SingleByteWrappingPolicy.h" />
     <ClInclude Include="SizeCalculator.h" />
+    <ClInclude Include="StatusBarController.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="SuspendAutoWrap.h" />
     <ClInclude Include="TextOutVisitor.h" />
@@ -395,6 +396,7 @@
     <ClCompile Include="ShiftUpAction.cpp" />
     <ClCompile Include="SingleByteCharacter.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
+    <ClCompile Include="StatusBarController.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="SuspendAutoWrap.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />

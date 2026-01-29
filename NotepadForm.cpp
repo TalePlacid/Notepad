@@ -31,6 +31,7 @@
 #include "FindReplaceCommandFactory.h"
 #include "HistoryBook.h"
 #include "PreviewForm.h"
+#include "StatusBarController.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -63,7 +64,6 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 NotepadForm::NotepadForm() {
 	this->note = NULL;
 	this->isCompositing = FALSE;
-	this->font = NULL;
 	this->originalFont = NULL;
 	this->displayFont = NULL;
 	this->sizeCalculator = NULL;
@@ -74,6 +74,7 @@ NotepadForm::NotepadForm() {
 	this->searchResultController = NULL;
 	this->undoHistoryBook = NULL;
 	this->redoHistoryBook = NULL;
+	this->statusBarController = NULL;
 	this->hasFindReplaceDialog = FALSE;
 	this->previewForm = NULL;
 	this->isCompositing = FALSE;
@@ -138,6 +139,9 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->searchResultController = new SearchResultController(this);
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
+	this->statusBarController = new StatusBarController(this);
+	this->Register(this->statusBarController);
+	this->statusBarController->Create();
 
 	Margin margin;
 	margin.left = 20;
@@ -147,8 +151,9 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->pageSetting = PageSetting(CString("A4"), TRUE, margin, CString(""), CString(""));
 
 	this->nextIsLastOnSize = FALSE;
-
+	
 	this->Notify("UpdateScrollBars");
+	this->Notify("UpdateStatusBar");
 
 	return 0;
 }
@@ -197,11 +202,14 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	
 		this->Notify("ChangeCaret");
 		this->Notify("UpdateScrollBars");
+		this->Notify("UpdateStatusBar");
 		this->Invalidate();
 	}
 }
 
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
+	CFrameWnd::OnSize(nType, cx, cy);
+
 	if (this->isAutoWrapped)
 	{
 		NoteWrapper noteWrapper(this);
@@ -297,6 +305,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
 		this->Notify("UpdateScrollBars");
+		this->Notify("UpdateStatusBar");
 	}
 	
 	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
@@ -341,6 +350,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	this->pagingBuffer->UnmarkSelectionBegin();
 	this->Invalidate();
 	this->Notify("UpdateScrollBars");
+	this->Notify("UpdateStatusBar");
 
 	return 0;
 }
@@ -389,11 +399,11 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		}
 	}
 
+	this->Notify("UpdateStatusBar");
 	this->Invalidate();
 }
 
 void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	TRACE("%c\n", nChar);
 	KeyActionFactory keyActionFactory;
 	KeyAction* keyAction = keyActionFactory.Create(this, nChar);
 	if (keyAction != NULL)
@@ -412,6 +422,8 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 		delete keyAction;
 	}
+
+	this->Notify("UpdateStatusBar");
 	this->Invalidate();
 }
 
@@ -467,6 +479,7 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	}
 
 	this->Notify("UpdateScrollBars");
+	this->Notify("UpdateStatusBar");
 	this->Invalidate();
 
 	return 0;
@@ -545,6 +558,11 @@ void NotepadForm::OnClose() {
 	if (this->previewForm != NULL)
 	{
 		delete this->previewForm;
+	}
+
+	if (this->statusBarController != NULL)
+	{
+		delete this->statusBarController;
 	}
 
 	CFrameWnd::OnClose();

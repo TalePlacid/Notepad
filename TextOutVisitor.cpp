@@ -67,8 +67,5 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 
 	this->logicalX += notepadForm->sizeCalculator->GetCharacterWidth((char*)(*character));
 
-	if (notepadForm->font != NULL)
-	{
-		dc->SelectObject(oldFont);
-	}
+	dc->SelectObject(oldFont);
 }

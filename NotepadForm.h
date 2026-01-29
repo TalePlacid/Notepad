@@ -6,7 +6,6 @@
 
 class Glyph;
 class CaretController;
-class Font;
 class SizeCalculator;
 class ScrollController;
 class ClipboardController;
@@ -16,6 +15,7 @@ class SearchResultController;
 class HistoryBook;
 class PreviewForm;
 class PreviewForm;
+class StatusBarController;
 
 class NotepadForm : public CFrameWnd, public Subject {
 public:
@@ -28,7 +28,6 @@ public:
 	Glyph* note;
 	CaretController* caretController;
 	SizeCalculator* sizeCalculator;
-	Font* font;
 	CFont* originalFont;
 	CFont* displayFont;
 	CMenu menu;
@@ -38,6 +37,7 @@ public:
 	SearchResultController* searchResultController;
 	HistoryBook* undoHistoryBook;
 	HistoryBook* redoHistoryBook;
+	StatusBarController* statusBarController;
 	PageSetting pageSetting;
 	PreviewForm* previewForm;
 	BOOL hasFindReplaceDialog;

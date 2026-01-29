@@ -91,7 +91,11 @@
 #define IDC_BUTTON_NEXT		            50022
 #define IDC_BUTTON_LAST			        50023
 #define IDC_STATIC_PAGENUMBER			50024
-
+#define IDC_STATUS_CURRENT				50025
+#define IDC_STATUS_MAGNIFICATION		50026
+#define IDC_STATUS_NEWLINEPOLICY		50027
+#define IDC_STATUS_ENCODING				50028
+#define IDC_STATUS_SEPARATOR			50029
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
