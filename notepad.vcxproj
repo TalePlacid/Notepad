@@ -202,7 +202,9 @@
     <ClInclude Include="NewCommand.h" />
     <ClInclude Include="Note.h" />
     <ClInclude Include="NoteConverter.h" />
+    <ClInclude Include="NotepadApp.h" />
     <ClInclude Include="NotepadForm.h" />
+    <ClInclude Include="NotepadFrame.h" />
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
@@ -344,7 +346,9 @@
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="NoteConverter.cpp" />
+    <ClCompile Include="NotepadApp.cpp" />
     <ClCompile Include="NotepadForm.cpp" />
+    <ClCompile Include="NotepadFrame.cpp" />
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />

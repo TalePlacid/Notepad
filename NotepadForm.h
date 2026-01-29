@@ -17,10 +17,10 @@ class PreviewForm;
 class PreviewForm;
 class StatusBarController;
 
-class NotepadForm : public CFrameWnd, public Subject {
+class NotepadForm : public CWnd, public Subject {
 public:
-	NotepadForm();
-	~NotepadForm();
+	NotepadForm(StatusBarController *statusBarController);
+	virtual ~NotepadForm();
 public:
 	CString Load(CString path);
 	void Save(CString path);

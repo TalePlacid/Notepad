@@ -1,5 +1,6 @@
 #include <afxext.h>
 #include "StatusBarController.h"
+#include "NotepadFrame.h"
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
@@ -13,7 +14,10 @@ StatusBarController::StatusBarController(CWnd* parent) {
 }
 
 StatusBarController::~StatusBarController() {
-
+	if (this->statusBar != NULL)
+	{
+		delete this->statusBar;
+	}
 }
 
 void StatusBarController::Create() {
@@ -33,8 +37,9 @@ void StatusBarController::Create() {
 	this->statusBar->SetPaneInfo(3, this->statuses[0], SBPS_NORMAL, 150);
 	this->statusBar->SetPaneInfo(4, this->statuses[0], SBPS_NORMAL, 150);
 
+	NotepadForm* notepadForm = (NotepadForm*)((NotepadFrame*)(this->parent))->GetNotepadForm();
 	CString magnification;
-	Long percentage = ((NotepadForm*)(this->parent))->magnification * 100;
+	Long percentage = notepadForm->magnification * 100;
 	magnification.Format("%ld%%", percentage);
 	this->statusBar->SetPaneText(2, magnification);
 	this->statusBar->SetPaneText(3, "Windows(CRLF)");
@@ -44,8 +49,9 @@ void StatusBarController::Create() {
 void StatusBarController::Update(Subject* subject, string interest) {
 	if (interest == "UpdateStatusBar")
 	{
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		NotepadForm* notepadForm = (NotepadForm*)(subject);
+		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
+		Glyph* note = notepadForm->note;
 		Long rowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
@@ -55,7 +61,7 @@ void StatusBarController::Update(Subject* subject, string interest) {
 		this->statusBar->SetPaneText(1, (LPCTSTR)current);
 
 		CString magnification;
-		Long percentage = ((NotepadForm*)(this->parent))->magnification * 100;
+		Long percentage = notepadForm->magnification * 100;
 		magnification.Format("%ld%%", percentage);
 		this->statusBar->SetPaneText(2, magnification);
 	}

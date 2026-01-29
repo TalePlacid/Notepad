@@ -96,6 +96,8 @@
 #define IDC_STATUS_NEWLINEPOLICY		50027
 #define IDC_STATUS_ENCODING				50028
 #define IDC_STATUS_SEPARATOR			50029
+#define IDC_NOTEPADFORM					50030
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

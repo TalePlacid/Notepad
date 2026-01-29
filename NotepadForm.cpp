@@ -38,7 +38,7 @@
 
 static UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
 
-BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
+BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_CREATE()
 	ON_WM_CHAR()
 	ON_WM_SIZE()
@@ -61,7 +61,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CFrameWnd)
 	END_MESSAGE_MAP()
 
 
-NotepadForm::NotepadForm() {
+NotepadForm::NotepadForm(StatusBarController* statusBarController) {
 	this->note = NULL;
 	this->isCompositing = FALSE;
 	this->originalFont = NULL;
@@ -74,9 +74,9 @@ NotepadForm::NotepadForm() {
 	this->searchResultController = NULL;
 	this->undoHistoryBook = NULL;
 	this->redoHistoryBook = NULL;
-	this->statusBarController = NULL;
 	this->hasFindReplaceDialog = FALSE;
 	this->previewForm = NULL;
+	this->statusBarController = statusBarController;
 	this->isCompositing = FALSE;
 	this->isAutoWrapped = FALSE;
 	this->magnification = 1.0;
@@ -95,11 +95,11 @@ BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
 	cs.style &= ~WS_HSCROLL;
 	cs.style &= ~WS_VSCROLL;
 
-	return CFrameWnd::PreCreateWindow(cs);
+	return CWnd::PreCreateWindow(cs);
 }
 
 int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-	CFrameWnd::OnCreate(lpCreateStruct);
+	CWnd::OnCreate(lpCreateStruct);
 
 	//기본 폰트(맑은 고딕, 10pt, 보통 스타일)
 	LOGFONT logFont = { 0, };
@@ -133,15 +133,12 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->clipboardController = new ClipboardController(this);
 
-	this->menu.LoadMenu(MAKEINTRESOURCE(IDR_MENU_MAIN));
-	this->SetMenu(&(this->menu));
-
 	this->searchResultController = new SearchResultController(this);
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
-	this->statusBarController = new StatusBarController(this);
-	this->Register(this->statusBarController);
+
 	this->statusBarController->Create();
+	this->Register(this->statusBarController);
 
 	Margin margin;
 	margin.left = 20;
@@ -153,7 +150,6 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->nextIsLastOnSize = FALSE;
 	
 	this->Notify("UpdateScrollBars");
-	this->Notify("UpdateStatusBar");
 
 	return 0;
 }
@@ -208,7 +204,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
-	CFrameWnd::OnSize(nType, cx, cy);
+	CWnd::OnSize(nType, cx, cy);
 
 	if (this->isAutoWrapped)
 	{
@@ -399,7 +395,7 @@ void NotepadForm::OnCommandRequested(UINT nID) {
 		}
 	}
 
-	this->Notify("UpdateStatusBar");
+	this->Notify("UpdateStatusBar"); 
 	this->Invalidate();
 }
 
@@ -423,7 +419,7 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		delete keyAction;
 	}
 
-	this->Notify("UpdateStatusBar");
+	this->Notify("UpdateStatusBar"); 
 	this->Invalidate();
 }
 
@@ -479,7 +475,7 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	}
 
 	this->Notify("UpdateScrollBars");
-	this->Notify("UpdateStatusBar");
+	this->Notify("UpdateStatusBar"); 
 	this->Invalidate();
 
 	return 0;
@@ -560,12 +556,7 @@ void NotepadForm::OnClose() {
 		delete this->previewForm;
 	}
 
-	if (this->statusBarController != NULL)
-	{
-		delete this->statusBarController;
-	}
-
-	CFrameWnd::OnClose();
+	CWnd::OnClose();
 }
 
 CString NotepadForm::Load(CString path) {
@@ -604,32 +595,3 @@ void NotepadForm::Save(CString path) {
 		ofs.close();
 	}
 }
-
-class NotepadApp : public CWinApp {
-public:
-	NotepadApp();
-	~NotepadApp();
-	virtual BOOL InitInstance();
-};
-
-NotepadApp::NotepadApp() {
-
-}
-
-NotepadApp::~NotepadApp() {
-
-}
-
-BOOL NotepadApp::InitInstance() {
-	NotepadForm *notepadForm = new NotepadForm;
-
-	notepadForm->Create(NULL, "메모장 ~제목없음");
-
-	notepadForm->ShowWindow(SW_SHOW);
-	notepadForm->UpdateWindow();
-	this->m_pMainWnd = notepadForm;
-
-	return TRUE;
-}
-
-NotepadApp notepadApp;

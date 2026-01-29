@@ -455,6 +455,12 @@
     <ClInclude Include="StatusBarController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="NotepadFrame.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NotepadApp.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -869,6 +875,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="StatusBarController.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NotepadFrame.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NotepadApp.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
