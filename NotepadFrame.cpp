@@ -35,7 +35,7 @@ int NotepadFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->statusBarController = new StatusBarController(this);
 
 	//¿¡µðÅÍ
-	this->notepadForm = new NotepadForm(this->statusBarController);
+	this->notepadForm = new NotepadForm(this, this->statusBarController);
 	CRect clientArea;
 	this->GetClientRect(clientArea);
 	this->notepadForm->Create(NULL, NULL,

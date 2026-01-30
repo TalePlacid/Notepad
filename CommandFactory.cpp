@@ -27,6 +27,9 @@
 #include "LoadFirstCommand.h"
 #include "SetPageCommand.h"
 #include "PrintCommand.h"
+#include "ZoomInCommand.h"
+#include "ZoomOutCommand.h"
+#include "ZoomResetCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -76,6 +79,15 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 		break;
 	case ID_MENU_REPLACE:
 		command = new OpenReplaceDialogCommand(parent);
+		break;
+	case ID_MENU_ZOOMIN:
+		command = new ZoomInCommand(parent);
+		break;
+	case ID_MENU_ZOOMOUT:
+		command = new ZoomOutCommand(parent);
+		break;
+	case ID_MENU_ZOOMRESET:
+		command = new ZoomResetCommand(parent);
 		break;
 	case ID_COMMAND_ERASE:
 		command = new EraseCommand(parent);

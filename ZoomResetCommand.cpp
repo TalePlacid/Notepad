@@ -1,37 +1,27 @@
 #include <afxwin.h>
-#include "ZoomInAction.h"
+#include "ZoomResetCommand.h"
 #include "NotepadForm.h"
 #include "SizeCalculator.h"
 
 #pragma warning(disable:4996)
 
-ZoomInAction::ZoomInAction(CWnd* parent)
-	:KeyAction(parent) {
+ZoomResetCommand::ZoomResetCommand(CWnd* parent)
+	:Command(parent) {
 
 }
 
-ZoomInAction::~ZoomInAction() {
+ZoomResetCommand::~ZoomResetCommand() {
 
 }
 
-void ZoomInAction::Perform() {
+void ZoomResetCommand::Execute() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 
-	notepadForm->magnification += 0.1;
-	if (notepadForm->magnification > 5.0)
-	{
-		notepadForm->magnification = 5.0;
-	}
+	notepadForm->magnification = 1.0;
 
 	LOGFONT logFont;
 	notepadForm->originalFont->GetLogFont(&logFont);
 
-	double round = 0.5;
-	if (logFont.lfHeight < 0)
-	{
-		round = -0.5;
-	}
-	logFont.lfHeight = logFont.lfHeight * notepadForm->magnification + round;
 	if (notepadForm->displayFont != NULL)
 	{
 		delete notepadForm->displayFont;

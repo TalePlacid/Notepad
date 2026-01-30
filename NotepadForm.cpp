@@ -62,7 +62,8 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	END_MESSAGE_MAP()
 
 
-NotepadForm::NotepadForm(StatusBarController* statusBarController) {
+NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController){
+	this->parent = parent;
 	this->note = NULL;
 	this->isCompositing = FALSE;
 	this->originalFont = NULL;

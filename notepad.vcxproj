@@ -147,6 +147,7 @@
     <ClInclude Include="Comparer.h" />
     <ClInclude Include="Composite.h" />
     <ClInclude Include="CopyCommand.h" />
+    <ClInclude Include="Ctrl0Action.h" />
     <ClInclude Include="CtrlAAction.h" />
     <ClInclude Include="CtrlCAction.h" />
     <ClInclude Include="CtrlEndAction.h" />
@@ -154,7 +155,9 @@
     <ClInclude Include="CtrlHAction.h" />
     <ClInclude Include="CtrlHomeAction.h" />
     <ClInclude Include="CtrlLeftAction.h" />
+    <ClInclude Include="CtrlMinusAction.h" />
     <ClInclude Include="CtrlPageUpAction.h" />
+    <ClInclude Include="CtrlPlusAction.h" />
     <ClInclude Include="CtrlRightAction.h" />
     <ClInclude Include="CtrlShiftEndAction.h" />
     <ClInclude Include="CtrlShiftHomeAction.h" />
@@ -271,9 +274,9 @@
     <ClInclude Include="VScrollBarPageUpAction.h" />
     <ClInclude Include="VScrollBarUpClickAction.h" />
     <ClInclude Include="WriteAtEndCommand.h" />
-    <ClInclude Include="ZoomInAction.h" />
-    <ClInclude Include="ZoomOutAction.h" />
-    <ClInclude Include="ZoomResetAction.h" />
+    <ClInclude Include="ZoomInCommand.h" />
+    <ClInclude Include="ZoomOutCommand.h" />
+    <ClInclude Include="ZoomResetCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
@@ -294,6 +297,7 @@
     <ClCompile Include="Comparer.cpp" />
     <ClCompile Include="Composite.cpp" />
     <ClCompile Include="CopyCommand.cpp" />
+    <ClCompile Include="Ctrl0Action.cpp" />
     <ClCompile Include="CtrlAAction.cpp" />
     <ClCompile Include="CtrlCAction.cpp" />
     <ClCompile Include="CtrlEndAction.cpp" />
@@ -301,8 +305,10 @@
     <ClCompile Include="CtrlHAction.cpp" />
     <ClCompile Include="CtrlHomeAction.cpp" />
     <ClCompile Include="CtrlLeftAction.cpp" />
+    <ClCompile Include="CtrlMinusAction.cpp" />
     <ClCompile Include="CtrlPageDownAction.cpp" />
     <ClCompile Include="CtrlPageUpAction.cpp" />
+    <ClCompile Include="CtrlPlusAction.cpp" />
     <ClCompile Include="CtrlRightAction.cpp" />
     <ClCompile Include="CtrlShiftEndAction.cpp" />
     <ClCompile Include="CtrlShiftHomeAction.cpp" />
@@ -413,9 +419,9 @@
     <ClCompile Include="VScrollBarPageUpAction.cpp" />
     <ClCompile Include="VScrollBarUpClickAction.cpp" />
     <ClCompile Include="WriteAtEndCommand.cpp" />
-    <ClCompile Include="ZoomInAction.cpp" />
-    <ClCompile Include="ZoomOutAction.cpp" />
-    <ClCompile Include="ZoomResetAction.cpp" />
+    <ClCompile Include="ZoomInCommand.cpp" />
+    <ClCompile Include="ZoomOutCommand.cpp" />
+    <ClCompile Include="ZoomResetCommand.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

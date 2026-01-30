@@ -19,12 +19,13 @@ class StatusBarController;
 
 class NotepadForm : public CWnd, public Subject {
 public:
-	NotepadForm(StatusBarController *statusBarController);
+	NotepadForm(CWnd *parent, StatusBarController *statusBarController);
 	virtual ~NotepadForm();
 public:
 	CString Load(CString path);
 	void Save(CString path);
 public:
+	CWnd* parent;
 	Glyph* note;
 	CaretController* caretController;
 	SizeCalculator* sizeCalculator;
@@ -45,6 +46,7 @@ public:
 	double magnification;
 public:
 	BOOL IsCompositing() const;
+	CWnd* GetParent();
 	CString GetPath() const;
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -80,6 +82,10 @@ inline BOOL NotepadForm::IsCompositing() const {
 
 inline CString NotepadForm::GetPath() const {
 	return const_cast<CString&>(this->path);
+}
+
+inline CWnd* NotepadForm::GetParent() {
+	return this->parent;
 }
 
 #endif // !_NOTEPADFORM_H

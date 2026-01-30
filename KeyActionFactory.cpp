@@ -34,9 +34,9 @@
 #include "CtrlPageDownAction.h"
 #include "CtrlPageUpAction.h"
 #include "CtrlAAction.h"
-#include "ZoomInAction.h"
-#include "ZoomOutAction.h"
-#include "ZoomResetAction.h"
+#include "CtrlPlusAction.h"
+#include "CtrlMinusAction.h"
+#include "Ctrl0Action.h"
 
 #pragma warning(disable:4996)
 
@@ -183,21 +183,21 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 	case VK_ADD:
 		if (onCtrlKey)
 		{
-			keyAction = new ZoomInAction(parent);
+			keyAction = new CtrlPlusAction(parent);
 		}
 		break;
 	case VK_OEM_MINUS:
 	case VK_SUBTRACT:
 		if (onCtrlKey)
 		{
-			keyAction = new ZoomOutAction(parent);
+			keyAction = new CtrlMinusAction(parent);
 		}
 		break;
 	case VK_NUMPAD0:
 	case '0':
 		if (onCtrlKey)
 		{
-			keyAction = new ZoomResetAction(parent);
+			keyAction = new Ctrl0Action(parent);
 		}
 		break;
 	case 'A':

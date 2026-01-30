@@ -443,13 +443,13 @@
     <ClInclude Include="PrinterResource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ZoomInAction.h">
+    <ClInclude Include="ZoomInCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ZoomOutAction.h">
+    <ClInclude Include="ZoomOutCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ZoomResetAction.h">
+    <ClInclude Include="ZoomResetCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="StatusBarController.h">
@@ -459,6 +459,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="NotepadApp.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlPlusAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlMinusAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ctrl0Action.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -865,13 +874,13 @@
     <ClCompile Include="PrinterResource.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ZoomInAction.cpp">
+    <ClCompile Include="ZoomInCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ZoomOutAction.cpp">
+    <ClCompile Include="ZoomOutCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ZoomResetAction.cpp">
+    <ClCompile Include="ZoomResetCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="StatusBarController.cpp">
@@ -881,6 +890,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="NotepadApp.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlPlusAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CtrlMinusAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ctrl0Action.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

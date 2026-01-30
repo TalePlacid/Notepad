@@ -60,7 +60,7 @@
 #define ID_MENU_ZOOMOUT                 40048
 #define ID_MENU_STATUS                  40050
 #define ID_MENU_INFO                    40052
-#define ID_MENU_ZOOMDEFAULT             40053
+#define ID_MENU_ZOOMRESET               40053
 #define ID_MENU_AUTOWRAP                40054
 #define ID_MENU_PAGESETTING             40055
 #define ID_MENU_SETPAGE                 40056
