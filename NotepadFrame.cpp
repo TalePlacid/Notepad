@@ -7,6 +7,7 @@
 
 BEGIN_MESSAGE_MAP(NotepadFrame, CFrameWnd)
 	ON_WM_CREATE()
+	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
 	ON_WM_EXITSIZEMOVE()
 	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_PREVIEW, OnCommandRequested)
@@ -44,6 +45,10 @@ int NotepadFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->notepadForm->SetFocus();
 
 	return 0;
+}
+
+void NotepadFrame::OnSetFocus(CWnd* pOldWnd) {
+	this->notepadForm->SetFocus();
 }
 
 void NotepadFrame::OnSize(UINT nType, int cx, int cy) {

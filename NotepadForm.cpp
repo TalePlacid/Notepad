@@ -50,7 +50,8 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_COMMAND_LOADLAST, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_PREVIEW, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_COMMAND_ERASE, ID_COMMAND_LOADLAST, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -358,7 +359,10 @@ LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnSetFocus(CWnd* pOldWnd) {
-	this->Notify("ChangeCaret");
+	if (this->caretController != NULL)
+	{
+		this->Notify("ChangeCaret");
+	}
 }
 
 void NotepadForm::OnKillFocus(CWnd* pNewWnd) {

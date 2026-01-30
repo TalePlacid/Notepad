@@ -370,6 +370,11 @@ Long PagingBuffer::Remove(Long toOffset) {
 	return ret;
 }
 
+void PagingBuffer::Clear() {
+	fclose(this->file);
+	this->file = fopen("Note.tmp", "w+b");
+}
+
 Long PagingBuffer::Replace(Long offset, CString str) {
 	FILE* replacedFile = fopen("replacedFile.tmp", "w+b");
 

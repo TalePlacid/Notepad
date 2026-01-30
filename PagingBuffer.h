@@ -20,6 +20,7 @@ public:
 	Long Add(CString str);
 	Long Remove();
 	Long Remove(Long toOffset);
+	void Clear();
 	Long Replace(Long offset, CString str);
 	Long CountRow(Long offset);
 

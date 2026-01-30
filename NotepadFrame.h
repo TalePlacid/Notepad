@@ -13,6 +13,7 @@ public:
 	CWnd* GetNotepadForm();
 protected:
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void OnSetFocus(CWnd* pOldWnd);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnExitSizeMove();
 	void OnCommandRequested(UINT nID);
