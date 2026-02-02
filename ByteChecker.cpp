@@ -60,3 +60,37 @@ bool ByteChecker::IsWordCharacter(char character) {
 
 	return ret;
 }
+
+Long ByteChecker::CheckUtf8FirstByte(char* character) {
+	Long bytes = 0;
+
+	if ((*character & 0x80) == 0x00)
+	{
+		bytes = 1;
+	}
+	else if ((*character & 0xE0) == 0xC0)
+	{
+		bytes = 2;
+	}
+	else if ((*character & 0xF0) == 0xE0)
+	{
+		bytes = 3;
+	}
+	else if ((*character & 0xF8) == 0xF0)
+	{
+		bytes = 4;
+	}
+
+	return bytes;
+}
+
+bool ByteChecker::IsUtf8ContinuationByte(char* character) {
+	bool ret = false;
+
+	if ((*character & 0xC0) == 0x80)
+	{
+		ret = true;
+	}
+
+	return ret;
+}

@@ -15,6 +15,8 @@ public:
 	bool IsAlphabet(char* character);
 	bool IsCapital(char character);
 	bool IsWordCharacter(char character);
+	Long CheckUtf8FirstByte(char* character);
+	bool IsUtf8ContinuationByte(char* character);
 };
 
 #endif // !_BYTECHECKER_H

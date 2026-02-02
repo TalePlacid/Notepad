@@ -25,6 +25,7 @@ END_MESSAGE_MAP()
 PageSettingForm::PageSettingForm(CWnd* parent)
 	:CDialog(PageSettingForm::IDD, parent) {
 	this->pageSettingLayout = NULL;
+	this->parent = parent;
 	this->isInitialized = FALSE;
 }
 
@@ -39,7 +40,7 @@ BOOL PageSettingForm::OnInitDialog() {
 	CDialog::OnInitDialog();
 
 	//1. 페이지 설정을 읽는다.
-	PageSetting pageSetting = ((NotepadForm*)(this->GetParent()))->pageSetting;
+	PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
 
 	//1. 컨트롤들에서 기본 값을 설정한다.
 	CString sizes[] = { "A4", "A5", "A6", "B4", "B5", "레터", "리걸" };

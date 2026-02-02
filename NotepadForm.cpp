@@ -564,7 +564,23 @@ void NotepadForm::OnClose() {
 	CWnd::OnClose();
 }
 
-CString NotepadForm::Load(CString path) {
+void NotepadForm::Load(CString path, TCHAR*(*str), Long& count) {
+	(*str) = NULL;
+	count = 0;
+
+	FILE* file;
+	file = fopen((LPCTSTR)path, "rb+");
+	if (file != NULL)
+	{
+		fseek(file, 0, SEEK_END);
+		Long fileEndOffset = ftell(file);
+		(*str) = new TCHAR[fileEndOffset + 1];
+		fseek(file, 0, SEEK_SET);
+		count = fread((*str), 1, fileEndOffset, file);
+		(*str)[count] = '\0';
+		fclose(file);
+	}
+#if 0
 	ifstream ifs;
 	ifs.open(path);
 
@@ -581,6 +597,7 @@ CString NotepadForm::Load(CString path) {
 	}
 
 	return str;
+#endif
 }
 
 void NotepadForm::Save(CString path) {

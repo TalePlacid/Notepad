@@ -6,11 +6,8 @@ class OpenCommand : public Command {
 public:
 	OpenCommand(CWnd* parent);
 	virtual ~OpenCommand();
-	OpenCommand(const OpenCommand& source);
-	OpenCommand& operator=(const OpenCommand& source);
 
 	virtual void Execute();
-	virtual void Unexecute();
 };
 
 #endif // !_OPENCOMMAND_H

@@ -22,16 +22,13 @@ public:
 	NotepadForm(CWnd *parent, StatusBarController *statusBarController);
 	virtual ~NotepadForm();
 public:
-	CString Load(CString path);
+	void Load(CString path, TCHAR*(*str), Long& count);
 	void Save(CString path);
 public:
 	CWnd* parent;
 	Glyph* note;
 	CaretController* caretController;
 	SizeCalculator* sizeCalculator;
-	CFont* originalFont;
-	CFont* displayFont;
-	CMenu menu;
 	ScrollController* scrollController;
 	ClipboardController* clipboardController;
 	PagingBuffer* pagingBuffer;
@@ -41,13 +38,18 @@ public:
 	StatusBarController* statusBarController;
 	PageSetting pageSetting;
 	PreviewForm* previewForm;
+public:
+	CFont* originalFont;
+	CFont* displayFont;
+	CMenu menu;
 	BOOL hasFindReplaceDialog;
 	BOOL isAutoWrapped;
 	double magnification;
+	CString path;
+	CString encoding;
 public:
 	BOOL IsCompositing() const;
 	CWnd* GetParent();
-	CString GetPath() const;
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -72,16 +74,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 private:
 	BOOL isCompositing;
-	CString path;
 	BOOL nextIsLastOnSize;
 };
 
 inline BOOL NotepadForm::IsCompositing() const {
 	return this->isCompositing;
-}
-
-inline CString NotepadForm::GetPath() const {
-	return const_cast<CString&>(this->path);
 }
 
 inline CWnd* NotepadForm::GetParent() {

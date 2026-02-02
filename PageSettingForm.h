@@ -24,6 +24,7 @@ protected:
 	virtual void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
+	CWnd* parent;
 	BOOL isInitialized;
 };
 

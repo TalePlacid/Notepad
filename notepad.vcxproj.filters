@@ -470,6 +470,12 @@
     <ClInclude Include="Ctrl0Action.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="EncodingDetector.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TextEncoder.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -899,6 +905,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Ctrl0Action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="EncodingDetector.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TextEncoder.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

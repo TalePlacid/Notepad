@@ -173,6 +173,7 @@
     <ClInclude Include="DownArrowAction.h" />
     <ClInclude Include="DropOldestStack.h" />
     <ClInclude Include="DummyRow.h" />
+    <ClInclude Include="EncodingDetector.h" />
     <ClInclude Include="EndAction.h" />
     <ClInclude Include="EraseCommand.h" />
     <ClInclude Include="EraseRangeCommand.h" />
@@ -264,6 +265,7 @@
     <ClInclude Include="StatusBarController.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="SuspendAutoWrap.h" />
+    <ClInclude Include="TextEncoder.h" />
     <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="UndoCommand.h" />
     <ClInclude Include="UpArrowAction.h" />
@@ -322,6 +324,7 @@
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="DownArrowAction.cpp" />
     <ClCompile Include="DummyRow.cpp" />
+    <ClCompile Include="EncodingDetector.cpp" />
     <ClCompile Include="EndAction.cpp" />
     <ClCompile Include="EraseCommand.cpp" />
     <ClCompile Include="EraseRangeCommand.cpp" />
@@ -409,6 +412,7 @@
     <ClCompile Include="StatusBarController.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="SuspendAutoWrap.cpp" />
+    <ClCompile Include="TextEncoder.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
     <ClCompile Include="UndoCommand.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />
