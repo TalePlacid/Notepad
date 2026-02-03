@@ -97,6 +97,7 @@
 #define IDC_STATUS_ENCODING				50028
 #define IDC_STATUS_SEPARATOR			50029
 #define IDC_NOTEPADFORM					50030
+#define IDC_COMBO_ENCODING				50031
 
 // Next default values for new objects
 // 

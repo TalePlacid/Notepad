@@ -1,7 +1,5 @@
 #include <afxdlgs.h>
 #include <imm.h>
-#include <fstream>
-#include <sstream>
 #include "NotepadForm.h"
 #include "Note.h"
 #include "Glyph.h"
@@ -32,6 +30,8 @@
 #include "HistoryBook.h"
 #include "PreviewForm.h"
 #include "StatusBarController.h"
+#include "EncodingDetector.h"
+#include "TextEncoder.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -82,6 +82,7 @@ NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController)
 	this->isCompositing = FALSE;
 	this->isAutoWrapped = FALSE;
 	this->magnification = 1.0;
+	this->isDirty = FALSE;
 
 	TCHAR buffer[256];
 	GetCurrentDirectory(256, buffer);
@@ -159,6 +160,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if ((nChar > 31 && nChar < 127) || nChar == 9 || nChar == 13)
 	{
+		this->isDirty = TRUE;
+
 		char character[2];
 		character[0] = nChar;
 		if (character[0] == '\r')
@@ -310,6 +313,8 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
+	this->isDirty = TRUE;
+	
 	char character[3];
 	character[0] = (BYTE)(wParam >> 8);
 	character[1] = (BYTE)wParam;
@@ -494,13 +499,17 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnClose() {
+	if (this->isDirty)
+	{
+		int ret = this->MessageBox("저장하시겠습니까?", "경고", MB_YESNO);
+		if (ret == IDYES)
+		{
+			this->SendMessage(WM_COMMAND, (WPARAM)ID_MENU_SAVE, 0);
+		}
+	}
+
 	if (this->note != NULL)
 	{
-		TCHAR buffer[256];
-		GetCurrentDirectory(256, buffer);
-		CString path(buffer);
-		this->Save(path);
-
 		delete this->note;
 		this->note = NULL;
 	}
@@ -601,6 +610,48 @@ void NotepadForm::Load(CString path, TCHAR*(*str), Long& count) {
 }
 
 void NotepadForm::Save(CString path) {
+	FILE* file = fopen((LPCTSTR)path, "wb+");
+
+	if (file != NULL)
+	{
+		//1. ANSI문자열을 만든다.
+		CString str = this->pagingBuffer->GetFullText();
+
+		//2. ANSI형식이 아니라면, 인코딩한다.
+		TCHAR(*contents) = NULL;
+		Long contentsCount = 0;
+		TextEncoder textEncoder;
+		if (this->encoding == "UTF-16 LE")
+		{
+			textEncoder.AnsiToUtf16Le(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
+		}
+		else if (this->encoding == "UTF-16 BE")
+		{
+			textEncoder.AnsiToUtf16Be(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
+		}
+		else if (this->encoding == "UTF-8 BOM")
+		{
+			textEncoder.AnsiToUtf8Bom(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
+		}
+		else if (this->encoding == "UTF-8")
+		{
+			textEncoder.AnsiToUtf8(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
+		}
+
+		//3. 파일에 쓴다.
+		if (contents != NULL)
+		{
+			fwrite(contents, 1, contentsCount, file);
+			delete[] contents;
+		}
+		else
+		{
+			fwrite(str.GetBuffer(), 1, str.GetLength(), file);
+		}
+
+		fclose(file);
+	}
+#if 0
 	CString tempFile = path + CString("\\Note.tmp");
 
 	ifstream ifs;
@@ -616,4 +667,5 @@ void NotepadForm::Save(CString path) {
 		ifs.close();
 		ofs.close();
 	}
+#endif
 }

@@ -47,6 +47,7 @@ public:
 	double magnification;
 	CString path;
 	CString encoding;
+	BOOL isDirty;
 public:
 	BOOL IsCompositing() const;
 	CWnd* GetParent();

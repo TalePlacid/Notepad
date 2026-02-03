@@ -43,7 +43,9 @@ EraseRangeCommand& EraseRangeCommand::operator=(const EraseRangeCommand& source)
 	return *this;
 }
 
-void EraseRangeCommand::Execute() {	
+void EraseRangeCommand::Execute() {
+	((NotepadForm*)(this->parent))->isDirty = TRUE;
+
 	//1. 앞 위치로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	this->contents = pagingBuffer->MakeSelectedString();

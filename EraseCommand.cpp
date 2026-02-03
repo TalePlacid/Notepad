@@ -38,6 +38,8 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 }
 
 void EraseCommand::Execute() {
+	((NotepadForm*)(this->parent))->isDirty = TRUE;
+
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

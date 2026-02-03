@@ -60,6 +60,8 @@ ReplaceCommand& ReplaceCommand::operator=(const ReplaceCommand& source) {
 }
 
 void ReplaceCommand::Execute() {
+	((NotepadForm*)(this->parent))->isDirty = TRUE;
+
 	//1. 검색된 위치로 이동한다.
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(this->offset);

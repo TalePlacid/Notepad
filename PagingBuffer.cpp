@@ -18,7 +18,7 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 	this->file = fopen((LPCTSTR)notepadForm->path, "rb+");
 	if (this->file == NULL)
 	{
-		this->file = fopen((LPCTSTR)notepadForm->path, "w+b");
+		this->file = fopen((LPCTSTR)notepadForm->path, "wb+");
 	}
 
 	if (this->file != NULL)
@@ -159,7 +159,7 @@ Long PagingBuffer::Add(char(*character)) {
 	Long currentOffset = ftell(this->file);
 
 	//1. 새 임시파일을 만든다.
-	FILE* addedFile = fopen("AddedFile.tmp", "w+b");
+	FILE* addedFile = fopen("AddedFile.tmp", "wb+");
 
 	if (addedFile != NULL)
 	{
@@ -213,7 +213,7 @@ Long PagingBuffer::Add(char(*character)) {
 }
 
 Long PagingBuffer::Add(CString str) {
-	FILE* addedFile = fopen("AddedFile.tmp", "w+b");
+	FILE* addedFile = fopen("AddedFile.tmp", "wb+");
 
 	if (addedFile != NULL)
 	{
@@ -264,7 +264,7 @@ Long PagingBuffer::Remove() {
 	Long ret = 0;
 
 	//1. 새 임시파일을 만든다.
-	FILE* removedFile = fopen("RemovedFile.tmp", "w+b");
+	FILE* removedFile = fopen("RemovedFile.tmp", "wb+");
 	if (removedFile != NULL)
 	{
 		//2. 지울 문자의 길이를 구한다.
@@ -321,7 +321,7 @@ Long PagingBuffer::Remove() {
 Long PagingBuffer::Remove(Long toOffset) {
 	Long ret = 0;
 
-	FILE* removedFile = fopen("RemovedFile.tmp", "w+b");
+	FILE* removedFile = fopen("RemovedFile.tmp", "wb+");
 	if (removedFile != NULL) {
 		Long currentOffset = ftell(this->file);
 
@@ -372,11 +372,11 @@ Long PagingBuffer::Remove(Long toOffset) {
 
 void PagingBuffer::Clear() {
 	fclose(this->file);
-	this->file = fopen("Note.tmp", "w+b");
+	this->file = fopen("Note.tmp", "wb+");
 }
 
 Long PagingBuffer::Replace(Long offset, CString str) {
-	FILE* replacedFile = fopen("replacedFile.tmp", "w+b");
+	FILE* replacedFile = fopen("replacedFile.tmp", "wb+");
 
 	if (replacedFile != NULL)
 	{

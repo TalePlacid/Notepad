@@ -19,7 +19,9 @@ OpenCommand::~OpenCommand() {
 
 void OpenCommand::Execute() {
 	//1. 파일탐색 대화상자를 연다.
-	CFileDialog cFileDialog(TRUE);
+	CFileDialog cFileDialog(TRUE, "txt", "NoName.txt",
+		OFN_NOCHANGEDIR | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		"텍스트 파일 (*.txt)|*.txt|모든 파일 (*.*)|*.*||");
 	INT_PTR result = cFileDialog.DoModal();
 
 	//2. 열렸다면,
@@ -52,19 +54,27 @@ void OpenCommand::Execute() {
 		Long encodedCount;
 		if (encodingDetector.IsUTF16LE(str))
 		{
-			textEncoder.Utf16LEToAnsi(str, count, &encoded, encodedCount);
+			textEncoder.Utf16LeToAnsi(str, count, &encoded, encodedCount);
+			((NotepadForm*)(this->parent))->encoding = "UTF-16 LE";
 		}
 		else if (encodingDetector.IsUTF16BE(str))
 		{
-			textEncoder.Utf16BEToAnsi(str, count, &encoded, encodedCount);
+			textEncoder.Utf16BeToAnsi(str, count, &encoded, encodedCount);
+			((NotepadForm*)(this->parent))->encoding = "UTF-16 BE";
 		}
 		else if (encodingDetector.IsUTF8BOM(str))
 		{
 			textEncoder.Utf8BomToAnsi(str, count, &encoded, encodedCount);
+			((NotepadForm*)(this->parent))->encoding = "UTF-8 BOM";
 		}
 		else if (encodingDetector.IsUTF8(str, count))
 		{
 			textEncoder.Utf8ToAnsi(str, count, &encoded, encodedCount);
+			((NotepadForm*)(this->parent))->encoding = "UTF-8";
+		}
+		else
+		{
+			((NotepadForm*)(this->parent))->encoding = "ANSI";
 		}
 
 		//4. 노트를 생성한다.
@@ -74,7 +84,7 @@ void OpenCommand::Execute() {
 		//5. 페이징 버퍼를 생성한다.
 		((NotepadForm*)(this->parent))->pagingBuffer = new PagingBuffer(this->parent);
 
-		//6. 프레임의 캡션을 수정한다.
+		//6. 인코딩 속성과 캡션을 수정한다.
 		((NotepadForm*)(this->parent))->parent->SetWindowTextA(cFileDialog.GetFileName());
 
 		if (str != NULL)
@@ -87,42 +97,4 @@ void OpenCommand::Execute() {
 			delete[] encoded;
 		}
 	}
-#if 0
-	CFileDialog cFileDialog(TRUE);
-	INT_PTR result = cFileDialog.DoModal();
-
-	if (result == IDOK)
-	{
-		NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-		if (notepadForm->note != NULL)
-		{
-			delete notepadForm->note;
-			notepadForm->note = NULL;
-		}
-		
-		if (notepadForm->pagingBuffer != NULL)
-		{
-			delete notepadForm->pagingBuffer;
-			notepadForm->pagingBuffer = NULL;
-		}
-
-
-		CString path = cFileDialog.GetPathName();
-		this->parent->SetWindowTextA(cFileDialog.GetFileName());
-		CString noteString = ((NotepadForm*)(this->parent))->Load(path);
-
-		NoteConverter noteConverter;
-		EncodingDetector encodingDetector;
-		if (encodingDetector.IsUTF16LE(noteString.GetBuffer()))
-		{
-
-		}
-		else
-		{
-			((NotepadForm*)(this->parent))->note = noteConverter.Convert((LPCTSTR)noteString);
-		}
-
-		this->parent->Invalidate();
-	}
-#endif
 }

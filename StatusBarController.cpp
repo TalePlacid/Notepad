@@ -64,5 +64,7 @@ void StatusBarController::Update(Subject* subject, string interest) {
 		Long percentage = notepadForm->magnification * 100;
 		magnification.Format("%ld%%", percentage);
 		this->statusBar->SetPaneText(2, magnification);
+
+		this->statusBar->SetPaneText(4, notepadForm->encoding);
 	}
 }

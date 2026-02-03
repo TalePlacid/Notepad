@@ -34,5 +34,12 @@ void NewCommand::Execute() {
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	pagingBuffer->CacheRowStartIndex(-rowStartIndex);
 
+	TCHAR buffer[256];
+	GetCurrentDirectory(256, buffer);
+	CString path(buffer);
+	notepadForm->path = path + CString("\\NoName.txt");
+
+	notepadForm->parent->SetWindowTextA("메모장 ~제목없음");
+
 	this->parent->Invalidate();
 }
