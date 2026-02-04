@@ -35,14 +35,14 @@ void OpenCommand::Execute() {
 			notepadForm->note = NULL;
 		}
 
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
 		pagingBuffer->Clear();
 
 		//2. 문자열을 적재한다.
-		((NotepadForm*)(this->parent))->path = cFileDialog.GetPathName();
+		notepadForm->path = cFileDialog.GetPathName();
 		TCHAR(*str) = 0;
 		Long count;
-		((NotepadForm*)(this->parent))->Load(((NotepadForm*)(this->parent))->path, &str, count);
+		notepadForm->Load(notepadForm->path, &str, count);
 
 		//3. ANSI가 아니면, ANSI로 재인코딩한다.
 		EncodingDetector encodingDetector;
@@ -52,37 +52,38 @@ void OpenCommand::Execute() {
 		if (encodingDetector.IsUTF16LE(str))
 		{
 			textEncoder.Utf16LeToAnsi(str, count, &encoded, encodedCount);
-			((NotepadForm*)(this->parent))->encoding = "UTF-16 LE";
+			notepadForm->encoding = "UTF-16 LE";
 		}
 		else if (encodingDetector.IsUTF16BE(str))
 		{
 			textEncoder.Utf16BeToAnsi(str, count, &encoded, encodedCount);
-			((NotepadForm*)(this->parent))->encoding = "UTF-16 BE";
+			notepadForm->encoding = "UTF-16 BE";
 		}
 		else if (encodingDetector.IsUTF8BOM(str))
 		{
 			textEncoder.Utf8BomToAnsi(str, count, &encoded, encodedCount);
-			((NotepadForm*)(this->parent))->encoding = "UTF-8 BOM";
+			notepadForm->encoding = "UTF-8 BOM";
 		}
 		else if (encodingDetector.IsUTF8(str, count))
 		{
 			textEncoder.Utf8ToAnsi(str, count, &encoded, encodedCount);
-			((NotepadForm*)(this->parent))->encoding = "UTF-8";
+			notepadForm->encoding = "UTF-8";
 		}
 		else
 		{
-			((NotepadForm*)(this->parent))->encoding = "ANSI";
+			notepadForm->encoding = "ANSI";
 		}
 
 		//4. 노트를 생성한다.
 		NoteConverter noteConverter;
-		((NotepadForm*)(this->parent))->note = noteConverter.Convert(string(encoded));
+		notepadForm->note = noteConverter.Convert(string(encoded));
 
 		//5. 페이징 버퍼의 내용을 교체한다.
 		pagingBuffer->Add(CString(encoded));
+		pagingBuffer->FirstRow();
 
-		//6. 인코딩 속성과 캡션을 수정한다.
-		((NotepadForm*)(this->parent))->parent->SetWindowTextA(cFileDialog.GetFileName());
+		//6. 캡션을 수정한다.
+		notepadForm->parent->SetWindowTextA(cFileDialog.GetFileName());
 
 		if (str != NULL)
 		{

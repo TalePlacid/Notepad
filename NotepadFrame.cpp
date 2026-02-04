@@ -11,11 +11,17 @@ BEGIN_MESSAGE_MAP(NotepadFrame, CFrameWnd)
 	ON_WM_SIZE()
 	ON_WM_EXITSIZEMOVE()
 	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_PREVIEW, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_COMMAND_ERASE, ID_COMMAND_OPENINEXPLORER, OnCommandRequested)
 	ON_WM_ERASEBKGND()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
-NotepadFrame::NotepadFrame(){
+NotepadFrame::NotepadFrame(LPTSTR m_lpCmdLine){
+	this->path = "";
+	if (m_lpCmdLine[0] != '\0')
+	{
+		this->path = CString(m_lpCmdLine);
+	}
 	this->notepadForm = NULL;
 	this->statusBarController = NULL;
 }

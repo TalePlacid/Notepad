@@ -213,6 +213,7 @@
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
     <ClInclude Include="OpenFindDialogCommand.h" />
+    <ClInclude Include="OpenInExplorerCommand.h" />
     <ClInclude Include="OpenReplaceDialogCommand.h" />
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageSetting.h" />
@@ -363,6 +364,7 @@
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
     <ClCompile Include="OpenFindDialogCommand.cpp" />
+    <ClCompile Include="OpenInExplorerCommand.cpp" />
     <ClCompile Include="OpenReplaceDialogCommand.cpp" />
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageSetting.cpp" />

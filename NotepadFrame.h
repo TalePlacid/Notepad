@@ -7,11 +7,12 @@ class StatusBarController;
 
 class NotepadFrame : public CFrameWnd {
 public:
-	NotepadFrame();
+	NotepadFrame(LPTSTR m_lpCmdLine);
 	virtual ~NotepadFrame();
 
 	CWnd* GetNotepadForm();
 	CMenu* GetMenu();
+	CString& GetPath() const;
 protected:
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnSetFocus(CWnd* pOldWnd);
@@ -22,10 +23,15 @@ protected:
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
+	CString path;
 	CMenu menu;
 	CWnd* notepadForm;
 	StatusBarController* statusBarController;
 };
+
+inline CString& NotepadFrame::GetPath() const {
+	return const_cast<CString&>(this->path);
+}
 
 inline CWnd* NotepadFrame::GetNotepadForm() {
 	return this->notepadForm;
