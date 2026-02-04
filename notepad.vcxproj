@@ -201,6 +201,7 @@
     <ClInclude Include="LoadPreviousCommand.h" />
     <ClInclude Include="MacroCommand.h" />
     <ClInclude Include="message.h" />
+    <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="MultiByteWrappingPolicy.h" />
     <ClInclude Include="NewCommand.h" />
@@ -353,6 +354,7 @@
     <ClCompile Include="LoadNextCommand.cpp" />
     <ClCompile Include="LoadPreviousCommand.cpp" />
     <ClCompile Include="MacroCommand.cpp" />
+    <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />

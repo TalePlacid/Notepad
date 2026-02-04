@@ -3,6 +3,7 @@
 #include <afxwin.h>
 #include "Subject.h"
 #include "PageSetting.h"
+#include "MouseHandler.h"
 
 class Glyph;
 class CaretController;
@@ -71,11 +72,13 @@ protected:
 	virtual BOOL OnEraseBkgnd(CDC *pDC);
 	LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
 	LRESULT OnFindReplaceFocused(WPARAM wParam, LPARAM lParam);
+	void OnLButtonDown(UINT nFlags, CPoint point);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
 	BOOL isCompositing;
 	BOOL nextIsLastOnSize;
+	MouseHandler mouseHandler;
 };
 
 inline BOOL NotepadForm::IsCompositing() const {

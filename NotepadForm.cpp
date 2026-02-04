@@ -58,11 +58,13 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
 	ON_MESSAGE(WM_FINDREPLACE_FOCUS, OnFindReplaceFocused)
+	ON_WM_LBUTTONDOWN()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
 
-NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController){
+NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController)
+	:mouseHandler(this){
 	this->parent = parent;
 	this->note = NULL;
 	this->isCompositing = FALSE;
@@ -500,6 +502,10 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 	findReplaceForm->SetFocus();
 
 	return 0;
+}
+
+void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
+	this->mouseHandler.DownLeftButton(nFlags, point);
 }
 
 void NotepadForm::OnClose() {
