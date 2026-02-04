@@ -239,6 +239,7 @@
     <ClInclude Include="RightArrowAction.h" />
     <ClInclude Include="Row.h" />
     <ClInclude Include="RowCounter.h" />
+    <ClInclude Include="SaveAsCommand.h" />
     <ClInclude Include="SaveCommand.h" />
     <ClInclude Include="Scroll.h" />
     <ClInclude Include="ScrollBarAction.h" />
@@ -387,6 +388,7 @@
     <ClCompile Include="RightArrowAction.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="RowCounter.cpp" />
+    <ClCompile Include="SaveAsCommand.cpp" />
     <ClCompile Include="SaveCommand.cpp" />
     <ClCompile Include="Scroll.cpp" />
     <ClCompile Include="ScrollBarAction.cpp" />

@@ -15,23 +15,14 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 	this->pageSize = pageSize;
 
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-	this->file = fopen((LPCTSTR)notepadForm->path, "rb+");
+	CString originalPath = notepadForm->path;
+	Long index = originalPath.ReverseFind('\\');
+	CString tmpPath = originalPath.Left(index + 1) + CString("Note.tmp");
+
+	this->file = fopen((LPCTSTR)tmpPath, "rb+");
 	if (this->file == NULL)
 	{
-		this->file = fopen((LPCTSTR)notepadForm->path, "wb+");
-	}
-
-	if (this->file != NULL)
-	{
-		TCHAR(*str) = NULL;
-		Long count;
-		notepadForm->Load(notepadForm->path, &str, count);
-		fwrite((LPCTSTR)str, 1, count, this->file);
-		if (str != NULL)
-		{
-			delete[] str;
-		}
-		fseek(this->file, 0, SEEK_SET);
+		this->file = fopen((LPCTSTR)tmpPath, "wb+");
 	}
 
 	this->rowStartIndex = 0;
@@ -39,7 +30,11 @@ PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
 }
 
 PagingBuffer::~PagingBuffer() {
-
+	if (this->file != NULL)
+	{
+		fclose(this->file);
+		remove("Note.tmp");
+	}
 }
 
 Glyph* PagingBuffer::LoadPrevious() {

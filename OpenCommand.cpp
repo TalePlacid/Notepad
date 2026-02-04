@@ -35,11 +35,8 @@ void OpenCommand::Execute() {
 			notepadForm->note = NULL;
 		}
 
-		if (notepadForm->pagingBuffer != NULL)
-		{
-			delete notepadForm->pagingBuffer;
-			notepadForm->pagingBuffer = NULL;
-		}
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		pagingBuffer->Clear();
 
 		//2. 문자열을 적재한다.
 		((NotepadForm*)(this->parent))->path = cFileDialog.GetPathName();
@@ -81,8 +78,8 @@ void OpenCommand::Execute() {
 		NoteConverter noteConverter;
 		((NotepadForm*)(this->parent))->note = noteConverter.Convert(string(encoded));
 
-		//5. 페이징 버퍼를 생성한다.
-		((NotepadForm*)(this->parent))->pagingBuffer = new PagingBuffer(this->parent);
+		//5. 페이징 버퍼의 내용을 교체한다.
+		pagingBuffer->Add(CString(encoded));
 
 		//6. 인코딩 속성과 캡션을 수정한다.
 		((NotepadForm*)(this->parent))->parent->SetWindowTextA(cFileDialog.GetFileName());

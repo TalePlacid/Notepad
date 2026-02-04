@@ -4,6 +4,7 @@
 #include "SelectFontCommand.h"
 #include "OpenCommand.h"
 #include "SaveCommand.h"
+#include "SaveAsCommand.h"
 #include "NewCommand.h"
 #include "EraseCommand.h"
 #include "AutoWrapCommand.h"
@@ -56,7 +57,7 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 		command = new SaveCommand(parent);
 		break;
 	case ID_MENU_SAVEAS:
-		command = new SaveCommand(parent);
+		command = new SaveAsCommand(parent);
 		break;
 	case ID_MENU_SETPAGE:
 		command = new SetPageCommand(parent);

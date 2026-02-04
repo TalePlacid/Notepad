@@ -381,8 +381,12 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 }
 
 void NotepadForm::OnCommandRequested(UINT nID) {
+	if (nID == ID_MENU_EXIT)
+	{
+		this->parent->PostMessage(WM_CLOSE);
+	}
+	
 	CommandFactory commandFactory;
-
 	Command* command = commandFactory.Create(this, nID);
 	if (command != NULL)
 	{
@@ -589,24 +593,6 @@ void NotepadForm::Load(CString path, TCHAR*(*str), Long& count) {
 		(*str)[count] = '\0';
 		fclose(file);
 	}
-#if 0
-	ifstream ifs;
-	ifs.open(path);
-
-	CString str("");
-	if (ifs.is_open())
-	{
-		stringstream ss;
-		ss << ifs.rdbuf();
-		str.Format("%s", ss.str().c_str());
-		str.Replace("\n", "\r\n");
-
-		this->path = path;
-		ifs.close();
-	}
-
-	return str;
-#endif
 }
 
 void NotepadForm::Save(CString path) {
@@ -651,21 +637,4 @@ void NotepadForm::Save(CString path) {
 
 		fclose(file);
 	}
-#if 0
-	CString tempFile = path + CString("\\Note.tmp");
-
-	ifstream ifs;
-	ifs.open(tempFile);
-
-	CString noName = path + CString("\\NoName.txt");
-
-	ofstream ofs;
-	ofs.open(noName, ios::out | ios::binary);
-	if (ifs.is_open() && ofs.is_open())
-	{
-		ofs << ifs.rdbuf();
-		ifs.close();
-		ofs.close();
-	}
-#endif
 }
