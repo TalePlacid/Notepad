@@ -8,8 +8,9 @@ public:
 	MouseHandler(CWnd* parent);
 	~MouseHandler();
 
-	void DownLeftButton(UINT nFlags, CPoint point);
-	BOOL WheelMouse(UINT nFlags, short zDeltz, CPoint point);
+	void DownLeftButton(CPoint point);
+	BOOL WheelMouse(short zDeltz);
+	void CtrlWheelMouse(short zDeltz);
 private:
 	CWnd* parent;
 };

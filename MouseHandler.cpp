@@ -6,6 +6,7 @@
 #include "Glyph.h"
 #include "VScrollBarUpClickAction.h"
 #include "vScrollBarDownClickAction.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -17,7 +18,7 @@ MouseHandler::~MouseHandler() {
 
 }
 
-void MouseHandler::DownLeftButton(UINT nFlags, CPoint point) {
+void MouseHandler::DownLeftButton(CPoint point) {
 	//1. 절대좌표로 환산한다.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 
@@ -106,13 +107,13 @@ void MouseHandler::DownLeftButton(UINT nFlags, CPoint point) {
 	this->parent->Invalidate();
 }
 
-BOOL MouseHandler::WheelMouse(UINT nFlags, short zDelta, CPoint pt) {
+BOOL MouseHandler::WheelMouse(short zDelta) {
 	//1. 수직스크롤이 존재한다면,
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	BOOL hasVScroll = notepadForm->scrollController->HasVScroll();
 	if (hasVScroll)
 	{
-		//1. 방향을 확인한다.
+		//1.1. 방향을 확인한다.
 		BOOL isUp = TRUE;
 		if (zDelta < 0)
 		{
@@ -120,10 +121,10 @@ BOOL MouseHandler::WheelMouse(UINT nFlags, short zDelta, CPoint pt) {
 			zDelta *= -1;
 		}
 
-		//2. 반복 횟수를 정한다.
+		//1.2. 반복 횟수를 정한다.
 		Long count = zDelta / DELTA_PER_TICK;
 
-		//2. 방향에 따라 반복한다.
+		//1.3. 방향에 따라 반복한다.
 		ScrollBarAction* action = NULL;
 		if (isUp)
 		{
@@ -152,4 +153,23 @@ BOOL MouseHandler::WheelMouse(UINT nFlags, short zDelta, CPoint pt) {
 	}
 
 	return hasVScroll;
+}
+
+void MouseHandler::CtrlWheelMouse(short zDelta) {
+	//1. 방향을 확인한다.
+	UINT nID = ID_MENU_ZOOMIN;
+	if (zDelta < 0)
+	{
+		nID = ID_MENU_ZOOMOUT;
+		zDelta *= -1;
+	}
+
+	//2. 반복 횟수를 정한다.
+	Long count = zDelta / DELTA_PER_TICK;
+
+	//3. 방향에 따라 반복한다.
+	for (Long i = 0; i < count; i++)
+	{
+		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)nID, 0);
+	}
 }

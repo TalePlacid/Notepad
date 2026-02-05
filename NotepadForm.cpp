@@ -506,11 +506,19 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
-	this->mouseHandler.DownLeftButton(nFlags, point);
+	this->mouseHandler.DownLeftButton(point);
 }
 
 BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
-	this->mouseHandler.WheelMouse(nFlags, zDelta, pt);
+	switch (nFlags)
+	{
+	case MK_CONTROL:
+		this->mouseHandler.CtrlWheelMouse(zDelta);
+		break;
+	default:
+		this->mouseHandler.WheelMouse(zDelta);
+		break;
+	}
 
 	return 0;
 }
