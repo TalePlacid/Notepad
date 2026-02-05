@@ -1,6 +1,7 @@
 #ifndef _MOUSEHANDLER_H //guard
 #define _MOUSEHANDLER_H
 #include <afxwin.h>
+#define DELTA_PER_TICK 120
 
 class MouseHandler {
 public:
@@ -8,6 +9,7 @@ public:
 	~MouseHandler();
 
 	void DownLeftButton(UINT nFlags, CPoint point);
+	BOOL WheelMouse(UINT nFlags, short zDeltz, CPoint point);
 private:
 	CWnd* parent;
 };

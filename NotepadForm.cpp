@@ -59,6 +59,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
 	ON_MESSAGE(WM_FINDREPLACE_FOCUS, OnFindReplaceFocused)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEWHEEL()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -506,6 +507,12 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
 	this->mouseHandler.DownLeftButton(nFlags, point);
+}
+
+BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
+	this->mouseHandler.WheelMouse(nFlags, zDelta, pt);
+
+	return 0;
 }
 
 void NotepadForm::OnClose() {

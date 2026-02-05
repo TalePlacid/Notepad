@@ -73,6 +73,7 @@ protected:
 	LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
 	LRESULT OnFindReplaceFocused(WPARAM wParam, LPARAM lParam);
 	void OnLButtonDown(UINT nFlags, CPoint point);
+	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
