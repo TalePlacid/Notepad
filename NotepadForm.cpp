@@ -32,6 +32,9 @@
 #include "StatusBarController.h"
 #include "EncodingDetector.h"
 #include "TextEncoder.h"
+#include "MouseHandler.h"
+#include "MouseActionFactory.h"
+#include "MouseAction.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -59,13 +62,14 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
 	ON_MESSAGE(WM_FINDREPLACE_FOCUS, OnFindReplaceFocused)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
 
-NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController)
-	:mouseHandler(this){
+NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController) {
 	this->parent = parent;
 	this->note = NULL;
 	this->isCompositing = FALSE;
@@ -82,6 +86,7 @@ NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController)
 	this->hasFindReplaceDialog = FALSE;
 	this->previewForm = NULL;
 	this->statusBarController = statusBarController;
+	this->mouseHandler = NULL;
 	this->isCompositing = FALSE;
 	this->isAutoWrapped = FALSE;
 	this->magnification = 1.0;
@@ -145,6 +150,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->statusBarController->Create();
 	this->Register(this->statusBarController);
+
+	this->mouseHandler = new MouseHandler(this);
 
 	Margin margin;
 	margin.left = 20;
@@ -506,17 +513,35 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
-	this->mouseHandler.DownLeftButton(point);
+	this->mouseHandler->DownLeftButton(point);
+}
+   
+void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
+	MouseActionFactory mouseActionFactory(this);
+	MouseAction* mouseAction = mouseActionFactory.Create(nFlags, point);
+	if (mouseAction != NULL)
+	{
+		mouseAction->Perform();
+		delete mouseAction;
+
+		this->mouseHandler->UpdateLatestPoint(point);
+		((NotepadForm*)(this->parent))->Notify("UpdateStatusBar");
+		this->parent->Invalidate();
+	}
+}
+
+void NotepadForm::OnLButtonUp(UINT nFlags, CPoint point) {
+	this->mouseHandler->EndDrag(point);
 }
 
 BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
 	switch (nFlags)
 	{
 	case MK_CONTROL:
-		this->mouseHandler.CtrlWheelMouse(zDelta);
+		this->mouseHandler->CtrlWheelMouse(zDelta);
 		break;
 	default:
-		this->mouseHandler.WheelMouse(zDelta);
+		this->mouseHandler->WheelMouse(zDelta);
 		break;
 	}
 
@@ -593,6 +618,11 @@ void NotepadForm::OnClose() {
 	if (this->previewForm != NULL)
 	{
 		delete this->previewForm;
+	}
+
+	if (this->mouseHandler != NULL)
+	{
+		delete this->mouseHandler;
 	}
 
 	CWnd::OnClose();

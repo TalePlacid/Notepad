@@ -171,6 +171,10 @@
     <ClInclude Include="CutCommand.h" />
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="DownArrowAction.h" />
+    <ClInclude Include="DragDownAction.h" />
+    <ClInclude Include="DragLeftAction.h" />
+    <ClInclude Include="DragRightAction.h" />
+    <ClInclude Include="DragUpAction.h" />
     <ClInclude Include="DropOldestStack.h" />
     <ClInclude Include="DummyRow.h" />
     <ClInclude Include="EncodingDetector.h" />
@@ -201,6 +205,8 @@
     <ClInclude Include="LoadPreviousCommand.h" />
     <ClInclude Include="MacroCommand.h" />
     <ClInclude Include="message.h" />
+    <ClInclude Include="MouseAction.h" />
+    <ClInclude Include="MouseActionFactory.h" />
     <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="MultiByteWrappingPolicy.h" />
@@ -210,6 +216,7 @@
     <ClInclude Include="NotepadApp.h" />
     <ClInclude Include="NotepadForm.h" />
     <ClInclude Include="NotepadFrame.h" />
+    <ClInclude Include="NotePositionResolver.h" />
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
@@ -326,6 +333,10 @@
     <ClCompile Include="CutCommand.cpp" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="DownArrowAction.cpp" />
+    <ClCompile Include="DragDownAction.cpp" />
+    <ClCompile Include="DragLeftAction.cpp" />
+    <ClCompile Include="DragRightAction.cpp" />
+    <ClCompile Include="DragUpAction.cpp" />
     <ClCompile Include="DummyRow.cpp" />
     <ClCompile Include="EncodingDetector.cpp" />
     <ClCompile Include="EndAction.cpp" />
@@ -354,6 +365,8 @@
     <ClCompile Include="LoadNextCommand.cpp" />
     <ClCompile Include="LoadPreviousCommand.cpp" />
     <ClCompile Include="MacroCommand.cpp" />
+    <ClCompile Include="MouseAction.cpp" />
+    <ClCompile Include="MouseActionFactory.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
     <ClCompile Include="NewCommand.cpp" />
@@ -362,6 +375,7 @@
     <ClCompile Include="NotepadApp.cpp" />
     <ClCompile Include="NotepadForm.cpp" />
     <ClCompile Include="NotepadFrame.cpp" />
+    <ClCompile Include="NotePositionResolver.cpp" />
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />

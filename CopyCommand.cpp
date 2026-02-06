@@ -15,7 +15,5 @@ CopyCommand::~CopyCommand() {
 }
 
 void CopyCommand::Execute() {
-	((NotepadForm*)(this->parent))->isDirty = TRUE;
-
 	((NotepadForm*)(this->parent))->clipboardController->Copy();
 }

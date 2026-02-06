@@ -84,6 +84,11 @@ BOOL NotepadFrame::OnEraseBkgnd(CDC* pDC) {
 void NotepadFrame::OnClose() {
 	this->notepadForm->SendMessage(WM_CLOSE);
 
+	if (this->notepadForm != NULL)
+	{
+		delete this->notepadForm;
+	}
+
 	if (this->statusBarController != NULL)
 	{
 		delete this->statusBarController;

@@ -1,4 +1,5 @@
 #include "MouseHandler.h"
+#include "NotePositionResolver.h"
 #include "NotepadForm.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
@@ -10,55 +11,40 @@
 
 #pragma warning(disable:4996)
 
-MouseHandler::MouseHandler(CWnd* parent) {
+MouseHandler::MouseHandler(CWnd* parent)
+	:latestPoint(-1, -1) {
 	this->parent = parent;
+	this->onDrag = FALSE;                                                                                    
 }
 
 MouseHandler::~MouseHandler() {
 
 }
 
-void MouseHandler::DownLeftButton(CPoint point) {
-	//1. 절대좌표로 환산한다.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+CPoint MouseHandler::DownLeftButton(CPoint point) {
+	//1. 선택을 해제한다.
+	((NotepadForm*)(this->parent))->note->Select(false);
+	((NotepadForm*)(this->parent))->pagingBuffer->UnmarkSelectionBegin();
+	this->latestPoint = point;
+	this->onDrag = TRUE;
 
-	CPoint absolutePoint = point;
-	if (scrollController->HasVScroll())
-	{
-		absolutePoint.y += scrollController->GetVScroll().GetPos();
-	}
+	//2. 좌표를 노트 위치로 바꾼다.
+	NotePositionResolver notePositionResolver(this->parent);
+	Long noteRowIndex;
+	Long columnIndex;
+	notePositionResolver.PointToNotePosition(this->latestPoint, noteRowIndex, columnIndex);
 
-	if (scrollController->HasHScroll())
-	{
-		absolutePoint.x += scrollController->GetHScroll().GetPos();
-	}
-
-	//2. 노트상의 줄위치를 구한다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-	Long rowHeight = sizeCalculator->GetRowHeight();
-	Long fileRowIndex = absolutePoint.y / rowHeight;
-	Long noteRowIndex = fileRowIndex - rowStartIndex;
-
+	//3. 지금 줄의 가장 앞으로 이동한다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	if (noteRowIndex >= note->GetLength())
-	{
-		noteRowIndex = note->GetLength() - 1;
-	}
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 
-	//3. 노트상의 칸위치를 구한다.
-	Glyph* row = note->GetAt(noteRowIndex);
-	Long columnIndex = sizeCalculator->GetNearestColumnIndex(row, absolutePoint.x);
-
-	//4. 지금 줄의 가장 앞으로 이동한다.
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* currentRow = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = currentRow->GetCurrent();
 	currentRow->First();
 	pagingBuffer->Previous(currentColumnIndex);
 
-	//5. 현재 위치보다 앞이면,
+	//4. 현재 위치보다 앞이면,
 	Glyph* previousRow;
 	if (currentRowIndex > noteRowIndex)
 	{
@@ -80,7 +66,7 @@ void MouseHandler::DownLeftButton(CPoint point) {
 			pagingBuffer->Previous(currentRow->GetLength());
 		}
 	}
-	else //6. 현재 위치보다 뒤이면,
+	else //5. 현재 위치보다 뒤이면,
 	{
 		while (currentRowIndex < noteRowIndex)
 		{
@@ -99,12 +85,19 @@ void MouseHandler::DownLeftButton(CPoint point) {
 		}
 	}
 
-	//7. 칸 위치로 이동한다.
+	//6. 칸 위치로 이동한다.
 	currentRow->Move(columnIndex);
 	pagingBuffer->Next(columnIndex);
 
-	//8. 클라이언트 영역을 갱신한다.
+	//7. 클라이언트 영역을 갱신한다.
 	this->parent->Invalidate();
+
+	return this->latestPoint;
+}
+
+void MouseHandler::EndDrag(CPoint point) {
+	this->onDrag = FALSE;
+	this->latestPoint.SetPoint(-1, -1);
 }
 
 BOOL MouseHandler::WheelMouse(short zDelta) {
@@ -172,4 +165,60 @@ void MouseHandler::CtrlWheelMouse(short zDelta) {
 	{
 		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)nID, 0);
 	}
+}
+
+CPoint& MouseHandler::UpdateLatestPoint(CPoint point) {
+	this->latestPoint = point;
+
+	return this->latestPoint;
+}
+
+BOOL MouseHandler::IsMovedAboveRow(CPoint point) {
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long rowHeight = sizeCalculator->GetRowHeight();
+	Long rowStart = this->latestPoint.y / rowHeight * rowHeight;
+
+	BOOL ret = FALSE;
+	if (point.y < rowStart)
+	{
+		ret = TRUE;
+	}
+
+	return ret;
+}
+
+BOOL MouseHandler::IsMovedBelowRow(CPoint point) {
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	Long rowHeight = sizeCalculator->GetRowHeight();
+	Long rowEnd = (this->latestPoint.y / rowHeight + 1) * rowHeight;
+
+	BOOL ret = FALSE;
+	if (point.y > rowEnd)
+	{
+		ret = TRUE;
+	}
+
+	return ret;
+}
+
+BOOL MouseHandler::IsMovedLeft(CPoint point) {
+	BOOL ret = FALSE;
+	Long xDifference = point.x - this->latestPoint.x;
+	if (xDifference <= -4)
+	{
+		ret = TRUE;
+	}
+
+	return ret;
+}
+
+BOOL MouseHandler::IsMovedRight(CPoint point) {
+	BOOL ret = FALSE;
+	Long xDifference = point.x - this->latestPoint.x;
+	if (xDifference >= 4)
+	{
+		ret = TRUE;
+	}
+
+	return ret;
 }

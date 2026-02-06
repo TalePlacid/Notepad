@@ -3,7 +3,6 @@
 #include <afxwin.h>
 #include "Subject.h"
 #include "PageSetting.h"
-#include "MouseHandler.h"
 
 class Glyph;
 class CaretController;
@@ -17,6 +16,7 @@ class HistoryBook;
 class PreviewForm;
 class PreviewForm;
 class StatusBarController;
+class MouseHandler;
 
 class NotepadForm : public CWnd, public Subject {
 public:
@@ -39,6 +39,7 @@ public:
 	StatusBarController* statusBarController;
 	PageSetting pageSetting;
 	PreviewForm* previewForm;
+	MouseHandler* mouseHandler;
 public:
 	CFont* originalFont;
 	CFont* displayFont;
@@ -73,13 +74,14 @@ protected:
 	LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
 	LRESULT OnFindReplaceFocused(WPARAM wParam, LPARAM lParam);
 	void OnLButtonDown(UINT nFlags, CPoint point);
+	void OnLButtonUp(UINT nFlags, CPoint point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	void OnMouseMove(UINT nFlags, CPoint point);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
 	BOOL isCompositing;
 	BOOL nextIsLastOnSize;
-	MouseHandler mouseHandler;
 };
 
 inline BOOL NotepadForm::IsCompositing() const {
