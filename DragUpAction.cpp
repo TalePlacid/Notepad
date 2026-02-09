@@ -1,9 +1,11 @@
 #include <afxwin.h>
 #include "DragUpAction.h"
 #include "NotepadForm.h"
-#include "NotePositionResolver.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "ScrollController.h"
+#include "CoordinateConverter.h"
+#include "resource.h"
 
 #pragma warning(disable:4996)
 
@@ -17,10 +19,10 @@ DragUpAction::~DragUpAction() {
 }
 
 void DragUpAction::Perform() {
-	NotePositionResolver notePositionResolver(this->parent);
+	CoordinateConverter coordinateConverter(this->parent);
 	Long rowIndex;
 	Long columnIndex;
-	notePositionResolver.PointToNotePosition(this->point, rowIndex, columnIndex);
+	coordinateConverter.AbsoluteToNotePosition(this->point, rowIndex, columnIndex);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
@@ -29,6 +31,9 @@ void DragUpAction::Perform() {
 
 	Glyph* previousRow;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Scroll vScroll;
+	Long difference;
 	while (currentRowIndex > rowIndex)
 	{
 		//현재줄
@@ -39,6 +44,15 @@ void DragUpAction::Perform() {
 			row->GetAt(currentColumnIndex)->ToggleSelection();
 			pagingBuffer->Previous();
 			pagingBuffer->EndSelectionIfCollapsed();
+		}
+
+		//필요시 적재
+		if (note->IsAboveTopLine(currentRowIndex) && vScroll.GetPos() > 0)
+		{
+			difference = currentRowIndex - rowIndex;
+			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			currentRowIndex = note->GetCurrent();
+			rowIndex = currentRowIndex - difference;
 		}
 
 		//줄이동

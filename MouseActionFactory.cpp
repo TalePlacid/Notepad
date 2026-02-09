@@ -1,5 +1,8 @@
 #include "MouseActionFactory.h"
 #include "NotepadForm.h"
+#include "MouseLeftDownAction.h"
+#include "MouseWheelAction.h"
+#include "MouseCtrlWheelAction.h"
 #include "MouseHandler.h"
 #include "DragUpAction.h"
 #include "DragDownAction.h"
@@ -16,27 +19,49 @@ MouseActionFactory::~MouseActionFactory() {
 
 }
 
-MouseAction* MouseActionFactory::Create(UINT nFlags, CPoint point) {
+MouseAction* MouseActionFactory::Create(UINT nID, UINT nFlags, CPoint point, short zDelta) {
 	MouseAction* mouseAction = NULL;
-	MouseHandler* mouseHandler = ((NotepadForm*)(this->parent))->mouseHandler;
-	if (nFlags == MK_LBUTTON && mouseHandler->OnDrag())
+	switch (nID)
 	{
-		if (mouseHandler->IsMovedAboveRow(point))
+	case WM_LBUTTONDOWN:
+		mouseAction = new MouseLeftDownAction(this->parent, point);
+		break;
+	case WM_MOUSEWHEEL:
+		switch (nFlags)
 		{
+		case MK_CONTROL:
+			mouseAction = new MouseCtrlWheelAction(this->parent, point, zDelta);
+			break;
+		default:
+			mouseAction = new MouseWheelAction(this->parent, point, zDelta);
+			break;
+		}
+		break;
+	case WM_MOUSEMOVE:
+	{
+		MouseHandler* mouseHandler = ((NotepadForm*)(this->parent))->mouseHandler;
+		Direction direction = mouseHandler->CheckDirection(point);
+		switch (direction)
+		{
+		case DIRECTION_UP:
 			mouseAction = new DragUpAction(this->parent, point);
-		}
-		else if (mouseHandler->IsMovedBelowRow(point))
-		{
+			break;
+		case DIRECTION_DOWN:
 			mouseAction = new DragDownAction(this->parent, point);
-		}
-		else if (mouseHandler->IsMovedLeft(point))
-		{
+			break;
+		case DIRECTION_LEFT:
 			mouseAction = new DragLeftAction(this->parent, point);
-		}
-		else if (mouseHandler->IsMovedRight(point))
-		{
+			break;
+		case DIRECTION_RIGHT:
 			mouseAction = new DragRightAction(this->parent, point);
+			break;
+		default:
+			break;
 		}
+	}
+		break;
+	default:
+		break;
 	}
 
 	return mouseAction;

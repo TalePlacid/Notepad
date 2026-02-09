@@ -1,24 +1,23 @@
-#include "NotePositionResolver.h"
+#include "CoordinateConverter.h"
 #include "NotepadForm.h"
 #include "ScrollController.h"
-#include "SizeCalculator.h"
 #include "PagingBuffer.h"
+#include "SizeCalculator.h"
 #include "Glyph.h"
 
 #pragma warning(disable:4996)
 
-NotePositionResolver::NotePositionResolver(CWnd* parent) {
+CoordinateConverter::CoordinateConverter(CWnd* parent) {
 	this->parent = parent;
 }
 
-NotePositionResolver::~NotePositionResolver() {
+CoordinateConverter::~CoordinateConverter() {
 
 }
 
-void NotePositionResolver::PointToNotePosition(CPoint point, Long& rowIndex, Long& columnIndex) {
-	//1. 절대좌표로 환산한다.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+CPoint CoordinateConverter::DisplayToAbsolute(CPoint point) {
 	CPoint absolutePoint = point;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	if (scrollController->HasVScroll())
 	{
 		absolutePoint.y += scrollController->GetVScroll().GetPos();
@@ -29,13 +28,16 @@ void NotePositionResolver::PointToNotePosition(CPoint point, Long& rowIndex, Lon
 		absolutePoint.x += scrollController->GetHScroll().GetPos();
 	}
 
-	//2. 노트상의 줄위치를 구한다.
+	return absolutePoint;
+}
+
+void CoordinateConverter::AbsoluteToNotePosition(CPoint point, Long& rowIndex, Long& columnIndex) {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	Long rowHeight = sizeCalculator->GetRowHeight();
-	Long fileRowIndex = absolutePoint.y / rowHeight;
+	Long fileRowIndex = point.y / rowHeight;
 	rowIndex = fileRowIndex - rowStartIndex;
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -46,5 +48,5 @@ void NotePositionResolver::PointToNotePosition(CPoint point, Long& rowIndex, Lon
 
 	//3. 노트상의 칸위치를 구한다.
 	Glyph* row = note->GetAt(rowIndex);
-	columnIndex = sizeCalculator->GetNearestColumnIndex(row, absolutePoint.x);
+	columnIndex = sizeCalculator->GetNearestColumnIndex(row, point.x);
 }

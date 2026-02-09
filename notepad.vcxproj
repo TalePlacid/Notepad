@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Array.h" />
+    <ClInclude Include="AutoScroller.h" />
     <ClInclude Include="AutoWrapCommand.h" />
     <ClInclude Include="AutoWrappingPolicy.h" />
     <ClInclude Include="BackspaceAction.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="CommandFactory.h" />
     <ClInclude Include="Comparer.h" />
     <ClInclude Include="Composite.h" />
+    <ClInclude Include="CoordinateConverter.h" />
     <ClInclude Include="CopyCommand.h" />
     <ClInclude Include="Ctrl0Action.h" />
     <ClInclude Include="CtrlAAction.h" />
@@ -207,7 +209,10 @@
     <ClInclude Include="message.h" />
     <ClInclude Include="MouseAction.h" />
     <ClInclude Include="MouseActionFactory.h" />
+    <ClInclude Include="MouseCtrlWheelAction.h" />
     <ClInclude Include="MouseHandler.h" />
+    <ClInclude Include="MouseLeftDownAction.h" />
+    <ClInclude Include="MouseWheelAction.h" />
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="MultiByteWrappingPolicy.h" />
     <ClInclude Include="NewCommand.h" />
@@ -216,7 +221,6 @@
     <ClInclude Include="NotepadApp.h" />
     <ClInclude Include="NotepadForm.h" />
     <ClInclude Include="NotepadFrame.h" />
-    <ClInclude Include="NotePositionResolver.h" />
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
@@ -292,6 +296,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
+    <ClCompile Include="AutoScroller.cpp" />
     <ClCompile Include="AutoWrapCommand.cpp" />
     <ClCompile Include="BackspaceAction.cpp" />
     <ClCompile Include="BruteForce.cpp" />
@@ -308,6 +313,7 @@
     <ClCompile Include="CommandFactory.cpp" />
     <ClCompile Include="Comparer.cpp" />
     <ClCompile Include="Composite.cpp" />
+    <ClCompile Include="CoordinateConverter.cpp" />
     <ClCompile Include="CopyCommand.cpp" />
     <ClCompile Include="Ctrl0Action.cpp" />
     <ClCompile Include="CtrlAAction.cpp" />
@@ -367,7 +373,10 @@
     <ClCompile Include="MacroCommand.cpp" />
     <ClCompile Include="MouseAction.cpp" />
     <ClCompile Include="MouseActionFactory.cpp" />
+    <ClCompile Include="MouseCtrlWheelAction.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
+    <ClCompile Include="MouseLeftDownAction.cpp" />
+    <ClCompile Include="MouseWheelAction..cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
     <ClCompile Include="NewCommand.cpp" />
     <ClCompile Include="Note.cpp" />
@@ -375,7 +384,6 @@
     <ClCompile Include="NotepadApp.cpp" />
     <ClCompile Include="NotepadForm.cpp" />
     <ClCompile Include="NotepadFrame.cpp" />
-    <ClCompile Include="NotePositionResolver.cpp" />
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />

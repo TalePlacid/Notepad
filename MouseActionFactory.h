@@ -9,7 +9,7 @@ public:
 	MouseActionFactory(CWnd* parent);
 	~MouseActionFactory();
 
-	MouseAction* Create(UINT nFlags, CPoint point);
+	MouseAction* Create(UINT nID, UINT nFlags, CPoint point, short zDelta);
 private:
 	CWnd* parent;
 };

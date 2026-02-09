@@ -35,6 +35,8 @@
 #include "MouseHandler.h"
 #include "MouseActionFactory.h"
 #include "MouseAction.h"
+#include "CoordinateConverter.h"
+#include "AutoScroller.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -62,9 +64,10 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
 	ON_MESSAGE(WM_FINDREPLACE_FOCUS, OnFindReplaceFocused)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
-	ON_WM_MOUSEWHEEL()
+	ON_WM_TIMER()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
@@ -513,39 +516,77 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
-	this->mouseHandler->DownLeftButton(point);
+	this->HandleMouseEvent(WM_LBUTTONDOWN, nFlags, point);
 }
-   
-void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
-	MouseActionFactory mouseActionFactory(this);
-	MouseAction* mouseAction = mouseActionFactory.Create(nFlags, point);
-	if (mouseAction != NULL)
-	{
-		mouseAction->Perform();
-		delete mouseAction;
 
-		this->mouseHandler->UpdateLatestPoint(point);
-		((NotepadForm*)(this->parent))->Notify("UpdateStatusBar");
-		this->parent->Invalidate();
+void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
+	if (nFlags == MK_LBUTTON && this->mouseHandler->OnDrag())
+	{
+		AutoScroller autoScroller(this);
+		BOOL isAutoScrolled = autoScroller.ScrollIfNeeded(point);
+		if (isAutoScrolled)
+		{
+			SetTimer(0, 30, NULL);
+		}
+
+		this->HandleMouseEvent(WM_MOUSEMOVE, nFlags, point);
 	}
 }
 
 void NotepadForm::OnLButtonUp(UINT nFlags, CPoint point) {
-	this->mouseHandler->EndDrag(point);
+	this->mouseHandler->EndDrag();
+	KillTimer(0);
 }
 
 BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
-	switch (nFlags)
-	{
-	case MK_CONTROL:
-		this->mouseHandler->CtrlWheelMouse(zDelta);
-		break;
-	default:
-		this->mouseHandler->WheelMouse(zDelta);
-		break;
-	}
+	this->HandleMouseEvent(WM_MOUSEWHEEL, nFlags, pt, zDelta);
 
 	return 0;
+}
+
+void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
+	switch (nIDEvent)
+	{
+	case 0:
+	{
+		CPoint cursorPos;
+		GetCursorPos(&cursorPos);
+		AutoScroller autoScroller(this);
+		autoScroller.ScrollIfNeeded(cursorPos);
+
+		this->HandleMouseEvent(WM_MOUSEMOVE, MK_LBUTTON, cursorPos);
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zDelta) {
+	CoordinateConverter coordinateConverter(this);
+	CPoint absolutePoint = coordinateConverter.DisplayToAbsolute(point);
+	
+	MouseActionFactory mouseActionFactory(this);
+	MouseAction* mouseAction = mouseActionFactory.Create(nID, nFlags, absolutePoint, zDelta);
+	if (mouseAction != NULL)
+	{
+		mouseAction->Perform();
+		if (mouseAction->NeedUpdateLatest())
+		{
+			this->mouseHandler->UpdateLatestPoint(absolutePoint);
+		}
+
+		if (!mouseAction->ShouldKeepSelection())
+		{
+			this->note->Select(false);
+			this->pagingBuffer->UnmarkSelectionBegin();
+		}
+		delete mouseAction;
+	}
+
+	this->Notify("UpdateScrollBars");
+	this->Notify("UpdateStatusBar");
+	this->parent->Invalidate();
 }
 
 void NotepadForm::OnClose() {

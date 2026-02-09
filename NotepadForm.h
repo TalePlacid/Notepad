@@ -74,11 +74,14 @@ protected:
 	LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
 	LRESULT OnFindReplaceFocused(WPARAM wParam, LPARAM lParam);
 	void OnLButtonDown(UINT nFlags, CPoint point);
+	void OnMouseMove(UINT nFlags, CPoint point);
 	void OnLButtonUp(UINT nFlags, CPoint point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	void OnMouseMove(UINT nFlags, CPoint point);
+	void OnTimer(UINT_PTR nIDEvent);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
+private:
+	void HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zDelta = 0);
 private:
 	BOOL isCompositing;
 	BOOL nextIsLastOnSize;

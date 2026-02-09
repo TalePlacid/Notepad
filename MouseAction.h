@@ -8,8 +8,13 @@ class MouseAction : public Action {
 public:
 	MouseAction(CWnd* parent, CPoint point);
 	virtual ~MouseAction() = 0;
+	virtual bool NeedUpdateLatest();
 protected:
 	CPoint point;
 };
+
+inline bool MouseAction::NeedUpdateLatest() {
+	return false;
+}
 
 #endif // !_MOUSEACTION_H

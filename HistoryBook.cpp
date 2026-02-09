@@ -14,7 +14,11 @@ HistoryBook::HistoryBook(Long capacity)
 }
 
 HistoryBook::~HistoryBook() {
-
+	while (!this->histories.IsEmpty())
+	{
+		DropOldestStack<Command*>::Node node = this->histories.Pop();
+		delete node.GetElement();
+	}
 }
 
 HistoryBook::HistoryBook(const HistoryBook& source)
@@ -106,6 +110,12 @@ bool HistoryBook::IsEmpty() {
 }
 
 Command** HistoryBook::Clear() {
+	while (!this->histories.IsEmpty())
+	{
+		DropOldestStack<Command*>::Node node = this->histories.Pop();
+		delete node.GetElement();
+	}
+
 	Command** history = 0;
 	DropOldestStack<Command*>::Node* node = this->histories.Clear();
 	if (node != 0)

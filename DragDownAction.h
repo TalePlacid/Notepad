@@ -9,6 +9,16 @@ public:
 	virtual ~DragDownAction();
 
 	virtual void Perform();
+	virtual bool ShouldKeepSelection();
+	virtual bool NeedUpdateLatest();
 };
+
+inline bool DragDownAction::ShouldKeepSelection() {
+	return true;
+}
+
+inline bool DragDownAction::NeedUpdateLatest() {
+	return true;
+}
 
 #endif // !_DRAGDOWNACTION_H

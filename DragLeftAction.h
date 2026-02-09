@@ -9,6 +9,16 @@ public:
 	virtual ~DragLeftAction();
 
 	virtual void Perform();
+	virtual bool ShouldKeepSelection();
+	virtual bool NeedUpdateLatest();
 };
+
+inline bool DragLeftAction::ShouldKeepSelection() {
+	return true;
+}
+
+inline bool DragLeftAction::NeedUpdateLatest() {
+	return true;
+}
 
 #endif //!_DRAGLEFTACTION_H

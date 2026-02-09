@@ -1,8 +1,8 @@
 #include "DragLeftAction.h"
 #include "NotepadForm.h"
-#include "NotePositionResolver.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "CoordinateConverter.h"
 
 #pragma warning(diable:4996)
 
@@ -16,10 +16,10 @@ DragLeftAction::~DragLeftAction() {
 }
 
 void DragLeftAction::Perform() {
-	NotePositionResolver notePositionResolver(this->parent);
+	CoordinateConverter coordinateConverter(this->parent);
 	Long rowIndex;
 	Long columnIndex;
-	notePositionResolver.PointToNotePosition(this->point, rowIndex, columnIndex);
+	coordinateConverter.AbsoluteToNotePosition(this->point, rowIndex, columnIndex);
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();

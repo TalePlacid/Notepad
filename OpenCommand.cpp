@@ -71,6 +71,9 @@ void OpenCommand::Execute() {
 		}
 		else
 		{
+			encoded = new TCHAR[count + 1];
+			encoded[count] = '\0';
+			memcpy(encoded, str, count);
 			notepadForm->encoding = "ANSI";
 		}
 
