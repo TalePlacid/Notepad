@@ -55,7 +55,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_PREVIEW, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_SELECTALL, OnCommandRequested)
 	ON_COMMAND_RANGE(ID_COMMAND_ERASE, ID_COMMAND_OPENINEXPLORER, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
@@ -67,6 +67,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
+	ON_WM_RBUTTONDOWN()
 	ON_WM_TIMER()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
@@ -587,6 +588,11 @@ void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zD
 	this->Notify("UpdateScrollBars");
 	this->Notify("UpdateStatusBar");
 	this->parent->Invalidate();
+}
+
+void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
+	ClientToScreen(&point);
+	this->mouseHandler->PopUpContextMenu(point);
 }
 
 void NotepadForm::OnClose() {

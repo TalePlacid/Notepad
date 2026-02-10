@@ -94,21 +94,27 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	case ID_COMMAND_ERASE:
 		command = new EraseCommand(parent);
 		break;
+	case ID_MENU_PASTE:
 	case ID_COMMAND_PASTE:
 		command = new PasteCommand(parent);
 		break;
+	case ID_MENU_DELETE:
 	case ID_COMMAND_ERASERANGE:
 		command = new EraseRangeCommand(parent);
 		break;
+	case ID_MENU_COPY:
 	case ID_COMMAND_COPY:
 		command = new CopyCommand(parent);
 		break;
+	case ID_MENU_CUT:
 	case ID_COMMAND_CUT:
 		command = new CutCommand(parent);
 		break;
+	case ID_MENU_UNDO:
 	case ID_COMMAND_UNDO:
 		command = new UndoCommand(parent);
 		break;
+	case ID_MENU_REDO:
 	case ID_COMMAND_REDO:
 		command = new RedoCommand(parent);
 		break;

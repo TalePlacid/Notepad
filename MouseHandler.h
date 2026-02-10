@@ -23,10 +23,13 @@ public:
 	BOOL EndDrag();
 	Direction CheckDirection(CPoint point);
 	BOOL OnDrag();
+
+	void PopUpContextMenu(CPoint point);
 private:
 	CWnd* parent;
 	CPoint latestPoint;
 	BOOL onDrag;
+	CMenu contextMenu;
 };
 
 inline BOOL MouseHandler::OnDrag() {

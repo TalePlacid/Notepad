@@ -43,7 +43,6 @@ public:
 public:
 	CFont* originalFont;
 	CFont* displayFont;
-	CMenu menu;
 	BOOL hasFindReplaceDialog;
 	BOOL isAutoWrapped;
 	double magnification;
@@ -76,8 +75,10 @@ protected:
 	void OnLButtonDown(UINT nFlags, CPoint point);
 	void OnMouseMove(UINT nFlags, CPoint point);
 	void OnLButtonUp(UINT nFlags, CPoint point);
+	void OnRButtonDown(UINT nFlags, CPoint point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	void OnTimer(UINT_PTR nIDEvent);
+	
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:

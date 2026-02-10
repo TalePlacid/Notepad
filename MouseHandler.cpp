@@ -15,6 +15,7 @@ MouseHandler::MouseHandler(CWnd* parent)
 	:latestPoint(-1, -1) {
 	this->parent = parent;
 	this->onDrag = FALSE;
+	this->contextMenu.LoadMenuA(MAKEINTRESOURCE(IDR_MENU_CONTEXT));
 }
 
 MouseHandler::~MouseHandler() {
@@ -72,4 +73,12 @@ Direction MouseHandler::CheckDirection(CPoint point) {
 	}
 
 	return direction;
+}
+
+void MouseHandler::PopUpContextMenu(CPoint point) {
+	CMenu* popup = this->contextMenu.GetSubMenu(0);
+	
+	this->parent->SetForegroundWindow();
+	popup->TrackPopupMenu(TPM_LEFTALIGN, point.x, point.y, this->parent);
+	this->parent->PostMessage(WM_NULL);
 }

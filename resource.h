@@ -4,6 +4,8 @@
 //
 #define IDR_MENU_MAIN                   101
 #define IDD_DIALOG_PAGESETTING          102
+#define IDR_MENU1                       104
+#define IDR_MENU_CONTEXT                104
 #define IDC_GROUP_PAPER                 1001
 #define IDC_STATIC_SIZE                 1002
 #define IDC_STATIC_SOURCE               1003
@@ -28,11 +30,6 @@
 #define IDC_GROUP_PREVIEW               1022
 #define IDC_BUTTON_CANCEL               1023
 #define IDC_BUTTON_OK                   1024
-#define IDC_BUTTON_FIRST                1025
-#define IDC_BUTTON_PREVIOUS             1026
-#define IDC_BUTTON_NEXT                 1027
-#define IDC_BUTTON_LAST                 1028
-#define IDC_STATIC_PAGENUMBER           1031
 #define ID_MENU_NEW                     40003
 #define ID_MENU_OPEN                    40004
 #define ID_MENU_SAVE                    40005
@@ -67,6 +64,13 @@
 #define ID_Menu                         40057
 #define ID_Menu40058                    40058
 #define ID_MENU_PREVIEW                 40059
+#define ID_40060                        40060
+#define ID_40061                        40061
+#define ID_40062                        40062
+#define ID_40063                        40063
+#define ID_40064                        40064
+#define ID_40065                        40065
+#define ID_MENU_SELECTALL               40066
 #define ID_COMMAND_ERASE                50001
 #define ID_COMMAND_PASTE                50002
 #define ID_COMMAND_ERASERANGE           50003
@@ -86,26 +90,26 @@
 #define ID_COMMAND_LOADPREVIOUS         50017
 #define ID_COMMAND_LOADFIRST            50018
 #define ID_COMMAND_LOADLAST             50019
-#define ID_COMMAND_OPENINEXPLORER		50020
-#define IDC_BUTTON_FIRST				50100
-#define IDC_BUTTON_PREVIOUS				50101
-#define IDC_BUTTON_NEXT		            50102
-#define IDC_BUTTON_LAST			        50103
-#define IDC_STATIC_PAGENUMBER			50104
-#define IDC_STATUS_CURRENT				50105
-#define IDC_STATUS_MAGNIFICATION		50106
-#define IDC_STATUS_NEWLINEPOLICY		50107
-#define IDC_STATUS_ENCODING				50108
-#define IDC_STATUS_SEPARATOR			50109
-#define IDC_NOTEPADFORM					50110
-#define IDC_COMBO_ENCODING				50111
+#define ID_COMMAND_OPENINEXPLORER       50020
+#define IDC_BUTTON_FIRST                50021
+#define IDC_BUTTON_PREVIOUS             50022
+#define IDC_BUTTON_NEXT                 50023
+#define IDC_BUTTON_LAST                 50024
+#define IDC_STATIC_PAGENUMBER           50025
+#define IDC_STATUS_CURRENT              50026
+#define IDC_STATUS_MAGNIFICATION        50027
+#define IDC_STATUS_NEWLINEPOLICY        50028
+#define IDC_STATUS_ENCODING             50029
+#define IDC_STATUS_SEPARATOR            50030
+#define IDC_NOTEPADFORM                 50031
+#define IDC_COMBO_ENCODING              50032
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        104
-#define _APS_NEXT_COMMAND_VALUE         40060
+#define _APS_NEXT_RESOURCE_VALUE        106
+#define _APS_NEXT_COMMAND_VALUE         40067
 #define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
