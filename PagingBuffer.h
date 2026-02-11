@@ -11,7 +11,7 @@ class Glyph;
 
 class PagingBuffer {
 public:
-	PagingBuffer(CWnd* parent, Long pageSize = 2097152);
+	PagingBuffer(CWnd* parent, TCHAR(*sourceContents), Long sourceCount, Long pageSize = 2097152);
 	~PagingBuffer();
 
 	Glyph* LoadPrevious();
@@ -55,6 +55,7 @@ public:
 	Long GetSelectionBeginOffset() const;
 protected:
 	CWnd* parent;
+	CString tempPath;
 	Long pageSize;
 	FILE* file;
 	Long rowStartIndex;

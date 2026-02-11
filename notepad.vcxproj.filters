@@ -518,6 +518,12 @@
     <ClInclude Include="MouseCtrlWheelAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="FileStreamAdapter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TextFileIO.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoWrapCommand.cpp">
@@ -995,6 +1001,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MouseCtrlWheelAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FileStreamAdapter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TextFileIO.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

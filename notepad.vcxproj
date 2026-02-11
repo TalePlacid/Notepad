@@ -184,6 +184,7 @@
     <ClInclude Include="EraseCommand.h" />
     <ClInclude Include="EraseRangeCommand.h" />
     <ClInclude Include="FilePointerCalculator.h" />
+    <ClInclude Include="FileStreamAdapter.h" />
     <ClInclude Include="FindCommand.h" />
     <ClInclude Include="FindNextCommand.h" />
     <ClInclude Include="FindReplaceCommandFactory.h" />
@@ -280,6 +281,7 @@
     <ClInclude Include="Subject.h" />
     <ClInclude Include="SuspendAutoWrap.h" />
     <ClInclude Include="TextEncoder.h" />
+    <ClInclude Include="TextFileIO.h" />
     <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="UndoCommand.h" />
     <ClInclude Include="UpArrowAction.h" />
@@ -349,6 +351,7 @@
     <ClCompile Include="EraseCommand.cpp" />
     <ClCompile Include="EraseRangeCommand.cpp" />
     <ClCompile Include="FilePointerCalculator.cpp" />
+    <ClCompile Include="FileStreamAdapter.cpp" />
     <ClCompile Include="FindCommand.cpp" />
     <ClCompile Include="FindNextCommand.cpp" />
     <ClCompile Include="FindReplaceCommandFactory.cpp" />
@@ -441,6 +444,7 @@
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="SuspendAutoWrap.cpp" />
     <ClCompile Include="TextEncoder.cpp" />
+    <ClCompile Include="TextFileIO.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
     <ClCompile Include="UndoCommand.cpp" />
     <ClCompile Include="UpArrowAction.cpp" />

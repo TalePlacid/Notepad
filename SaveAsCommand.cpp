@@ -16,6 +16,7 @@ SaveAsCommand::~SaveAsCommand() {
 }
 
 void SaveAsCommand::Execute() {
+#if 0
 	//1. 파일 대화상자를 설정한다.
 	CFileDialog fileDialog(FALSE, "txt", "NoName.txt",
 		OFN_NOCHANGEDIR | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
@@ -33,7 +34,7 @@ void SaveAsCommand::Execute() {
 	if (result == IDOK)
 	{
 		//2.1. 경로를 설정한다.
-		((NotepadForm*)(this->parent))->path = fileDialog.GetPathName();
+		((NotepadForm*)(this->parent))->sourcePath = fileDialog.GetPathName();
 		((NotepadForm*)(this->parent))->parent->SetWindowTextA(fileDialog.GetFileName());
 
 		//2.2. 인코딩을 적는다.
@@ -61,7 +62,8 @@ void SaveAsCommand::Execute() {
 		}
 
 		//2.3. 경로에 저장한다.
-		((NotepadForm*)(this->parent))->Save(((NotepadForm*)(this->parent))->path);
+		((NotepadForm*)(this->parent))->Save(((NotepadForm*)(this->parent))->sourcePath);
 		((NotepadForm*)(this->parent))->isDirty = FALSE;
 	}
+#endif
 }

@@ -12,7 +12,7 @@ public:
 
 	CWnd* GetNotepadForm();
 	CMenu* GetMenu();
-	CString& GetPath() const;
+	CString& GetStartedPath() const;
 protected:
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnSetFocus(CWnd* pOldWnd);
@@ -23,14 +23,14 @@ protected:
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
-	CString path;
+	CString startedPath;
 	CMenu menu;
 	CWnd* notepadForm;
 	StatusBarController* statusBarController;
 };
 
-inline CString& NotepadFrame::GetPath() const {
-	return const_cast<CString&>(this->path);
+inline CString& NotepadFrame::GetStartedPath() const {
+	return const_cast<CString&>(this->startedPath);
 }
 
 inline CWnd* NotepadFrame::GetNotepadForm() {

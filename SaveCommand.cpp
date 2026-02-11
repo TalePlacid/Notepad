@@ -15,6 +15,7 @@ SaveCommand::~SaveCommand() {
 }
 
 void SaveCommand::Execute() {
+#if 0
 	//1. 파일 탐색 대화상자를 설정한다.
 	CFileDialog fileDialog(FALSE, "txt", "NoName.txt", 
 		OFN_NOCHANGEDIR | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, 
@@ -35,7 +36,7 @@ void SaveCommand::Execute() {
 		INT_PTR result = fileDialog.DoModal();
 		if (result == IDOK)
 		{
-			((NotepadForm*)(this->parent))->path = fileDialog.GetPathName();
+			((NotepadForm*)(this->parent))->sourcePath = fileDialog.GetPathName();
 			((NotepadForm*)(this->parent))->parent->SetWindowTextA(fileDialog.GetFileName());
 		}
 	}
@@ -65,6 +66,7 @@ void SaveCommand::Execute() {
 	}
 
 	//4. 경로에 저장한다.
-	((NotepadForm*)(this->parent))->Save(((NotepadForm*)(this->parent))->path);
+	((NotepadForm*)(this->parent))->Save(((NotepadForm*)(this->parent))->sourcePath);
 	((NotepadForm*)(this->parent))->isDirty = FALSE;
+#endif
 }

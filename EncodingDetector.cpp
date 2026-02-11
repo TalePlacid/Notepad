@@ -11,66 +11,60 @@ EncodingDetector::~EncodingDetector() {
 
 }
 
-bool EncodingDetector::IsUTF16LE(char (*str)){
-	bool ret = false;
+Encoding EncodingDetector::ClassifyEncoding(char(*str), Long count) {
+	Encoding encoding = ANSI;
 
-	if (static_cast<unsigned char>(str[0]) == 0xFF && static_cast<unsigned char>(str[1]) == 0xFE)
+	if (count > 0)
 	{
-		ret = true;
-	}
-
-	return ret;
-}
-
-bool EncodingDetector::IsUTF16BE(char(*str)) {
-	bool ret = false;
-
-	if (static_cast<unsigned char>(str[0]) == 0xFE && static_cast<unsigned char>(str[1]) == 0xFF)
-	{
-		ret = true;
-	}
-
-	return ret;
-}
-
-bool EncodingDetector::IsUTF8BOM(char(*str)) {
-	bool ret = false;
-
-	if (static_cast<unsigned char>(str[0]) == 0xEF 
-		&& static_cast<unsigned char>(str[1]) == 0xBB
-		&& static_cast<unsigned char>(str[2]) == 0xBF)
-	{
-		ret = true;
-	}
-
-	return ret;
-}
-
-bool EncodingDetector::IsUTF8(char(*str), Long count) {
-	ByteChecker byteChecker;
-	Long bytes;
-	Long j;
-	bool flag = true;
-	Long i = 0;
-	while (i < count && flag)
-	{
-		flag = false;
-		bytes = byteChecker.CheckUtf8FirstByte(str + i);
-		if (bytes > 0)
+		if (static_cast<unsigned char>(str[0]) == 0xFF
+			&& static_cast<unsigned char>(str[1]) == 0xFE)
 		{
-			flag = true;
-			j = 1;
-			while (j < bytes && flag)
+			encoding = UTF16LE;
+		}
+		else if (static_cast<unsigned char>(str[0]) == 0xFE
+			&& static_cast<unsigned char>(str[1]) == 0xFF)
+		{
+			encoding = UTF16BE;
+		}
+		else if (static_cast<unsigned char>(str[0]) == 0xEF
+			&& static_cast<unsigned char>(str[1]) == 0xBB
+			&& static_cast<unsigned char>(str[2]) == 0xBF)
+		{
+			encoding = UTF8BOM;
+		}
+		else
+		{
+			ByteChecker byteChecker;
+			Long bytes;
+			Long j;
+			bool flag = true;
+			Long i = 0;
+			while (i < count && flag)
 			{
-				if (!byteChecker.IsUtf8ContinuationByte(str + i + j))
+				flag = false;
+				bytes = byteChecker.CheckUtf8FirstByte(str + i);
+				if (bytes > 0)
 				{
-					flag = false;
+					flag = true;
+					j = 1;
+					while (j < bytes && flag)
+					{
+						if (!byteChecker.IsUtf8ContinuationByte(str + i + j))
+						{
+							flag = false;
+						}
+						j++;
+					}
 				}
-				j++;
+				i += bytes;
+			}
+
+			if (flag == true)
+			{
+				encoding = UTF8;
 			}
 		}
-		i += bytes;
 	}
 
-	return flag;
+	return encoding;
 }

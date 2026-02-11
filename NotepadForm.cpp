@@ -37,6 +37,7 @@
 #include "MouseAction.h"
 #include "CoordinateConverter.h"
 #include "AutoScroller.h"
+#include "TextFileIO.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -73,7 +74,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	END_MESSAGE_MAP()
 
 
-NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController) {
+NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* statusBarController) {
 	this->parent = parent;
 	this->note = NULL;
 	this->isCompositing = FALSE;
@@ -96,10 +97,7 @@ NotepadForm::NotepadForm(CWnd *parent, StatusBarController* statusBarController)
 	this->magnification = 1.0;
 	this->isDirty = FALSE;
 
-	TCHAR buffer[256];
-	GetCurrentDirectory(256, buffer);
-	CString path(buffer);
-	this->path = path + CString("\\NoName.txt");
+	this->sourcePath = sourcePath;
 }
 
 NotepadForm::~NotepadForm() {
@@ -137,7 +135,18 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->displayFont->CreateFontIndirectA(&logFont);
 
 	this->sizeCalculator = new SizeCalculator(this);
-	this->pagingBuffer = new PagingBuffer(this);
+
+	TextFileIO textFileIO;
+	TCHAR(*sourceContents) = 0;
+	Long sourceCount;
+	textFileIO.Load(this->sourcePath.GetBuffer(), &sourceContents, sourceCount);
+
+	this->pagingBuffer = new PagingBuffer(this, sourceContents, sourceCount);
+	if (sourceContents != NULL)
+	{
+		delete sourceContents;
+	}
+
 	this->note = this->pagingBuffer->LoadNext();
 
 	this->caretController = new CaretController(this);
@@ -673,66 +682,4 @@ void NotepadForm::OnClose() {
 	}
 
 	CWnd::OnClose();
-}
-
-void NotepadForm::Load(CString path, TCHAR*(*str), Long& count) {
-	(*str) = NULL;
-	count = 0;
-
-	FILE* file;
-	file = fopen((LPCTSTR)path, "rb+");
-	if (file != NULL)
-	{
-		fseek(file, 0, SEEK_END);
-		Long fileEndOffset = ftell(file);
-		(*str) = new TCHAR[fileEndOffset + 1];
-		fseek(file, 0, SEEK_SET);
-		count = fread((*str), 1, fileEndOffset, file);
-		(*str)[count] = '\0';
-		fclose(file);
-	}
-}
-
-void NotepadForm::Save(CString path) {
-	FILE* file = fopen((LPCTSTR)path, "wb+");
-
-	if (file != NULL)
-	{
-		//1. ANSI문자열을 만든다.
-		CString str = this->pagingBuffer->GetFullText();
-
-		//2. ANSI형식이 아니라면, 인코딩한다.
-		TCHAR(*contents) = NULL;
-		Long contentsCount = 0;
-		TextEncoder textEncoder;
-		if (this->encoding == "UTF-16 LE")
-		{
-			textEncoder.AnsiToUtf16Le(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
-		}
-		else if (this->encoding == "UTF-16 BE")
-		{
-			textEncoder.AnsiToUtf16Be(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
-		}
-		else if (this->encoding == "UTF-8 BOM")
-		{
-			textEncoder.AnsiToUtf8Bom(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
-		}
-		else if (this->encoding == "UTF-8")
-		{
-			textEncoder.AnsiToUtf8(str.GetBuffer(), str.GetLength(), &contents, contentsCount);
-		}
-
-		//3. 파일에 쓴다.
-		if (contents != NULL)
-		{
-			fwrite(contents, 1, contentsCount, file);
-			delete[] contents;
-		}
-		else
-		{
-			fwrite(str.GetBuffer(), 1, str.GetLength(), file);
-		}
-
-		fclose(file);
-	}
 }

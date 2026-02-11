@@ -17,6 +17,7 @@ OpenInExplorerCommand::~OpenInExplorerCommand() {
 }
 
 void OpenInExplorerCommand::Execute() {
+#if 0
 	//2.1. 기존 내용을 지운다.
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	if (notepadForm->note != NULL)
@@ -29,10 +30,10 @@ void OpenInExplorerCommand::Execute() {
 	pagingBuffer->Clear();
 
 	//2. 문자열을 적재한다.
-	notepadForm->path = ((NotepadFrame*)(notepadForm->parent))->GetPath();
+	notepadForm->sourcePath = ((NotepadFrame*)(notepadForm->parent))->GetStartedPath();
 	TCHAR(*str) = 0;
 	Long count;
-	notepadForm->Load(notepadForm->path, &str, count);
+	notepadForm->Load(notepadForm->sourcePath, &str, count);
 
 	//3. ANSI가 아니면, ANSI로 재인코딩한다.
 	EncodingDetector encodingDetector;
@@ -61,6 +62,9 @@ void OpenInExplorerCommand::Execute() {
 	}
 	else
 	{
+		encoded = new TCHAR[count + 1];
+		encoded[count] = '\0';
+		memcpy(encoded, str, count);
 		notepadForm->encoding = "ANSI";
 	}
 
@@ -73,8 +77,8 @@ void OpenInExplorerCommand::Execute() {
 	pagingBuffer->FirstRow();
 
 	//6. 캡션을 수정한다.
-	Long index = notepadForm->path.ReverseFind('\\');
-	CString fileName = notepadForm->path.Right(notepadForm->path.GetLength() - (index + 1));
+	Long index = notepadForm->sourcePath.ReverseFind('\\');
+	CString fileName = notepadForm->sourcePath.Right(notepadForm->sourcePath.GetLength() - (index + 1));
 	notepadForm->parent->SetWindowTextA((LPCTSTR)fileName);
 
 	if (str != NULL)
@@ -86,4 +90,5 @@ void OpenInExplorerCommand::Execute() {
 	{
 		delete[] encoded;
 	}
+#endif
 }

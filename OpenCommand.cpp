@@ -18,6 +18,7 @@ OpenCommand::~OpenCommand() {
 }
 
 void OpenCommand::Execute() {
+#if 0
 	//1. 파일탐색 대화상자를 연다.
 	CFileDialog cFileDialog(TRUE, "txt", "NoName.txt",
 		OFN_NOCHANGEDIR | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
@@ -39,16 +40,17 @@ void OpenCommand::Execute() {
 		pagingBuffer->Clear();
 
 		//2. 문자열을 적재한다.
-		notepadForm->path = cFileDialog.GetPathName();
+		notepadForm->sourcePath = cFileDialog.GetPathName();
 		TCHAR(*str) = 0;
 		Long count;
-		notepadForm->Load(notepadForm->path, &str, count);
+		notepadForm->Load(notepadForm->sourcePath, &str, count);
 
 		//3. ANSI가 아니면, ANSI로 재인코딩한다.
 		EncodingDetector encodingDetector;
 		TextEncoder textEncoder;
 		TCHAR(*encoded) = NULL;
 		Long encodedCount;
+
 		if (encodingDetector.IsUTF16LE(str))
 		{
 			textEncoder.Utf16LeToAnsi(str, count, &encoded, encodedCount);
@@ -98,4 +100,5 @@ void OpenCommand::Execute() {
 			delete[] encoded;
 		}
 	}
+#endif
 }

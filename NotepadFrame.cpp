@@ -17,10 +17,10 @@ BEGIN_MESSAGE_MAP(NotepadFrame, CFrameWnd)
 	END_MESSAGE_MAP()
 
 NotepadFrame::NotepadFrame(LPTSTR m_lpCmdLine){
-	this->path = "";
+	this->startedPath = "";
 	if (m_lpCmdLine[0] != '\0')
 	{
-		this->path = CString(m_lpCmdLine);
+		this->startedPath = CString(m_lpCmdLine);
 	}
 	this->notepadForm = NULL;
 	this->statusBarController = NULL;
@@ -41,7 +41,7 @@ int NotepadFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->statusBarController = new StatusBarController(this);
 
 	//¿¡µðÅÍ
-	this->notepadForm = new NotepadForm(this, this->statusBarController);
+	this->notepadForm = new NotepadForm(this, this->startedPath, this->statusBarController);
 	CRect clientArea;
 	this->GetClientRect(clientArea);
 	this->notepadForm->Create(NULL, NULL,

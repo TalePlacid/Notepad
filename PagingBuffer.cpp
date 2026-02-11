@@ -10,19 +10,23 @@
 
 #pragma warning(disable:4996)
 
-PagingBuffer::PagingBuffer(CWnd* parent, Long pageSize) {
+PagingBuffer::PagingBuffer(CWnd* parent, TCHAR(*sourceContents), Long sourceCount, Long pageSize) {
 	this->parent = parent;
 	this->pageSize = pageSize;
 
-	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-	CString originalPath = notepadForm->path;
-	Long index = originalPath.ReverseFind('\\');
-	CString tmpPath = originalPath.Left(index + 1) + CString("Note.tmp");
+	TCHAR path[MAX_PATH];
+	GetTempPath(MAX_PATH, path);
 
-	this->file = fopen((LPCTSTR)tmpPath, "rb+");
-	if (this->file == NULL)
+	TCHAR tempPath[MAX_PATH];
+	GetTempFileNameA(path, NULL, 0, tempPath);
+
+	this->tempPath = CString(tempPath);
+	this->file = fopen((LPCTSTR)(this->tempPath), "wb+");
+	if (this->file != NULL)
 	{
-		this->file = fopen((LPCTSTR)tmpPath, "wb+");
+		size_t size = fwrite(sourceContents, 1, sourceCount, this->file);
+		fflush(this->file);
+		fseek(this->file, 0, SEEK_SET);
 	}
 
 	this->rowStartIndex = 0;
@@ -33,7 +37,7 @@ PagingBuffer::~PagingBuffer() {
 	if (this->file != NULL)
 	{
 		fclose(this->file);
-		remove("Note.tmp");
+		remove((LPCTSTR)(this->tempPath));
 	}
 }
 
@@ -154,7 +158,9 @@ Long PagingBuffer::Add(char(*character)) {
 	Long currentOffset = ftell(this->file);
 
 	//1. 새 임시파일을 만든다.
-	FILE* addedFile = fopen("AddedFile.tmp", "wb+");
+	Long index = this->tempPath.ReverseFind('.');
+	CString addedPath = this->tempPath.Left(index) + "AddedFile.tmp";
+	FILE* addedFile = fopen((LPCTSTR)addedPath, "wb+");
 
 	if (addedFile != NULL)
 	{
@@ -196,9 +202,9 @@ Long PagingBuffer::Add(char(*character)) {
 		//4. 임시파일과 기존파일을 맞바꾼다.
 		fclose(addedFile);
 		fclose(this->file);
-		remove("Note.tmp");
-		rename("AddedFile.tmp", "Note.tmp");
-		this->file = fopen("Note.tmp", "rb+");
+		remove(this->tempPath);
+		rename(addedPath, this->tempPath);
+		this->file = fopen(this->tempPath, "rb+");
 
 		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
 		fseek(this->file, currentOffset + characterLength, SEEK_SET);
@@ -208,7 +214,9 @@ Long PagingBuffer::Add(char(*character)) {
 }
 
 Long PagingBuffer::Add(CString str) {
-	FILE* addedFile = fopen("AddedFile.tmp", "wb+");
+	Long index = this->tempPath.ReverseFind('.');
+	CString addedPath = this->tempPath.Left(index) + "AddedFile.tmp";
+	FILE* addedFile = fopen(addedPath, "wb+");
 
 	if (addedFile != NULL)
 	{
@@ -244,9 +252,9 @@ Long PagingBuffer::Add(CString str) {
 		//4. 임시파일과 기존파일을 맞바꾼다.
 		fclose(addedFile);
 		fclose(this->file);
-		remove("Note.tmp");
-		rename("AddedFile.tmp", "Note.tmp");
-		this->file = fopen("Note.tmp", "rb+");
+		remove(this->tempPath);
+		rename(addedPath, this->tempPath);
+		this->file = fopen(this->tempPath, "rb+");
 
 		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
 		fseek(this->file, currentOffset + str.GetLength(), SEEK_SET);
@@ -259,7 +267,9 @@ Long PagingBuffer::Remove() {
 	Long ret = 0;
 
 	//1. 새 임시파일을 만든다.
-	FILE* removedFile = fopen("RemovedFile.tmp", "wb+");
+	Long index = this->tempPath.ReverseFind('.');
+	CString removedPath = this->tempPath.Left(index) + "RemovedFile.tmp";
+	FILE* removedFile = fopen(removedPath, "wb+");
 	if (removedFile != NULL)
 	{
 		//2. 지울 문자의 길이를 구한다.
@@ -302,9 +312,9 @@ Long PagingBuffer::Remove() {
 		//5. 새 파일과 기존파일을 맞바꾼다.
 		fclose(removedFile);
 		fclose(this->file);
-		remove("Note.tmp");
-		rename("RemovedFile.tmp", "Note.tmp");
-		this->file = fopen("Note.tmp", "rb+");
+		remove(this->tempPath);
+		rename(removedPath, this->tempPath);
+		this->file = fopen(this->tempPath, "rb+");
 
 		fseek(this->file, currentOffset - characterLength, SEEK_SET);
 		ret = -1;
@@ -316,7 +326,9 @@ Long PagingBuffer::Remove() {
 Long PagingBuffer::Remove(Long toOffset) {
 	Long ret = 0;
 
-	FILE* removedFile = fopen("RemovedFile.tmp", "wb+");
+	Long index = this->tempPath.ReverseFind('.');
+	CString removedPath = this->tempPath.Left(index) + "RemovedFile.tmp";
+	FILE* removedFile = fopen(removedPath, "wb+");
 	if (removedFile != NULL) {
 		Long currentOffset = ftell(this->file);
 
@@ -354,9 +366,9 @@ Long PagingBuffer::Remove(Long toOffset) {
 
 		fclose(removedFile);
 		fclose(this->file);
-		remove("Note.tmp");
-		rename("removedFile.tmp", "Note.tmp");
-		this->file = fopen("Note.tmp", "rb+");
+		remove(this->tempPath);
+		rename(removedPath, this->tempPath);
+		this->file = fopen(this->tempPath, "rb+");
 
 		fseek(this->file, forwardOffset, SEEK_SET);
 		ret = -1;
@@ -367,11 +379,13 @@ Long PagingBuffer::Remove(Long toOffset) {
 
 void PagingBuffer::Clear() {
 	fclose(this->file);
-	this->file = fopen("Note.tmp", "wb+");
+	this->file = fopen(this->tempPath, "wb+");
 }
 
 Long PagingBuffer::Replace(Long offset, CString str) {
-	FILE* replacedFile = fopen("replacedFile.tmp", "wb+");
+	Long index = this->tempPath.ReverseFind('.');
+	CString replacedPath = this->tempPath.Left(index) + "ReplacedFile.tmp";
+	FILE* replacedFile = fopen(replacedPath, "wb+");
 
 	if (replacedFile != NULL)
 	{
@@ -394,9 +408,9 @@ Long PagingBuffer::Replace(Long offset, CString str) {
 		fclose(replacedFile);
 		fclose(this->file);
 
-		remove("Note.tmp");
-		rename("replacedFile.tmp", "Note.tmp");
-		this->file = fopen("Note.tmp", "rb+");
+		remove(this->tempPath);
+		rename(replacedPath, this->tempPath);
+		this->file = fopen(this->tempPath, "rb+");
 
 		fseek(this->file, offset + str.GetLength(), SEEK_SET);
 	}
@@ -642,4 +656,4 @@ Long PagingBuffer::GetCurrentOffset() const {
 Long PagingBuffer::GetFileEndOffset() const {
 	FilePointerCalculator filePointerCalculator(const_cast<PagingBuffer*>(this));
 	return filePointerCalculator.FileEnd();
-}
+}          

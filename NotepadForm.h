@@ -20,11 +20,8 @@ class MouseHandler;
 
 class NotepadForm : public CWnd, public Subject {
 public:
-	NotepadForm(CWnd *parent, StatusBarController *statusBarController);
+	NotepadForm(CWnd *parent, CString sourcePath, StatusBarController *statusBarController);
 	virtual ~NotepadForm();
-public:
-	void Load(CString path, TCHAR*(*str), Long& count);
-	void Save(CString path);
 public:
 	CWnd* parent;
 	Glyph* note;
@@ -46,7 +43,7 @@ public:
 	BOOL hasFindReplaceDialog;
 	BOOL isAutoWrapped;
 	double magnification;
-	CString path;
+	CString sourcePath;
 	CString encoding;
 	BOOL isDirty;
 public:

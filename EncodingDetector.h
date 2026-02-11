@@ -3,15 +3,20 @@
 
 typedef signed long int Long;
 
+enum Encoding : Long {
+	UTF16LE,
+	UTF16BE,
+	UTF8BOM,
+	UTF8,
+	ANSI
+};
+
 class EncodingDetector {
 public:
 	EncodingDetector();
 	~EncodingDetector();
 
-	bool IsUTF16LE(char(*str));
-	bool IsUTF16BE(char(*str));
-	bool IsUTF8BOM(char(*str));
-	bool IsUTF8(char(*str), Long count);
+	Encoding ClassifyEncoding(char(*str), Long count);
 };
 
 #endif // !_ENCODINGDETECTOR_H
