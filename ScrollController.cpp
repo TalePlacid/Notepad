@@ -194,6 +194,14 @@ void ScrollController::Update(Subject* subject, string interest) {
 	}
 }
 
+void ScrollController::Initialize() {
+	this->hasVScroll = false;
+	this->hasHScroll = false;
+
+	this->vScroll = Scroll();
+	this->hScroll = Scroll();
+}
+
 bool ScrollController::IsOnVScrollRange() {
 	bool ret = false;
 

@@ -15,6 +15,8 @@ public:
 
 	virtual void Update(Subject* subject, string interest);
 	
+	void Initialize();
+
 	bool IsOnVScrollRange();
 	bool IsOnHScrollRange();
 

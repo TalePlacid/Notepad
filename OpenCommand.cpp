@@ -4,6 +4,7 @@
 #include "NoteConverter.h"
 #include "PagingBuffer.h"
 #include "TextFileIO.h"
+#include "ScrollController.h"
 
 #pragma warning(disable:4996)
 
@@ -52,7 +53,10 @@ void OpenCommand::Execute() {
 		pagingBuffer->Add(CString(str));
 		pagingBuffer->FirstRow();
 
-		//2.5. 캡션을 수정한다.
+		//2.5. 스크롤바 설정을 초기화한다.
+		notepadForm->scrollController->Initialize();
+
+		//2.6. 캡션을 수정한다.
 		notepadForm->parent->SetWindowTextA(fileDialog.GetFileName());
 		notepadForm->encoding = encoding;
 		notepadForm->isDirty = FALSE;

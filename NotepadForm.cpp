@@ -57,7 +57,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_SELECTALL, OnCommandRequested)
-	ON_COMMAND_RANGE(ID_COMMAND_ERASE, ID_COMMAND_OPENINEXPLORER, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_COMMAND_ERASE, ID_COMMAND_LOADLAST, OnCommandRequested)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -113,7 +113,7 @@ BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
 
 int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CWnd::OnCreate(lpCreateStruct);
-
+	
 	//기본 폰트(맑은 고딕, 10pt, 보통 스타일)
 	LOGFONT logFont = { 0, };
 	CClientDC dc(this);
@@ -174,7 +174,15 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->pageSetting = PageSetting(CString("A4"), TRUE, margin, CString(""), CString(""));
 
 	this->nextIsLastOnSize = FALSE;
-	
+
+	if (this->sourcePath != "")
+	{
+		Long index = this->sourcePath.ReverseFind('\\');
+		CString fileName = this->sourcePath.Right(this->sourcePath.GetLength() - (index + 1));
+		fileName = fileName.Left(fileName.GetLength() - 4);
+		this->parent->SetWindowTextA((LPCTSTR)fileName);
+	}
+
 	this->Notify("UpdateScrollBars");
 
 	return 0;

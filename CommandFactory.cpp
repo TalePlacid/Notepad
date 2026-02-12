@@ -31,7 +31,7 @@
 #include "ZoomInCommand.h"
 #include "ZoomOutCommand.h"
 #include "ZoomResetCommand.h"
-#include "OpenInExplorerCommand.h"
+#include "NewWindowCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -50,6 +50,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	{
 	case ID_MENU_NEW:
 		command = new NewCommand(parent);
+		break;
+	case ID_MENU_NEWWINDOW:
+		command = new NewWindowCommand(parent);
 		break;
 	case ID_MENU_OPEN:
 		command = new OpenCommand(parent);
@@ -144,9 +147,6 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 		break;
 	case ID_COMMAND_LOADLAST:
 		command = new LoadLastCommand(parent);
-		break;
-	case ID_COMMAND_OPENINEXPLORER:
-		command = new OpenInExplorerCommand(parent);
 		break;
 	default:
 		break;

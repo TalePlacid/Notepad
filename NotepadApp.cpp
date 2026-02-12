@@ -27,11 +27,6 @@ BOOL NotepadApp::InitInstance() {
 	notepadFrame->UpdateWindow();
 	this->m_pMainWnd = notepadFrame;
 
-	if (this->m_lpCmdLine[0] != '\0')
-	{
-		SendMessage(notepadFrame->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_OPENINEXPLORER, 0);
-	}
-
 	return TRUE;
 }
 

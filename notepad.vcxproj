@@ -218,6 +218,7 @@
     <ClInclude Include="MultiByteCharacter.h" />
     <ClInclude Include="MultiByteWrappingPolicy.h" />
     <ClInclude Include="NewCommand.h" />
+    <ClInclude Include="NewWindowCommand.h" />
     <ClInclude Include="Note.h" />
     <ClInclude Include="NoteConverter.h" />
     <ClInclude Include="NotepadApp.h" />
@@ -227,7 +228,6 @@
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenCommand.h" />
     <ClInclude Include="OpenFindDialogCommand.h" />
-    <ClInclude Include="OpenInExplorerCommand.h" />
     <ClInclude Include="OpenReplaceDialogCommand.h" />
     <ClInclude Include="PageDownAction.h" />
     <ClInclude Include="PageSetting.h" />
@@ -383,6 +383,7 @@
     <ClCompile Include="MouseWheelAction..cpp" />
     <ClCompile Include="MultiByteCharacter.cpp" />
     <ClCompile Include="NewCommand.cpp" />
+    <ClCompile Include="NewWindowCommand.cpp" />
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="NoteConverter.cpp" />
     <ClCompile Include="NotepadApp.cpp" />
@@ -392,7 +393,6 @@
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OpenCommand.cpp" />
     <ClCompile Include="OpenFindDialogCommand.cpp" />
-    <ClCompile Include="OpenInExplorerCommand.cpp" />
     <ClCompile Include="OpenReplaceDialogCommand.cpp" />
     <ClCompile Include="PageDownAction.cpp" />
     <ClCompile Include="PageSetting.cpp" />

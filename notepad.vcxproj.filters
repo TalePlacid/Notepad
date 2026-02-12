@@ -479,9 +479,6 @@
     <ClInclude Include="SaveAsCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="OpenInExplorerCommand.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="MouseHandler.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -525,6 +522,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Encoding.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NewWindowCommand.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -967,9 +967,6 @@
     <ClCompile Include="SaveAsCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="OpenInExplorerCommand.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="MouseHandler.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -1010,6 +1007,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TextFileIO.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NewWindowCommand.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

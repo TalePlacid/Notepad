@@ -90,7 +90,6 @@
 #define ID_COMMAND_LOADPREVIOUS         50017
 #define ID_COMMAND_LOADFIRST            50018
 #define ID_COMMAND_LOADLAST             50019
-#define ID_COMMAND_OPENINEXPLORER       50020
 #define IDC_BUTTON_FIRST                50021
 #define IDC_BUTTON_PREVIOUS             50022
 #define IDC_BUTTON_NEXT                 50023
