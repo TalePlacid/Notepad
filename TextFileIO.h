@@ -1,5 +1,6 @@
 #ifndef _TEXTFILEIO_H //guard
 #define _TEXTFILEIO_H
+#include "Encoding.h"
 
 typedef signed long int Long;
 
@@ -8,8 +9,8 @@ public:
 	TextFileIO();
 	~TextFileIO();
 
-	Long Load(char(*path), char* (*bytes), Long& count);
-	void Save(char(*path), char(*bytes), Long count);
+	Encoding Load(const char(*path), char* (*bytes), Long& count);
+	Encoding Save(const char(*path), const char(*bytes), Long count);
 };
 
 #endif // !_TEXTFILEIO_H

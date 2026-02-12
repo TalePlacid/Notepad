@@ -9,15 +9,15 @@ public:
 	TextEncoder();
 	~TextEncoder();
 
-	void Utf16LeToAnsi(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
-	void Utf16BeToAnsi(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
-	void Utf8BomToAnsi(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
-	void Utf8ToAnsi(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void Utf16LeToAnsi(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void Utf16BeToAnsi(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void Utf8BomToAnsi(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void Utf8ToAnsi(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
 
-	void AnsiToUtf16Le(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
-	void AnsiToUtf16Be(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
-	void AnsiToUtf8Bom(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
-	void AnsiToUtf8(TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void AnsiToUtf16Le(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void AnsiToUtf16Be(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void AnsiToUtf8Bom(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
+	void AnsiToUtf8(const TCHAR(*source), Long sourceCount, TCHAR* (*encoded), Long& encodedCount);
 };
 
 #endif // !_TEXTENCODER_H

@@ -11,7 +11,7 @@ FileStreamAdapter::~FileStreamAdapter() {
 
 }
 
-Long FileStreamAdapter::Read(char(*path), char*(*bytes), Long& count) {
+Long FileStreamAdapter::Read(const char(*path), char*(*bytes), Long& count) {
 	count = 0;
 
 	FILE* file = fopen(path, "rb");
@@ -31,7 +31,7 @@ Long FileStreamAdapter::Read(char(*path), char*(*bytes), Long& count) {
 	return count;
 }
 
-void FileStreamAdapter::Write(char(*path), char(*bytes), Long count) {
+void FileStreamAdapter::Write(const char(*path), char(*bytes), Long count) {
 	FILE* file = fopen(path, "wb");
 
 	if (file != 0)

@@ -3,6 +3,7 @@
 #include <afxwin.h>
 #include "Subject.h"
 #include "PageSetting.h"
+#include "Encoding.h"
 
 class Glyph;
 class CaretController;
@@ -44,7 +45,7 @@ public:
 	BOOL isAutoWrapped;
 	double magnification;
 	CString sourcePath;
-	CString encoding;
+	Encoding encoding;
 	BOOL isDirty;
 public:
 	BOOL IsCompositing() const;
@@ -75,7 +76,6 @@ protected:
 	void OnRButtonDown(UINT nFlags, CPoint point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	void OnTimer(UINT_PTR nIDEvent);
-	
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:

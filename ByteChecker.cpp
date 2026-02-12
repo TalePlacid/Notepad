@@ -61,7 +61,7 @@ bool ByteChecker::IsWordCharacter(char character) {
 	return ret;
 }
 
-Long ByteChecker::CheckUtf8FirstByte(char* character) {
+Long ByteChecker::CheckUtf8FirstByte(const char* character) {
 	Long bytes = 0;
 
 	if ((*character & 0x80) == 0x00)
@@ -84,7 +84,7 @@ Long ByteChecker::CheckUtf8FirstByte(char* character) {
 	return bytes;
 }
 
-bool ByteChecker::IsUtf8ContinuationByte(char* character) {
+bool ByteChecker::IsUtf8ContinuationByte(const char* character) {
 	bool ret = false;
 
 	if ((*character & 0xC0) == 0x80)

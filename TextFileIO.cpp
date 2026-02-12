@@ -13,7 +13,7 @@ TextFileIO::~TextFileIO() {
 
 }
 
-Long TextFileIO::Load(char(*path), char* (*bytes), Long& count) {
+Encoding TextFileIO::Load(const char(*path), char* (*bytes), Long& count) {
 	char(*source) = 0;
 	Long sourceCount;
 
@@ -53,5 +53,47 @@ Long TextFileIO::Load(char(*path), char* (*bytes), Long& count) {
 		delete[] source;
 	}
 
-	return count;
+	return encoding;
+}
+
+Encoding TextFileIO::Save(const char(*path), const char(*bytes), Long count) {
+	EncodingDetector encodingDetector;
+	Encoding encoding = encodingDetector.ClassifyEncoding(bytes, count);
+
+	TCHAR(*encoded) = NULL;
+	Long encodedCount;
+	TextEncoder textEncoder;
+	switch (encoding)
+	{
+	case UTF16LE:
+		textEncoder.AnsiToUtf16Le(bytes, count, &encoded, encodedCount);
+		break;
+	case UTF16BE:
+		textEncoder.AnsiToUtf16Be(bytes, count, &encoded, encodedCount);
+		break;
+	case UTF8BOM:
+		textEncoder.AnsiToUtf8Bom(bytes, count, &encoded, encodedCount);
+		break;
+	case UTF8:
+		textEncoder.AnsiToUtf8(bytes, count, &encoded, encodedCount);
+		break;
+	case ANSI:
+		encoded = new TCHAR[count + 1];
+		memcpy(encoded, bytes, count);
+		encodedCount = count;
+		encoded[encodedCount] = '\0';
+		break;
+	default:
+		break;
+	}
+
+	FileStreamAdapter fileStreamAdapter;
+	fileStreamAdapter.Write(path, encoded, encodedCount);
+
+	if (encoded != NULL)
+	{
+		delete[] encoded;
+	}
+
+	return encoding;
 }

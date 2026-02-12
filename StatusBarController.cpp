@@ -4,6 +4,7 @@
 #include "NotepadForm.h"
 #include "Glyph.h"
 #include "PagingBuffer.h"
+#include "Encoding.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
@@ -65,6 +66,27 @@ void StatusBarController::Update(Subject* subject, string interest) {
 		magnification.Format("%ld%%", percentage);
 		this->statusBar->SetPaneText(2, magnification);
 
-		this->statusBar->SetPaneText(4, notepadForm->encoding);
+		CString encoding;
+		switch (notepadForm->encoding)
+		{
+		case UTF16LE:
+			encoding = "UTF-16 LE";
+			break;
+		case UTF16BE:
+			encoding = "UTF-16 BE";
+			break;
+		case UTF8BOM:
+			encoding = "UTF-8 BOM";
+			break;
+		case UTF8:
+			encoding = "UTF-8";
+			break;
+		case ANSI:
+			encoding = "ANSI";
+			break;
+		default:
+			break;
+		}
+		this->statusBar->SetPaneText(4, encoding);
 	}
 }

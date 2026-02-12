@@ -230,7 +230,7 @@ Long PagingBuffer::Add(CString str) {
 		fseek(this->file, 0, SEEK_SET);
 		fread(contents, 1, currentOffset, this->file);
 
-		memcpy(contents + currentOffset, str.GetBuffer(), str.GetLength());
+		memcpy(contents + currentOffset, (LPCTSTR)str, str.GetLength());
 
 		Long backwardStart = currentOffset + str.GetLength();
 		fseek(this->file, currentOffset, SEEK_SET);
@@ -397,7 +397,7 @@ Long PagingBuffer::Replace(Long offset, CString str) {
 		fseek(this->file, 0, SEEK_SET);
 		fread(contents, 1, offset, this->file);
 		
-		memcpy(contents + offset, str.GetBuffer(), str.GetLength());
+		memcpy(contents + offset, (LPCTSTR)str, str.GetLength());
 		fseek(this->file, offset + str.GetLength(), SEEK_SET);
 
 		fread(contents + (offset+str.GetLength()), 1, fileEndOffset - (offset + str.GetLength()), this->file);

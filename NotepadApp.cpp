@@ -13,10 +13,13 @@ NotepadApp::~NotepadApp() {
 }
 
 BOOL NotepadApp::InitInstance() {
+	CWinApp::InitInstance();
+
 	//테스트용 파일경로
 	CString testPath = "C:\\parkcom\\notepad\\notepad\\test.txt";
-	this->m_lpCmdLine = testPath.GetBuffer();
-	NotepadFrame* notepadFrame = new NotepadFrame(this->m_lpCmdLine);
+	NotepadFrame* notepadFrame = new NotepadFrame((LPCTSTR)testPath);
+	
+	//NotepadFrame* notepadFrame = new NotepadFrame(this->m_lpCmdLine);
 
 	notepadFrame->Create(NULL, "메모장 ~제목없음");         
 

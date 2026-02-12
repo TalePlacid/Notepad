@@ -11,7 +11,7 @@ EncodingDetector::~EncodingDetector() {
 
 }
 
-Encoding EncodingDetector::ClassifyEncoding(char(*str), Long count) {
+Encoding EncodingDetector::ClassifyEncoding(const char(*str), Long count) {
 	Encoding encoding = ANSI;
 
 	if (count > 0)

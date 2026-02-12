@@ -139,12 +139,12 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	TextFileIO textFileIO;
 	TCHAR(*sourceContents) = 0;
 	Long sourceCount;
-	textFileIO.Load(this->sourcePath.GetBuffer(), &sourceContents, sourceCount);
+	textFileIO.Load((LPCTSTR)(this->sourcePath), &sourceContents, sourceCount);
 
 	this->pagingBuffer = new PagingBuffer(this, sourceContents, sourceCount);
 	if (sourceContents != NULL)
 	{
-		delete sourceContents;
+		delete[] sourceContents;
 	}
 
 	this->note = this->pagingBuffer->LoadNext();

@@ -8,8 +8,8 @@ public:
 	FileStreamAdapter();
 	~FileStreamAdapter();
 
-	Long Read(char(*path), char* (*bytes), Long& count);
-	void Write(char(*path), char(*bytes), Long count);
+	Long Read(const char(*path), char* (*bytes), Long& count);
+	void Write(const char(*path), char(*bytes), Long count);
 };
 
 #endif // !_FILESTREAMADAPTER_H

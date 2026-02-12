@@ -7,7 +7,7 @@ class StatusBarController;
 
 class NotepadFrame : public CFrameWnd {
 public:
-	NotepadFrame(LPTSTR m_lpCmdLine);
+	NotepadFrame(LPCTSTR m_lpCmdLine);
 	virtual ~NotepadFrame();
 
 	CWnd* GetNotepadForm();

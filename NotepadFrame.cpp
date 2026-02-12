@@ -16,7 +16,7 @@ BEGIN_MESSAGE_MAP(NotepadFrame, CFrameWnd)
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
-NotepadFrame::NotepadFrame(LPTSTR m_lpCmdLine){
+NotepadFrame::NotepadFrame(LPCTSTR m_lpCmdLine){
 	this->startedPath = "";
 	if (m_lpCmdLine[0] != '\0')
 	{

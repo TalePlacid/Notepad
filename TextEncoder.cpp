@@ -10,7 +10,7 @@ TextEncoder::~TextEncoder() {
 
 }
 
-void TextEncoder::Utf16LeToAnsi(TCHAR(*source), Long sourceCount,
+void TextEncoder::Utf16LeToAnsi(const TCHAR(*source), Long sourceCount,
 	TCHAR*(*encoded), Long& encodedCount) {
 	Long bomCount = 2;
 	Long characterCount = (sourceCount - bomCount) / 2;
@@ -24,7 +24,7 @@ void TextEncoder::Utf16LeToAnsi(TCHAR(*source), Long sourceCount,
 	(*encoded)[encodedCount] = '\0';
 }
 
-void TextEncoder::Utf16BeToAnsi(TCHAR(*source), Long sourceCount,
+void TextEncoder::Utf16BeToAnsi(const TCHAR(*source), Long sourceCount,
 	TCHAR* (*encoded), Long& encodedCount) {
 	//LE로 바이트 스왑
 	TCHAR(*swapped) = new TCHAR[sourceCount];
@@ -45,7 +45,7 @@ void TextEncoder::Utf16BeToAnsi(TCHAR(*source), Long sourceCount,
 	}
 }
 
-void TextEncoder::Utf8BomToAnsi(TCHAR(*source), Long sourceCount,
+void TextEncoder::Utf8BomToAnsi(const TCHAR(*source), Long sourceCount,
 	TCHAR* (*encoded), Long& encodedCount) {
 	//1. BOM을 제거한다.
 	Long bomCount = 3;
@@ -55,7 +55,7 @@ void TextEncoder::Utf8BomToAnsi(TCHAR(*source), Long sourceCount,
 	this->Utf8ToAnsi(source + bomCount, sourceCount_, encoded, encodedCount);
 }
 
-void TextEncoder::Utf8ToAnsi(TCHAR(*source), Long sourceCount,
+void TextEncoder::Utf8ToAnsi(const TCHAR(*source), Long sourceCount,
 	TCHAR* (*encoded), Long& encodedCount) {
 	//1. UTF16 LE로 변환한다.
 	Long utf16Count = MultiByteToWideChar(CP_UTF8, 0, source, sourceCount, NULL, 0);
@@ -78,7 +78,7 @@ void TextEncoder::Utf8ToAnsi(TCHAR(*source), Long sourceCount,
 	}
 }
 
-void TextEncoder::AnsiToUtf16Le(TCHAR(*source), Long sourceCount,
+void TextEncoder::AnsiToUtf16Le(const TCHAR(*source), Long sourceCount,
 	TCHAR* (*encoded), Long& encodedCount) {
 	//1. UTF16크기만큼 생성한다.
 	Long utf16Count = MultiByteToWideChar(CP_ACP, 0, source, sourceCount, NULL, 0);
@@ -95,7 +95,7 @@ void TextEncoder::AnsiToUtf16Le(TCHAR(*source), Long sourceCount,
 	encodedCount = (utf16Count + 1) * 2;
 }
 
-void TextEncoder::AnsiToUtf16Be(TCHAR(*source), Long sourceCount,
+void TextEncoder::AnsiToUtf16Be(const TCHAR(*source), Long sourceCount,
 	TCHAR* (*encoded), Long& encodedCount) {
 	//1. UTF-16 LE형식으로 변환한다.
 	TCHAR(*leEncoded) = NULL;
@@ -120,7 +120,7 @@ void TextEncoder::AnsiToUtf16Be(TCHAR(*source), Long sourceCount,
 	}
 }
 
-void TextEncoder::AnsiToUtf8Bom(TCHAR(*source), Long sourceCount,
+void TextEncoder::AnsiToUtf8Bom(const TCHAR(*source), Long sourceCount,
 	TCHAR* (*encoded), Long& encodedCount) {
 	//1. UTF16 LE형식으로 변환한다.
 	Long leCount = MultiByteToWideChar(CP_ACP, 0, source, sourceCount, NULL, 0);
@@ -148,7 +148,7 @@ void TextEncoder::AnsiToUtf8Bom(TCHAR(*source), Long sourceCount,
 	}
 }
 
-void TextEncoder::AnsiToUtf8(TCHAR(*source), Long sourceCount,
+void TextEncoder::AnsiToUtf8(const TCHAR(*source), Long sourceCount,
 	TCHAR* (*encoded), Long& encodedCount) {
 	//1. UTF16 LE형식으로 변환한다.
 	Long leCount = MultiByteToWideChar(CP_ACP, 0, source, sourceCount, NULL, 0);

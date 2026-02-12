@@ -179,6 +179,7 @@
     <ClInclude Include="DragUpAction.h" />
     <ClInclude Include="DropOldestStack.h" />
     <ClInclude Include="DummyRow.h" />
+    <ClInclude Include="Encoding.h" />
     <ClInclude Include="EncodingDetector.h" />
     <ClInclude Include="EndAction.h" />
     <ClInclude Include="EraseCommand.h" />
