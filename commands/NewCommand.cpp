@@ -1,8 +1,8 @@
 #include "NewCommand.h"
-#include "NotepadForm.h"
-#include "GlyphFactory.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
+#include "../NotepadForm.h"
+#include "../glyphs/GlyphFactory.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

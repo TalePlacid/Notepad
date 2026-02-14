@@ -1,7 +1,7 @@
 #ifndef _SELECTFONTCOMMAND_H //guard
 #define _SELECTFONTCOMMAND_H
-#include "Command.h"
 #include <afxwin.h>
+#include "Command.h"
 
 class Font;
 

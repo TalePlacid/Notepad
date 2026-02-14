@@ -1,8 +1,7 @@
 #ifndef _NOTE_H //guard
 #define _NOTE_H
 #include "Composite.h"
-#include "Array.h"
-#include "Position.h"
+#include "../Array.h"
 #include <string>
 using namespace std;
 

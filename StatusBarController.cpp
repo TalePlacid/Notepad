@@ -2,7 +2,7 @@
 #include "StatusBarController.h"
 #include "NotepadFrame.h"
 #include "NotepadForm.h"
-#include "Glyph.h"
+#include "glyphs/Glyph.h"
 #include "PagingBuffer.h"
 #include "Encoding.h"
 #include "resource.h"

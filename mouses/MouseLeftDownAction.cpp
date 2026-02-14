@@ -1,9 +1,9 @@
 #include "MouseLeftDownAction.h"
-#include "CoordinateConverter.h"
-#include "NotepadForm.h"
-#include "MouseHandler.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
+#include "../NotepadForm.h"
+#include "../MouseHandler.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
+#include "../CoordinateConverter.h"
 
 #pragma warning(disable:4996)
 

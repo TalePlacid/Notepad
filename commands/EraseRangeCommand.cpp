@@ -1,16 +1,16 @@
 #include <afxwin.h>
 #include "EraseRangeCommand.h"
-#include "NotepadForm.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
-#include "resource.h"
-#include "GlyphFactory.h"
-#include "ByteChecker.h"
-#include "CaretNavigator.h"
-#include "ScrollController.h"
-#include "RowCounter.h"
-#include "SizeCalculator.h"
-#include "NoteWrapper.h"
+#include "../resource.h"
+#include "../NotepadForm.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
+#include "../ScrollController.h"
+#include "../SizeCalculator.h"
+#include "../glyphs/GlyphFactory.h"
+#include "../ByteChecker.h"
+#include "../CaretNavigator.h"
+#include "../RowCounter.h"
+#include "../NoteWrapper.h"
 
 #pragma warning(disable:4996)
 

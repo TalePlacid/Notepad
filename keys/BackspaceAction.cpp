@@ -1,9 +1,9 @@
 #include <afxwin.h>
-#include "resource.h"
 #include "BackspaceAction.h"
-#include "NotepadForm.h"
-#include "PagingBuffer.h"
-#include "Glyph.h"
+#include "../resource.h"
+#include "../NotepadForm.h"
+#include "../PagingBuffer.h"
+#include "../glyphs/Glyph.h"
 
 #pragma warning(disable:4996)
 

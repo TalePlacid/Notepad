@@ -1,10 +1,10 @@
 #include <afxdlgs.h>
 #include "SelectFontCommand.h"
-#include "NotepadForm.h"
-#include "SizeCalculator.h"
-#include "ScrollBarAnalyzer.h"
-#include "ScrollController.h"
-#include "PagingBuffer.h"
+#include "../NotepadForm.h"
+#include "../SizeCalculator.h"
+#include "../ScrollBarAnalyzer.h"
+#include "../ScrollController.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

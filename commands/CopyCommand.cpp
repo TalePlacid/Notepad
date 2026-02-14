@@ -1,7 +1,7 @@
 #include <afxwin.h>
 #include "CopyCommand.h"
-#include "NotepadForm.h"
-#include "ClipboardController.h"
+#include "../NotepadForm.h"
+#include "../ClipboardController.h"
 
 #pragma warning(disable:4996)
 

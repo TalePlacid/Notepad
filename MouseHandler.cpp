@@ -1,13 +1,7 @@
 #include "MouseHandler.h"
-#include "NotepadForm.h"
-#include "ScrollController.h"
-#include "SizeCalculator.h"
-#include "PagingBuffer.h"
-#include "Glyph.h"
-#include "VScrollBarUpClickAction.h"
-#include "vScrollBarDownClickAction.h"
-#include "CoordinateConverter.h"
 #include "resource.h"
+#include "NotepadForm.h"
+#include "SizeCalculator.h"
 
 #pragma warning(disable:4996)
 

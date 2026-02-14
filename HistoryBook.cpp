@@ -1,9 +1,9 @@
 #include <afxwin.h>
 #include "HistoryBook.h"
-#include "Command.h"
-#include "MacroCommand.h"
 #include "resource.h"
-#include "FindReplaceOption.h"
+#include "findReplaces/FindReplaceOption.h"
+#include "commands/Command.h"
+#include "commands/MacroCommand.h"
 
 #pragma warning(disable:4996)
 

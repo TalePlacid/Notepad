@@ -2,7 +2,7 @@
 #define _MACROCOMMAND_H
 #include <afxwin.h>
 #include "Command.h"
-#include "Array.h"
+#include "../Array.h"
 
 typedef signed long int Long;
 

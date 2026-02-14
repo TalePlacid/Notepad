@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include "CutCommand.h"
-#include "resource.h"
+#include "../resource.h"
 
 CutCommand::CutCommand(CWnd* parent)
 	:Command(parent) {

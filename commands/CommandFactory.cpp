@@ -1,5 +1,5 @@
 #include <afxdlgs.h>
-#include "resource.h"
+#include "../resource.h"
 #include "CommandFactory.h"
 #include "SelectFontCommand.h"
 #include "OpenCommand.h"
@@ -16,11 +16,6 @@
 #include "OpenReplaceDialogCommand.h"
 #include "UndoCommand.h"
 #include "RedoCommand.h"
-#include "ReplaceCommand.h"
-#include "ReplaceAllCommand.h"
-#include "CloseFindReplaceCommand.h"
-#include "FindCommand.h"
-#include "FindNextCommand.h"
 #include "PreviewCommand.h"
 #include "LoadNextCommand.h"
 #include "LoadPreviousCommand.h"
@@ -32,6 +27,11 @@
 #include "ZoomOutCommand.h"
 #include "ZoomResetCommand.h"
 #include "NewWindowCommand.h"
+#include "../findReplaces/ReplaceCommand.h"
+#include "../findReplaces/ReplaceAllCommand.h"
+#include "../findReplaces/CloseFindReplaceCommand.h"
+#include "../findReplaces/FindCommand.h"
+#include "../findReplaces/FindNextCommand.h"
 
 #pragma warning(disable:4996)
 

@@ -1,8 +1,8 @@
 #include <afxwin.h>
 #include "HomeAction.h"
-#include "NotepadForm.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
+#include "../NotepadForm.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

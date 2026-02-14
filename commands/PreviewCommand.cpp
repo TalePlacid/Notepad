@@ -1,8 +1,8 @@
 #include "PreviewCommand.h"
-#include "NotepadForm.h"
-#include "PreviewForm.h"
-#include "SuspendAutoWrap.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../NotepadForm.h"
+#include "../prints/PreviewForm.h"
+#include "../SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 

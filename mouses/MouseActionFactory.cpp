@@ -1,13 +1,13 @@
 #include "MouseActionFactory.h"
-#include "NotepadForm.h"
 #include "MouseLeftDownAction.h"
 #include "MouseWheelAction.h"
 #include "MouseCtrlWheelAction.h"
-#include "MouseHandler.h"
 #include "DragUpAction.h"
 #include "DragDownAction.h"
 #include "DragLeftAction.h"
 #include "DragRightAction.h"
+#include "../NotepadForm.h"
+#include "../MouseHandler.h"
 
 #pragma warning(disable:4996)
 

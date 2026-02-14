@@ -2,9 +2,9 @@
 #include <fcntl.h>
 #include "PagingBuffer.h"
 #include "NotepadForm.h"
-#include "Glyph.h"
-#include "NoteConverter.h"
+#include "glyphs/Glyph.h"
 #include "SizeCalculator.h"
+#include "NoteConverter.h"
 #include "ByteChecker.h"
 #include "FilePointerCalculator.h"
 

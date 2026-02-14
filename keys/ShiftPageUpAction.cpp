@@ -1,11 +1,11 @@
 #include <afxwin.h>
 #include "ShiftPageUpAction.h"
-#include "ScrollController.h"
-#include "NotepadForm.h"
-#include "SizeCalculator.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../ScrollController.h"
+#include "../NotepadForm.h"
+#include "../SizeCalculator.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

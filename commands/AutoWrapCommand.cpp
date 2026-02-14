@@ -1,13 +1,13 @@
 #include <afxwin.h>
 #include "AutoWrapCommand.h"
-#include "NotepadForm.h"
-#include "NotepadFrame.h"
-#include "NoteWrapper.h"
-#include "PagingBuffer.h"
-#include "ScrollController.h"
-#include "SizeCalculator.h"
-#include "Glyph.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../NotepadFrame.h"
+#include "../NotepadForm.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
+#include "../ScrollController.h"
+#include "../SizeCalculator.h"
+#include "../NoteWrapper.h"
 
 #pragma warning(disable:4996)
 

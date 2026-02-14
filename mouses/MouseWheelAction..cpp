@@ -1,9 +1,9 @@
 #include "MouseWheelAction.h"
-#include "NotepadForm.h"
-#include "ScrollController.h"
-#include "ScrollBarAction.h"
-#include "VScrollBarUpClickAction.h"
-#include "VScrollBarDownClickAction.h"
+#include "../NotepadForm.h"
+#include "../ScrollController.h"
+#include "../scrolls/ScrollBarAction.h"
+#include "../scrolls/VScrollBarUpClickAction.h"
+#include "../scrolls/VScrollBarDownClickAction.h"
 
 #pragma warning(disable:4996)
 

@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include "SetPageCommand.h"
-#include "PageSettingForm.h"
+#include "../prints/PageSettingForm.h"
 
 #pragma warning(disable:4996)
 

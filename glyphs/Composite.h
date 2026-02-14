@@ -1,7 +1,7 @@
 #ifndef _COMPOSITE_H //guard
 #define _COMPOSITE_H
 #include "Glyph.h"
-#include "Array.h"
+#include "../Array.h"
 
 typedef signed long int Long;
 

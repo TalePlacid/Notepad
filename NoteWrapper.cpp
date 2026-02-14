@@ -1,10 +1,10 @@
 #include <afxwin.h>
 #include "NoteWrapper.h"
 #include "NotepadForm.h"
-#include "Glyph.h"
-#include "GlyphFactory.h"
+#include "glyphs/Glyph.h"
 #include "SizeCalculator.h"
 #include "ScrollController.h"
+#include "glyphs/GlyphFactory.h"
 #include "ByteChecker.h"
 
 #pragma warning(disable:4996)

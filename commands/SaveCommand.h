@@ -1,7 +1,7 @@
 #ifndef _SAVECOMMAND_H //guard
 #define _SAVECOMMAND_H
-#include "Command.h"
 #include <afxwin.h>
+#include "Command.h"
 
 class SaveCommand : public Command {
 public:

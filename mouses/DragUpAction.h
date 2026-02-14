@@ -1,5 +1,6 @@
 #ifndef _DRAGUPACTION_H //guard
 #define _DRAGUPACTION_H
+#include <afxwin.h>
 #include "MouseAction.h"
 
 class DragUpAction : public MouseAction {

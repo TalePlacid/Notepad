@@ -1,10 +1,10 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
 #include "OpenFindDialogCommand.h"
-#include "NotepadForm.h"
-#include "message.h"
-#include "SearchResultController.h"
-#include "PagingBuffer.h"
+#include "../message.h"
+#include "../NotepadForm.h"
+#include "../SearchResultController.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

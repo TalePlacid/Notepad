@@ -2,7 +2,7 @@
 #define _NOTEPADFORM_H
 #include <afxwin.h>
 #include "Subject.h"
-#include "PageSetting.h"
+#include "prints/PageSetting.h"
 #include "Encoding.h"
 
 class Glyph;

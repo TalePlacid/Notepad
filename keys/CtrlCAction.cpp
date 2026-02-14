@@ -1,7 +1,7 @@
 #include "CtrlCAction.h"
-#include "NotepadForm.h"
-#include "PagingBuffer.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../NotepadForm.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

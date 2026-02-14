@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include "SelectionVisitor.h"
-#include "Glyph.h"
+#include "glyphs/Glyph.h"
 
 #pragma warning(disable:4996)
 

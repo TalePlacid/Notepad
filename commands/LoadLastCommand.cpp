@@ -1,10 +1,10 @@
 #include <afxwin.h>
 #include "LoadLastCommand.h"
-#include "NotepadForm.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
-#include "NoteWrapper.h"
-#include "SuspendAutoWrap.h"
+#include "../NotepadForm.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
+#include "../NoteWrapper.h"
+#include "../SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 

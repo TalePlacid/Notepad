@@ -1,7 +1,7 @@
 #include <afxwin.h>
-#include "NotepadForm.h"
 #include "ScrollBarAnalyzer.h"
-#include "Glyph.h"
+#include "NotepadForm.h"
+#include "glyphs/Glyph.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "PagingBuffer.h"

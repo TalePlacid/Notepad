@@ -1,7 +1,7 @@
 #include <afxwin.h>
 #include "ZoomInCommand.h"
-#include "NotepadForm.h"
-#include "SizeCalculator.h"
+#include "../NotepadForm.h"
+#include "../SizeCalculator.h"
 
 #pragma warning(disable:4996)
 

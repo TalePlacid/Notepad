@@ -1,10 +1,10 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
 #include "SaveAsCommand.h"
-#include "NotepadForm.h"
-#include "PagingBuffer.h"
-#include "TextFileIO.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../NotepadForm.h"
+#include "../PagingBuffer.h"
+#include "../TextFileIO.h"
 
 #pragma warning(disable:4996)
 

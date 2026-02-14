@@ -2,7 +2,6 @@
 #define _GLYPH_H
 #include <string>
 using namespace std;
-#include "Position.h"
 
 typedef signed long int Long;
 

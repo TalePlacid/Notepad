@@ -1,8 +1,8 @@
 #include <afxwin.h>
 #include "CtrlAAction.h"
-#include "PagingBuffer.h"
-#include "NotepadForm.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../PagingBuffer.h"
+#include "../NotepadForm.h"
 
 #pragma warning(disable:4996)
 

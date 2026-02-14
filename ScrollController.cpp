@@ -1,10 +1,10 @@
 #include <afxwin.h>
 #include "ScrollController.h"
-#include "ScrollBarAnalyzer.h"
 #include "NotepadForm.h"
+#include "ScrollBarAnalyzer.h"
+#include "glyphs/Glyph.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
-#include "Glyph.h"
 
 #pragma warning(disable:4996)
 

@@ -1,9 +1,9 @@
 #include <afxwin.h>
 #include "CaretNavigator.h"
-#include "PagingBuffer.h"
-#include "NotepadForm.h"
-#include "Glyph.h"
 #include "resource.h"
+#include "NotepadForm.h"
+#include "glyphs/Glyph.h"
+#include "PagingBuffer.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "NoteWrapper.h"

@@ -1,7 +1,7 @@
 #include <afxwin.h>
 #include "CtrlPageUpAction.h"
-#include "NotepadForm.h"
-#include "ScrollController.h"
+#include "../NotepadForm.h"
+#include "../ScrollController.h"
 
 #pragma warning(disable:4996)
 

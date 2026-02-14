@@ -1,5 +1,5 @@
 #include "Row.h"
-#include "TextOutVisitor.h"
+#include "../TextOutVisitor.h"
 
 #pragma warning(disable:4996)
 

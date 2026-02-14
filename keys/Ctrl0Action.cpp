@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include "Ctrl0Action.h"
-#include "resource.h"
+#include "../resource.h"
 
 #pragma warning(disable:4996)
 

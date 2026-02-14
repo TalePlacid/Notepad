@@ -1,8 +1,8 @@
 #include "CaretController.h"
 #include "Caret.h"
-#include "SizeCalculator.h"
-#include "Glyph.h"
 #include "NotepadForm.h"
+#include "glyphs/Glyph.h"
+#include "SizeCalculator.h"
 #include "PagingBuffer.h"
 #include "ScrollController.h"
 

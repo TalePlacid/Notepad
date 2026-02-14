@@ -3,7 +3,7 @@
 #include "ScrollController.h"
 #include "PagingBuffer.h"
 #include "SizeCalculator.h"
-#include "Glyph.h"
+#include "glyphs/Glyph.h"
 
 #pragma warning(disable:4996)
 

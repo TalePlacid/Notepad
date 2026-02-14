@@ -1,10 +1,10 @@
 #include <afxdlgs.h>
 #include "OpenCommand.h"
-#include "NotepadForm.h"
-#include "NoteConverter.h"
-#include "PagingBuffer.h"
-#include "TextFileIO.h"
-#include "ScrollController.h"
+#include "../NotepadForm.h"
+#include "../NoteConverter.h"
+#include "../PagingBuffer.h"
+#include "../TextFileIO.h"
+#include "../ScrollController.h"
 
 #pragma warning(disable:4996)
 

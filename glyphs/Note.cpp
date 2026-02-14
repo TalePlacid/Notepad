@@ -1,7 +1,7 @@
 #include "Note.h"
 #include "GlyphFactory.h"
 #include "DummyRow.h"
-#include "PagingBuffer.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

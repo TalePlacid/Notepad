@@ -1,10 +1,9 @@
 #include "TextOutVisitor.h"
 #include "NotepadForm.h"
 #include "SizeCalculator.h"
-#include "Glyph.h"
+#include "glyphs/Glyph.h"
 #include "SelectionVisitor.h"
 #include "PagingBuffer.h"
-#include "Position.h"
 #include "ScrollController.h"
 
 #pragma warning(disable:4996)

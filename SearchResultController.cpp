@@ -1,11 +1,11 @@
 #include "SearchResultController.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
-#include "Comparer.h"
-#include "CaseSensitiveComparer.h"
-#include "CaseInsensitiveComparer.h"
-#include "SearchingAlgorithmFactory.h"
-#include "SearchingAlgorithm.h"
+#include "searches/Comparer.h"
+#include "searches/CaseSensitiveComparer.h"
+#include "searches/SearchingAlgorithm.h"
+#include "searches/CaseInsensitiveComparer.h"
+#include "searches/SearchingAlgorithmFactory.h"
 
 #pragma warning(disable:4996)
 

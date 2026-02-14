@@ -1,7 +1,7 @@
 #ifndef _ROW_H //guard
 #define _ROW_H
 #include "Composite.h"
-#include "Array.h"
+#include "../Array.h"
 
 typedef signed long int Long;
 

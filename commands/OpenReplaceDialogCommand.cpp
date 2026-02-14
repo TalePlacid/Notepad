@@ -1,10 +1,10 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
 #include "OpenReplaceDialogCommand.h"
-#include "NotepadForm.h"
-#include "SearchResultController.h"
-#include "PagingBuffer.h"
-#include "message.h"
+#include "../message.h"
+#include "../NotepadForm.h"
+#include "../SearchResultController.h"
+#include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 

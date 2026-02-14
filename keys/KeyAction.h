@@ -1,6 +1,6 @@
 #ifndef _KEYACTION_H //guard
 #define _KEYACTION_H
-#include "Action.h"
+#include "../Action.h"
 
 class CWnd;
 

@@ -1,8 +1,8 @@
 #include "DragLeftAction.h"
-#include "NotepadForm.h"
-#include "Glyph.h"
-#include "PagingBuffer.h"
-#include "CoordinateConverter.h"
+#include "../NotepadForm.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
+#include "../CoordinateConverter.h"
 
 #pragma warning(diable:4996)
 

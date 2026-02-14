@@ -1,8 +1,8 @@
 #include <afxwin.h>
 #include "RedoCommand.h"
-#include "NotepadForm.h"
-#include "HistoryBook.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../NotepadForm.h"
+#include "../HistoryBook.h"
 
 #pragma warning(disable:4996)
 

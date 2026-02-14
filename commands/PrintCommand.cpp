@@ -1,15 +1,15 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
 #include "PrintCommand.h"
-#include "SuspendAutoWrap.h"
-#include "NotepadForm.h"
-#include "PreviewPaginator.h"
-#include "PagingBuffer.h"
-#include "Glyph.h"
-#include "PageSetting.h"
-#include "PrinterResource.h"
-#include "PrintRenderer.h"
-#include "resource.h"
+#include "../resource.h"
+#include "../prints/PageSetting.h"
+#include "../prints/PrinterResource.h"
+#include "../NotepadForm.h"
+#include "../PagingBuffer.h"
+#include "../glyphs/Glyph.h"
+#include "../prints/PreviewPaginator.h"
+#include "../prints/PrintRenderer.h"
+#include "../SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
