@@ -1,6 +1,8 @@
 #include <afxdlgs.h>
 #include "../resource.h"
 #include "CommandFactory.h"
+#include "WriteAtEndCommand.h"
+#include "InsertAtCaretCommand.h"
 #include "SelectFontCommand.h"
 #include "OpenCommand.h"
 #include "SaveCommand.h"
@@ -43,11 +45,13 @@ CommandFactory::~CommandFactory() {
 
 }
 
-Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
+Command* CommandFactory::Create(CWnd* parent, UINT nID, const TCHAR(*character), 
+	BOOL onChar, LPARAM lParam) {
 	Command* command = NULL;
 
 	switch (nID)
 	{
+#if 0
 	case ID_MENU_NEW:
 		command = new NewCommand(parent);
 		break;
@@ -94,6 +98,12 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 	case ID_MENU_ZOOMRESET:
 		command = new ZoomResetCommand(parent);
 		break;
+	case ID_COMMAND_WRITEATEND:
+		command = new WriteAtEndCommand(parent, character, onChar);
+		break;
+	case ID_COMMAND_INSERTATCARET:
+		command = new InsertAtCaretCommand(parent, character, onChar);
+		break;	
 	case ID_COMMAND_ERASE:
 		command = new EraseCommand(parent);
 		break;
@@ -150,6 +160,7 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, LPARAM lParam) {
 		break;
 	default:
 		break;
+#endif
 	}
 
 	return command;

@@ -14,5 +14,7 @@ CtrlPlusAction::~CtrlPlusAction() {
 }
 
 void CtrlPlusAction::Perform() {
+#if 0
 	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_MENU_ZOOMIN, 0);
+#endif
 }

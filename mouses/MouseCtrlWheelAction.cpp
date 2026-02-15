@@ -14,10 +14,10 @@ MouseCtrlWheelAction::~MouseCtrlWheelAction() {
 
 void MouseCtrlWheelAction::Perform() {
 	//1. 방향을 확인한다.
-	UINT nID = ID_MENU_ZOOMIN;
+	UINT nID = ID_ACTION_ZOOMIN;
 	if (zDelta < 0)
 	{
-		nID = ID_MENU_ZOOMOUT;
+		nID = ID_ACTION_ZOOMOUT;
 		zDelta *= -1;
 	}
 

@@ -62,7 +62,7 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 		nID = ID_COMMAND_FINDNEXT;
 	}
 
-	command = commandFactory.Create(parent, nID, (LPARAM)findReplaceDialog);
+	command = commandFactory.Create(parent, nID, 0, FALSE, (LPARAM)findReplaceDialog);
 
 	return command;
 }

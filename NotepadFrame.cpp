@@ -10,8 +10,7 @@ BEGIN_MESSAGE_MAP(NotepadFrame, CFrameWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
 	ON_WM_EXITSIZEMOVE()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_PREVIEW, OnCommandRequested)
-	ON_COMMAND_RANGE(ID_COMMAND_ERASE, ID_COMMAND_LOADLAST, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_ACTION_NEW, ID_COMMAND_LOADLAST, OnCommandRange)
 	ON_WM_ERASEBKGND()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
@@ -71,7 +70,7 @@ void NotepadFrame::OnExitSizeMove() {
 	this->notepadForm->SendMessage(WM_EXITSIZEMOVE);
 }
 
-void NotepadFrame::OnCommandRequested(UINT nID) {
+void NotepadFrame::OnCommandRange(UINT nID) {
 	this->notepadForm->SendMessage(WM_COMMAND, (WPARAM)nID);
 	this->notepadForm->SetFocus();
 }

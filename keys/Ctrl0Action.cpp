@@ -14,5 +14,7 @@ Ctrl0Action::~Ctrl0Action() {
 }
 
 void Ctrl0Action::Perform() {
+#if 0
 	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_MENU_ZOOMRESET, 0);
+#endif
 }

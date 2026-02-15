@@ -545,6 +545,9 @@
     <ClCompile Include="commands\UndoCommand.cpp">
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
+    <ClCompile Include="WritingModeSelector.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -1035,6 +1038,12 @@
     </ClInclude>
     <ClInclude Include="commands\UndoCommand.h">
       <Filter>헤더 파일\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="WritingModeSelector.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

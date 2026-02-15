@@ -14,5 +14,7 @@ CtrlMinusAction::~CtrlMinusAction() {
 }
 
 void CtrlMinusAction::Perform() {
+#if 0
 	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_MENU_ZOOMOUT, 0);
+#endif
 }

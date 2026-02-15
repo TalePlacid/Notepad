@@ -7,7 +7,7 @@ typedef signed long int Long;
 
 class InsertAtCaretCommand : public Command {
 public:
-	InsertAtCaretCommand(CWnd* parent, char(*character), BOOL onChar = TRUE);
+	InsertAtCaretCommand(CWnd* parent, const TCHAR(*character), BOOL onChar = TRUE);
 	virtual ~InsertAtCaretCommand();
 	InsertAtCaretCommand(const InsertAtCaretCommand& source);
 	InsertAtCaretCommand& operator=(const InsertAtCaretCommand& source);

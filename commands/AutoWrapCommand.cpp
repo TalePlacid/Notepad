@@ -37,12 +37,12 @@ void AutoWrapCommand::Execute() {
 	{
 		Long dummyRowCount = noteWrapper.Wrap();
 		max += dummyRowCount * sizeCalculator->GetRowHeight();
-		notepadFrame->GetMenu()->CheckMenuItem(ID_MENU_AUTOWRAP, MF_CHECKED);
+		notepadFrame->GetMenu()->CheckMenuItem(ID_ACTION_AUTOWRAP, MF_CHECKED);
 	}
 	else
 	{
 		noteWrapper.Unwrap();
-		notepadFrame->GetMenu()->CheckMenuItem(ID_MENU_AUTOWRAP, MF_UNCHECKED);
+		notepadFrame->GetMenu()->CheckMenuItem(ID_ACTION_AUTOWRAP, MF_UNCHECKED);
 	}
 
 	if (scrollController->HasVScroll())

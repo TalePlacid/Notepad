@@ -2,12 +2,13 @@
 #define _WRITEATENDCOMMAND_H
 #include <afxwin.h>
 #include "Command.h"
+#include "../resource.h"
 
 typedef signed long int Long;
 
 class WriteAtEndCommand : public Command {
 public:
-	WriteAtEndCommand(CWnd* parent, char(*character), BOOL onChar = TRUE);
+	WriteAtEndCommand(CWnd* parent, const TCHAR(*character), BOOL onChar = TRUE);
 	virtual ~WriteAtEndCommand();
 	WriteAtEndCommand(const WriteAtEndCommand& source);
 	WriteAtEndCommand& operator=(const WriteAtEndCommand& source);
@@ -23,5 +24,13 @@ private:
 	BOOL onChar;
 	Long offset;
 };
+
+inline UINT WriteAtEndCommand::GetId() {
+	return ID_COMMAND_WRITEATEND;
+}
+
+inline bool WriteAtEndCommand::IsUndoable() {
+	return true;
+}
 
 #endif // !_WRITEATENDCOMMAND_H

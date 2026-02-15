@@ -28,7 +28,7 @@ void ReplaceAllCommand::Execute() {
 
 	//2. Ã£´Â´Ù.
 	CommandFactory commandFactory;
-	Command* command = commandFactory.Create(this->parent, ID_COMMAND_FIND, (LPARAM)(this->findReplaceDialog));
+	Command* command = commandFactory.Create(this->parent, ID_COMMAND_FIND, 0, FALSE, (LPARAM)(this->findReplaceDialog));
 	if (command != NULL)
 	{
 		command->Execute();
@@ -41,7 +41,7 @@ void ReplaceAllCommand::Execute() {
 	Long count = searchResultController->GetLength();
 	while (i < count)
 	{
-		command = commandFactory.Create(this->parent, ID_COMMAND_REPLACE, (LPARAM)(this->findReplaceDialog));
+		command = commandFactory.Create(this->parent, ID_COMMAND_REPLACE, 0, FALSE, (LPARAM)(this->findReplaceDialog));
 		if (command != NULL)
 		{
 			command->Execute();

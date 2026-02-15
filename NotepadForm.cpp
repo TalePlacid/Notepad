@@ -25,6 +25,7 @@
 #include "TextEncoder.h"
 #include "CoordinateConverter.h"
 #include "AutoScroller.h"
+#include "WritingModeSelector.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -62,8 +63,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_MENU_NEW, ID_MENU_SELECTALL, OnCommandRequested)
-	ON_COMMAND_RANGE(ID_COMMAND_ERASE, ID_COMMAND_LOADLAST, OnCommandRequested)
+	ON_COMMAND_RANGE(ID_ACTION_NEW, ID_COMMAND_LOADLAST, OnCommandRange)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -197,52 +197,64 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if ((nChar > 31 && nChar < 127) || nChar == 9 || nChar == 13)
 	{
-		this->isDirty = TRUE;
-
-		char character[2];
+		UINT nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+		TCHAR character[2];
 		character[0] = nChar;
+		character[1] = '\0';
 		if (character[0] == '\r')
 		{
 			character[1] = '\n';
 		}
-
-		Long rowIndex = this->note->GetCurrent();
-		Glyph* row = this->note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
-
-		Command* command;
-		if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
-		{
-			command = new WriteAtEndCommand(this, character);
-		}
-		else
-		{
-			command = new InsertAtCaretCommand(this, character);
-		}
-
-		if (command != NULL)
-		{
-			command->Execute();
-			if (command->IsUndoable())
-			{
-				//command = this->undoHistoryBook->Bind(command);
-				this->undoHistoryBook->Push(command);
-				this->redoHistoryBook->Clear();
-			}
-			else
-			{
-				delete command;
-			}                 
-		}
-
-		this->note->Select(false);
-		this->pagingBuffer->UnmarkSelectionBegin();
-	
-		this->Notify("ChangeCaret");
-		this->Notify("UpdateScrollBars");
-		this->Notify("UpdateStatusBar");
-		this->Invalidate();
+		this->HandleCommand(nID, character, TRUE);
 	}
+}
+
+LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
+	return TRUE;
+}
+
+LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
+	if (lParam & GCS_COMPSTR)
+	{
+		HIMC himc = ImmGetContext(this->GetSafeHwnd());
+		TCHAR character[256];
+		Command* command = NULL;
+		Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
+		character[length] = '\0';
+
+		if (length > 0)
+		{
+			UINT nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+			this->HandleCommand(nID, character, FALSE);
+			this->isCompositing = TRUE;
+		}
+		else if (length == 0)
+		{
+			this->isCompositing = FALSE;
+			this->HandleCommand(ID_COMMAND_ERASE);
+		}
+
+		ImmReleaseContext(this->GetSafeHwnd(), himc);
+	}
+
+	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
+}
+
+LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
+	char character[2];
+	character[0] = (BYTE)(wParam >> 8);
+	character[1] = (BYTE)wParam;
+
+	UINT nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+	this->HandleCommand(nID, character, TRUE);
+
+	return 0;
+}
+
+LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
+	this->isCompositing = FALSE;
+
+	return TRUE;
 }
 
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
@@ -295,112 +307,6 @@ void NotepadForm::OnPaint() {
 	}
 }
 
-LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
-	return TRUE;
-}
-
-LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
-	if (lParam & GCS_COMPSTR)
-	{
-		HIMC himc = ImmGetContext(this->GetSafeHwnd());
-		TCHAR character[256];
-		Command* command = NULL;
-		Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
-		
-		Long rowIndex = this->note->GetCurrent();
-		Glyph* row = this->note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
-		
-		if (length > 0)
-		{
-			character[length] = '\0';
-
-			if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
-			{
-				command = new WriteAtEndCommand(this, character, FALSE);
-			}
-			else
-			{
-				command = new InsertAtCaretCommand(this, character, FALSE);
-			}
-
-			if (command != NULL)
-			{
-				command->Execute();
-				delete command;
-			}			
-			this->isCompositing = TRUE;
-		}
-		else if (length == 0)
-		{
-			this->isCompositing = FALSE;
-			row->Remove(columnIndex - 1);
-		}
-
-		this->note->Select(false);
-		this->pagingBuffer->UnmarkSelectionBegin();
-		this->Invalidate();
-
-		ImmReleaseContext(this->GetSafeHwnd(), himc);
-		this->Notify("UpdateScrollBars");
-		this->Notify("UpdateStatusBar");
-	}
-	
-	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
-}
-
-LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
-	this->isDirty = TRUE;
-	
-	char character[3];
-	character[0] = (BYTE)(wParam >> 8);
-	character[1] = (BYTE)wParam;
-	character[2] = '\0';
-
-	Long rowIndex = this->note->GetCurrent();
-	Glyph* row = this->note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	Command* command;
-	if (rowIndex >= this->note->GetLength() - 1 && columnIndex >= row->GetLength())
-	{
-		command = new WriteAtEndCommand(this, character);
-	}
-	else
-	{
-		command = new InsertAtCaretCommand(this, character);
-	}
-
-	if (command != NULL)
-	{
-		command->Execute();
-		if (command->IsUndoable())
-		{
-			//command = this->undoHistoryBook->Bind(command);
-			this->undoHistoryBook->Push(command);
-			this->redoHistoryBook->Clear();
-		}
-		else
-		{
-			delete command;
-		}
-	}
-
-	this->note->Select(false);
-	this->pagingBuffer->UnmarkSelectionBegin();
-	this->Invalidate();
-	this->Notify("UpdateScrollBars");
-	this->Notify("UpdateStatusBar");
-
-	return 0;
-}
-
-LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
-	this->isCompositing = FALSE;
-
-	return TRUE;
-}
-
 void NotepadForm::OnSetFocus(CWnd* pOldWnd) {
 	if (this->caretController != NULL)
 	{
@@ -417,61 +323,12 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 	this->Invalidate();
 }
 
-void NotepadForm::OnCommandRequested(UINT nID) {
-	if (nID == ID_MENU_EXIT)
-	{
-		this->parent->PostMessage(WM_CLOSE);
-	}
-	
-	CommandFactory commandFactory;
-	Command* command = commandFactory.Create(this, nID);
-	if (command != NULL)
-	{
-		command->Execute();
-
-		if (command->NeedScrollBarUpdate())
-		{
-			this->Notify("UpdateScrollBars");
-		}
-
-		if (command->IsUndoable())
-		{
-			//command = this->undoHistoryBook->Bind(command);
-			this->undoHistoryBook->Push(command);
-			this->redoHistoryBook->Clear();
-		}
-		else
-		{
-			delete command;
-		}
-	}
-
-	this->Notify("UpdateStatusBar"); 
-	this->Invalidate();
+void NotepadForm::OnCommandRange(UINT nID) {
+	this->HandleCommand(nID);
 }
 
 void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	KeyActionFactory keyActionFactory;
-	KeyAction* keyAction = keyActionFactory.Create(this, nChar);
-	if (keyAction != NULL)
-	{
-		keyAction->Perform();
-		
-		if (keyAction->NeedScrollBarUpdate())
-		{
-			this->Notify("UpdateScrollBars");
-		}
-		
-		if (!keyAction->ShouldKeepSelection())
-		{
-			this->note->Select(false);
-			this->pagingBuffer->UnmarkSelectionBegin();
-		}
-		delete keyAction;
-	}
-
-	this->Notify("UpdateStatusBar"); 
-	this->Invalidate();
+	this->HandleAction(nChar);
 }
 
 void NotepadForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
@@ -586,6 +443,69 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 	}
 }
 
+void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
+	ClientToScreen(&point);
+	this->mouseHandler->PopUpContextMenu(point);
+}
+
+void NotepadForm::HandleCommand(UINT nID, const TCHAR(*character), BOOL onChar) {
+	if (nID == ID_ACTION_EXIT)
+	{
+		this->parent->PostMessage(WM_CLOSE);
+	}
+
+	CommandFactory commandFactory;
+	Command* command = commandFactory.Create(this, nID, character, onChar);
+	if (command != NULL)
+	{
+		command->Execute();
+
+		if (command->NeedScrollBarUpdate())
+		{
+			this->Notify("UpdateScrollBars");
+		}
+
+		if (command->IsUndoable())
+		{
+			//command = this->undoHistoryBook->Bind(command);
+			this->undoHistoryBook->Push(command);
+			this->redoHistoryBook->Clear();
+		}
+		else
+		{
+			delete command;
+		}
+	}
+
+	this->isDirty = TRUE;
+	this->Notify("UpdateStatusBar");
+	this->Invalidate();
+}
+
+void NotepadForm::HandleAction(UINT nID) {
+	KeyActionFactory keyActionFactory;
+	KeyAction* keyAction = keyActionFactory.Create(this, nID);
+	if (keyAction != NULL)
+	{
+		keyAction->Perform();
+
+		if (keyAction->NeedScrollBarUpdate())
+		{
+			this->Notify("UpdateScrollBars");
+		}
+
+		if (!keyAction->ShouldKeepSelection())
+		{
+			this->note->Select(false);
+			this->pagingBuffer->UnmarkSelectionBegin();
+		}
+		delete keyAction;
+	}
+
+	this->Notify("UpdateStatusBar");
+	this->Invalidate();
+}
+
 void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zDelta) {
 	CoordinateConverter coordinateConverter(this);
 	CPoint absolutePoint = coordinateConverter.DisplayToAbsolute(point);
@@ -613,18 +533,13 @@ void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zD
 	this->parent->Invalidate();
 }
 
-void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
-	ClientToScreen(&point);
-	this->mouseHandler->PopUpContextMenu(point);
-}
-
 void NotepadForm::OnClose() {
 	if (this->isDirty)
 	{
 		int ret = this->MessageBox("저장하시겠습니까?", "경고", MB_YESNO);
 		if (ret == IDYES)
 		{
-			this->SendMessage(WM_COMMAND, (WPARAM)ID_MENU_SAVE, 0);
+			this->SendMessage(WM_COMMAND, (WPARAM)ID_ACTION_SAVE, 0);
 		}
 	}
 

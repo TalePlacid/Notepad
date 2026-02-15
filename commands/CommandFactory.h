@@ -10,7 +10,8 @@ public:
 	CommandFactory();
 	~CommandFactory();
 
-	Command* Create(CWnd* parent, UINT nID, LPARAM lParam = 0);
+	Command* Create(CWnd* parent, UINT nID, const TCHAR(*character), 
+		BOOL onChar, LPARAM lParam = 0);
 };
 
 #endif // !_COMMANDFACTORY_H

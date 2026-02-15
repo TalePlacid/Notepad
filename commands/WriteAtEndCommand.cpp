@@ -1,5 +1,4 @@
 #include "WriteAtEndCommand.h"
-#include "../resource.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
@@ -11,7 +10,7 @@
 
 #pragma warning(disable:4996)
 
-WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, char(*character), BOOL onChar)
+WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, const TCHAR(*character), BOOL onChar)
 	:Command(parent) {
 	this->character[0] = character[0];
 	this->character[1] = character[1];
@@ -207,12 +206,4 @@ void WriteAtEndCommand::Redo() {
 
 Command* WriteAtEndCommand::Clone() {
 	return new WriteAtEndCommand(*this);
-}
-
-UINT WriteAtEndCommand::GetId() {
-	return ID_COMMAND_WRITEATEND;
-}
-
-bool WriteAtEndCommand::IsUndoable() {
-	return true;
 }

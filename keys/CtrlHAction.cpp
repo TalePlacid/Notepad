@@ -14,5 +14,7 @@ CtrlHAction::~CtrlHAction() {
 }
 
 void CtrlHAction::Perform() {
+#if 0
 	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_MENU_REPLACE, 0);
+#endif
 }

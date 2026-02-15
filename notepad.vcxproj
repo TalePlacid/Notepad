@@ -286,6 +286,7 @@
     <ClCompile Include="TextFileIO.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
     <ClCompile Include="Visitor.cpp" />
+    <ClCompile Include="WritingModeSelector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
@@ -418,6 +419,7 @@
     <ClInclude Include="prints\PreviewPaginator.h" />
     <ClInclude Include="prints\PrinterResource.h" />
     <ClInclude Include="prints\PrintRenderer.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RowCounter.h" />
     <ClInclude Include="Scroll.h" />
     <ClInclude Include="ScrollBarAnalyzer.h" />
@@ -451,6 +453,7 @@
     <ClInclude Include="TextFileIO.h" />
     <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="Visitor.h" />
+    <ClInclude Include="WritingModeSelector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

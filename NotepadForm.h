@@ -54,16 +54,16 @@ protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	void OnSize(UINT nType, int cx, int cy);
-	void OnExitSizeMove();
-	void OnPaint();
 	LRESULT OnImeStartComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeChar(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeEndComposition(WPARAM wParam, LPARAM lParam);
+	void OnSize(UINT nType, int cx, int cy);
+	void OnExitSizeMove();
+	void OnPaint();
 	void OnSetFocus(CWnd* pOldWnd);
 	void OnKillFocus(CWnd* pNewWnd);
-	void OnCommandRequested(UINT nID);
+	void OnCommandRange(UINT nID);
 	void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -79,6 +79,8 @@ protected:
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
+	void HandleCommand(UINT nID, const TCHAR(*character) = 0, BOOL onChar = FALSE);
+	void HandleAction(UINT nID);
 	void HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zDelta = 0);
 private:
 	BOOL isCompositing;
