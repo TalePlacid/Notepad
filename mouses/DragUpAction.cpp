@@ -1,10 +1,10 @@
 #include "DragUpAction.h"
-#include "../resource.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../CoordinateConverter.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
@@ -49,7 +49,7 @@ void DragUpAction::Perform() {
 		if (note->IsAboveTopLine(currentRowIndex) && vScroll.GetPos() > 0)
 		{
 			difference = currentRowIndex - rowIndex;
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			PageLoader::LoadPrevious(this->parent);
 			currentRowIndex = note->GetCurrent();
 			rowIndex = currentRowIndex - difference;
 		}

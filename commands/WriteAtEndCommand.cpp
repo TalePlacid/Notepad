@@ -7,14 +7,15 @@
 #include "../glyphs/GlyphFactory.h"
 #include "../CaretNavigator.h"
 #include "../NoteWrapper.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
-WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, const TCHAR(*character), BOOL onChar)
+WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, const TCHAR(*character), BOOL isCompositing)
 	:Command(parent) {
 	this->character[0] = character[0];
 	this->character[1] = character[1];
-	this->onChar = onChar;
+	this->isCompositing = isCompositing;
 	this->offset = -1;
 }
 
@@ -26,7 +27,7 @@ WriteAtEndCommand::WriteAtEndCommand(const WriteAtEndCommand& source)
 	:Command(source.parent) {
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
-	this->onChar = source.onChar;
+	this->isCompositing = source.isCompositing;
 	this->offset = source.offset;
 }
 
@@ -35,7 +36,7 @@ WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source)
 
 	this->character[0] = const_cast<WriteAtEndCommand&>(source).character[0];
 	this->character[1] = const_cast<WriteAtEndCommand&>(source).character[1];
-	this->onChar = source.onChar;
+	this->isCompositing = source.isCompositing;
 	this->offset = source.offset;
 
 	return *this;
@@ -61,7 +62,7 @@ void WriteAtEndCommand::Execute() {
 	if (this->character[0] != '\r')
 	{
 		columnIndex = row->Add(glyph);
-		if (this->onChar)
+		if (!this->isCompositing)
 		{
 			pagingBuffer->Add((char*)(*glyph));
 		}
@@ -126,7 +127,7 @@ void WriteAtEndCommand::Undo() {
 	{
 		if (note->IsAboveTopLine(rowIndex - 1))
 		{
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			PageLoader::LoadPrevious(this->parent);
 		}
 		note->Remove();
 
@@ -139,7 +140,7 @@ void WriteAtEndCommand::Undo() {
 	}
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (this->onChar)
+	if (!this->isCompositing)
 	{
 		pagingBuffer->Remove();
 	}
@@ -167,7 +168,7 @@ void WriteAtEndCommand::Redo() {
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
-		if (this->onChar)
+		if (!this->isCompositing)
 		{
 			pagingBuffer->Add((char*)(*glyph));
 		}

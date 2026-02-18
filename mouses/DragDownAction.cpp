@@ -1,10 +1,10 @@
 #include "DragDownAction.h"
-#include "../resource.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../CoordinateConverter.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
@@ -50,7 +50,7 @@ void DragDownAction::Perform() {
 		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetPos())
 		{
 			difference = rowIndex - currentRowIndex;
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+			PageLoader::LoadNext(this->parent);
 			currentRowIndex = note->GetCurrent();
 			rowIndex = currentRowIndex + difference;
 		}

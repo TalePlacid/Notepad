@@ -1,6 +1,5 @@
 #include <afxwin.h>
 #include "AutoWrapCommand.h"
-#include "../resource.h"
 #include "../NotepadFrame.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
@@ -8,6 +7,7 @@
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
 #include "../NoteWrapper.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
@@ -21,7 +21,7 @@ AutoWrapCommand::~AutoWrapCommand() {
 }
 
 void AutoWrapCommand::Execute() {
-	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADFIRST, 0);
+	PageLoader::LoadFirst(this->parent);
 
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	notepadForm->isAutoWrapped = !notepadForm->isAutoWrapped;
@@ -37,12 +37,12 @@ void AutoWrapCommand::Execute() {
 	{
 		Long dummyRowCount = noteWrapper.Wrap();
 		max += dummyRowCount * sizeCalculator->GetRowHeight();
-		notepadFrame->GetMenu()->CheckMenuItem(ID_ACTION_AUTOWRAP, MF_CHECKED);
+		//notepadFrame->GetMenu()->CheckMenuItem(ID_ACTION_AUTOWRAP, MF_CHECKED);
 	}
 	else
 	{
 		noteWrapper.Unwrap();
-		notepadFrame->GetMenu()->CheckMenuItem(ID_ACTION_AUTOWRAP, MF_UNCHECKED);
+		//notepadFrame->GetMenu()->CheckMenuItem(ID_ACTION_AUTOWRAP, MF_UNCHECKED);
 	}
 
 	if (scrollController->HasVScroll())

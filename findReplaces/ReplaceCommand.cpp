@@ -216,7 +216,7 @@ void ReplaceCommand::Redo() {
 }
 
 UINT ReplaceCommand::GetId() {
-	return ID_COMMAND_REPLACE;
+	return 0; // ID_COMMAND_REPLACE;
 }
 
 Command* ReplaceCommand::Clone() {

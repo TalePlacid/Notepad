@@ -1,5 +1,4 @@
 #include "InsertAtCaretCommand.h"
-#include "../resource.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
@@ -8,14 +7,15 @@
 #include "../glyphs/GlyphFactory.h"
 #include "../caretNavigator.h"
 #include "../NoteWrapper.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
-InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, const TCHAR(*character), BOOL onChar)
+InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, const TCHAR(*character), BOOL isCompositing)
 	:Command(parent) {
 	this->character[0] = character[0];
 	this->character[1] = character[1];
-	this->onChar = onChar;
+	this->isCompositing = isCompositing;
 	this->offset = -1;
 	this->columnIndex = -1;
 }
@@ -28,7 +28,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 	:Command(source) {
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
-	this->onChar = source.onChar;
+	this->isCompositing = source.isCompositing;
 	this->offset = source.offset;
 }
 
@@ -36,7 +36,7 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 	Command::operator=(source);
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
-	this->onChar = source.onChar;
+	this->isCompositing = source.isCompositing;
 	this->offset = source.offset;
 
 	return *this;
@@ -80,7 +80,7 @@ void InsertAtCaretCommand::Execute() {
 		}
 
 		//3.3. 조합 확정이면, 페이징버퍼에서 적는다. 
-		if (this->onChar)
+		if (!this->isCompositing)
 		{
 			pagingBuffer->Add(this->character);
 		}
@@ -149,7 +149,7 @@ void InsertAtCaretCommand::Undo() {
 		//4.1. 적재범위에서 벗어났다면, 재적재한다.
 		if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 		{
-			SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+			PageLoader::LoadPrevious(this->parent);
 			rowIndex = note->GetCurrent();
 		}
 
@@ -182,7 +182,10 @@ void InsertAtCaretCommand::Undo() {
 	}
 
 	//5. 페이징 버퍼에서 지운다.
-	pagingBuffer->Remove();
+	if (!this->isCompositing)
+	{
+		pagingBuffer->Remove();
+	}
 
 	//6. 수직 스크롤이 있다면, 반영한다.
 	if (scrollController->HasVScroll())
@@ -243,7 +246,10 @@ void InsertAtCaretCommand::Redo() {
 	}
 
 	//5. 페이징버퍼에서 적는다.
-	pagingBuffer->Add(this->character);
+	if (!this->isCompositing)
+	{
+		pagingBuffer->Add(this->character);
+	}
 
 	//6. 수직 스크롤이 있다면, 반영한다.
 	if (scrollController->HasVScroll())
@@ -262,7 +268,7 @@ Command* InsertAtCaretCommand::Clone() {
 }
 
 UINT InsertAtCaretCommand::GetId() {
-	return ID_COMMAND_INSERTATCARET;
+	return 0; // ID_COMMAND_INSERTATCARET;
 }
 
 bool InsertAtCaretCommand::IsUndoable() {

@@ -1,9 +1,12 @@
 #ifndef _NOTEPADFORM_H //guard
 #define _NOTEPADFORM_H
 #include <afxwin.h>
+#include "AppID.h"
 #include "Subject.h"
 #include "prints/PageSetting.h"
 #include "Encoding.h"
+
+typedef unsigned long int ULong;
 
 class Glyph;
 class CaretController;
@@ -63,7 +66,7 @@ protected:
 	void OnPaint();
 	void OnSetFocus(CWnd* pOldWnd);
 	void OnKillFocus(CWnd* pNewWnd);
-	void OnCommandRange(UINT nID);
+	void OnMenuClicked(UINT nID);
 	void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -76,12 +79,13 @@ protected:
 	void OnRButtonDown(UINT nFlags, CPoint point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	void OnTimer(UINT_PTR nIDEvent);
-	void OnClose();
 	DECLARE_MESSAGE_MAP()
 private:
-	void HandleCommand(UINT nID, const TCHAR(*character) = 0, BOOL onChar = FALSE);
-	void HandleAction(UINT nID);
-	void HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zDelta = 0);
+	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL isCompositing = FALSE);
+	void HandleAction(AppID nID);
+#if 0
+	void HandleMouseEvent(AppID nID, UINT nFlags, CPoint point, short zDelta = 0);
+#endif
 private:
 	BOOL isCompositing;
 	BOOL nextIsLastOnSize;

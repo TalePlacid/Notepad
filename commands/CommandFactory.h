@@ -1,6 +1,7 @@
 #ifndef _COMMANDFACTORY_H //guard
 #define _COMMANDFACTORY_H
 #include <afxwin.h>
+#include "../AppID.h"
 
 class Command;
 class CFindReplaceDialog;
@@ -10,8 +11,8 @@ public:
 	CommandFactory();
 	~CommandFactory();
 
-	Command* Create(CWnd* parent, UINT nID, const TCHAR(*character), 
-		BOOL onChar, LPARAM lParam = 0);
+	static Command* Create(CWnd* parent, AppID nID, const TCHAR(*character) = 0, 
+		BOOL isCompositing = FALSE, LPARAM lParam = 0);
 };
 
 #endif // !_COMMANDFACTORY_H

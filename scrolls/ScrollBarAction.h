@@ -1,6 +1,6 @@
 #ifndef _SCROLLBARACTION_H //guard
 #define _SCROLLBARACTION_H
-#include "../Action.h"
+#include "../actions/Action.h"
 
 class CWnd;
 

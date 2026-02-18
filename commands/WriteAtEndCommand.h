@@ -8,7 +8,7 @@ typedef signed long int Long;
 
 class WriteAtEndCommand : public Command {
 public:
-	WriteAtEndCommand(CWnd* parent, const TCHAR(*character), BOOL onChar = TRUE);
+	WriteAtEndCommand(CWnd* parent, const TCHAR(*character), BOOL isCompositing = FALSE);
 	virtual ~WriteAtEndCommand();
 	WriteAtEndCommand(const WriteAtEndCommand& source);
 	WriteAtEndCommand& operator=(const WriteAtEndCommand& source);
@@ -21,12 +21,12 @@ public:
 	virtual bool IsUndoable();
 private:
 	char character[2];
-	BOOL onChar;
+	BOOL isCompositing;
 	Long offset;
 };
 
 inline UINT WriteAtEndCommand::GetId() {
-	return ID_COMMAND_WRITEATEND;
+	return 0; //ID_COMMAND_WRITEATEND;
 }
 
 inline bool WriteAtEndCommand::IsUndoable() {

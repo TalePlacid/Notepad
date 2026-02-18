@@ -1,8 +1,8 @@
 #include "PreviewCommand.h"
-#include "../resource.h"
 #include "../NotepadForm.h"
 #include "../prints/PreviewForm.h"
 #include "../SuspendAutoWrap.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
@@ -18,7 +18,7 @@ PreviewCommand::~PreviewCommand() {
 void PreviewCommand::Execute() {
 	SuspendAutoWrap suspendAutoWrap(this->parent);
 
-	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADFIRST, 0);
+	PageLoader::LoadFirst(this->parent);
 
 	RECT rect;
 	rect.left = 0;

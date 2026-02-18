@@ -1,12 +1,12 @@
 #include <afxwin.h>
 #include "CaretNavigator.h"
-#include "resource.h"
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
 #include "PagingBuffer.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "NoteWrapper.h"
+#include "PageLoader.h"
 
 #pragma warning(disable:4996)
 
@@ -43,7 +43,7 @@ Long CaretNavigator::MoveTo(Long offset) {
 			//2.1.1. 이전 줄이 적재범위에서 벗어나면 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
-				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+				PageLoader::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
@@ -75,7 +75,7 @@ Long CaretNavigator::MoveTo(Long offset) {
 			Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * sizeCalculator->GetRowHeight();
 			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 			{
-				SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+				PageLoader::LoadNext(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
@@ -194,7 +194,7 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 	Long pageMax = (rowStartIndex + note->GetLength()) * rowHeight;
 	if (note->IsBelowBottomLine(rowIndexToMove) && pageMax < vScroll.GetMax())
 	{
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		PageLoader::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();
 		row = note->GetAt(rowIndex);
 		rowStartIndex = pagingBuffer->GetRowStartIndex();
@@ -267,7 +267,7 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 	//3. 적재범위를 넘어섰으면, 재적재한다.
 	if (note->IsAboveTopLine(rowIndexToMove) && rowStartIndex > 0)
 	{
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADPREVIOUS, 0);
+		PageLoader::LoadPrevious(this->parent);
 		rowIndex = note->GetCurrent();
 		row = note->GetAt(rowIndex);
 		rowStartIndex = pagingBuffer->GetRowStartIndex();

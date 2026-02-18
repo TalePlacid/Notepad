@@ -1,7 +1,6 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
 #include "PrintCommand.h"
-#include "../resource.h"
 #include "../prints/PageSetting.h"
 #include "../prints/PrinterResource.h"
 #include "../NotepadForm.h"
@@ -10,6 +9,7 @@
 #include "../prints/PreviewPaginator.h"
 #include "../prints/PrintRenderer.h"
 #include "../SuspendAutoWrap.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
@@ -28,7 +28,7 @@ PrintCommand::~PrintCommand() {
 void PrintCommand::Execute() {
 	//1. 자동개행을 멈추고, 처음으로 이동한다.
 	SuspendAutoWrap suspendAutoWrap(this->parent);
-	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADFIRST, 0);
+	PageLoader::LoadFirst(this->parent);
 
 	//2. 페이징 한다.
 	this->previewPaginator = new PreviewPaginator(this->parent);

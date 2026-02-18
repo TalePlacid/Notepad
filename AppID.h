@@ -1,0 +1,20 @@
+#ifndef _APPID_H //guard
+#define _APPID_H
+
+typedef unsigned long int ULong;
+
+enum class AppID : ULong
+{
+	NONE,
+	ID_COMMAND_WRITE_AT_END,
+	ID_COMMAND_INSERT_AT_CARET,
+	ID_COMMAND_ERASE,
+	ID_ACTION_NEW,
+	ID_ACTION_NEW_WINDOW,
+	ID_ACTION_OPEN,
+	ID_ACTION_SAVE,
+	ID_ACTION_SAVE_AS,
+	ID_ACTION_CHANGE_FONT
+};
+
+#endif // !_APPID_H

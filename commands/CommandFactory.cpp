@@ -1,13 +1,8 @@
 #include <afxdlgs.h>
-#include "../resource.h"
+#include "../AppID.h"
 #include "CommandFactory.h"
 #include "WriteAtEndCommand.h"
 #include "InsertAtCaretCommand.h"
-#include "SelectFontCommand.h"
-#include "OpenCommand.h"
-#include "SaveCommand.h"
-#include "SaveAsCommand.h"
-#include "NewCommand.h"
 #include "EraseCommand.h"
 #include "AutoWrapCommand.h"
 #include "PasteCommand.h"
@@ -19,16 +14,11 @@
 #include "UndoCommand.h"
 #include "RedoCommand.h"
 #include "PreviewCommand.h"
-#include "LoadNextCommand.h"
-#include "LoadPreviousCommand.h"
-#include "LoadLastCommand.h"
-#include "LoadFirstCommand.h"
 #include "SetPageCommand.h"
 #include "PrintCommand.h"
 #include "ZoomInCommand.h"
 #include "ZoomOutCommand.h"
 #include "ZoomResetCommand.h"
-#include "NewWindowCommand.h"
 #include "../findReplaces/ReplaceCommand.h"
 #include "../findReplaces/ReplaceAllCommand.h"
 #include "../findReplaces/CloseFindReplaceCommand.h"
@@ -45,12 +35,21 @@ CommandFactory::~CommandFactory() {
 
 }
 
-Command* CommandFactory::Create(CWnd* parent, UINT nID, const TCHAR(*character), 
-	BOOL onChar, LPARAM lParam) {
+Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character), 
+	BOOL isCompositing, LPARAM lParam) {
 	Command* command = NULL;
 
 	switch (nID)
 	{
+	case AppID::ID_COMMAND_WRITE_AT_END:
+		command = new WriteAtEndCommand(parent, character, isCompositing);
+		break;
+	case AppID::ID_COMMAND_INSERT_AT_CARET:
+		command = new InsertAtCaretCommand(parent, character, isCompositing);
+		break;
+	case AppID::ID_COMMAND_ERASE:
+		command = new EraseCommand(parent, isCompositing);
+		break;
 #if 0
 	case ID_MENU_NEW:
 		command = new NewCommand(parent);
@@ -146,21 +145,9 @@ Command* CommandFactory::Create(CWnd* parent, UINT nID, const TCHAR(*character),
 	case ID_COMMAND_FINDNEXT:
 		command = new FindNextCommand(parent, (CFindReplaceDialog*)lParam);
 		break;
-	case ID_COMMAND_LOADFIRST:
-		command = new LoadFirstCommand(parent);
-		break;	
-	case ID_COMMAND_LOADPREVIOUS:
-		command = new LoadPreviousCommand(parent);
-		break;
-	case ID_COMMAND_LOADNEXT:
-		command = new LoadNextCommand(parent);
-		break;
-	case ID_COMMAND_LOADLAST:
-		command = new LoadLastCommand(parent);
-		break;
+#endif
 	default:
 		break;
-#endif
 	}
 
 	return command;

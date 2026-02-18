@@ -7,7 +7,7 @@ typedef signed long int Long;
 
 class InsertAtCaretCommand : public Command {
 public:
-	InsertAtCaretCommand(CWnd* parent, const TCHAR(*character), BOOL onChar = TRUE);
+	InsertAtCaretCommand(CWnd* parent, const TCHAR(*character), BOOL isCompositing = FALSE);
 	virtual ~InsertAtCaretCommand();
 	InsertAtCaretCommand(const InsertAtCaretCommand& source);
 	InsertAtCaretCommand& operator=(const InsertAtCaretCommand& source);
@@ -20,7 +20,7 @@ public:
 	virtual bool IsUndoable();
 private:
 	char character[2];
-	UINT onChar;
+	UINT isCompositing;
 	Long offset;
 	Long columnIndex;
 };

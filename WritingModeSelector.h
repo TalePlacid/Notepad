@@ -1,6 +1,7 @@
 #ifndef _WRITINGMODESELECTOR_H //guard
 #define _WRITINGMODESELECTOR_H
 #include <afxwin.h>
+#include "AppID.h"
 
 class PagingBuffer;
 
@@ -9,7 +10,7 @@ public:
 	WritingModeSelector();
 	~WritingModeSelector();
 
-	static UINT DetermineWritingMode(const PagingBuffer* pagingBuffer);
+	static AppID DetermineWritingMode(const PagingBuffer* pagingBuffer);
 };
 
 #endif // !_WRITINGMODESELECTOR_H

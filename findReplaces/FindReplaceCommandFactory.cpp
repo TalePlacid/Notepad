@@ -30,6 +30,7 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
 	UINT nID = 0;
+#if 0
 	if (findReplaceDialog->IsTerminating())
 	{
 		nID = ID_COMMAND_CLOSEFINDREPLACE;
@@ -61,8 +62,8 @@ Command* FindReplaceCommandFactory::Create(CWnd* parent, CFindReplaceDialog* fin
 	{
 		nID = ID_COMMAND_FINDNEXT;
 	}
+#endif
+//	command = commandFactory.Create(parent, nID, 0, FALSE, (LPARAM)findReplaceDialog);
 
-	command = commandFactory.Create(parent, nID, 0, FALSE, (LPARAM)findReplaceDialog);
-
-	return command;
+	return NULL; //command;
 }

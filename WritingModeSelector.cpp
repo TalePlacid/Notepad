@@ -1,5 +1,4 @@
 #include "WritingModeSelector.h"
-#include "resource.h"
 #include "PagingBuffer.h"
 
 #pragma warning(disable:4996)
@@ -12,11 +11,11 @@ WritingModeSelector::~WritingModeSelector() {
 
 }
 
-UINT WritingModeSelector::DetermineWritingMode(const PagingBuffer* pagingBuffer) {
-	UINT nID = ID_COMMAND_INSERTATCARET;
+AppID WritingModeSelector::DetermineWritingMode(const PagingBuffer* pagingBuffer) {
+	AppID nID = AppID::ID_COMMAND_INSERT_AT_CARET;
 	if (pagingBuffer->GetCurrentOffset() == pagingBuffer->GetFileEndOffset())
 	{
-		nID = ID_COMMAND_WRITEATEND;
+		nID = AppID::ID_COMMAND_WRITE_AT_END;
 	}
 
 	return nID;

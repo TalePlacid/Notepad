@@ -1,7 +1,6 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
 #include "ReplaceAllCommand.h"
-#include "../resource.h"
 #include "FindReplaceOption.h"
 #include "../NotepadForm.h"
 #include "../SearchResultController.h"
@@ -10,6 +9,8 @@
 #include "../commands/Command.h"
 #include "../commands/MacroCommand.h"
 #include "../commands/CommandFactory.h"
+#include "../PageLoader.h"
+
 
 #pragma warning(disable:4996)
 
@@ -24,10 +25,11 @@ ReplaceAllCommand::~ReplaceAllCommand() {
 
 void ReplaceAllCommand::Execute() {
 	//1. 전체 문서의 첫 위치로 이동한다.
-	SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADFIRST, 0);
+	PageLoader::LoadFirst(this->parent);
 
 	//2. 찾는다.
 	CommandFactory commandFactory;
+#if 0
 	Command* command = commandFactory.Create(this->parent, ID_COMMAND_FIND, 0, FALSE, (LPARAM)(this->findReplaceDialog));
 	if (command != NULL)
 	{
@@ -50,6 +52,7 @@ void ReplaceAllCommand::Execute() {
 		}
 		i++;
 	}
+#endif
 }
 
 void ReplaceAllCommand::Undo() {

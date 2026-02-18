@@ -1,6 +1,6 @@
 #ifndef _MOUSEACTION_H
 #define _MOUSEACTION_H
-#include "../Action.h"
+#include "../actions/Action.h"
 
 class CWnd;
 

@@ -1,6 +1,5 @@
 #include <afxwin.h>
 #include "EraseRangeCommand.h"
-#include "../resource.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
@@ -11,6 +10,7 @@
 #include "../CaretNavigator.h"
 #include "../RowCounter.h"
 #include "../NoteWrapper.h"
+#include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
@@ -155,7 +155,7 @@ void EraseRangeCommand::Execute() {
 			pagingBuffer->Add(CString("\r\n"));
 			pagingBuffer->PreviousRow();
 		}
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		PageLoader::LoadNext(this->parent);
 		if (!row->IsDummyRow() && columnIndex == 0)
 		{
 			note->MergeRows(rowIndex);
@@ -333,7 +333,7 @@ void EraseRangeCommand::Redo() {
 			pagingBuffer->Add(CString("\r\n"));
 			pagingBuffer->PreviousRow();
 		}
-		SendMessage(this->parent->GetSafeHwnd(), WM_COMMAND, (WPARAM)ID_COMMAND_LOADNEXT, 0);
+		PageLoader::LoadNext(this->parent);
 		if (!row->IsDummyRow() && columnIndex == 0)
 		{
 			note->MergeRows(rowIndex);
@@ -348,7 +348,7 @@ Command* EraseRangeCommand::Clone() {
 }
 
 UINT EraseRangeCommand::GetId() {
-	return ID_COMMAND_ERASERANGE;
+	return 0; // ID_COMMAND_ERASERANGE;
 }
 
 bool EraseRangeCommand::IsUndoable() {

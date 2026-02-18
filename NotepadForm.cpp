@@ -2,8 +2,8 @@
 #include <imm.h>
 
 #include "NotepadForm.h"
-#include "message.h"
 #include "resource.h"
+#include "message.h"
 #include "Observer.h"
 
 #include "glyphs/Note.h"
@@ -26,10 +26,12 @@
 #include "CoordinateConverter.h"
 #include "AutoScroller.h"
 #include "WritingModeSelector.h"
+#include "KeyDownInterpreter.h"
+#include "MenuInterpreter.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
-#include "keys/KeyActionFactory.h"
+#include "actions/ActionFactory.h"
 #include "scrolls/ScrollBarActionFactory.h"
 #include "findReplaces/FindReplaceCommandFactory.h"
 #include "mouses/MouseActionFactory.h"
@@ -38,13 +40,9 @@
 #include "Caret.h"
 #include "glyphs/Glyph.h"
 #include "commands/Command.h"
-#include "keys/KeyAction.h"
+#include "actions/KeyAction.h"
 #include "scrolls/ScrollBarAction.h"
 #include "mouses/MouseAction.h"
-
-#include "commands/WriteAtEndCommand.h"
-#include "commands/InsertAtCaretCommand.h"
-#include "commands/EraseCommand.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -63,7 +61,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_COMMAND_RANGE(ID_ACTION_NEW, ID_COMMAND_LOADLAST, OnCommandRange)
+	ON_COMMAND_RANGE(ID_MENU_UNDO, ID_MENU_INFO, OnMenuClicked)
 	ON_WM_KEYDOWN()
 	ON_WM_VSCROLL()
 	ON_WM_HSCROLL()
@@ -76,7 +74,6 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_TIMER()
-	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
 
 
@@ -107,7 +104,72 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 }
 
 NotepadForm::~NotepadForm() {
+	if (this->note != NULL)
+	{
+		delete this->note;
+		this->note = NULL;
+	}
 
+	if (this->caretController != NULL)
+	{
+		delete this->caretController;
+		this->caretController = NULL;
+	}
+
+	if (this->originalFont != NULL)
+	{
+		delete this->originalFont;
+	}
+
+	if (this->displayFont != NULL)
+	{
+		delete this->displayFont;
+	}
+
+	if (this->sizeCalculator != NULL)
+	{
+		delete this->sizeCalculator;
+	}
+
+	if (this->scrollController != NULL)
+	{
+		delete this->scrollController;
+	}
+
+	if (this->clipboardController != NULL)
+	{
+		delete this->clipboardController;
+	}
+
+	if (this->pagingBuffer != NULL)
+	{
+		delete this->pagingBuffer;
+	}
+
+	if (this->searchResultController != NULL)
+	{
+		delete this->searchResultController;
+	}
+
+	if (this->undoHistoryBook != NULL)
+	{
+		delete this->undoHistoryBook;
+	}
+
+	if (this->redoHistoryBook != NULL)
+	{
+		delete this->redoHistoryBook;
+	}
+
+	if (this->previewForm != NULL)
+	{
+		delete this->previewForm;
+	}
+
+	if (this->mouseHandler != NULL)
+	{
+		delete this->mouseHandler;
+	}
 }
 
 BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
@@ -197,7 +259,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if ((nChar > 31 && nChar < 127) || nChar == 9 || nChar == 13)
 	{
-		UINT nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+		AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
 		TCHAR character[2];
 		character[0] = nChar;
 		character[1] = '\0';
@@ -205,7 +267,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		{
 			character[1] = '\n';
 		}
-		this->HandleCommand(nID, character, TRUE);
+		this->HandleCommand(nID, character, FALSE);
 	}
 }
 
@@ -224,14 +286,14 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 
 		if (length > 0)
 		{
-			UINT nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-			this->HandleCommand(nID, character, FALSE);
+			AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+			this->HandleCommand(nID, character, this->isCompositing);
 			this->isCompositing = TRUE;
 		}
 		else if (length == 0)
 		{
+			this->HandleCommand(AppID::ID_COMMAND_ERASE, NULL, this->isCompositing);
 			this->isCompositing = FALSE;
-			this->HandleCommand(ID_COMMAND_ERASE);
 		}
 
 		ImmReleaseContext(this->GetSafeHwnd(), himc);
@@ -245,7 +307,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	character[0] = (BYTE)(wParam >> 8);
 	character[1] = (BYTE)wParam;
 
-	UINT nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+	AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
 	this->HandleCommand(nID, character, TRUE);
 
 	return 0;
@@ -323,12 +385,34 @@ void NotepadForm::OnKillFocus(CWnd* pNewWnd) {
 	this->Invalidate();
 }
 
-void NotepadForm::OnCommandRange(UINT nID) {
-	this->HandleCommand(nID);
+void NotepadForm::OnMenuClicked(UINT nID) {
+	AppID appID = MenuInterpreter::DetermineID(nID);
+	if (appID != AppID::NONE)
+	{
+		if (MenuInterpreter::IsAction(nID))
+		{
+			this->HandleAction(appID);
+		}
+		else
+		{
+			this->HandleCommand(appID);
+		}
+	}
 }
 
 void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	this->HandleAction(nChar);
+	AppID nID = KeyDownInterpreter::DetermineID(nChar);
+	if (nID != AppID::NONE)
+	{
+		if (KeyDownInterpreter::IsAction(nChar))
+		{
+			this->HandleAction(nID);
+		}
+		else
+		{
+			this->HandleCommand(nID);
+		}
+	}
 }
 
 void NotepadForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
@@ -397,7 +481,7 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 }
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
-	this->HandleMouseEvent(WM_LBUTTONDOWN, nFlags, point);
+	//this->HandleMouseEvent(WM_LBUTTONDOWN, nFlags, point);
 }
 
 void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
@@ -410,7 +494,7 @@ void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
 			SetTimer(0, 30, NULL);
 		}
 
-		this->HandleMouseEvent(WM_MOUSEMOVE, nFlags, point);
+		//this->HandleMouseEvent(WM_MOUSEMOVE, nFlags, point);
 	}
 }
 
@@ -420,7 +504,7 @@ void NotepadForm::OnLButtonUp(UINT nFlags, CPoint point) {
 }
 
 BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
-	this->HandleMouseEvent(WM_MOUSEWHEEL, nFlags, pt, zDelta);
+	//this->HandleMouseEvent(WM_MOUSEWHEEL, nFlags, pt, zDelta);
 
 	return 0;
 }
@@ -435,7 +519,7 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 		AutoScroller autoScroller(this);
 		autoScroller.ScrollIfNeeded(cursorPos);
 
-		this->HandleMouseEvent(WM_MOUSEMOVE, MK_LBUTTON, cursorPos);
+		//this->HandleMouseEvent(WM_MOUSEMOVE, MK_LBUTTON, cursorPos);
 	}
 		break;
 	default:
@@ -448,14 +532,8 @@ void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
 	this->mouseHandler->PopUpContextMenu(point);
 }
 
-void NotepadForm::HandleCommand(UINT nID, const TCHAR(*character), BOOL onChar) {
-	if (nID == ID_ACTION_EXIT)
-	{
-		this->parent->PostMessage(WM_CLOSE);
-	}
-
-	CommandFactory commandFactory;
-	Command* command = commandFactory.Create(this, nID, character, onChar);
+void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar) {
+	Command* command = CommandFactory::Create(this, nID, character, onChar);
 	if (command != NULL)
 	{
 		command->Execute();
@@ -482,29 +560,29 @@ void NotepadForm::HandleCommand(UINT nID, const TCHAR(*character), BOOL onChar) 
 	this->Invalidate();
 }
 
-void NotepadForm::HandleAction(UINT nID) {
-	KeyActionFactory keyActionFactory;
-	KeyAction* keyAction = keyActionFactory.Create(this, nID);
-	if (keyAction != NULL)
+void NotepadForm::HandleAction(AppID nID) {
+	Action* action = ActionFactory::Create(this, nID);
+	if (action != NULL)
 	{
-		keyAction->Perform();
+		action->Perform();
 
-		if (keyAction->NeedScrollBarUpdate())
+		if (action->NeedScrollBarUpdate())
 		{
 			this->Notify("UpdateScrollBars");
 		}
 
-		if (!keyAction->ShouldKeepSelection())
+		if (!action->ShouldKeepSelection())
 		{
 			this->note->Select(false);
 			this->pagingBuffer->UnmarkSelectionBegin();
 		}
-		delete keyAction;
+		delete action;
 	}
 
 	this->Notify("UpdateStatusBar");
 	this->Invalidate();
 }
+#if 0
 
 void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zDelta) {
 	CoordinateConverter coordinateConverter(this);
@@ -532,83 +610,4 @@ void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zD
 	this->Notify("UpdateStatusBar");
 	this->parent->Invalidate();
 }
-
-void NotepadForm::OnClose() {
-	if (this->isDirty)
-	{
-		int ret = this->MessageBox("저장하시겠습니까?", "경고", MB_YESNO);
-		if (ret == IDYES)
-		{
-			this->SendMessage(WM_COMMAND, (WPARAM)ID_ACTION_SAVE, 0);
-		}
-	}
-
-	if (this->note != NULL)
-	{
-		delete this->note;
-		this->note = NULL;
-	}
-
-	if (this->caretController != NULL)
-	{
-		delete this->caretController;
-		this->caretController = NULL;
-	}
-
-	if (this->originalFont != NULL)
-	{
-		delete this->originalFont;
-	}
-
-	if (this->displayFont != NULL)
-	{
-		delete this->displayFont;
-	}
-
-	if (this->sizeCalculator != NULL)
-	{
-		delete this->sizeCalculator;
-	}
-
-	if (this->scrollController != NULL)
-	{
-		delete this->scrollController;
-	}
-
-	if (this->clipboardController != NULL)
-	{
-		delete this->clipboardController;
-	}
-
-	if (this->pagingBuffer != NULL)
-	{
-		delete this->pagingBuffer;
-	}
-
-	if (this->searchResultController != NULL)
-	{
-		delete this->searchResultController;
-	}
-
-	if (this->undoHistoryBook != NULL)
-	{
-		delete this->undoHistoryBook;
-	}
-
-	if (this->redoHistoryBook != NULL)
-	{
-		delete this->redoHistoryBook;
-	}
-
-	if (this->previewForm != NULL)
-	{
-		delete this->previewForm;
-	}
-
-	if (this->mouseHandler != NULL)
-	{
-		delete this->mouseHandler;
-	}
-
-	CWnd::OnClose();
-}
+#endif

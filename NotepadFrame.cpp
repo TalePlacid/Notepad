@@ -10,7 +10,7 @@ BEGIN_MESSAGE_MAP(NotepadFrame, CFrameWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
 	ON_WM_EXITSIZEMOVE()
-	ON_COMMAND_RANGE(ID_ACTION_NEW, ID_COMMAND_LOADLAST, OnCommandRange)
+	ON_COMMAND_RANGE(ID_MENU_UNDO, ID_MENU_INFO, OnMenuClicked)
 	ON_WM_ERASEBKGND()
 	ON_WM_CLOSE()
 	END_MESSAGE_MAP()
@@ -70,7 +70,7 @@ void NotepadFrame::OnExitSizeMove() {
 	this->notepadForm->SendMessage(WM_EXITSIZEMOVE);
 }
 
-void NotepadFrame::OnCommandRange(UINT nID) {
+void NotepadFrame::OnMenuClicked(UINT nID) {
 	this->notepadForm->SendMessage(WM_COMMAND, (WPARAM)nID);
 	this->notepadForm->SetFocus();
 }
@@ -81,6 +81,15 @@ BOOL NotepadFrame::OnEraseBkgnd(CDC* pDC) {
 
 
 void NotepadFrame::OnClose() {
+	if (((NotepadForm*)(this->notepadForm))->isDirty)
+	{
+		int ret = this->MessageBox("저장하시겠습니까?", "경고", MB_YESNO);
+		if (ret == IDYES)
+		{
+			this->notepadForm->SendMessage(WM_COMMAND, (WPARAM)ID_MENU_SAVE, 0);
+		}
+	}
+	
 	this->notepadForm->SendMessage(WM_CLOSE);
 
 	if (this->notepadForm != NULL)

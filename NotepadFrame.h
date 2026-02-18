@@ -18,7 +18,7 @@ protected:
 	void OnSetFocus(CWnd* pOldWnd);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnExitSizeMove();
-	void OnCommandRange(UINT nID);
+	void OnMenuClicked(UINT nID);
 	virtual BOOL OnEraseBkgnd(CDC* pDC);
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
