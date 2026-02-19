@@ -1,21 +1,21 @@
 #include <afxwin.h>
-#include "HomeAction.h"
+#include "MoveLineRearAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
-HomeAction::HomeAction(CWnd* parent)
-	:KeyAction(parent) {
+MoveLineRearAction::MoveLineRearAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-HomeAction::~HomeAction() {
+MoveLineRearAction::~MoveLineRearAction() {
 
 }
 
-void HomeAction::Perform() {
+void MoveLineRearAction::Perform() {
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
@@ -23,9 +23,9 @@ void HomeAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. 노트에서 이동한다.
-	Long firstColumnIndex = row->First();
+	Long lastColumnIndex = row->Last();
 
 	//3. 페이징 버퍼에서 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->Previous(columnIndex - firstColumnIndex);
+	pagingBuffer->Next(lastColumnIndex - columnIndex);
 }

@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "CtrlLeftAction.h"
+#include "MoveWordLeftAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
@@ -7,16 +7,16 @@
 
 #pragma warning(disable:4996)
 
-CtrlLeftAction::CtrlLeftAction(CWnd* parent)
-	:KeyAction(parent) {
+MoveWordLeftAction::MoveWordLeftAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-CtrlLeftAction::~CtrlLeftAction() {
+MoveWordLeftAction::~MoveWordLeftAction() {
 
 }
 
-void CtrlLeftAction::Perform() {
+void MoveWordLeftAction::Perform() {
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

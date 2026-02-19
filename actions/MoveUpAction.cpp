@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "UpArrowAction.h"
+#include "MoveUpAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../SizeCalculator.h"
@@ -9,16 +9,16 @@
 
 #pragma warning(disable:4996)
 
-UpArrowAction::UpArrowAction(CWnd* parent)
-	:KeyAction(parent) {
+MoveUpAction::MoveUpAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-UpArrowAction::~UpArrowAction() {
+MoveUpAction::~MoveUpAction() {
 
 }
 
-void UpArrowAction::Perform() {
+void MoveUpAction::Perform() {
 	//1. 이전 줄이 재적재범위에 들어가면, 재적재한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;

@@ -29,6 +29,52 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 
 	switch (nChar)
 	{
+	case VK_UP:
+		nID = AppID::ID_ACTION_MOVE_UP;
+		break;
+	case VK_DOWN:
+		nID = AppID::ID_ACTION_MOVE_DOWN;
+		break;
+	case VK_LEFT:
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_MOVE_WORD_LEFT;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_LEFT;
+		}
+		break;
+	case VK_RIGHT:
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_MOVE_WORD_RIGHT;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_RIGHT;
+		}
+		break;
+	case VK_HOME:
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_MOVE_DOC_FRONT;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_LINE_FRONT;
+		}
+		break;
+	case VK_END:
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_MOVE_DOC_REAR;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_LINE_REAR;
+		}
+		break;
 	case VK_BACK:
 		nID = AppID::ID_COMMAND_ERASE;
 		break;

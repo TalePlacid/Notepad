@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "LeftArrowAction.h"
+#include "MoveLeftAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../SizeCalculator.h"
@@ -9,16 +9,16 @@
 
 #pragma warning(disable:4996)
 
-LeftArrowAction::LeftArrowAction(CWnd* parent)
-	:KeyAction(parent) {
+MoveLeftAction::MoveLeftAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-LeftArrowAction::~LeftArrowAction() {
+MoveLeftAction::~MoveLeftAction() {
 
 }
 
-void LeftArrowAction::Perform() {
+void MoveLeftAction::Perform() {
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

@@ -1,41 +1,4 @@
 #include "KeyActionFactory.h"
-#include "LeftArrowAction.h"
-#include "RightArrowAction.h"
-#include "UpArrowAction.h"
-#include "DownArrowAction.h"
-#include "HomeAction.h"
-#include "EndAction.h"
-#include "CtrlLeftAction.h"
-#include "CtrlRightAction.h"
-#include "CtrlHomeAction.h"
-#include "CtrlEndAction.h"
-#include "ShiftLeftAction.h"
-#include "ShiftRightAction.h"
-#include "ShiftUpAction.h"
-#include "ShiftDownAction.h"
-#include "ShiftHomeAction.h"
-#include "ShiftEndAction.h"
-#include "CtrlShiftLeftAction.h"
-#include "CtrlShiftHomeAction.h"
-#include "CtrlShiftEndAction.h"
-#include "CtrlShiftRightAction.h"
-#include "CtrlCAction.h"
-#include "CtrlVAction.h"
-#include "PageUpAction.h"
-#include "PageDownAction.h"
-#include "CtrlXAction.h"
-#include "CtrlFAction.h"
-#include "CtrlHAction.h"
-#include "CtrlZAction.h"
-#include "CtrlYAction.h"
-#include "ShiftPageDownAction.h"
-#include "ShiftPageUpAction.h"
-#include "CtrlPageDownAction.h"
-#include "CtrlPageUpAction.h"
-#include "CtrlAAction.h"
-#include "CtrlPlusAction.h"
-#include "CtrlMinusAction.h"
-#include "Ctrl0Action.h"
 
 #pragma warning(disable:4996)
 
@@ -55,6 +18,7 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 
 	switch (nChar)
 	{
+#if 0
 	case VK_LEFT:
 		if (onCtrlKey && onShiftKey)
 		{
@@ -248,9 +212,9 @@ KeyAction* KeyActionFactory::Create(CWnd* parent, UINT nChar) {
 			keyAction = new CtrlZAction(parent);
 		}
 		break;
+#endif
 	default:
 		break;
 	}
-
 	return keyAction;
 }

@@ -404,7 +404,7 @@
     <ClCompile Include="actions\CtrlCAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlEndAction.cpp">
+    <ClCompile Include="actions\MoveDocRearAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\CtrlFAction.cpp">
@@ -413,10 +413,10 @@
     <ClCompile Include="actions\CtrlHAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlHomeAction.cpp">
+    <ClCompile Include="actions\MoveDocFrontAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlLeftAction.cpp">
+    <ClCompile Include="actions\MoveWordLeftAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\CtrlMinusAction.cpp">
@@ -431,7 +431,7 @@
     <ClCompile Include="actions\CtrlPlusAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlRightAction.cpp">
+    <ClCompile Include="actions\MoveWordRightAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\CtrlShiftEndAction.cpp">
@@ -458,13 +458,13 @@
     <ClCompile Include="actions\CtrlZAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\DownArrowAction.cpp">
+    <ClCompile Include="actions\MoveDownAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\EndAction.cpp">
+    <ClCompile Include="actions\MoveLineRearAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\HomeAction.cpp">
+    <ClCompile Include="actions\MoveLineFrontAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\KeyAction.cpp">
@@ -473,7 +473,7 @@
     <ClCompile Include="actions\KeyActionFactory.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\LeftArrowAction.cpp">
+    <ClCompile Include="actions\MoveLeftAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\PageDownAction.cpp">
@@ -482,7 +482,7 @@
     <ClCompile Include="actions\PageUpAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\RightArrowAction.cpp">
+    <ClCompile Include="actions\MoveRightAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\ShiftDownAction.cpp">
@@ -509,7 +509,7 @@
     <ClCompile Include="actions\ShiftUpAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\UpArrowAction.cpp">
+    <ClCompile Include="actions\MoveUpAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\NewAction.cpp">
@@ -901,7 +901,7 @@
     <ClInclude Include="actions\CtrlCAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlEndAction.h">
+    <ClInclude Include="actions\MoveDocRearAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\CtrlFAction.h">
@@ -910,10 +910,10 @@
     <ClInclude Include="actions\CtrlHAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlHomeAction.h">
+    <ClInclude Include="actions\MoveDocFrontAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlLeftAction.h">
+    <ClInclude Include="actions\MoveWordLeftAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\CtrlMinusAction.h">
@@ -928,7 +928,7 @@
     <ClInclude Include="actions\CtrlPlusAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlRightAction.h">
+    <ClInclude Include="actions\MoveWordRightAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\CtrlShiftEndAction.h">
@@ -955,13 +955,13 @@
     <ClInclude Include="actions\CtrlZAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\DownArrowAction.h">
+    <ClInclude Include="actions\MoveDownAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\EndAction.h">
+    <ClInclude Include="actions\MoveLineRearAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\HomeAction.h">
+    <ClInclude Include="actions\MoveLineFrontAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\KeyAction.h">
@@ -970,7 +970,7 @@
     <ClInclude Include="actions\KeyActionFactory.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\LeftArrowAction.h">
+    <ClInclude Include="actions\MoveLeftAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\PageDownAction.h">
@@ -979,7 +979,7 @@
     <ClInclude Include="actions\PageUpAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\RightArrowAction.h">
+    <ClInclude Include="actions\MoveRightAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\ShiftDownAction.h">
@@ -1006,7 +1006,7 @@
     <ClInclude Include="actions\ShiftUpAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\UpArrowAction.h">
+    <ClInclude Include="actions\MoveUpAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\NewAction.h">

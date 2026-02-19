@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "DownArrowAction.h"
+#include "MoveDownAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../SizeCalculator.h"
@@ -9,16 +9,16 @@
 
 #pragma warning(disable:4996)
 
-DownArrowAction::DownArrowAction(CWnd* parent)
-	:KeyAction(parent) {
+MoveDownAction::MoveDownAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-DownArrowAction::~DownArrowAction() {
+MoveDownAction::~MoveDownAction() {
 
 }
 
-void DownArrowAction::Perform() {
+void MoveDownAction::Perform() {
 	//1. 다음 줄이 재적재범위에 들어가면, 재적재한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
