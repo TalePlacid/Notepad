@@ -4,7 +4,6 @@
 #include "WriteAtEndCommand.h"
 #include "InsertAtCaretCommand.h"
 #include "EraseCommand.h"
-#include "AutoWrapCommand.h"
 #include "PasteCommand.h"
 #include "EraseRangeCommand.h"
 #include "CopyCommand.h"

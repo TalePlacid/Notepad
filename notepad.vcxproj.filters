@@ -146,9 +146,6 @@
     <ClCompile Include="commands\EraseCommand.cpp">
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
-    <ClCompile Include="commands\AutoWrapCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
     <ClCompile Include="NoteWrapper.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -476,10 +473,10 @@
     <ClCompile Include="actions\MoveLeftAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\PageDownAction.cpp">
+    <ClCompile Include="actions\MovePageDownAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\PageUpAction.cpp">
+    <ClCompile Include="actions\MovePageUpAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\MoveRightAction.cpp">
@@ -632,9 +629,6 @@
       <Filter>헤더 파일\commands</Filter>
     </ClInclude>
     <ClInclude Include="commands\EraseCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\AutoWrapCommand.h">
       <Filter>헤더 파일\commands</Filter>
     </ClInclude>
     <ClInclude Include="NoteWrapper.h">
@@ -976,10 +970,10 @@
     <ClInclude Include="actions\MoveLeftAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\PageDownAction.h">
+    <ClInclude Include="actions\MovePageDownAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\PageUpAction.h">
+    <ClInclude Include="actions\MovePageUpAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\MoveRightAction.h">

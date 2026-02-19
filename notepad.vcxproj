@@ -161,8 +161,8 @@
     <ClCompile Include="actions\NewAction.cpp" />
     <ClCompile Include="actions\NewWIndowAction.cpp" />
     <ClCompile Include="actions\OpenAction.cpp" />
-    <ClCompile Include="actions\PageDownAction.cpp" />
-    <ClCompile Include="actions\PageUpAction.cpp" />
+    <ClCompile Include="actions\MovePageDownAction.cpp" />
+    <ClCompile Include="actions\MovePageUpAction.cpp" />
     <ClCompile Include="actions\MoveRightAction.cpp" />
     <ClCompile Include="actions\SaveAction.cpp" />
     <ClCompile Include="actions\SaveAsAction.cpp" />
@@ -181,7 +181,6 @@
     <ClCompile Include="CaretController.cpp" />
     <ClCompile Include="CaretNavigator.cpp" />
     <ClCompile Include="ClipboardController.cpp" />
-    <ClCompile Include="commands\AutoWrapCommand.cpp" />
     <ClCompile Include="commands\Command.cpp" />
     <ClCompile Include="commands\CommandFactory.cpp" />
     <ClCompile Include="commands\CopyCommand.cpp" />
@@ -323,8 +322,8 @@
     <ClInclude Include="actions\NewAction.h" />
     <ClInclude Include="actions\NewWindowAction.h" />
     <ClInclude Include="actions\OpenAction.h" />
-    <ClInclude Include="actions\PageDownAction.h" />
-    <ClInclude Include="actions\PageUpAction.h" />
+    <ClInclude Include="actions\MovePageDownAction.h" />
+    <ClInclude Include="actions\MovePageUpAction.h" />
     <ClInclude Include="actions\MoveRightAction.h" />
     <ClInclude Include="actions\SaveAction.h" />
     <ClInclude Include="actions\SaveAsAction.h" />
@@ -345,7 +344,6 @@
     <ClInclude Include="CaretController.h" />
     <ClInclude Include="CaretNavigator.h" />
     <ClInclude Include="ClipboardController.h" />
-    <ClInclude Include="commands\AutoWrapCommand.h" />
     <ClInclude Include="commands\Command.h" />
     <ClInclude Include="commands\CommandFactory.h" />
     <ClInclude Include="commands\CopyCommand.h" />

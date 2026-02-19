@@ -75,6 +75,12 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 			nID = AppID::ID_ACTION_MOVE_LINE_REAR;
 		}
 		break;
+	case VK_PRIOR:
+		nID = AppID::ID_ACTION_MOVE_PAGE_UP;
+		break;
+	case VK_NEXT:
+		nID = AppID::ID_ACTION_MOVE_PAGE_DOWN;
+		break;
 	case VK_BACK:
 		nID = AppID::ID_COMMAND_ERASE;
 		break;

@@ -1,30 +1,31 @@
 #include <afxwin.h>
-#include "PageUpAction.h"
+#include "MovePageDownAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
-#include "../SizeCalculator.h"
 #include "../ScrollController.h"
+#include "../SizeCalculator.h"
 #include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
-PageUpAction::PageUpAction(CWnd* parent)
-	:KeyAction(parent) {
+MovePageDownAction::MovePageDownAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-PageUpAction::~PageUpAction() {
+MovePageDownAction::~MovePageDownAction() {
 
 }
 
-void PageUpAction::Perform() {
-	//1. 수직스크롤바가 있고, 처음 위치가 아니라면,
+void MovePageDownAction::Perform() {
+	//1. 수직 스크롤바가 존재하고, 마지막 위치가 이니라면,
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll = scrollController->GetVScroll();
-	if (scrollController->HasVScroll() && vScroll.GetPos() > 0)
+	Long posLimit = vScroll.GetMax() - vScroll.GetPage();
+	if (scrollController->HasVScroll() && vScroll.GetPos() < posLimit)
 	{
-		//1.1. 올라갈 줄 수를 구한다.
+		//1.1. 내려갈 줄 수를 구한다.
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Long rowHeight = sizeCalculator->GetRowHeight();
 		Long rowCount = vScroll.GetPage() / rowHeight;
@@ -41,52 +42,44 @@ void PageUpAction::Perform() {
 
 		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
 
-		//1.3. 줄의 처음으로 이동한다.
+		//1.3. 처음위치로 이동한다.
 		Long movedIndex = row->First();
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		pagingBuffer->Previous(columnIndex - movedIndex);
 
-		//1.3. 줄 수 만큼, 첫번째 줄이 아니면 반복한다.
+		//1.4. 줄수 만큼, 마지막 줄이 아니면 반복한다.
 		Glyph* previousRow;
 		Long i = 0;
-		while (i < rowCount && rowIndex > 0)
+		while (i < rowCount && rowIndex < note->GetLength() - 1)
 		{
-			//1.3.1. 적재범위를 벗어나면, 재적재한다.
-			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
+			//1.4.1. 적재범위에서 벗어났으면, 재적재한다.
+			Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
+			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
 			{
-				PageLoader::LoadPrevious(this->parent);
+				PageLoader::LoadNext(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
-			//1.3.2. 노트에서 이동한다.
+			//1.4.2. 노트에서 이동한다.
 			previousRow = note->GetAt(rowIndex);
-			rowIndex = note->Previous();
+			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 
-			//1.3.3. 이전 줄이 진짜 줄이면,
-			if (!previousRow->IsDummyRow())
+			//1.4.3. 줄이 가짜 줄이면,
+			if (row->IsDummyRow())
 			{
-				//1.3.3.1. 페이징 버퍼에서 이전 줄로 이동한다.
-				pagingBuffer->PreviousRow();
-
-				//1.3.3.2. 현재 줄이 더미 줄이면, 추가적으로 이동한다.
-				if (row->IsDummyRow())
-				{
-					pagingBuffer->Last();
-					pagingBuffer->Previous(row->GetLength());
-				}
+				pagingBuffer->Next(previousRow->GetLength());
 			}
-			else //1.3.4. 이전 줄이 더미 줄이면,
+			else
 			{
-				//1.3.4.1. 페이징 버퍼에서 이전으로 이동한다.
-				pagingBuffer->Previous(row->GetLength());
+				pagingBuffer->NextRow();
 			}
 
 			i++;
 		}
 
-		//1.4. 줄 너비와 가장 가까운 위치로 이동한다.
+		//1.5. 줄 너비와 가장 가까운 위치로 이동한다.
 		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
 		movedIndex = row->Move(nearestIndex);
 		pagingBuffer->Next(movedIndex);

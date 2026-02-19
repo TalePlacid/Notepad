@@ -5,6 +5,7 @@
 #include "SaveAction.h"
 #include "SaveAsAction.h"
 #include "ChangeFontAction.h"
+#include "AutoWrapAction.h"
 #include "MoveUpAction.h"
 #include "MoveDownAction.h"
 #include "MoveLeftAction.h"
@@ -15,7 +16,8 @@
 #include "MoveWordLeftAction.h"
 #include "MoveDocFrontAction.h"
 #include "MoveDocRearAction.h"
-#include "AutoWrapAction.h"
+#include "MovePageUpAction.h"
+#include "MovePageDownAction.h"
 
 #pragma warning(disable:4996)
 
@@ -82,6 +84,12 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 		break;
 	case AppID::ID_ACTION_MOVE_DOC_REAR:
 		action = new MoveDocRearAction(parent);
+		break;
+	case AppID::ID_ACTION_MOVE_PAGE_UP:
+		action = new MovePageUpAction(parent);
+		break;
+	case AppID::ID_ACTION_MOVE_PAGE_DOWN:
+		action = new MovePageDownAction(parent);
 		break;
 	default:
 		break;
