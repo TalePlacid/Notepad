@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="actions\Action.cpp" />
     <ClCompile Include="actions\ActionFactory.cpp" />
+    <ClCompile Include="actions\AutoWrapAction.cpp" />
     <ClCompile Include="actions\ChangeFontAction.cpp" />
     <ClCompile Include="actions\Ctrl0Action.cpp" />
     <ClCompile Include="actions\CtrlAAction.cpp" />
@@ -290,6 +291,7 @@
   <ItemGroup>
     <ClInclude Include="actions\Action.h" />
     <ClInclude Include="actions\ActionFactory.h" />
+    <ClInclude Include="actions\AutoWrapAction.h" />
     <ClInclude Include="actions\ChangeFontAction.h" />
     <ClInclude Include="actions\Ctrl0Action.h" />
     <ClInclude Include="actions\CtrlAAction.h" />

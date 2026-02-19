@@ -44,6 +44,9 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 	case ID_MENU_FONT:
 		appID = AppID::ID_ACTION_CHANGE_FONT;
 		break;
+	case ID_MENU_AUTOWRAP:
+		appID = AppID::ID_ACTION_AUTOWRAP;
+		break;
 	default:
 		break;
 	}

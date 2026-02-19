@@ -15,6 +15,7 @@
 #include "MoveWordLeftAction.h"
 #include "MoveDocFrontAction.h"
 #include "MoveDocRearAction.h"
+#include "AutoWrapAction.h"
 
 #pragma warning(disable:4996)
 
@@ -48,6 +49,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 		break;
 	case AppID::ID_ACTION_CHANGE_FONT:
 		action = new ChangeFontAction(parent);
+		break;
+	case AppID::ID_ACTION_AUTOWRAP:
+		action = new AutoWrapAction(parent);
 		break;
 	case AppID::ID_ACTION_MOVE_UP:
 		action = new MoveUpAction(parent);
