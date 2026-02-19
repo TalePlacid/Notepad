@@ -12,7 +12,7 @@ public:
 	~CommandFactory();
 
 	static Command* Create(CWnd* parent, AppID nID, const TCHAR(*character) = 0, 
-		BOOL isCompositing = FALSE, LPARAM lParam = 0);
+		BOOL isCompositing = FALSE, BOOL isSelected = FALSE, LPARAM lParam = 0);
 };
 
 #endif // !_COMMANDFACTORY_H

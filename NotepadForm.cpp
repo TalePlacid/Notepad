@@ -532,8 +532,10 @@ void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
 	this->mouseHandler->PopUpContextMenu(point);
 }
 
-void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar) {
-	Command* command = CommandFactory::Create(this, nID, character, onChar);
+void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompositing) {
+	BOOL isSelected = this->pagingBuffer->GetSelectionBeginOffset() >= 0;
+	
+	Command* command = CommandFactory::Create(this, nID, character, isCompositing, isSelected);
 	if (command != NULL)
 	{
 		command->Execute();

@@ -34,7 +34,7 @@ CommandFactory::~CommandFactory() {
 }
 
 Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character), 
-	BOOL isCompositing, LPARAM lParam) {
+	BOOL isCompositing, BOOL isSelected, LPARAM lParam) {
 	Command* command = NULL;
 
 	switch (nID)
@@ -46,7 +46,26 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 		command = new InsertAtCaretCommand(parent, character, isCompositing);
 		break;
 	case AppID::ID_COMMAND_ERASE:
-		command = new EraseCommand(parent, isCompositing);
+		if (isSelected)
+		{
+			command = new EraseRangeCommand(parent);
+		}
+		else
+		{
+			command = new EraseCommand(parent, isCompositing);
+		}
+		break;
+	case AppID::ID_COMMAND_PASTE:
+		if (isSelected)
+		{
+			command = new MacroCommand(parent, 2);
+			command->Add(new EraseRangeCommand(parent));
+			command->Add(new PasteCommand(parent));
+		}
+		else
+		{
+			command = new PasteCommand(parent);
+		}
 		break;
 #if 0
 	case ID_MENU_NEW:

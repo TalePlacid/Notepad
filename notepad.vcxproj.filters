@@ -395,9 +395,6 @@
     <ClCompile Include="actions\SelectAllAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlCAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
     <ClCompile Include="actions\MoveDocRearAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -890,9 +887,6 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\SelectAllAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\CtrlCAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\MoveDocRearAction.h">

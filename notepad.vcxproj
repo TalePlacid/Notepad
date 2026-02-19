@@ -134,7 +134,6 @@
     <ClCompile Include="actions\CopyAction.cpp" />
     <ClCompile Include="actions\Ctrl0Action.cpp" />
     <ClCompile Include="actions\SelectAllAction.cpp" />
-    <ClCompile Include="actions\CtrlCAction.cpp" />
     <ClCompile Include="actions\MoveDocRearAction.cpp" />
     <ClCompile Include="actions\CtrlFAction.cpp" />
     <ClCompile Include="actions\CtrlHAction.cpp" />
@@ -295,7 +294,6 @@
     <ClInclude Include="actions\CopyAction.h" />
     <ClInclude Include="actions\Ctrl0Action.h" />
     <ClInclude Include="actions\SelectAllAction.h" />
-    <ClInclude Include="actions\CtrlCAction.h" />
     <ClInclude Include="actions\MoveDocRearAction.h" />
     <ClInclude Include="actions\CtrlFAction.h" />
     <ClInclude Include="actions\CtrlHAction.h" />
