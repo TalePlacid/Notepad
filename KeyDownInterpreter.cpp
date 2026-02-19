@@ -30,15 +30,37 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 	switch (nChar)
 	{
 	case VK_UP:
-		nID = AppID::ID_ACTION_MOVE_UP;
+		if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_UP;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_UP;
+		}
 		break;
 	case VK_DOWN:
-		nID = AppID::ID_ACTION_MOVE_DOWN;
+		if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_DOWN;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_DOWN;
+		}
 		break;
 	case VK_LEFT:
-		if (onCtrlKey)
+		if (onCtrlKey && onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_WORD_LEFT;
+		}
+		else if (onCtrlKey)
 		{
 			nID = AppID::ID_ACTION_MOVE_WORD_LEFT;
+		}
+		else if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_LEFT;
 		}
 		else
 		{
@@ -46,9 +68,17 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		}
 		break;
 	case VK_RIGHT:
-		if (onCtrlKey)
+		if (onCtrlKey && onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_WORD_RIGHT;
+		}
+		else if (onCtrlKey)
 		{
 			nID = AppID::ID_ACTION_MOVE_WORD_RIGHT;
+		}
+		else if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_RIGHT;
 		}
 		else
 		{
@@ -56,9 +86,17 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		}
 		break;
 	case VK_HOME:
-		if (onCtrlKey)
+		if (onCtrlKey && onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_DOC_FRONT;
+		}
+		else if (onCtrlKey)
 		{
 			nID = AppID::ID_ACTION_MOVE_DOC_FRONT;
+		}
+		else if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_LINE_FRONT;
 		}
 		else
 		{
@@ -66,9 +104,17 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		}
 		break;
 	case VK_END:
-		if (onCtrlKey)
+		if (onCtrlKey && onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_DOC_REAR;
+		}
+		else if (onCtrlKey)
 		{
 			nID = AppID::ID_ACTION_MOVE_DOC_REAR;
+		}
+		else if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_LINE_REAR;
 		}
 		else
 		{
@@ -76,13 +122,33 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		}
 		break;
 	case VK_PRIOR:
-		nID = AppID::ID_ACTION_MOVE_PAGE_UP;
+		if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_PAGE_UP;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_PAGE_UP;
+		}
 		break;
 	case VK_NEXT:
-		nID = AppID::ID_ACTION_MOVE_PAGE_DOWN;
+		if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_PAGE_DOWN;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_MOVE_PAGE_DOWN;
+		}
 		break;
 	case VK_BACK:
 		nID = AppID::ID_COMMAND_ERASE;
+		break;
+	case 'A':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_SELECT_ALL;
+		}
 		break;
 	case 'N':
 		if (onCtrlKey && onShiftKey)

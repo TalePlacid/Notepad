@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "ShiftUpAction.h"
+#include "SelectUpAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../SizeCalculator.h"
@@ -8,16 +8,16 @@
 
 #pragma warning(disable:4996)
 
-ShiftUpAction::ShiftUpAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectUpAction::SelectUpAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-ShiftUpAction::~ShiftUpAction() {
+SelectUpAction::~SelectUpAction() {
 
 }
 
-void ShiftUpAction::Perform() {
+void SelectUpAction::Perform() {
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

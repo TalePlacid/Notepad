@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "ShiftPageDownAction.h"
+#include "SelectPageDownAction.h"
 #include "../ScrollController.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
@@ -9,16 +9,16 @@
 
 #pragma warning(disable:4996)
 
-ShiftPageDownAction::ShiftPageDownAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectPageDownAction::SelectPageDownAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-ShiftPageDownAction::~ShiftPageDownAction() {
+SelectPageDownAction::~SelectPageDownAction() {
 
 }
 
-void ShiftPageDownAction::Perform() {
+void SelectPageDownAction::Perform() {
 	//1. 수직 스크롤바가 존재하고, 마지막 위치가 이니라면,
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll = scrollController->GetVScroll();

@@ -1,21 +1,21 @@
 #include <afxwin.h>
-#include "CtrlAAction.h"
+#include "SelectAllAction.h"
 #include "../PagingBuffer.h"
 #include "../NotepadForm.h"
 #include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
-CtrlAAction::CtrlAAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectAllAction::SelectAllAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-CtrlAAction::~CtrlAAction() {
+SelectAllAction::~SelectAllAction() {
 
 }
 
-void CtrlAAction::Perform() {
+void SelectAllAction::Perform() {
 	//1. 페이징 버퍼에서 첫 위치로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->FirstRow();

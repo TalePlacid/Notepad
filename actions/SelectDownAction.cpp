@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "ShiftDownAction.h"
+#include "SelectDownAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../ScrollController.h"
@@ -9,16 +9,16 @@
 
 #pragma warning(disable:4996)
 
-ShiftDownAction::ShiftDownAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectDownAction::SelectDownAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-ShiftDownAction::~ShiftDownAction() {
+SelectDownAction::~SelectDownAction() {
 
 }
 
-void ShiftDownAction::Perform() {
+void SelectDownAction::Perform() {
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();

@@ -1,21 +1,21 @@
 #include <afxwin.h>
-#include "CtrlShiftEndAction.h"
+#include "SelectDocRearAction.h"
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
 #include "../PageLoader.h"
 
 #pragma warning(disable:4996)
 
-CtrlShiftEndAction::CtrlShiftEndAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectDocRearAction::SelectDocRearAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-CtrlShiftEndAction::~CtrlShiftEndAction() {
+SelectDocRearAction::~SelectDocRearAction() {
 
 }
 
-void CtrlShiftEndAction::Perform() {
+void SelectDocRearAction::Perform() {
 	//1. 페이징 버퍼에서 선택시작위치를 읽는다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();

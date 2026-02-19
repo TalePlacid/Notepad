@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "ShiftPageUpAction.h"
+#include "SelectPageUpAction.h"
 #include "../ScrollController.h"
 #include "../NotepadForm.h"
 #include "../SizeCalculator.h"
@@ -9,16 +9,16 @@
 
 #pragma warning(disable:4996)
 
-ShiftPageUpAction::ShiftPageUpAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectPageUpAction::SelectPageUpAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-ShiftPageUpAction::~ShiftPageUpAction() {
+SelectPageUpAction::~SelectPageUpAction() {
 
 }
 
-void ShiftPageUpAction::Perform() {
+void SelectPageUpAction::Perform() {
 	//1. 수직스크롤바가 있고, 처음 위치가 아니라면,
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll = scrollController->GetVScroll();

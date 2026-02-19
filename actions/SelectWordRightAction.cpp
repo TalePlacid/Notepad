@@ -1,5 +1,5 @@
 #include <afxwin.h>
-#include "ShiftRightAction.h"
+#include "SelectWordRightAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
@@ -9,16 +9,16 @@
 
 #pragma warning(disable:4996)
 
-ShiftRightAction::ShiftRightAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectWordRightAction::SelectWordRightAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-ShiftRightAction::~ShiftRightAction() {
+SelectWordRightAction::~SelectWordRightAction() {
 
 }
 
-void ShiftRightAction::Perform() {
+void SelectWordRightAction::Perform() {
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
@@ -27,18 +27,26 @@ void ShiftRightAction::Perform() {
 
 	//2. 줄의 끝이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset;
 	if (columnIndex < row->GetLength())
 	{
-		//2.1. 노트에서 선택한다.
-		row->GetAt(columnIndex)->ToggleSelection();
+		//2.1. 노트에서 다음 단어 시작으로 이동한다.
+		Long wordStart = row->FindNextWordStart(columnIndex);
+		Long movedIndex = row->Move(wordStart);
 
-		//2.2. 노트에서 이동한다.
-		columnIndex = row->Next();
+		//2.2. 노트에서 범위만큼 선택한다.
+		row->ToggleSelection(columnIndex, movedIndex);
 
-		//2.3. 페이징 버퍼에서 선택과 이동한다.
-		pagingBuffer->BeginSelectionIfNeeded();
-		pagingBuffer->Next();
-		pagingBuffer->EndSelectionIfCollapsed();
+		//2.3. 차이만큼 반복한다.
+		Long difference = movedIndex - columnIndex;
+		Long i = 0;
+		while (i < difference)
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			currentOffset = pagingBuffer->Next();
+			pagingBuffer->EndSelectionIfCollapsed();
+			i++;
+		}
 	}
 	else //3. 줄의 끝이면,
 	{
@@ -51,21 +59,17 @@ void ShiftRightAction::Perform() {
 			PageLoader::LoadNext(this->parent);
 		}
 
-		//3.2. 마지막줄이 아니면,
-		if (rowIndex + 1 < note->GetLength())
-		{
-			//3.2.1. 노트에서 이동한다.
-			rowIndex = note->Next();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->First();
+		//3.2. 노트에서 이동한다.
+		rowIndex = note->Next();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->First();
 
-			//3.2.2. 줄이 진짜이면, 페이징 버퍼에서 선택과 이동한다.
-			if (!row->IsDummyRow())
-			{
-				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->NextRow();
-				pagingBuffer->EndSelectionIfCollapsed();
-			}
+		//3.3. 줄이 진짜이면,
+		if (!row->IsDummyRow())
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			currentOffset = pagingBuffer->NextRow();
+			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}
 }

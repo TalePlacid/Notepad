@@ -1,36 +1,36 @@
 #include <afxwin.h>
-#include "ShiftEndAction.h"
+#include "SelectLineFrontAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)
 
-ShiftEndAction::ShiftEndAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectLineFrontAction::SelectLineFrontAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-ShiftEndAction::~ShiftEndAction() {
+SelectLineFrontAction::~SelectLineFrontAction() {
 
 }
 
-void ShiftEndAction::Perform() {
+void SelectLineFrontAction::Perform() {
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	//2. 줄의 끝까지 반복한다.
+	//2. 줄에서 앞까지 반복한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	while (columnIndex < row->GetLength())
+	while (columnIndex > 0)
 	{
+		columnIndex = row->Previous();
 		row->GetAt(columnIndex)->ToggleSelection();
-		columnIndex = row->Next();
 
 		pagingBuffer->BeginSelectionIfNeeded();
-		pagingBuffer->Next();
+		pagingBuffer->Previous();
 		pagingBuffer->EndSelectionIfCollapsed();
 	}
 }

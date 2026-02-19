@@ -1,21 +1,21 @@
 #include <afxwin.h>
-#include "CtrlShiftHomeAction.h"
+#include "SelectDocFrontAction.h"
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
 #include "../PageLoader.h"
 
 #pragma warning(disable:4966)
 
-CtrlShiftHomeAction::CtrlShiftHomeAction(CWnd* parent)
-	:KeyAction(parent) {
+SelectDocFrontAction::SelectDocFrontAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-CtrlShiftHomeAction::~CtrlShiftHomeAction() {
+SelectDocFrontAction::~SelectDocFrontAction() {
 
 }
 
-void CtrlShiftHomeAction::Perform() {
+void SelectDocFrontAction::Perform() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 

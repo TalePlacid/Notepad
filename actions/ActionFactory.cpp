@@ -18,6 +18,19 @@
 #include "MoveDocRearAction.h"
 #include "MovePageUpAction.h"
 #include "MovePageDownAction.h"
+#include "SelectUpAction.h"
+#include "SelectDownAction.h"
+#include "SelectLeftAction.h"
+#include "SelectRightAction.h"
+#include "SelectLineFrontAction.h"
+#include "SelectLineRearAction.h"
+#include "SelectWordLeftAction.h"
+#include "SelectWordRightAction.h"
+#include "SelectDocFrontAction.h"
+#include "SelectDocRearAction.h"
+#include "SelectPageUpAction.h"
+#include "SelectPageDownAction.h"
+#include "SelectAllAction.h"
 
 #pragma warning(disable:4996)
 
@@ -90,6 +103,45 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 		break;
 	case AppID::ID_ACTION_MOVE_PAGE_DOWN:
 		action = new MovePageDownAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_UP:
+		action = new SelectUpAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_DOWN:
+		action = new SelectDownAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_LEFT:
+		action = new SelectLeftAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_RIGHT:
+		action = new SelectRightAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_LINE_FRONT:
+		action = new SelectLineFrontAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_LINE_REAR:
+		action = new SelectLineRearAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_WORD_LEFT:
+		action = new SelectWordLeftAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_WORD_RIGHT:
+		action = new SelectWordRightAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_DOC_FRONT:
+		action = new SelectDocFrontAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_DOC_REAR:
+		action = new SelectDocRearAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_PAGE_UP:
+		action = new SelectPageUpAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_PAGE_DOWN:
+		action = new SelectPageDownAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_ALL:
+		action = new SelectAllAction(parent);
 		break;
 	default:
 		break;
