@@ -44,8 +44,6 @@ EraseRangeCommand& EraseRangeCommand::operator=(const EraseRangeCommand& source)
 }
 
 void EraseRangeCommand::Execute() {
-	((NotepadForm*)(this->parent))->isDirty = TRUE;
-
 	//1. 앞 위치로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	this->contents = pagingBuffer->MakeSelectedString();
@@ -122,6 +120,7 @@ void EraseRangeCommand::Execute() {
 		i += characterByte;
 	}
 
+
 	//4. 자동개행중이면, 재개행한다.
 	Long dummied = 0;
 	if (((NotepadForm*)(this->parent))->isAutoWrapped)
@@ -138,15 +137,16 @@ void EraseRangeCommand::Execute() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long rowHeight = sizeCalculator->GetRowHeight();
+	Scroll vScroll = scrollController->GetVScroll();
 	if (scrollController->HasVScroll())
 	{
-		Scroll vScroll = scrollController->GetVScroll();
 		Long max = vScroll.GetMax() - (merged + dummied) * rowHeight;
 		scrollController->ResizeVRange(max);
 	}
 
 	//7. 적재량이 부족하면, 재적재한다.
-	if (note->IsBelowBottomLine(rowIndex + 1))
+	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
+	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
 	{
 		row = note->GetAt(rowIndex);
 		columnIndex = row->GetCurrent();
