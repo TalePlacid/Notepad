@@ -1,19 +1,19 @@
 #include <afxwin.h>
-#include "CopyCommand.h"
+#include "CopyAction.h"
 #include "../NotepadForm.h"
 #include "../ClipboardController.h"
 
 #pragma warning(disable:4996)
 
-CopyCommand::CopyCommand(CWnd* parent)
-	:Command(parent) {
+CopyAction::CopyAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-CopyCommand::~CopyCommand() {
+CopyAction::~CopyAction() {
 
 }
 
-void CopyCommand::Execute() {
+void CopyAction::Perform() {
 	((NotepadForm*)(this->parent))->clipboardController->Copy();
 }

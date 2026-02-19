@@ -131,6 +131,7 @@
     <ClCompile Include="actions\ActionFactory.cpp" />
     <ClCompile Include="actions\AutoWrapAction.cpp" />
     <ClCompile Include="actions\ChangeFontAction.cpp" />
+    <ClCompile Include="actions\CopyAction.cpp" />
     <ClCompile Include="actions\Ctrl0Action.cpp" />
     <ClCompile Include="actions\SelectAllAction.cpp" />
     <ClCompile Include="actions\CtrlCAction.cpp" />
@@ -183,7 +184,6 @@
     <ClCompile Include="ClipboardController.cpp" />
     <ClCompile Include="commands\Command.cpp" />
     <ClCompile Include="commands\CommandFactory.cpp" />
-    <ClCompile Include="commands\CopyCommand.cpp" />
     <ClCompile Include="commands\CutCommand.cpp" />
     <ClCompile Include="commands\EraseCommand.cpp" />
     <ClCompile Include="commands\EraseRangeCommand.cpp" />
@@ -292,6 +292,7 @@
     <ClInclude Include="actions\ActionFactory.h" />
     <ClInclude Include="actions\AutoWrapAction.h" />
     <ClInclude Include="actions\ChangeFontAction.h" />
+    <ClInclude Include="actions\CopyAction.h" />
     <ClInclude Include="actions\Ctrl0Action.h" />
     <ClInclude Include="actions\SelectAllAction.h" />
     <ClInclude Include="actions\CtrlCAction.h" />
@@ -346,7 +347,6 @@
     <ClInclude Include="ClipboardController.h" />
     <ClInclude Include="commands\Command.h" />
     <ClInclude Include="commands\CommandFactory.h" />
-    <ClInclude Include="commands\CopyCommand.h" />
     <ClInclude Include="commands\CutCommand.h" />
     <ClInclude Include="commands\EraseCommand.h" />
     <ClInclude Include="commands\EraseRangeCommand.h" />

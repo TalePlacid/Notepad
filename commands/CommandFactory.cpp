@@ -6,7 +6,6 @@
 #include "EraseCommand.h"
 #include "PasteCommand.h"
 #include "EraseRangeCommand.h"
-#include "CopyCommand.h"
 #include "CutCommand.h"
 #include "OpenFindDialogCommand.h"
 #include "OpenReplaceDialogCommand.h"

@@ -203,9 +203,6 @@
     <ClCompile Include="ClipboardController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="commands\CopyCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
     <ClCompile Include="commands\PasteCommand.cpp">
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
@@ -545,6 +542,9 @@
     <ClCompile Include="actions\AutoWrapAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\CopyAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -687,9 +687,6 @@
     </ClInclude>
     <ClInclude Include="ClipboardController.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\CopyCommand.h">
-      <Filter>헤더 파일\commands</Filter>
     </ClInclude>
     <ClInclude Include="commands\PasteCommand.h">
       <Filter>헤더 파일\commands</Filter>
@@ -1043,6 +1040,9 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\AutoWrapAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\CopyAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
   </ItemGroup>

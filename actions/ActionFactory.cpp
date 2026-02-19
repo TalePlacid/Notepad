@@ -31,6 +31,7 @@
 #include "SelectPageUpAction.h"
 #include "SelectPageDownAction.h"
 #include "SelectAllAction.h"
+#include "CopyAction.h"
 
 #pragma warning(disable:4996)
 
@@ -142,6 +143,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 		break;
 	case AppID::ID_ACTION_SELECT_ALL:
 		action = new SelectAllAction(parent);
+		break;
+	case AppID::ID_ACTION_COPY:
+		action = new CopyAction(parent);
 		break;
 	default:
 		break;

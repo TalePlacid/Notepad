@@ -150,6 +150,12 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 			nID = AppID::ID_ACTION_SELECT_ALL;
 		}
 		break;
+	case 'C':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_COPY;
+		}
+		break;
 	case 'N':
 		if (onCtrlKey && onShiftKey)
 		{
