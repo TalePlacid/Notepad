@@ -55,7 +55,7 @@ void EraseRangeCommand::Execute() {
 
 void EraseRangeCommand::Undo() {
 	Editor editor(this->parent);
-	editor.InsertTextAt(this->frontOffset, this->columnIndex, this->contents);
+	editor.InsertTextAt(this->frontOffset, this->columnIndex, this->contents, true);
 }   
 
 void EraseRangeCommand::Redo() {

@@ -1,7 +1,6 @@
 #ifndef _CUTCOMMAND_H //guard
 #define _CUTCOMMAND_H
 #include "Command.h"
-#include "EraseRangeCommand.h"
 
 class CWnd;
 
@@ -16,8 +15,9 @@ public:
 
 	virtual AppID GetID();
 private:
-	EraseRangeCommand eraseRangeCommand;
+	Long columnIndex;
 	bool isExecuted;
+	CString erased;
 };
 
 #endif // !_CUTCOMMAND_H

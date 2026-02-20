@@ -56,16 +56,7 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 		}
 		break;
 	case AppID::ID_COMMAND_PASTE:
-		if (isSelected)
-		{
-			command = new MacroCommand(parent, 2);
-			command->Add(new EraseRangeCommand(parent));
-			command->Add(new PasteCommand(parent));
-		}
-		else
-		{
-			command = new PasteCommand(parent);
-		}
+		command = new PasteCommand(parent);
 		break;
 	case AppID::ID_COMMAND_CUT:
 		command = new CutCommand(parent);

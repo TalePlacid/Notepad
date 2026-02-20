@@ -16,8 +16,9 @@
 #pragma warning(disable:4996)
 
 PasteCommand::PasteCommand(CWnd* parent)
-	:Command(parent), contents(""), erased("") {
-	this->offset = -1;
+	:Command(parent), erased(""), contents("") {
+	this->frontOffset = -1;
+	this->rearOffset = -1;
 	this->columnIndex = 0;
 }
 
@@ -27,19 +28,21 @@ PasteCommand::~PasteCommand() {
 
 PasteCommand::PasteCommand(const PasteCommand& source)
 	:Command(source), contents(source.contents) {
-	this->offset = source.offset;
+	this->frontOffset = source.frontOffset;
+	this->rearOffset = source.rearOffset;
 	this->columnIndex = source.columnIndex;
-	this->contents = source.contents;
 	this->erased = source.erased;
+	this->contents = source.contents;
 }
 
 PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
 	Command::operator=(source);
 
-	this->offset = source.offset;
+	this->frontOffset = source.frontOffset;
+	this->rearOffset = source.rearOffset;
 	this->columnIndex = source.columnIndex;
-	this->contents = source.contents;
 	this->erased = source.erased;
+	this->contents = source.contents;
 
 	return *this;
 }
@@ -52,88 +55,17 @@ void PasteCommand::Execute() {
 	{
 		//2. 선택범위가 있으면, 지운다.
 		Editor editor(this->parent);
-		Long frontOffset;
-		Long rearOffset;
 		BOOL isSelected = editor.GetSelectedRange(frontOffset, rearOffset);
 		if (isSelected)
 		{
 			editor.EraseRange(frontOffset, rearOffset, this->columnIndex, this->erased);
-			this->offset = frontOffset;
 		}
 
 		//3. 내용을 붙여넣는다.
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		this->frontOffset = pagingBuffer->GetCurrentOffset();
 		this->contents = clipboardController->GetContent();
 		editor.InsertTextAt(pagingBuffer->GetCurrentOffset(), this->columnIndex, this->contents);
-#if 0
-		//1.1. 현재위치를 읽는다.
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
-
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		this->contents = ((NotepadForm*)(this->parent))->clipboardController->GetContent();
-		this->columnIndex = columnIndex;
-		this->offset = pagingBuffer->GetCurrentOffset();
-
-		//1.2. 복사할 내용의 끝까지 반복한다.
-		GlyphFactory glyphFactory;
-		ByteChecker byteChecker;
-		NoteWrapper noteWrapper(this->parent);
-		Glyph* glyph;
-		TCHAR character[2];
-		Long dummied = 0;
-		Long i = 0;
-		while (i < this->contents.GetLength())
-		{
-			//1.2.1. 문자를 읽는다.
-			character[0] = this->contents.GetAt(i);
-			if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
-			{
-				character[1] = this->contents.GetAt(++i);
-			}
-
-			//1.2.2. 줄바꿈 문자가 아니라면,
-			if (character[0] != '\r')
-			{
-				//1.2.2.1. 줄에서 쓴다.
-				glyph = glyphFactory.Create(character);
-				row->Add(columnIndex, glyph);
-				columnIndex = row->GetCurrent();
-			}
-			else //1.2.3. 줄바꿈 문자라면, 줄을 나눈다.
-			{
-				note->SplitRows(rowIndex, columnIndex);
-				rowIndex = note->Next();
-				row = note->GetAt(rowIndex);
-				columnIndex = row->First();
-			}
-
-			//1.2.3. 자동개행중이면, 재개행한다.
-			if (((NotepadForm*)(this->parent))->isAutoWrapped)
-			{
-				dummied += noteWrapper.Rewrap();
-				rowIndex = note->GetCurrent();
-				row = note->GetAt(rowIndex);
-				columnIndex = row->GetCurrent();
-			}
-			i++;
-		}
-
-		//1.3. 페이징 버퍼에서 쓴다.
-		pagingBuffer->Add(this->contents);
-
-		//1.4. 수직 스크롤바에서 최대값을 조정한다.
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		if (scrollController->HasVScroll())
-		{
-			Scroll vScroll = scrollController->GetVScroll();
-			Long max = vScroll.GetMax() + (RowCounter::CountRow(this->contents) + dummied) * sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
-		}
-#endif
 	}
 }
 
@@ -243,6 +175,7 @@ void PasteCommand::Undo() {
 }
 
 void PasteCommand::Redo() {
+#if 0
 	//1. 오프셋 기반으로 이동한다.
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(this->offset);
@@ -312,6 +245,7 @@ void PasteCommand::Redo() {
 		Long max = vScroll.GetMax() + (RowCounter::CountRow(this->contents) + dummied) * sizeCalculator->GetRowHeight();
 		scrollController->ResizeVRange(max);
 	}
+#endif
 }
 
 Command* PasteCommand::Clone() {

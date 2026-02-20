@@ -21,10 +21,11 @@ public:
 	virtual AppID GetID();
 	virtual bool IsUndoable();
 private:
-	Long offset;
+	Long frontOffset;
+	Long rearOffset;
 	Long columnIndex;
-	CString contents;
 	CString erased;
+	CString contents;
 };
 
 #endif // !_PASTECOMMAND_H

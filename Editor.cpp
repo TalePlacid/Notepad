@@ -22,7 +22,7 @@ Editor::~Editor() {
 
 }
 
-void Editor::InsertTextAt(Long offset, Long columnIndex, CString text) {
+void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, bool isSelected) {
 	//1. 오프셋 기반으로 이동한다.
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(offset);
@@ -54,7 +54,7 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text) {
 		//3.2. 줄바꿈 문자가 아니라면, 줄에서 쓴다.
 		if (character[0] != '\r')
 		{
-			glyph = glyphFactory.Create(character, true);
+			glyph = glyphFactory.Create(character, isSelected);
 			row->Add(currentColumnIndex, glyph);
 			currentColumnIndex = row->GetCurrent();
 		}
@@ -79,7 +79,10 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text) {
 
 	//4. 페이징 버퍼에서 쓴다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MarkSelectionBegin();
+	if (isSelected)
+	{
+		pagingBuffer->MarkSelectionBegin();
+	}
 	pagingBuffer->Add(text);
 
 	//5. 수직 스크롤바에서 최대값을 조정한다.

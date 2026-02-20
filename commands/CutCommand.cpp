@@ -3,10 +3,12 @@
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
 #include "../ClipboardController.h"
+#include "../Editor.h"
 
 CutCommand::CutCommand(CWnd* parent)
-	:Command(parent), eraseRangeCommand(this->parent) {
+	:Command(parent) {
 	this->isExecuted = false;
+	this->columnIndex = 0;
 }
 
 CutCommand::~CutCommand() {
@@ -20,23 +22,20 @@ void CutCommand::Execute() {
 		ClipboardController* clipboardController = ((NotepadForm*)(this->parent))->clipboardController;
 		clipboardController->Copy();
 
-		this->eraseRangeCommand.Execute();
+		Editor editor(this->parent);
+		Long frontOffset;
+		Long rearOffset;
+		editor.GetSelectedRange(frontOffset, rearOffset);
+		editor.EraseRange(frontOffset, rearOffset, this->columnIndex, this->erased);
+
 		this->isExecuted = true;
 	}
 }
 
 void CutCommand::Undo() {
-	if (this->isExecuted)
-	{
-		this->eraseRangeCommand.Undo();
-	}
 }
 
 void CutCommand::Redo() {
-	if (this->isExecuted)
-	{
-		this->eraseRangeCommand.Redo();
-	}
 }
 
 AppID CutCommand::GetID() {
