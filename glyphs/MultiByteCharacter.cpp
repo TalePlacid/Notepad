@@ -7,8 +7,9 @@ MultiByteCharacter::MultiByteCharacter() {
 	this->content[0] = '\0';
 }
 
-MultiByteCharacter::MultiByteCharacter(char(*content), bool isDirty){
+MultiByteCharacter::MultiByteCharacter(char(*content), bool isSelected){
 	strncpy(this->content, content, 2);
+	this->isSelected = isSelected;
 }
 
 MultiByteCharacter::~MultiByteCharacter() {

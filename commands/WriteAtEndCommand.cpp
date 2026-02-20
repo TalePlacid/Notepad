@@ -208,3 +208,7 @@ void WriteAtEndCommand::Redo() {
 Command* WriteAtEndCommand::Clone() {
 	return new WriteAtEndCommand(*this);
 }
+
+AppID WriteAtEndCommand::GetID() {
+	return AppID::ID_COMMAND_WRITE_AT_END;
+}

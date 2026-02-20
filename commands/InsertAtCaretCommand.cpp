@@ -267,8 +267,8 @@ Command* InsertAtCaretCommand::Clone() {
 	return new InsertAtCaretCommand(*this);
 }
 
-UINT InsertAtCaretCommand::GetId() {
-	return 0; // ID_COMMAND_INSERTATCARET;
+AppID InsertAtCaretCommand::GetID() {
+	return AppID::ID_COMMAND_INSERT_AT_CARET;
 }
 
 bool InsertAtCaretCommand::IsUndoable() {

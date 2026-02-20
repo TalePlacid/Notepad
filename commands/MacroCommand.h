@@ -21,7 +21,7 @@ public:
 	virtual Command* GetAt(Long index);
 	
 	virtual bool IsMacroCommand();
-	virtual UINT GetId();
+	virtual AppID GetID();
 	Long GetCapacity() const;
 	Long GetLength() const;
 

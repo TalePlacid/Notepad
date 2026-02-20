@@ -148,8 +148,6 @@
     <ClCompile Include="actions\SelectDocFrontAction.cpp" />
     <ClCompile Include="actions\SelectWordLeftAction.cpp" />
     <ClCompile Include="actions\SelectWordRightAction.cpp" />
-    <ClCompile Include="actions\CtrlVAction.cpp" />
-    <ClCompile Include="actions\CtrlXAction.cpp" />
     <ClCompile Include="actions\CtrlYAction.cpp" />
     <ClCompile Include="actions\CtrlZAction.cpp" />
     <ClCompile Include="actions\MoveDownAction.cpp" />
@@ -202,6 +200,7 @@
     <ClCompile Include="commands\ZoomResetCommand.cpp" />
     <ClCompile Include="CoordinateConverter.cpp" />
     <ClCompile Include="DateTime.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="EncodingDetector.cpp" />
     <ClCompile Include="FilePointerCalculator.cpp" />
     <ClCompile Include="FileStreamAdapter.cpp" />
@@ -308,8 +307,6 @@
     <ClInclude Include="actions\SelectDocFrontAction.h" />
     <ClInclude Include="actions\SelectWordLeftAction.h" />
     <ClInclude Include="actions\SelectWordRightAction.h" />
-    <ClInclude Include="actions\CtrlVAction.h" />
-    <ClInclude Include="actions\CtrlXAction.h" />
     <ClInclude Include="actions\CtrlYAction.h" />
     <ClInclude Include="actions\CtrlZAction.h" />
     <ClInclude Include="actions\MoveDownAction.h" />
@@ -452,6 +449,9 @@
     <ClInclude Include="TextOutVisitor.h" />
     <ClInclude Include="Visitor.h" />
     <ClInclude Include="WritingModeSelector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Editor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

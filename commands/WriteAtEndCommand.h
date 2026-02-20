@@ -17,17 +17,13 @@ public:
 	virtual void Undo();
 	virtual void Redo();
 	virtual Command* Clone();
-	virtual UINT GetId();
+	virtual AppID GetID();
 	virtual bool IsUndoable();
 private:
 	char character[2];
 	BOOL isCompositing;
 	Long offset;
 };
-
-inline UINT WriteAtEndCommand::GetId() {
-	return 0; //ID_COMMAND_WRITEATEND;
-}
 
 inline bool WriteAtEndCommand::IsUndoable() {
 	return true;

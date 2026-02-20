@@ -110,8 +110,8 @@ Command* MacroCommand::GetAt(Long index) {
 	return this->commands.GetAt(index);
 }
 
-UINT MacroCommand::GetId() {
-	return this->commands[0]->GetId();
+AppID MacroCommand::GetID() {
+	return this->commands[0]->GetID();
 }
 
 Command* MacroCommand::operator[](Long index) {

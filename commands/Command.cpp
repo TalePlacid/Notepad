@@ -48,8 +48,8 @@ bool Command::IsMacroCommand() {
 	return false;
 }
 
-UINT Command::GetId() {
-	return 0;
+AppID Command::GetID() {
+	return AppID::NONE;
 }
 
 Long Command::GetOffset() {

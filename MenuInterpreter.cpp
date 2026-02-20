@@ -13,9 +13,11 @@ MenuInterpreter::~MenuInterpreter() {
 
 BOOL MenuInterpreter::IsAction(UINT nID) {
 	BOOL isAction = TRUE;
-	if (nID == ID_MENU_UNDO)
+
+	switch (nID)
 	{
-		isAction = FALSE;
+	default:
+		break;
 	}
 
 	return isAction;

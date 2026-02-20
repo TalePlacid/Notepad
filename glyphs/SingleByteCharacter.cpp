@@ -2,8 +2,9 @@
 
 #pragma warning(disable:4996)
 
-SingleByteCharacter::SingleByteCharacter(char content, bool isDirty){
+SingleByteCharacter::SingleByteCharacter(char content, bool isSelected){
 	this->content = content;
+	this->isSelected = isSelected;
 }
 
 SingleByteCharacter::~SingleByteCharacter() {

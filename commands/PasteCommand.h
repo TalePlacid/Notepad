@@ -18,12 +18,13 @@ public:
 	virtual void Undo();
 	virtual void Redo();
 	virtual Command* Clone();
-	virtual UINT GetId();
+	virtual AppID GetID();
 	virtual bool IsUndoable();
 private:
 	Long offset;
 	Long columnIndex;
 	CString contents;
+	CString erased;
 };
 
 #endif // !_PASTECOMMAND_H

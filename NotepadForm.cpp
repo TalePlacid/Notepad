@@ -404,7 +404,7 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	AppID nID = KeyDownInterpreter::DetermineID(nChar);
 	if (nID != AppID::NONE)
 	{
-		if (KeyDownInterpreter::IsAction(nChar))
+		if (KeyDownInterpreter::IsAction(nID))
 		{
 			this->HandleAction(nID);
 		}

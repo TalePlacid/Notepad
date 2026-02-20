@@ -10,22 +10,15 @@ KeyDownInterpreter::~KeyDownInterpreter() {
 
 }
 
-BOOL KeyDownInterpreter::IsAction(UINT nChar) {
+BOOL KeyDownInterpreter::IsAction(AppID nID) {
 	BOOL isAction = TRUE;
 
-	int onCtrlKey = GetKeyState(VK_CONTROL) & 0x8000;
-	int onShiftKey = GetKeyState(VK_SHIFT) & 0x8000;
-
-	switch (nChar)
+	switch (nID)
 	{
-	case VK_BACK:
+	case AppID::ID_COMMAND_ERASE:
+	case AppID::ID_COMMAND_PASTE:
+	case AppID::ID_COMMAND_CUT:
 		isAction = FALSE;
-		break;
-	case 'V':
-		if (onCtrlKey)
-		{
-			isAction = FALSE;
-		}
 		break;
 	default:
 		break;
@@ -200,6 +193,13 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		{
 			nID = AppID::ID_COMMAND_PASTE;
 		}
+		break;
+	case 'X':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_COMMAND_CUT;
+		}
+		break;
 	default:
 		break;
 	}

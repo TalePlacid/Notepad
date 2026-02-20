@@ -1,6 +1,7 @@
 #include <afxwin.h>
 #include "EraseRangeCommand.h"
 #include "../NotepadForm.h"
+#include "../Editor.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
@@ -44,311 +45,30 @@ EraseRangeCommand& EraseRangeCommand::operator=(const EraseRangeCommand& source)
 }
 
 void EraseRangeCommand::Execute() {
-	//1. 앞 위치로 이동한다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	this->contents = pagingBuffer->MakeSelectedString();
-	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-	Long currentOffset = pagingBuffer->GetCurrentOffset();
-	if (selectionBeginOffset < currentOffset)
-	{
-		this->frontOffset = selectionBeginOffset;
-		this->rearOffset = currentOffset;
-	}
-	else
-	{
-		this->frontOffset = currentOffset;
-		this->rearOffset = selectionBeginOffset;
-	}
+	//1. 선택 범위를 읽는다.
+	Editor editor(this->parent);
+	editor.GetSelectedRange(this->frontOffset, this->rearOffset);
 
-	CaretNavigator caretNavigator(this->parent);
-	caretNavigator.MoveTo(this->frontOffset);
-
-	//2. 현재 위치를 읽는다.
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-	this->columnIndex = columnIndex;
-
-	//3. 선택 길이만큼 반복한다.
-	ByteChecker byteChecker;
-	Long merged = 0;
-	Glyph* nextRow;
-	TCHAR* character;
-	Long characterByte;
-	Long selectionLength = this->rearOffset - this->frontOffset;
-	Long i = 0;
-	BOOL flag = TRUE;
-	while (i < selectionLength && flag)
-	{
-		flag = FALSE;
-		//3.1. 줄의 끝이 아니라면,
-		if (columnIndex < row->GetLength())
-		{
-			flag = TRUE;
-			//3.1.1. 구한다.
-			character = (char*)*row->GetAt(columnIndex);
-			characterByte = 1;
-			if (byteChecker.IsLeadByte(character[0]))
-			{
-				characterByte = 2;
-			}
-
-			//3.1.2. 노트에서 지운다.
-			row->Remove(columnIndex);
-			row->Move(columnIndex);
-		}
-		else if (rowIndex + 1 < note->GetLength()) //3.2. 줄의 끝이고 다음 줄이 있다면,
-		{
-			flag = TRUE;
-			//3.2.1. 바이트수를 구한다.
-			nextRow = note->GetAt(rowIndex + 1);
-			if (!nextRow->IsDummyRow())
-			{
-				characterByte = 2;
-			}
-			else
-			{
-				characterByte = 0;
-			}
-
-			//3.2.2. 줄을 합친다.
-			note->MergeRows(rowIndex);
-			merged++;
-		}
-
-		i += characterByte;
-	}
-
-
-	//4. 자동개행중이면, 재개행한다.
-	Long dummied = 0;
-	if (((NotepadForm*)(this->parent))->isAutoWrapped)
-	{
-		NoteWrapper noteWrapper(this->parent);
-		dummied = noteWrapper.Rewrap();
-	}
-
-	//5. 페이징버퍼에서 지운다.
-	pagingBuffer->Remove(this->rearOffset);
-	pagingBuffer->UnmarkSelectionBegin();
-
-	//6. 수직 스크롤을 조정한다.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowHeight = sizeCalculator->GetRowHeight();
-	Scroll vScroll = scrollController->GetVScroll();
-	if (scrollController->HasVScroll())
-	{
-		Long max = vScroll.GetMax() - (merged + dummied) * rowHeight;
-		scrollController->ResizeVRange(max);
-	}
-
-	//7. 적재량이 부족하면, 재적재한다.
-	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
-	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
-	{
-		row = note->GetAt(rowIndex);
-		columnIndex = row->GetCurrent();
-		if (!row->IsDummyRow() && columnIndex == 0)
-		{
-			pagingBuffer->Add(CString("\r\n"));
-			pagingBuffer->PreviousRow();
-		}
-		PageLoader::LoadNext(this->parent);
-		if (!row->IsDummyRow() && columnIndex == 0)
-		{
-			note->MergeRows(rowIndex);
-			pagingBuffer->NextRow();
-			pagingBuffer->Remove();
-		}
-	}
+	//2. 선택범위를 지운다.
+	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
 }
 
 void EraseRangeCommand::Undo() {
-	//1. 오프셋 기반으로 이동한다.
-	CaretNavigator caretNavigator(this->parent);
-	caretNavigator.MoveTo(this->frontOffset);
-	caretNavigator.NormalizeColumn(this->columnIndex);
-
-	//2. 현재위치를 읽는다.
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	//3. 복사할 내용의 끝까지 반복한다.
-	GlyphFactory glyphFactory;
-	ByteChecker byteChecker;
-	NoteWrapper noteWrapper(this->parent);
-	Glyph* glyph;
-	TCHAR character[2];
-	Long dummied = 0;
-	Long i = 0;
-	while (i < this->contents.GetLength())
-	{
-		//3.1. 문자를 읽는다.
-		character[0] = this->contents.GetAt(i);
-		if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
-		{
-			character[1] = this->contents.GetAt(++i);
-		}
-
-		//3.2. 줄바꿈 문자가 아니라면, 줄에서 쓴다.
-		if (character[0] != '\r')
-		{
-			glyph = glyphFactory.Create(character);
-			glyph->Select(true);
-			row->Add(columnIndex, glyph);
-			columnIndex = row->GetCurrent();
-		}
-		else //3.3. 줄바꿈 문자라면, 줄을 나눈다.
-		{
-			note->SplitRows(rowIndex, columnIndex);
-			rowIndex = note->Next();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->First();
-		}
-
-		//3.4. 자동개행중이면, 재개행한다.
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
-		{
-			dummied += noteWrapper.Rewrap();
-			rowIndex = note->GetCurrent();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->GetCurrent();
-		}
-		i++;
-	}
-
-	//4. 페이징 버퍼에서 쓴다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->MarkSelectionBegin();
-	pagingBuffer->Add(this->contents);
-
-	//5. 수직 스크롤바에서 최대값을 조정한다.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	if (scrollController->HasVScroll())
-	{
-		Scroll vScroll = scrollController->GetVScroll();
-		Long max = vScroll.GetMax() + (RowCounter::CountRow(this->contents) + dummied) * sizeCalculator->GetRowHeight();
-		scrollController->ResizeVRange(max);
-	}
+	Editor editor(this->parent);
+	editor.InsertTextAt(this->frontOffset, this->columnIndex, this->contents);
 }   
 
 void EraseRangeCommand::Redo() {
-	//1. 앞 위치로 이동한다.
-	CaretNavigator caretNavigator(this->parent);
-	caretNavigator.MoveTo(this->frontOffset);
-	caretNavigator.NormalizeColumn(this->columnIndex);
-
-	//2. 현재 위치를 읽는다.
-	Glyph* note = ((NotepadForm*)(this->parent))->note;
-	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-
-	//3. 선택 길이만큼 반복한다.
-	ByteChecker byteChecker;
-	Long merged = 0;
-	Glyph* nextRow;
-	TCHAR* character;
-	Long characterByte;
-	Long selectionLength = this->rearOffset - this->frontOffset;
-	Long i = 0;
-	BOOL flag = TRUE;
-	while (i < selectionLength && flag)
-	{
-		flag = FALSE;
-		//3.1. 줄의 끝이 아니라면,
-		if (columnIndex < row->GetLength())
-		{
-			flag = TRUE;
-			//3.1.1. 구한다.
-			character = (char*)*row->GetAt(columnIndex);
-			characterByte = 1;
-			if (byteChecker.IsLeadByte(character[0]))
-			{
-				characterByte = 2;
-			}
-
-			//3.1.2. 노트에서 지운다.
-			row->Remove(columnIndex);
-			row->Move(columnIndex);
-		}
-		else if (rowIndex + 1 < note->GetLength()) //3.2. 줄의 끝이고 다음 줄이 있다면,
-		{
-			flag = TRUE;
-			//3.2.1. 바이트수를 구한다.
-			nextRow = note->GetAt(rowIndex + 1);
-			if (!nextRow->IsDummyRow())
-			{
-				characterByte = 2;
-			}
-			else
-			{
-				characterByte = 0;
-			}
-
-			//3.2.2. 줄을 합친다.
-			note->MergeRows(rowIndex);
-			merged++;
-		}
-
-		i += characterByte;
-	}
-
-	//4. 자동개행중이면, 재개행한다.
-	Long dummied = 0;
-	if (((NotepadForm*)(this->parent))->isAutoWrapped)
-	{
-		NoteWrapper noteWrapper(this->parent);
-		dummied = noteWrapper.Rewrap();
-	}
-
-	//5. 페이징버퍼에서 지운다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->Remove(this->rearOffset);
-	pagingBuffer->UnmarkSelectionBegin();
-
-	//6. 수직 스크롤을 조정한다.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowHeight = sizeCalculator->GetRowHeight();
-	if (scrollController->HasVScroll())
-	{
-		Scroll vScroll = scrollController->GetVScroll();
-		Long max = vScroll.GetMax() - (merged + dummied) * rowHeight;
-		scrollController->ResizeVRange(max);
-	}
-
-	//7. 적재량이 부족하면, 재적재한다.
-	if (note->IsBelowBottomLine(rowIndex + 1))
-	{
-		row = note->GetAt(rowIndex);
-		columnIndex = row->GetCurrent();
-		if (!row->IsDummyRow() && columnIndex == 0)
-		{
-			pagingBuffer->Add(CString("\r\n"));
-			pagingBuffer->PreviousRow();
-		}
-		PageLoader::LoadNext(this->parent);
-		if (!row->IsDummyRow() && columnIndex == 0)
-		{
-			note->MergeRows(rowIndex);
-			pagingBuffer->NextRow();
-			pagingBuffer->Remove();
-		}
-	}
+	Editor editor(this->parent);
+	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
 }
 
 Command* EraseRangeCommand::Clone() {
 	return new EraseRangeCommand(*this);
 }
 
-UINT EraseRangeCommand::GetId() {
-	return 0; // ID_COMMAND_ERASERANGE;
+AppID EraseRangeCommand::GetID() {
+	return AppID::ID_COMMAND_ERASE_RANGE;
 }
 
 bool EraseRangeCommand::IsUndoable() {

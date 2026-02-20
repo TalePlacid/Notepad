@@ -16,7 +16,7 @@ public:
 	virtual void Undo();
 	virtual void Redo();
 	virtual Command* Clone();
-	virtual UINT GetId();
+	virtual AppID GetID();
 	virtual bool IsUndoable();
 private:
 	Long frontOffset;

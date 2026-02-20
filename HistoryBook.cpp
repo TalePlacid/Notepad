@@ -60,7 +60,7 @@ Command* HistoryBook::Bind(Command* command) {
 		DropOldestStack<Command*>::Node top = this->histories.Pop();
 		(this->length)--;
 		Command* top_ = top.GetElement();
-		if (command->GetId() == top_->GetId())
+		if (command->GetID() == top_->GetID())
 		{
 			if (top_->IsMacroCommand())
 			{

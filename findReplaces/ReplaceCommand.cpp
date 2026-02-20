@@ -107,8 +107,7 @@ void ReplaceCommand::Execute() {
 				character[1] = this->replaced.GetAt(++j);
 			}
 
-			glyph = glyphFactory.Create(character);
-			glyph->Select(true);
+			glyph = glyphFactory.Create(character, true);
 			row->Replace(columnIndex, glyph);
 			columnIndex = row->Next();
 
@@ -136,8 +135,7 @@ void ReplaceCommand::Execute() {
 				character[1] = this->replaced.GetAt(++j);
 			}
 
-			glyph = glyphFactory.Create(character);
-			glyph->Select(true);
+			glyph = glyphFactory.Create(character, true);
 			row->Add(columnIndex, glyph);
 			columnIndex = row->GetCurrent();
 

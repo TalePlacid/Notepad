@@ -437,12 +437,6 @@
     <ClCompile Include="actions\SelectWordRightAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlVAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\CtrlXAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
     <ClCompile Include="actions\CtrlYAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -541,6 +535,9 @@
     </ClCompile>
     <ClCompile Include="actions\CopyAction.cpp">
       <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -931,12 +928,6 @@
     <ClInclude Include="actions\SelectWordRightAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlVAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\CtrlXAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
     <ClInclude Include="actions\CtrlYAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
@@ -1039,5 +1030,10 @@
     <ClInclude Include="actions\CopyAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Editor.h">
+      <Filter>헤더 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

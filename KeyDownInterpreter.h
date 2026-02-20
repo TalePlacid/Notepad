@@ -8,7 +8,7 @@ public:
 	KeyDownInterpreter();
 	~KeyDownInterpreter();
 
-	static BOOL IsAction(UINT nChar);
+	static BOOL IsAction(AppID nID);
 	static AppID DetermineID(UINT nChar);
 };
 

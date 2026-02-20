@@ -1,4 +1,5 @@
 #include "PasteCommand.h"
+#include "../Editor.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../ClipboardController.h"
@@ -15,7 +16,7 @@
 #pragma warning(disable:4996)
 
 PasteCommand::PasteCommand(CWnd* parent)
-	:Command(parent), contents("") {
+	:Command(parent), contents(""), erased("") {
 	this->offset = -1;
 	this->columnIndex = 0;
 }
@@ -28,23 +29,43 @@ PasteCommand::PasteCommand(const PasteCommand& source)
 	:Command(source), contents(source.contents) {
 	this->offset = source.offset;
 	this->columnIndex = source.columnIndex;
+	this->contents = source.contents;
+	this->erased = source.erased;
 }
 
 PasteCommand& PasteCommand::operator=(const PasteCommand& source) {
 	Command::operator=(source);
 
-	this->contents = source.contents;
 	this->offset = source.offset;
 	this->columnIndex = source.columnIndex;
+	this->contents = source.contents;
+	this->erased = source.erased;
 
 	return *this;
 }
 
 void PasteCommand::Execute() {
 	//1. 클립보드에서 붙여넣기가 됐으면,
-	BOOL isPasted = ((NotepadForm*)(this->parent))->clipboardController->Paste();
+	ClipboardController* clipboardController = ((NotepadForm*)(this->parent))->clipboardController;
+	BOOL isPasted = clipboardController->Paste();
 	if (isPasted)
 	{
+		//2. 선택범위가 있으면, 지운다.
+		Editor editor(this->parent);
+		Long frontOffset;
+		Long rearOffset;
+		BOOL isSelected = editor.GetSelectedRange(frontOffset, rearOffset);
+		if (isSelected)
+		{
+			editor.EraseRange(frontOffset, rearOffset, this->columnIndex, this->erased);
+			this->offset = frontOffset;
+		}
+
+		//3. 내용을 붙여넣는다.
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		this->contents = clipboardController->GetContent();
+		editor.InsertTextAt(pagingBuffer->GetCurrentOffset(), this->columnIndex, this->contents);
+#if 0
 		//1.1. 현재위치를 읽는다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
@@ -112,10 +133,12 @@ void PasteCommand::Execute() {
 			Long max = vScroll.GetMax() + (RowCounter::CountRow(this->contents) + dummied) * sizeCalculator->GetRowHeight();
 			scrollController->ResizeVRange(max);
 		}
+#endif
 	}
 }
 
 void PasteCommand::Undo() {
+#if 0
 	//1. 위치로 이동한다.
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(this->offset);
@@ -216,6 +239,7 @@ void PasteCommand::Undo() {
 			pagingBuffer->Remove();
 		}
 	}
+#endif
 }
 
 void PasteCommand::Redo() {
@@ -229,7 +253,7 @@ void PasteCommand::Redo() {
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
-
+	
 	//3. 복사할 내용의 끝까지 반복한다.
 	GlyphFactory glyphFactory;
 	ByteChecker byteChecker;
@@ -250,7 +274,7 @@ void PasteCommand::Redo() {
 		//3.2. 줄바꿈 문자가 아니라면, 줄에서 쓴다.
 		if (character[0] != '\r')
 		{
-			glyph = glyphFactory.Create(character);
+			glyph = glyphFactory.Create(character, true);
 			glyph->Select(true);
 			row->Add(columnIndex, glyph);
 			columnIndex = row->GetCurrent();
@@ -294,8 +318,8 @@ Command* PasteCommand::Clone() {
 	return new PasteCommand(*this);
 }
 
-UINT PasteCommand::GetId() {
-	return 0; // ID_COMMAND_PASTE;
+AppID PasteCommand::GetID() {
+	return AppID::ID_COMMAND_PASTE;
 }
 
 bool PasteCommand::IsUndoable() {

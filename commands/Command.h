@@ -1,6 +1,7 @@
 #ifndef _COMMAND_H //guard
 #define _COMMAND_H
 #include <afxwin.h>
+#include "../AppID.h"
 
 typedef signed long int Long;
 
@@ -24,7 +25,7 @@ public:
 	virtual bool IsMacroCommand();
 	virtual bool NeedScrollBarUpdate();
 
-	virtual UINT GetId();
+	virtual AppID GetID();
 	virtual Long GetOffset();
 	virtual CString GetSource();
 	virtual CString GetReplaced();

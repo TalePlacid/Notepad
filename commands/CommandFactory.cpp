@@ -67,6 +67,9 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 			command = new PasteCommand(parent);
 		}
 		break;
+	case AppID::ID_COMMAND_CUT:
+		command = new CutCommand(parent);
+		break;
 #if 0
 	case ID_MENU_NEW:
 		command = new NewCommand(parent);

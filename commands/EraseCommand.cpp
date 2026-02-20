@@ -280,8 +280,8 @@ Command* EraseCommand::Clone() {
 	return new EraseCommand(*this);
 }
 
-UINT EraseCommand::GetId() {
-	return 0; // ID_COMMAND_ERASE;
+AppID EraseCommand::GetID() {
+	return AppID::ID_COMMAND_ERASE;
 }
 
 bool EraseCommand::IsUndoable() {
