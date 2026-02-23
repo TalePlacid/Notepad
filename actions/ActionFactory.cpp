@@ -21,6 +21,8 @@
 #include "MoveDocRearAction.h"
 #include "MovePageUpAction.h"
 #include "MovePageDownAction.h"
+#include "MovePageLeftAction.h"
+#include "MovePageRightAction.h"
 #include "SelectUpAction.h"
 #include "SelectDownAction.h"
 #include "SelectLeftAction.h"
@@ -122,6 +124,12 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 	case AppID::ID_ACTION_MOVE_PAGE_DOWN:
 		action = new MovePageDownAction(parent);
 		break;
+	case AppID::ID_ACTION_MOVE_PAGE_LEFT:
+		action = new MovePageLeftAction(parent);
+		break;
+	case AppID::ID_ACTION_MOVE_PAGE_RIGHT:
+		action = new MovePageRightAction(parent);
+		break;	
 	case AppID::ID_ACTION_SELECT_UP:
 		action = new SelectUpAction(parent);
 		break;

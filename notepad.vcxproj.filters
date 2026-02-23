@@ -383,10 +383,10 @@
     <ClCompile Include="actions\MoveWordLeftAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlPageDownAction.cpp">
+    <ClCompile Include="actions\MovePageRightAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlPageUpAction.cpp">
+    <ClCompile Include="actions\MovePageLeftAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\MoveWordRightAction.cpp">
@@ -841,9 +841,6 @@
     <ClInclude Include="OpenAction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="actions\Ctrl0Action.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
     <ClInclude Include="actions\SelectAllAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
@@ -862,16 +859,10 @@
     <ClInclude Include="actions\MoveWordLeftAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlMinusAction.h">
+    <ClInclude Include="actions\MovePageRightAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlPageDownAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\CtrlPageUpAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\CtrlPlusAction.h">
+    <ClInclude Include="actions\MovePageLeftAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\MoveWordRightAction.h">

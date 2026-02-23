@@ -142,8 +142,8 @@
     <ClCompile Include="actions\CtrlHAction.cpp" />
     <ClCompile Include="actions\MoveDocFrontAction.cpp" />
     <ClCompile Include="actions\MoveWordLeftAction.cpp" />
-    <ClCompile Include="actions\CtrlPageDownAction.cpp" />
-    <ClCompile Include="actions\CtrlPageUpAction.cpp" />
+    <ClCompile Include="actions\MovePageRightAction.cpp" />
+    <ClCompile Include="actions\MovePageLeftAction.cpp" />
     <ClCompile Include="actions\MoveWordRightAction.cpp" />
     <ClCompile Include="actions\SelectDocRearAction.cpp" />
     <ClCompile Include="actions\SelectDocFrontAction.cpp" />
@@ -286,7 +286,6 @@
     <ClInclude Include="actions\AutoWrapAction.h" />
     <ClInclude Include="actions\ChangeFontAction.h" />
     <ClInclude Include="actions\CopyAction.h" />
-    <ClInclude Include="actions\Ctrl0Action.h" />
     <ClInclude Include="actions\OpenFindDialogAction.h" />
     <ClInclude Include="actions\OpenReplaceDialogAction.h" />
     <ClInclude Include="actions\PreviewAction.h" />
@@ -297,10 +296,8 @@
     <ClInclude Include="actions\CtrlHAction.h" />
     <ClInclude Include="actions\MoveDocFrontAction.h" />
     <ClInclude Include="actions\MoveWordLeftAction.h" />
-    <ClInclude Include="actions\CtrlMinusAction.h" />
-    <ClInclude Include="actions\CtrlPageDownAction.h" />
-    <ClInclude Include="actions\CtrlPageUpAction.h" />
-    <ClInclude Include="actions\CtrlPlusAction.h" />
+    <ClInclude Include="actions\MovePageRightAction.h" />
+    <ClInclude Include="actions\MovePageLeftAction.h" />
     <ClInclude Include="actions\MoveWordRightAction.h" />
     <ClInclude Include="actions\SelectDocRearAction.h" />
     <ClInclude Include="actions\SelectDocFrontAction.h" />

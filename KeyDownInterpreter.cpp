@@ -135,6 +135,10 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		{
 			nID = AppID::ID_ACTION_SELECT_PAGE_UP;
 		}
+		else if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_MOVE_PAGE_LEFT;
+		}
 		else
 		{
 			nID = AppID::ID_ACTION_MOVE_PAGE_UP;
@@ -144,6 +148,10 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		if (onShiftKey)
 		{
 			nID = AppID::ID_ACTION_SELECT_PAGE_DOWN;
+		}
+		else if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_MOVE_PAGE_RIGHT;
 		}
 		else
 		{

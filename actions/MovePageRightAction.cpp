@@ -1,29 +1,31 @@
 #include <afxwin.h>
-#include "CtrlPageUpAction.h"
+#include "MovePageRightAction.h"
 #include "../NotepadForm.h"
 #include "../ScrollController.h"
 
 #pragma warning(disable:4996)
 
-CtrlPageUpAction::CtrlPageUpAction(CWnd* parent)
+MovePageRightAction::MovePageRightAction(CWnd* parent)
 	:Action(parent) {
 
 }
 
-CtrlPageUpAction::~CtrlPageUpAction() {
+MovePageRightAction::~MovePageRightAction() {
 
 }
 
-void CtrlPageUpAction::Perform() {
+void MovePageRightAction::Perform() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	if (scrollController->HasHScroll())
 	{
 		Scroll hScroll = scrollController->GetHScroll();
-		Long pos = hScroll.GetPos() - hScroll.GetPage();
-		if (pos < 0)
+		Long pos = hScroll.GetPos() + hScroll.GetPage();
+		Long posLimit = hScroll.GetMax() - hScroll.GetPage();
+		if (pos > posLimit)
 		{
-			pos = 0;
+			pos = posLimit;
 		}
+
 		scrollController->MoveHScroll(pos);
 	}
 }

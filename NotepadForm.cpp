@@ -40,7 +40,7 @@
 #include "Caret.h"
 #include "glyphs/Glyph.h"
 #include "commands/Command.h"
-#include "actions/KeyAction.h"
+#include "actions/Action.h"
 #include "scrolls/ScrollBarAction.h"
 #include "mouses/MouseAction.h"
 
