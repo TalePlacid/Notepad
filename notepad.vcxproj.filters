@@ -269,15 +269,6 @@
     <ClCompile Include="prints\PrintRenderer.cpp">
       <Filter>소스 파일\prints</Filter>
     </ClCompile>
-    <ClCompile Include="commands\ZoomInCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="commands\ZoomOutCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="commands\ZoomResetCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
     <ClCompile Include="mouses\DragDownAction.cpp">
       <Filter>소스 파일\mouses</Filter>
     </ClCompile>
@@ -365,22 +356,7 @@
     <ClCompile Include="Visitor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="commands\OpenFindDialogCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="commands\OpenReplaceDialogCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="commands\PreviewCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="commands\PrintCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
     <ClCompile Include="commands\RedoCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="commands\SetPageCommand.cpp">
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
     <ClCompile Include="commands\UndoCommand.cpp">
@@ -388,9 +364,6 @@
     </ClCompile>
     <ClCompile Include="WritingModeSelector.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\Ctrl0Action.cpp">
-      <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\SelectAllAction.cpp">
       <Filter>소스 파일\actions</Filter>
@@ -410,16 +383,10 @@
     <ClCompile Include="actions\MoveWordLeftAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlMinusAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
     <ClCompile Include="actions\CtrlPageDownAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\CtrlPageUpAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\CtrlPlusAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\MoveWordRightAction.cpp">
@@ -450,12 +417,6 @@
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\MoveLineFrontAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\KeyAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\KeyActionFactory.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\MoveLeftAction.cpp">
@@ -538,6 +499,30 @@
     </ClCompile>
     <ClCompile Include="Editor.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\OpenFindDialogAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\OpenReplaceDialogAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\PreviewAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\PrintAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\SetPageAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ZoomInAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ZoomOutAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ZoomResetAction.cpp">
+      <Filter>소스 파일\actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -757,15 +742,6 @@
     <ClInclude Include="prints\PrintRenderer.h">
       <Filter>헤더 파일\prints</Filter>
     </ClInclude>
-    <ClInclude Include="commands\ZoomInCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\ZoomOutCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\ZoomResetCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
     <ClInclude Include="mouses\DragDownAction.h">
       <Filter>헤더 파일\mouses</Filter>
     </ClInclude>
@@ -850,22 +826,7 @@
     <ClInclude Include="Visitor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="commands\OpenFindDialogCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\OpenReplaceDialogCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\PreviewCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\PrintCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
     <ClInclude Include="commands\RedoCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\SetPageCommand.h">
       <Filter>헤더 파일\commands</Filter>
     </ClInclude>
     <ClInclude Include="commands\UndoCommand.h">
@@ -941,12 +902,6 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\MoveLineFrontAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\KeyAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\KeyActionFactory.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\MoveLeftAction.h">
@@ -1028,6 +983,30 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\CopyAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\OpenFindDialogAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\OpenReplaceDialogAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\PreviewAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\PrintAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\SetPageAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ZoomInAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ZoomOutAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ZoomResetAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
   </ItemGroup>

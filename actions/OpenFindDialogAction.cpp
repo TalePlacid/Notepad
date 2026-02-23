@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
-#include "OpenReplaceDialogCommand.h"
+#include "OpenFindDialogAction.h"
 #include "../message.h"
 #include "../NotepadForm.h"
 #include "../SearchResultController.h"
@@ -8,16 +8,16 @@
 
 #pragma warning(disable:4996)
 
-OpenReplaceDialogCommand::OpenReplaceDialogCommand(CWnd* parent)
-	:Command(parent) {
+OpenFindDialogAction::OpenFindDialogAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-OpenReplaceDialogCommand::~OpenReplaceDialogCommand() {
+OpenFindDialogAction::~OpenFindDialogAction() {
 
 }
 
-void OpenReplaceDialogCommand::Execute() {
+void OpenFindDialogAction::Perform() {
 	if (!((NotepadForm*)(this->parent))->hasFindReplaceDialog)
 	{
 		CString findString("");
@@ -32,10 +32,10 @@ void OpenReplaceDialogCommand::Execute() {
 			findString = searchResultController->GetFindReplaceOption().findString;
 		}
 
-		CFindReplaceDialog* replaceDialog = new CFindReplaceDialog;
-		replaceDialog->Create(FALSE, (LPCTSTR)findString, NULL, 1, this->parent);
+		CFindReplaceDialog* findDialog = new CFindReplaceDialog;
+		findDialog->Create(TRUE, (LPCTSTR)findString, NULL, 1, this->parent);
 
 		((NotepadForm*)(this->parent))->hasFindReplaceDialog = TRUE;
-		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_FOCUS, (WPARAM)replaceDialog, 0);
+		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_FOCUS, (WPARAM)findDialog, 0);
 	}
 }

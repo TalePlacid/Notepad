@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include <afxdlgs.h>
-#include "PrintCommand.h"
+#include "PrintAction.h"
 #include "../prints/PageSetting.h"
 #include "../prints/PrinterResource.h"
 #include "../NotepadForm.h"
@@ -13,47 +13,47 @@
 
 #pragma warning(disable:4996)
 
-PrintCommand::PrintCommand(CWnd* parent)
-	:Command(parent) {
+PrintAction::PrintAction(CWnd* parent)
+	:Action(parent) {
 	this->previewPaginator = NULL;
 }
 
-PrintCommand::~PrintCommand() {
+PrintAction::~PrintAction() {
 	if (this->previewPaginator != NULL)
 	{
 		delete this->previewPaginator;
 	}
 }
 
-void PrintCommand::Execute() {
-	//1. ìë™ê°œí–‰ì„ ë©ˆì¶”ê³ , ì²˜ìŒìœ¼ë¡œ ì´ë™í•œë‹¤.
+void PrintAction::Perform() {
+	//1. ÀÚµ¿°³ÇàÀ» ¸ØÃß°í, Ã³À½À¸·Î ÀÌµ¿ÇÑ´Ù.
 	SuspendAutoWrap suspendAutoWrap(this->parent);
 	PageLoader::LoadFirst(this->parent);
 
-	//2. í˜ì´ì§• í•œë‹¤.
+	//2. ÆäÀÌÂ¡ ÇÑ´Ù.
 	this->previewPaginator = new PreviewPaginator(this->parent);
 	this->previewPaginator->Paginate();
 
-	//3. ì¸ì‡„ ëŒ€í™”ìƒìë¥¼ ì—°ë‹¤.
+	//3. ÀÎ¼â ´ëÈ­»óÀÚ¸¦ ¿¬´Ù.
 	CPrintDialog printDialog(FALSE);
-	printDialog.m_pd.Flags &= ~PD_NOPAGENUMS; //í˜ì´ì§€ ë²”ìœ„ ì„¤ì • ì œê±° ê¸°ëŠ¥ í”Œë˜ê·¸ OFF
-	printDialog.m_pd.Flags |= PD_NOSELECTION; //ì„ íƒ ì˜ì—­ í”„ë¦°íŠ¸ ê¸°ëŠ¥ OFF
-	printDialog.m_pd.Flags |= PD_USEDEVMODECOPIESANDCOLLATE; // ì¸ì‡„ ë§¤ìˆ˜ ì„¤ì • ê¸°ëŠ¥ ON
-	printDialog.m_pd.nMinPage = 1; //ìµœì†Œ í˜ì´ì§€
-	printDialog.m_pd.nMaxPage = this->previewPaginator->GetPageCount(); //ìµœëŒ€ í˜ì´ì§€
-	printDialog.m_pd.nFromPage = 1; //ê¸°ë³¸ ìµœì†Œ í˜ì´ì§€
-	printDialog.m_pd.nToPage = this->previewPaginator->GetPageCount(); //ê¸°ë³¸ ìµœëŒ€ í˜ì´ì§€
-	printDialog.m_pd.nCopies = 1; // ê¸°ë³¸ ì¸ì‡„ ë§¤ìˆ˜
+	printDialog.m_pd.Flags &= ~PD_NOPAGENUMS; //ÆäÀÌÁö ¹üÀ§ ¼³Á¤ Á¦°Å ±â´É ÇÃ·¡±× OFF
+	printDialog.m_pd.Flags |= PD_NOSELECTION; //¼±ÅÃ ¿µ¿ª ÇÁ¸°Æ® ±â´É OFF
+	printDialog.m_pd.Flags |= PD_USEDEVMODECOPIESANDCOLLATE; // ÀÎ¼â ¸Å¼ö ¼³Á¤ ±â´É ON
+	printDialog.m_pd.nMinPage = 1; //ÃÖ¼Ò ÆäÀÌÁö
+	printDialog.m_pd.nMaxPage = this->previewPaginator->GetPageCount(); //ÃÖ´ë ÆäÀÌÁö
+	printDialog.m_pd.nFromPage = 1; //±âº» ÃÖ¼Ò ÆäÀÌÁö
+	printDialog.m_pd.nToPage = this->previewPaginator->GetPageCount(); //±âº» ÃÖ´ë ÆäÀÌÁö
+	printDialog.m_pd.nCopies = 1; // ±âº» ÀÎ¼â ¸Å¼ö
 	INT_PTR ret = printDialog.DoModal();
 
-	//4. ì¸ì‡„ ëŒ€í™”ìƒìì—ì„œ í™•ì¸ì„ ëˆŒë €ìœ¼ë©´,
+	//4. ÀÎ¼â ´ëÈ­»óÀÚ¿¡¼­ È®ÀÎÀ» ´­·¶À¸¸é,
 	if (ret == IDOK)
 	{
-		//4.1. í”„ë¦°í„° ë¦¬ì†ŒìŠ¤ë¥¼ ì½ëŠ”ë‹¤.
+		//4.1. ÇÁ¸°ÅÍ ¸®¼Ò½º¸¦ ÀĞ´Â´Ù.
 		PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
 		PrinterResource printerResource(this->parent, &printDialog);
 		printerResource.LoadMetrics();
-		
+
 		Long fromPage = 1;
 		Long toPage = this->previewPaginator->GetPageCount();
 		if (!printDialog.PrintAll())
@@ -63,28 +63,28 @@ void PrintCommand::Execute() {
 		}
 		Long copies = printDialog.GetCopies();
 
-		//4.2. í”„ë¦°í„° DCë¥¼ ì—°ê²°í•œë‹¤.
+		//4.2. ÇÁ¸°ÅÍ DC¸¦ ¿¬°áÇÑ´Ù.
 		CDC dc;
 		dc.Attach(printDialog.CreatePrinterDC());
 		dc.m_bPrinting = TRUE;
 
-		//4.3 ë¬¸ì„œ ì •ë³´ ì„¤ì •í•œë‹¤.
+		//4.3 ¹®¼­ Á¤º¸ ¼³Á¤ÇÑ´Ù.
 		DOCINFO di;
 		memset(&di, 0, sizeof(DOCINFO));
 		di.cbSize = sizeof(DOCINFO);
 		CString fileName;
 		this->parent->GetWindowText(fileName);
-		if (fileName == "ë©”ëª¨ì¥ ~ì œëª©ì—†ìŒ")
+		if (fileName == "¸Ş¸ğÀå ~Á¦¸ñ¾øÀ½")
 		{
-			fileName = "ì œëª©ì—†ìŒ";
+			fileName = "Á¦¸ñ¾øÀ½";
 		}
 		di.lpszDocName = (LPCSTR)fileName;
 
-		//3.4. ì¸ì‡„ë¥¼ ì‹œì‘ì— ì„±ê³µí–ˆìœ¼ë©´,
+		//3.4. ÀÎ¼â¸¦ ½ÃÀÛ¿¡ ¼º°øÇßÀ¸¸é,
 		int isStarted = dc.StartDoc(&di);
 		if (isStarted != SP_ERROR)
 		{
-			//3.4.1. í•œ ë¶€ì”© ì¸ì‡„ì´ë©´,
+			//3.4.1. ÇÑ ºÎ¾¿ ÀÎ¼âÀÌ¸é,
 			CFont* oldFont = dc.SelectObject(printerResource.GetFont());
 
 			PrintRenderer printRenderer(this->parent, this->previewPaginator, &printerResource);
@@ -115,7 +115,7 @@ void PrintCommand::Execute() {
 					i++;
 				}
 			}
-			else //3.4.2. í•œ ë¶€ì”© ì¸ì‡„ê°€ ì•„ë‹ˆë©´,
+			else //3.4.2. ÇÑ ºÎ¾¿ ÀÎ¼â°¡ ¾Æ´Ï¸é,
 			{
 				while (current < fromPage)
 				{
@@ -141,6 +141,6 @@ void PrintCommand::Execute() {
 			dc.SelectObject(oldFont);
 			dc.EndDoc();
 			dc.Detach();
-		} 
+		}
 	}
 }

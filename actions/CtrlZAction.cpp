@@ -5,7 +5,7 @@
 #pragma warning(disable:4996)
 
 CtrlZAction::CtrlZAction(CWnd* parent)
-	:KeyAction(parent) {
+	:Action(parent) {
 
 }
 

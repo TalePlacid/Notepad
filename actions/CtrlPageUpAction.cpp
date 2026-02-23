@@ -6,7 +6,7 @@
 #pragma warning(disable:4996)
 
 CtrlPageUpAction::CtrlPageUpAction(CWnd* parent)
-	:KeyAction(parent) {
+	:Action(parent) {
 
 }
 

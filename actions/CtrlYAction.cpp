@@ -5,7 +5,7 @@
 #pragma warning(disable:4996)
 
 CtrlYAction::CtrlYAction(CWnd* parent)
-	:KeyAction(parent) {
+	:Action(parent) {
 
 }
 

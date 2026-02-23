@@ -6,7 +6,7 @@
 #pragma warning(disable:4996)
 
 CtrlPageDownAction::CtrlPageDownAction(CWnd* parent)
-	:KeyAction(parent) {
+	:Action(parent) {
 
 }
 

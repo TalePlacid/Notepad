@@ -1,20 +1,20 @@
 #include <afxwin.h>
-#include "ZoomOutCommand.h"
+#include "ZoomOutAction.h"
 #include "../NotepadForm.h"
 #include "../SizeCalculator.h"
 
 #pragma warning(disable:4996)
 
-ZoomOutCommand::ZoomOutCommand(CWnd* parent)
-	:Command(parent) {
+ZoomOutAction::ZoomOutAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-ZoomOutCommand::~ZoomOutCommand() {
+ZoomOutAction::~ZoomOutAction() {
 
 }
 
-void ZoomOutCommand::Execute() {
+void ZoomOutAction::Perform() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 
 	notepadForm->magnification -= 0.1;

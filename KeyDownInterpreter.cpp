@@ -91,6 +91,9 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 			nID = AppID::ID_ACTION_MOVE_RIGHT;
 		}
 		break;
+	case VK_DELETE:
+		nID = AppID::ID_COMMAND_ERASE;
+		break;
 	case VK_HOME:
 		if (onCtrlKey && onShiftKey)
 		{
@@ -150,6 +153,27 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 	case VK_BACK:
 		nID = AppID::ID_COMMAND_ERASE;
 		break;
+	case VK_OEM_PLUS:
+	case VK_ADD:
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_ZOOM_IN;
+		}
+		break;
+	case VK_OEM_MINUS:
+	case VK_SUBTRACT:
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_ZOOM_OUT;
+		}
+		break;
+	case VK_NUMPAD0:
+	case '0':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_ZOOM_RESET;
+		}
+		break;
 	case 'A':
 		if (onCtrlKey)
 		{
@@ -160,6 +184,18 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		if (onCtrlKey)
 		{
 			nID = AppID::ID_ACTION_COPY;
+		}
+		break;
+	case 'F':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_OPEN_FIND_DIALOG;
+		}
+		break;
+	case 'H':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_OPEN_REPLACE_DIALOG;
 		}
 		break;
 	case 'N':

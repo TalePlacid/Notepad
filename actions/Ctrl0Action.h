@@ -1,6 +1,6 @@
 #ifndef _CTRL0ACTION_H //guard
 #define _CTRL0ACTION_H
-#include "KeyAction.h"
+#include "Action.h"
 
 class Ctrl0Action : public KeyAction {
 public:

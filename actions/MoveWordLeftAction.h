@@ -1,6 +1,6 @@
 #ifndef _MOVEWORDLEFTACTION_H //guard
 #define _MOVEWORDLEFTACTION_H
-#include "KeyAction.h"
+#include "Action.h"
 
 class MoveWordLeftAction : public Action {
 public:

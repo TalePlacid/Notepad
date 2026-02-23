@@ -1,10 +1,10 @@
 #ifndef _CTRLFACTION_H //guard
 #define _CTRLFACTION_H
-#include "KeyAction.h"
+#include "Action.h"
 
 class CWnd;
 
-class CtrlFAction : public KeyAction {
+class CtrlFAction : public Action {
 public:
 	CtrlFAction(CWnd* parent);
 	virtual ~CtrlFAction();

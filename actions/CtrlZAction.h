@@ -1,8 +1,8 @@
 #ifndef _CTRLZACTION_H //guard
 #define _CTRLZACTION_H
-#include "KeyAction.h"
+#include "Action.h"
 
-class CtrlZAction : public KeyAction {
+class CtrlZAction : public Action {
 public:
 	CtrlZAction(CWnd* parent);
 	virtual ~CtrlZAction();

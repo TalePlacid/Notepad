@@ -1,19 +1,19 @@
 #include <afxwin.h>
-#include "SetPageCommand.h"
+#include "SetPageAction.h"
 #include "../prints/PageSettingForm.h"
 
 #pragma warning(disable:4996)
 
-SetPageCommand::SetPageCommand(CWnd* parent)
-	:Command(parent) {
+SetPageAction::SetPageAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-SetPageCommand::~SetPageCommand() {
+SetPageAction::~SetPageAction() {
 
 }
 
-void SetPageCommand::Execute() {
+void SetPageAction::Perform() {
 	PageSettingForm pageSettingForm(this->parent);
 	pageSettingForm.DoModal();
 }

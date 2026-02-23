@@ -16,6 +16,12 @@ BOOL MenuInterpreter::IsAction(UINT nID) {
 
 	switch (nID)
 	{
+	case ID_MENU_CUT:
+	case ID_MENU_COPY:
+	case ID_MENU_PASTE:
+	case ID_MENU_DELETE:
+		isAction = FALSE;
+		break;
 	default:
 		break;
 	}
@@ -43,11 +49,47 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 	case ID_MENU_SAVEAS:
 		appID = AppID::ID_ACTION_SAVE_AS;
 		break;
+	case ID_MENU_SETPAGE:
+		appID = AppID::ID_ACTION_SET_PAGE;
+		break;
+	case ID_MENU_PREVIEW:
+		appID = AppID::ID_ACTION_PREVIEW;
+		break;
+	case ID_MENU_PRINT:
+		appID = AppID::ID_ACTION_PRINT;
+		break;
 	case ID_MENU_FONT:
 		appID = AppID::ID_ACTION_CHANGE_FONT;
 		break;
 	case ID_MENU_AUTOWRAP:
 		appID = AppID::ID_ACTION_AUTOWRAP;
+		break;
+	case ID_MENU_CUT:
+		appID = AppID::ID_COMMAND_CUT;
+		break;
+	case ID_MENU_COPY:
+		appID = AppID::ID_ACTION_COPY;
+		break;
+	case ID_MENU_PASTE:
+		appID = AppID::ID_COMMAND_PASTE;
+		break;
+	case ID_MENU_DELETE:
+		appID = AppID::ID_COMMAND_ERASE;
+		break;
+	case ID_MENU_FIND:
+		appID = AppID::ID_ACTION_OPEN_FIND_DIALOG;
+		break;
+	case ID_MENU_REPLACE:
+		appID = AppID::ID_ACTION_OPEN_REPLACE_DIALOG;
+		break;
+	case ID_MENU_ZOOMIN:
+		appID = AppID::ID_ACTION_ZOOM_IN;
+		break;
+	case ID_MENU_ZOOMOUT:
+		appID = AppID::ID_ACTION_ZOOM_OUT;
+		break;
+	case ID_MENU_ZOOMRESET:
+		appID = AppID::ID_ACTION_ZOOM_RESET;
 		break;
 	default:
 		break;

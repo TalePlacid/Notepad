@@ -1,10 +1,10 @@
 #ifndef _CTRLPAGEUPACTION_H
 #define _CTRLPAGEUPACTION_H
-#include "KeyAction.h"
+#include "Action.h"
 
 class CWnd;
 
-class CtrlPageUpAction : public KeyAction {
+class CtrlPageUpAction : public Action {
 public:
 	CtrlPageUpAction(CWnd* parent);
 	virtual ~CtrlPageUpAction();

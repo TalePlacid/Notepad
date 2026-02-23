@@ -4,6 +4,9 @@
 #include "OpenAction.h"
 #include "SaveAction.h"
 #include "SaveAsAction.h"
+#include "SetPageAction.h"
+#include "PreviewAction.h"
+#include "PrintAction.h"
 #include "ChangeFontAction.h"
 #include "AutoWrapAction.h"
 #include "MoveUpAction.h"
@@ -32,6 +35,11 @@
 #include "SelectPageDownAction.h"
 #include "SelectAllAction.h"
 #include "CopyAction.h"
+#include "OpenFindDialogAction.h"
+#include "OpenReplaceDialogAction.h"
+#include "ZoomInAction.h"
+#include "ZoomOutAction.h"
+#include "ZoomResetAction.h"
 
 #pragma warning(disable:4996)
 
@@ -62,6 +70,15 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 		break;
 	case AppID::ID_ACTION_SAVE_AS:
 		action = new SaveAsAction(parent);
+		break;
+	case AppID::ID_ACTION_SET_PAGE:
+		action = new SetPageAction(parent);
+		break;
+	case AppID::ID_ACTION_PREVIEW:
+		action = new PreviewAction(parent);
+		break;
+	case AppID::ID_ACTION_PRINT:
+		action = new PrintAction(parent);
 		break;
 	case AppID::ID_ACTION_CHANGE_FONT:
 		action = new ChangeFontAction(parent);
@@ -146,6 +163,21 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 		break;
 	case AppID::ID_ACTION_COPY:
 		action = new CopyAction(parent);
+		break;
+	case AppID::ID_ACTION_OPEN_FIND_DIALOG:
+		action = new OpenFindDialogAction(parent);
+		break;
+	case AppID::ID_ACTION_OPEN_REPLACE_DIALOG:
+		action = new OpenReplaceDialogAction(parent);
+		break;
+	case AppID::ID_ACTION_ZOOM_IN:
+		action = new ZoomInAction(parent);
+		break;
+	case AppID::ID_ACTION_ZOOM_OUT:
+		action = new ZoomOutAction(parent);
+		break;
+	case AppID::ID_ACTION_ZOOM_RESET:
+		action = new ZoomResetAction(parent);
 		break;
 	default:
 		break;

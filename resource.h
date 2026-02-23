@@ -57,6 +57,7 @@
 #define ID_MENU_ZOOMRESET               40120
 #define ID_MENU_STATUSBAR               40121
 #define ID_MENU_INFO                    40122
+#define ID_MENU_SETPAGE                 40123
 #define IDC_BUTTON_FIRST                50021
 #define IDC_BUTTON_PREVIOUS             50022
 #define IDC_BUTTON_NEXT                 50023
@@ -75,7 +76,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        106
-#define _APS_NEXT_COMMAND_VALUE         40123
+#define _APS_NEXT_COMMAND_VALUE         40124
 #define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           102
 #endif

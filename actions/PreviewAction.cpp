@@ -1,4 +1,5 @@
-#include "PreviewCommand.h"
+#include <afxwin.h>
+#include "PreviewAction.h"
 #include "../NotepadForm.h"
 #include "../prints/PreviewForm.h"
 #include "../SuspendAutoWrap.h"
@@ -6,16 +7,16 @@
 
 #pragma warning(disable:4996)
 
-PreviewCommand::PreviewCommand(CWnd* parent)
-	:Command(parent) {
+PreviewAction::PreviewAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-PreviewCommand::~PreviewCommand() {
+PreviewAction::~PreviewAction() {
 
 }
 
-void PreviewCommand::Execute() {
+void PreviewAction::Perform() {
 	SuspendAutoWrap suspendAutoWrap(this->parent);
 
 	PageLoader::LoadFirst(this->parent);

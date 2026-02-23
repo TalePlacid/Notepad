@@ -1,10 +1,10 @@
 #ifndef _CTRLPAGEDOWNACTION_H //guard
 #define _CTRLPAGEDOWNACTION_H
-#include "KeyAction.h"
+#include "Action.h"
 
 class CWnd;
 
-class CtrlPageDownAction : public KeyAction {
+class CtrlPageDownAction : public Action {
 public:
 	CtrlPageDownAction(CWnd* parent);
 	virtual ~CtrlPageDownAction();
