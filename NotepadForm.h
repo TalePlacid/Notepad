@@ -21,6 +21,7 @@ class PreviewForm;
 class PreviewForm;
 class StatusBarController;
 class MouseHandler;
+class FindReplaceOption;
 
 class NotepadForm : public CWnd, public Subject {
 public:
@@ -81,8 +82,9 @@ protected:
 	void OnTimer(UINT_PTR nIDEvent);
 	DECLARE_MESSAGE_MAP()
 private:
-	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL isCompositing = FALSE);
-	void HandleAction(AppID nID);
+	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL isCompositing = FALSE, 
+		FindReplaceOption* findReplaceOption = NULL);
+	void HandleAction(AppID nID, FindReplaceOption* findReplaceOption = NULL);
 #if 0
 	void HandleMouseEvent(AppID nID, UINT nFlags, CPoint point, short zDelta = 0);
 #endif

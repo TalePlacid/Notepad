@@ -38,14 +38,14 @@ BOOL FindReplaceOption::IsEqual(const FindReplaceOption& other) {
 		&& (this->isSearchDown == other.isSearchDown);
 }
 
-BOOL FindReplaceOption::EqualsExceptSearchDirection(FindReplaceOption& other) {
+BOOL FindReplaceOption::EqualsExceptSearchDirection(const FindReplaceOption& other) {
 	return (this->findString == other.findString)
 		&& (this->replaceString == other.replaceString)
 		&& (this->isMatchWhole == other.isMatchWhole)
 		&& (this->isMatchCase == other.isMatchCase);
 }
 
-BOOL FindReplaceOption::operator==(FindReplaceOption& other) {
+BOOL FindReplaceOption::operator==(const FindReplaceOption& other) {
 	return (this->findString == other.findString)
 		&& (this->replaceString == other.replaceString)
 		&& (this->isMatchWhole == other.isMatchWhole)
@@ -53,7 +53,7 @@ BOOL FindReplaceOption::operator==(FindReplaceOption& other) {
 		&& (this->isSearchDown == other.isSearchDown);
 }
 
-BOOL FindReplaceOption::operator!=(FindReplaceOption& other) {
+BOOL FindReplaceOption::operator!=(const FindReplaceOption& other) {
 	return (this->findString != other.findString)
 		|| (this->replaceString != other.replaceString)
 		|| (this->isMatchWhole != other.isMatchWhole)

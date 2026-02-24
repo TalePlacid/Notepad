@@ -88,10 +88,16 @@ Long SearchResultController::Search() {
 	SearchingAlgorithmFactory searchingAlgorithmFactory;
 	SearchingAlgorithm* searchingAlgorithm = searchingAlgorithmFactory.Create((LPCTSTR)(this->findReplaceOption.findString),
 		(LPCTSTR)contents, comparer, SearchingAlgorithmFactory::BRUTE_FORCE, this->findReplaceOption.isMatchWhole);
+	
 	if (searchingAlgorithm != NULL)
 	{
 		searchingAlgorithm->DoAlgorithm(&offsets, &count);
 		delete searchingAlgorithm;
+	}
+
+	if (comparer != NULL)
+	{
+		delete comparer;
 	}
 
 	if (count > 0)

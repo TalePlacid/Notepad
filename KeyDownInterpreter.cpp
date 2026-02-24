@@ -10,21 +10,21 @@ KeyDownInterpreter::~KeyDownInterpreter() {
 
 }
 
-BOOL KeyDownInterpreter::IsAction(AppID nID) {
-	BOOL isAction = TRUE;
+BOOL KeyDownInterpreter::IsCommand(AppID nID) {
+	BOOL isCommand = FALSE;
 
 	switch (nID)
 	{
 	case AppID::ID_COMMAND_ERASE:
 	case AppID::ID_COMMAND_PASTE:
 	case AppID::ID_COMMAND_CUT:
-		isAction = FALSE;
+		isCommand = TRUE;
 		break;
 	default:
 		break;
 	}
 	
-	return isAction;
+	return isCommand;
 }
 
 AppID KeyDownInterpreter::DetermineID(UINT nChar) {

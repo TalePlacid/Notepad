@@ -1,16 +1,16 @@
-#include <afxwin.h>
 #include "Editor.h"
 #include "NotepadForm.h"
-#include "PagingBuffer.h"
-#include "CaretNavigator.h"
 #include "glyphs/Glyph.h"
-#include "ByteChecker.h"
-#include "NoteWrapper.h"
+#include "PagingBuffer.h"
+#include "SearchResultController.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
+#include "CaretNavigator.h"
+#include "NoteWrapper.h"
 #include "PageLoader.h"
-#include "glyphs/GlyphFactory.h"
+#include "ByteChecker.h"
 #include "RowCounter.h"
+#include "glyphs/GlyphFactory.h"
 
 #pragma warning(disable:4996)
 
@@ -22,7 +22,7 @@ Editor::~Editor() {
 
 }
 
-void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, bool isSelected) {
+void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSelected) {
 	//1. 오프셋 기반으로 이동한다.
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(offset);
@@ -201,6 +201,292 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex, CS
 			pagingBuffer->Remove();
 		}
 	}
+}
+
+void Editor::Replace(Long offset, CString sourceText, CString replacingText, 
+	BOOL isSelected, Long& columnIndex) {
+	//1. 검색된 위치로 이동한다.
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(offset);
+	caretNavigator.NormalizeColumn(columnIndex);
+
+	//2. 현재 위치를 읽는다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = row->GetCurrent();
+	columnIndex = currentColumnIndex;
+
+	//3. 공통길이만큼 교체한다.
+	Long sourceLength = RowCounter::CountCharacters(sourceText);
+	Long replacedLength = RowCounter::CountCharacters(replacingText);
+	Long commonLength;
+	if (sourceLength < replacedLength)
+	{
+		commonLength = sourceLength;
+	}
+	else
+	{
+		commonLength = replacedLength;
+	}
+
+	ByteChecker byteChecker;
+	TCHAR character[2];
+	GlyphFactory glyphFactory;
+	Glyph* glyph;
+	Long j = 0;
+	Long i = 0;
+	while (i < commonLength)
+	{
+		if (currentColumnIndex < row->GetLength())
+		{
+			character[0] = replacingText.GetAt(j);
+			if (byteChecker.IsLeadByte(character[0]))
+			{
+				character[1] = replacingText.GetAt(++j);
+			}
+
+			glyph = glyphFactory.Create(character, true);
+			row->Replace(currentColumnIndex, glyph);
+			currentColumnIndex = row->Next();
+
+			j++;
+		}
+
+		if (currentColumnIndex >= row->GetLength())
+		{
+			currentRowIndex = note->Next();
+			row = note->GetAt(currentRowIndex);
+			currentColumnIndex = row->First();
+		}
+
+		i++;
+	}
+
+	//4. 바꾼 문자열이 더 길면, 노트에서 남는 길이만큼 추가한다.
+	if (replacedLength > commonLength)
+	{
+		while (j < replacingText.GetLength())
+		{
+			character[0] = replacingText.GetAt(j);
+			if (byteChecker.IsLeadByte(character[0]))
+			{
+				character[1] = replacingText.GetAt(++j);
+			}
+
+			glyph = glyphFactory.Create(character, true);
+			row->Add(currentColumnIndex, glyph);
+			currentColumnIndex = row->GetCurrent();
+
+			j++;
+		}
+	}
+	else if (sourceLength > commonLength) //5. 원본 문자열이 더 길면, 노트에서 남는 길이만큼 삭제한다.
+	{
+		Long restLength = sourceLength - commonLength;
+		i = 0;
+		while (i < restLength)
+		{
+			if (currentColumnIndex < row->GetLength())
+			{
+				row->Remove(currentColumnIndex);
+				currentColumnIndex = row->Move(currentColumnIndex);
+			}
+
+			if (currentColumnIndex >= row->GetLength())
+			{
+				note->MergeRows(currentRowIndex);
+			}
+
+			i++;
+		}
+	}
+
+	//6. 자동개행중이면, 재개행한다.
+	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	{
+		NoteWrapper noteWrapper(this->parent);
+		noteWrapper.Rewrap();
+	}
+
+	//7. 페이징 버퍼에서 수정한다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	if (sourceText.GetLength() <= replacingText.GetLength())
+	{
+		pagingBuffer->Replace(currentOffset, replacingText.Left(sourceText.GetLength()));
+		pagingBuffer->Add(replacingText.Right(replacingText.GetLength() - sourceText.GetLength()));
+	}
+	else
+	{
+		pagingBuffer->Replace(currentOffset, replacingText);
+		pagingBuffer->Remove(currentOffset + sourceText.GetLength());
+	}
+}
+
+Long Editor::Find(FindReplaceOption findReplaceOption) {
+	//1. 검색옵션을 최신화한다.
+	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	FindReplaceOption option = searchResultController->ChangeFindReplaceOption(findReplaceOption);
+
+	//2. 기존의 검색결과들을 지운다.
+	searchResultController->Clear();
+
+	//3. 검색한다.
+	Long ret = searchResultController->Search();
+
+	//4. 검색 결과가 있으면,
+	Long nearestIndex = -1;
+	if (searchResultController->GetLength() > 0)
+	{
+		//4.1. 가장 가까운 위치를 찾는다.
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
+		if (option.isSearchDown)
+		{
+			nearestIndex = searchResultController->FindNearestIndexBelow(currentOffset);
+		}
+		else
+		{
+			nearestIndex = searchResultController->FindNearestIndexAbove(currentOffset);
+		}
+
+		//4.2. 선택을 해제한다.
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		note->Select(false);
+		pagingBuffer->UnmarkSelectionBegin();
+
+		//4.3. 위치로 이동한다.
+		searchResultController->Move(nearestIndex);
+		CaretNavigator caretNavigator(this->parent);
+		caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
+		caretNavigator.NormalizeColumn(0);
+
+		//4.4. 선택한다.
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		Glyph* character;
+		Long characterLength;
+		ByteChecker byteChecker;
+		Long i = 0;
+		while (i < option.findString.GetLength())
+		{
+			characterLength = 0;
+			if (columnIndex < row->GetLength())
+			{
+				characterLength = 1;
+				character = row->GetAt(columnIndex);
+				if (byteChecker.IsLeadByte(*(char*)*character))
+				{
+					characterLength = 2;
+				}
+
+				row->GetAt(columnIndex)->Select(true);
+				columnIndex = row->Next();
+
+				pagingBuffer->BeginSelectionIfNeeded();
+				pagingBuffer->Next();
+			}
+			else
+			{
+				rowIndex = note->Next();
+				row = note->GetAt(rowIndex);
+				columnIndex = row->First();
+			}
+
+			i += characterLength;
+		}
+	}
+
+	//3. 검색결과가 없으면, 경고문을 출력한다.
+	if (searchResultController->GetLength() <= 0 || nearestIndex < 0)
+	{
+		CString message;
+		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)option.findString);
+		this->parent->MessageBox(message);
+	}
+
+	return ret;
+}
+
+bool Editor::FindNext() {
+	//1. 검색결과 컨트롤러에서 검색방향에 따라 이동한다.
+	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	FindReplaceOption option = searchResultController->GetFindReplaceOption();
+	Long current = searchResultController->GetCurrent();
+	Long previous = current;
+	if (option.isSearchDown)
+	{
+		current = searchResultController->Next();
+	}
+	else
+	{
+		current = searchResultController->Previous();
+	}
+
+	//2. 선택해제한다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
+
+	//3. 이동했으면,
+	bool ret = false;
+	if (current != previous)
+	{
+		ret = true;
+		//2.1. 위치로 이동한다.
+		CaretNavigator caretNavigator(this->parent);
+		caretNavigator.MoveTo(searchResultController->GetAt(current));
+		caretNavigator.NormalizeColumn(0);
+
+		//2.2. 선택한다.
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		Long columnIndex = row->GetCurrent();
+
+		Glyph* character;
+		Long characterLength;
+		ByteChecker byteChecker;
+		Long i = 0;
+		while (i < option.findString.GetLength())
+		{
+			characterLength = 0;
+			if (columnIndex < row->GetLength())
+			{
+				characterLength = 1;
+				character = row->GetAt(columnIndex);
+				if (byteChecker.IsLeadByte(*(char*)*character))
+				{
+					characterLength = 2;
+				}
+
+				row->GetAt(columnIndex)->Select(true);
+				columnIndex = row->Next();
+
+				pagingBuffer->BeginSelectionIfNeeded();
+				pagingBuffer->Next();
+			}
+			else
+			{
+				rowIndex = note->Next();
+				row = note->GetAt(rowIndex);
+				columnIndex = row->First();
+			}
+
+			i += characterLength;
+		}
+	}
+	else //3. 이동하지 않았으면,
+	{
+		CString message;
+		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)option.findString);
+		this->parent->MessageBox(message);
+	}
+
+	return ret;
 }
 
 bool Editor::GetSelectedRange(Long& frontOffset, Long& rearOffset) {

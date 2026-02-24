@@ -31,12 +31,6 @@
     <Filter Include="소스 파일\scrolls">
       <UniqueIdentifier>{ed796522-ae0d-4581-8eac-7b2bbb9f9d65}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\findReplaces">
-      <UniqueIdentifier>{7d1ec13c-bfe2-4a81-82bc-8c262313cc55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\findReplaces">
-      <UniqueIdentifier>{2dfe9c31-f988-4ccb-bb6e-1f80ec928bc1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\prints">
       <UniqueIdentifier>{5046ff38-c01f-476c-b33c-7879e7753d7f}</UniqueIdentifier>
     </Filter>
@@ -212,27 +206,6 @@
     <ClCompile Include="commands\CutCommand.cpp">
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
-    <ClCompile Include="findReplaces\FindReplaceOption.cpp">
-      <Filter>소스 파일\findReplaces</Filter>
-    </ClCompile>
-    <ClCompile Include="findReplaces\CloseFindReplaceCommand.cpp">
-      <Filter>소스 파일\findReplaces</Filter>
-    </ClCompile>
-    <ClCompile Include="findReplaces\FindCommand.cpp">
-      <Filter>소스 파일\findReplaces</Filter>
-    </ClCompile>
-    <ClCompile Include="findReplaces\FindNextCommand.cpp">
-      <Filter>소스 파일\findReplaces</Filter>
-    </ClCompile>
-    <ClCompile Include="findReplaces\FindReplaceCommandFactory.cpp">
-      <Filter>소스 파일\findReplaces</Filter>
-    </ClCompile>
-    <ClCompile Include="findReplaces\ReplaceAllCommand.cpp">
-      <Filter>소스 파일\findReplaces</Filter>
-    </ClCompile>
-    <ClCompile Include="findReplaces\ReplaceCommand.cpp">
-      <Filter>소스 파일\findReplaces</Filter>
-    </ClCompile>
     <ClCompile Include="DateTime.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -371,12 +344,6 @@
     <ClCompile Include="actions\MoveDocRearAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\CtrlFAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\CtrlHAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
     <ClCompile Include="actions\MoveDocFrontAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -402,12 +369,6 @@
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\SelectWordRightAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\CtrlYAction.cpp">
-      <Filter>소스 파일\actions</Filter>
-    </ClCompile>
-    <ClCompile Include="actions\CtrlZAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\MoveDownAction.cpp">
@@ -523,6 +484,27 @@
     </ClCompile>
     <ClCompile Include="actions\ZoomResetAction.cpp">
       <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplaceInterpreter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\FindAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplaceOption.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\CloseFindReplaceAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\FindNextAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\ReplaceCommand.cpp">
+      <Filter>소스 파일\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\ReplaceAllCommand.cpp">
+      <Filter>소스 파일\commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -679,27 +661,6 @@
     <ClInclude Include="SearchResultController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="findReplaces\FindReplaceOption.h">
-      <Filter>헤더 파일\findReplaces</Filter>
-    </ClInclude>
-    <ClInclude Include="findReplaces\CloseFindReplaceCommand.h">
-      <Filter>헤더 파일\findReplaces</Filter>
-    </ClInclude>
-    <ClInclude Include="findReplaces\FindCommand.h">
-      <Filter>헤더 파일\findReplaces</Filter>
-    </ClInclude>
-    <ClInclude Include="findReplaces\FindNextCommand.h">
-      <Filter>헤더 파일\findReplaces</Filter>
-    </ClInclude>
-    <ClInclude Include="findReplaces\FindReplaceCommandFactory.h">
-      <Filter>헤더 파일\findReplaces</Filter>
-    </ClInclude>
-    <ClInclude Include="findReplaces\ReplaceAllCommand.h">
-      <Filter>헤더 파일\findReplaces</Filter>
-    </ClInclude>
-    <ClInclude Include="findReplaces\ReplaceCommand.h">
-      <Filter>헤더 파일\findReplaces</Filter>
-    </ClInclude>
     <ClInclude Include="DropOldestStack.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -847,12 +808,6 @@
     <ClInclude Include="actions\MoveDocRearAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\CtrlFAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\CtrlHAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
     <ClInclude Include="actions\MoveDocFrontAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
@@ -878,12 +833,6 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\SelectWordRightAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\CtrlYAction.h">
-      <Filter>헤더 파일\actions</Filter>
-    </ClInclude>
-    <ClInclude Include="actions\CtrlZAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\MoveDownAction.h">
@@ -999,6 +948,27 @@
     </ClInclude>
     <ClInclude Include="actions\ZoomResetAction.h">
       <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceInterpreter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\FindAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceOption.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\CloseFindReplaceAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\FindNextAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\ReplaceCommand.h">
+      <Filter>헤더 파일\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\ReplaceAllCommand.h">
+      <Filter>헤더 파일\commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,13 +4,14 @@
 #include "../AppID.h"
 
 class Action;
+class FindReplaceOption;
 
 class ActionFactory {
 public:
 	ActionFactory();
 	~ActionFactory();
 
-	static Action* Create(CWnd* parent, AppID nID);
+	static Action* Create(CWnd* parent, AppID nID, FindReplaceOption* findReplaceOption = NULL);
 };
 
 #endif // !_ACTIONFACTORY_H

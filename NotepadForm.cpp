@@ -28,12 +28,12 @@
 #include "WritingModeSelector.h"
 #include "KeyDownInterpreter.h"
 #include "MenuInterpreter.h"
+#include "FindReplaceInterpreter.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
 #include "actions/ActionFactory.h"
 #include "scrolls/ScrollBarActionFactory.h"
-#include "findReplaces/FindReplaceCommandFactory.h"
 #include "mouses/MouseActionFactory.h"
 
 #include "prints/PreviewForm.h"
@@ -47,7 +47,7 @@
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
 
-static UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
+static const UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
 
 BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_CREATE()
@@ -389,13 +389,13 @@ void NotepadForm::OnMenuClicked(UINT nID) {
 	AppID appID = MenuInterpreter::DetermineID(nID);
 	if (appID != AppID::NONE)
 	{
-		if (MenuInterpreter::IsAction(nID))
+		if (MenuInterpreter::IsCommand(nID))
 		{
-			this->HandleAction(appID);
+			this->HandleCommand(appID);
 		}
 		else
 		{
-			this->HandleCommand(appID);
+			this->HandleAction(appID);
 		}
 	}
 }
@@ -404,13 +404,13 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	AppID nID = KeyDownInterpreter::DetermineID(nChar);
 	if (nID != AppID::NONE)
 	{
-		if (KeyDownInterpreter::IsAction(nID))
+		if (KeyDownInterpreter::IsCommand(nID))
 		{
-			this->HandleAction(nID);
+			this->HandleCommand(nID);
 		}
 		else
 		{
-			this->HandleCommand(nID);
+			this->HandleAction(nID);
 		}
 	}
 }
@@ -449,6 +449,24 @@ BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
 }
 LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
+	FindReplaceOption findReplaceOption;
+	findReplaceOption.findString = findReplaceDialog->GetFindString();
+	findReplaceOption.replaceString = findReplaceDialog->GetReplaceString();
+	findReplaceOption.isMatchCase = findReplaceDialog->MatchCase();
+	findReplaceOption.isMatchWhole = findReplaceDialog->MatchWholeWord();
+	findReplaceOption.isSearchDown = findReplaceDialog->SearchDown();
+	
+	AppID appID = FindReplaceInterpreter::DetermineID(lParam);
+	if (FindReplaceInterpreter::IsCommand(appID))
+	{
+		this->HandleCommand(appID, 0, 0, &findReplaceOption);
+	}
+	else
+	{
+		this->HandleAction(appID, &findReplaceOption);
+	}
+#if 0
+	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
 	
 	FindReplaceCommandFactory findReplaceCommandFactory;
 	Command* command = findReplaceCommandFactory.Create(this, findReplaceDialog);
@@ -469,7 +487,7 @@ LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	this->Notify("UpdateScrollBars");
 	this->Notify("UpdateStatusBar"); 
 	this->Invalidate();
-
+#endif
 	return 0;
 }
 
@@ -532,10 +550,10 @@ void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
 	this->mouseHandler->PopUpContextMenu(point);
 }
 
-void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompositing) {
+void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompositing, FindReplaceOption* findReplaceOption) {
 	BOOL isSelected = this->pagingBuffer->GetSelectionBeginOffset() >= 0;
 	
-	Command* command = CommandFactory::Create(this, nID, character, isCompositing, isSelected);
+	Command* command = CommandFactory::Create(this, nID, character, isCompositing, isSelected, findReplaceOption);
 	if (command != NULL)
 	{
 		command->Execute();
@@ -562,8 +580,8 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompo
 	this->Invalidate();
 }
 
-void NotepadForm::HandleAction(AppID nID) {
-	Action* action = ActionFactory::Create(this, nID);
+void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption) {
+	Action* action = ActionFactory::Create(this, nID, findReplaceOption);
 	if (action != NULL)
 	{
 		action->Perform();

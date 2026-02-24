@@ -8,7 +8,7 @@ public:
 	MenuInterpreter();
 	~MenuInterpreter();
 
-	static BOOL IsAction(UINT nID);
+	static BOOL IsCommand(UINT nID);
 	static AppID DetermineID(UINT nID);
 };
 

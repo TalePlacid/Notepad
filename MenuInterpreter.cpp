@@ -11,8 +11,8 @@ MenuInterpreter::~MenuInterpreter() {
 
 }
 
-BOOL MenuInterpreter::IsAction(UINT nID) {
-	BOOL isAction = TRUE;
+BOOL MenuInterpreter::IsCommand(UINT nID) {
+	BOOL isCommand = FALSE;
 
 	switch (nID)
 	{
@@ -20,13 +20,13 @@ BOOL MenuInterpreter::IsAction(UINT nID) {
 	case ID_MENU_COPY:
 	case ID_MENU_PASTE:
 	case ID_MENU_DELETE:
-		isAction = FALSE;
+		isCommand = TRUE;
 		break;
 	default:
 		break;
 	}
 
-	return isAction;
+	return isCommand;
 }
 
 AppID MenuInterpreter::DetermineID(UINT nID){

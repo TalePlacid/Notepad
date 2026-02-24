@@ -1,5 +1,6 @@
 #include <afxdlgs.h>
 #include "../AppID.h"
+#include "../FindReplaceOption.h"
 #include "CommandFactory.h"
 #include "WriteAtEndCommand.h"
 #include "InsertAtCaretCommand.h"
@@ -7,13 +8,10 @@
 #include "PasteCommand.h"
 #include "EraseRangeCommand.h"
 #include "CutCommand.h"
+#include "ReplaceCommand.h"
+#include "ReplaceAllCommand.h"
 #include "UndoCommand.h"
 #include "RedoCommand.h"
-#include "../findReplaces/ReplaceCommand.h"
-#include "../findReplaces/ReplaceAllCommand.h"
-#include "../findReplaces/CloseFindReplaceCommand.h"
-#include "../findReplaces/FindCommand.h"
-#include "../findReplaces/FindNextCommand.h"
 
 #pragma warning(disable:4996)
 
@@ -26,7 +24,7 @@ CommandFactory::~CommandFactory() {
 }
 
 Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character), 
-	BOOL isCompositing, BOOL isSelected, LPARAM lParam) {
+	BOOL isCompositing, BOOL isSelected, FindReplaceOption* findReplaceOption) {
 	Command* command = NULL;
 
 	switch (nID)
@@ -52,6 +50,12 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 		break;
 	case AppID::ID_COMMAND_CUT:
 		command = new CutCommand(parent);
+		break;
+	case AppID::ID_COMMAND_REPLACE:
+		command = new ReplaceCommand(parent, *findReplaceOption);
+		break;
+	case AppID::ID_COMMAND_REPLACE_ALL:
+		command = new ReplaceAllCommand(parent, *findReplaceOption);
 		break;
 #if 0
 	case ID_MENU_NEW:

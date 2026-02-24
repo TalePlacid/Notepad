@@ -4,15 +4,16 @@
 #include "../AppID.h"
 
 class Command;
-class CFindReplaceDialog;
+class FindReplaceOption;
 
 class CommandFactory {
 public:
 	CommandFactory();
 	~CommandFactory();
 
-	static Command* Create(CWnd* parent, AppID nID, const TCHAR(*character) = 0, 
-		BOOL isCompositing = FALSE, BOOL isSelected = FALSE, LPARAM lParam = 0);
+	static Command* Create(CWnd* parent, AppID nID, const TCHAR(*character) = 0,
+		BOOL isCompositing = FALSE, BOOL isSelected = FALSE,
+		FindReplaceOption* findReplaceOption = 0);
 };
 
 #endif // !_COMMANDFACTORY_H

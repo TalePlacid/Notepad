@@ -1,4 +1,5 @@
 #include "ActionFactory.h"
+#include "../FindReplaceOption.h"
 #include "NewAction.h"
 #include "NewWindowAction.h"
 #include "OpenAction.h"
@@ -39,6 +40,9 @@
 #include "CopyAction.h"
 #include "OpenFindDialogAction.h"
 #include "OpenReplaceDialogAction.h"
+#include "FindAction.h"
+#include "FindNextAction.h"
+#include "CloseFindReplaceAction.h"
 #include "ZoomInAction.h"
 #include "ZoomOutAction.h"
 #include "ZoomResetAction.h"
@@ -53,7 +57,7 @@ ActionFactory::~ActionFactory() {
 
 }
 
-Action* ActionFactory::Create(CWnd* parent, AppID nID) {
+Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findReplaceOption) {
 	Action* action = NULL;
 
 	switch (nID)
@@ -177,6 +181,15 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID) {
 		break;
 	case AppID::ID_ACTION_OPEN_REPLACE_DIALOG:
 		action = new OpenReplaceDialogAction(parent);
+		break;
+	case AppID::ID_ACTION_FIND:
+		action = new FindAction(parent, *findReplaceOption);
+		break;
+	case AppID::ID_ACTION_FIND_NEXT:
+		action = new FindNextAction(parent, *findReplaceOption);
+		break;
+	case AppID::ID_ACTION_CLOSE_FIND_REPLACE_DIALOG:
+		action = new CloseFindReplaceAction(parent);
 		break;
 	case AppID::ID_ACTION_ZOOM_IN:
 		action = new ZoomInAction(parent);

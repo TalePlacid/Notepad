@@ -15,10 +15,10 @@ struct FindReplaceOption {
 	FindReplaceOption& operator=(const FindReplaceOption& source);
 
 	BOOL IsEqual(const FindReplaceOption& other);
-	BOOL EqualsExceptSearchDirection(FindReplaceOption& other);
+	BOOL EqualsExceptSearchDirection(const FindReplaceOption& other);
 
-	BOOL operator==(FindReplaceOption& other);
-	BOOL operator!=(FindReplaceOption& other);
+	BOOL operator==(const FindReplaceOption& other);
+	BOOL operator!=(const FindReplaceOption& other);
 };
 
 #endif // !_FINDREPLACEOPTION_H

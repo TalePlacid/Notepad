@@ -1,7 +1,7 @@
 #include <afxwin.h>
 #include "HistoryBook.h"
 #include "resource.h"
-#include "findReplaces/FindReplaceOption.h"
+#include "FindReplaceOption.h"
 #include "commands/Command.h"
 #include "commands/MacroCommand.h"
 

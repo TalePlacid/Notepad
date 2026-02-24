@@ -1,17 +1,22 @@
 #ifndef _EDITOR_H //guard
 #define _EDITOR_H
+#include <afxwin.h>
+#include "FindReplaceOption.h"
 
 typedef signed long int Long;
-
-class CWnd;
 
 class Editor {
 public:
 	Editor(CWnd* parent);
 	~Editor();
 
-	void InsertTextAt(Long offset, Long columnIndex, CString text, bool isSelected = false);
+	void InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSelected = FALSE);
 	void EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex, CString& contents);
+	void Replace(Long offset, CString sourceText, CString replacingText, 
+		BOOL isSelected, Long& columnIndex);
+
+	Long Find(FindReplaceOption findReplaceOption);
+	bool FindNext();
 
 	bool GetSelectedRange(Long& frontOffset, Long& rearOffset);
 private:
