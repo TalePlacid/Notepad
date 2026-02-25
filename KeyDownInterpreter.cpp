@@ -270,6 +270,22 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 			nID = AppID::ID_COMMAND_CUT;
 		}
 		break;
+	case 'Y':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_REDO;
+		}
+		break;
+	case 'Z':
+		if (onCtrlKey && onShiftKey)
+		{
+			nID = AppID::ID_ACTION_REDO;
+		}
+		else if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_UNDO;
+		}
+		break;
 	default:
 		break;
 	}

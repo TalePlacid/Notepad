@@ -329,12 +329,6 @@
     <ClCompile Include="Visitor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="commands\RedoCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="commands\UndoCommand.cpp">
-      <Filter>소스 파일\commands</Filter>
-    </ClCompile>
     <ClCompile Include="WritingModeSelector.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -513,6 +507,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="actions\FindPreviousAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\UndoAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\RedoAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
   </ItemGroup>
@@ -796,12 +796,6 @@
     <ClInclude Include="Visitor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="commands\RedoCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="commands\UndoCommand.h">
-      <Filter>헤더 파일\commands</Filter>
-    </ClInclude>
     <ClInclude Include="WritingModeSelector.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -986,6 +980,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="actions\FindPreviousAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\UndoAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\RedoAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
   </ItemGroup>

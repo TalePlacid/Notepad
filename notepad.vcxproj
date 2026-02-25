@@ -140,6 +140,7 @@
     <ClCompile Include="actions\OpenReplaceDialogAction.cpp" />
     <ClCompile Include="actions\PreviewAction.cpp" />
     <ClCompile Include="actions\PrintAction.cpp" />
+    <ClCompile Include="actions\RedoAction.cpp" />
     <ClCompile Include="actions\SelectAllAction.cpp" />
     <ClCompile Include="actions\MoveDocRearAction.cpp" />
     <ClCompile Include="actions\MoveDocFrontAction.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="actions\SelectUpAction.cpp" />
     <ClCompile Include="actions\MoveUpAction.cpp" />
     <ClCompile Include="actions\SetPageAction.cpp" />
+    <ClCompile Include="actions\UndoAction.cpp" />
     <ClCompile Include="actions\ZoomInAction.cpp" />
     <ClCompile Include="actions\ZoomOutAction.cpp" />
     <ClCompile Include="actions\ZoomResetAction.cpp" />
@@ -190,10 +192,8 @@
     <ClCompile Include="commands\InsertAtCaretCommand.cpp" />
     <ClCompile Include="commands\MacroCommand.cpp" />
     <ClCompile Include="commands\PasteCommand.cpp" />
-    <ClCompile Include="commands\RedoCommand.cpp" />
     <ClCompile Include="commands\ReplaceAllCommand.cpp" />
     <ClCompile Include="commands\ReplaceCommand.cpp" />
-    <ClCompile Include="commands\UndoCommand.cpp" />
     <ClCompile Include="commands\WriteAtEndCommand.cpp" />
     <ClCompile Include="CoordinateConverter.cpp" />
     <ClCompile Include="DateTime.cpp" />
@@ -293,6 +293,7 @@
     <ClInclude Include="actions\OpenReplaceDialogAction.h" />
     <ClInclude Include="actions\PreviewAction.h" />
     <ClInclude Include="actions\PrintAction.h" />
+    <ClInclude Include="actions\RedoAction.h" />
     <ClInclude Include="actions\SelectAllAction.h" />
     <ClInclude Include="actions\MoveDocRearAction.h" />
     <ClInclude Include="actions\MoveDocFrontAction.h" />
@@ -326,6 +327,7 @@
     <ClInclude Include="actions\SelectUpAction.h" />
     <ClInclude Include="actions\MoveUpAction.h" />
     <ClInclude Include="actions\SetPageAction.h" />
+    <ClInclude Include="actions\UndoAction.h" />
     <ClInclude Include="actions\ZoomInAction.h" />
     <ClInclude Include="actions\ZoomOutAction.h" />
     <ClInclude Include="actions\ZoomResetAction.h" />
@@ -345,10 +347,8 @@
     <ClInclude Include="commands\InsertAtCaretCommand.h" />
     <ClInclude Include="commands\MacroCommand.h" />
     <ClInclude Include="commands\PasteCommand.h" />
-    <ClInclude Include="commands\RedoCommand.h" />
     <ClInclude Include="commands\ReplaceAllCommand.h" />
     <ClInclude Include="commands\ReplaceCommand.h" />
-    <ClInclude Include="commands\UndoCommand.h" />
     <ClInclude Include="commands\WriteAtEndCommand.h" />
     <ClInclude Include="CoordinateConverter.h" />
     <ClInclude Include="DateTime.h" />

@@ -81,6 +81,12 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 	case ID_MENU_AUTOWRAP:
 		appID = AppID::ID_ACTION_AUTOWRAP;
 		break;
+	case ID_MENU_UNDO:
+		appID = AppID::ID_ACTION_UNDO;
+		break;
+	case ID_MENU_REDO:
+		appID = AppID::ID_ACTION_REDO;
+		break;
 	case ID_MENU_CUT:
 		appID = AppID::ID_COMMAND_CUT;
 		break;

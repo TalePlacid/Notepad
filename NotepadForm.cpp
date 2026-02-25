@@ -599,6 +599,9 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption) 
 	}
 
 	this->Notify("UpdateStatusBar");
+	this->Notify("CreateScrollBars");
+	this->Notify("AdjustScrollBars");
+	this->Notify("ChangeCaret");
 	this->Invalidate();
 }
 #if 0

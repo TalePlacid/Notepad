@@ -1,21 +1,21 @@
 #include <afxwin.h>
-#include "RedoCommand.h"
-#include "../resource.h"
+#include "RedoAction.h"
 #include "../NotepadForm.h"
 #include "../HistoryBook.h"
+#include "../commands/Command.h"
 
 #pragma warning(disable:4996)
 
-RedoCommand::RedoCommand(CWnd* parent)
-	:Command(parent) {
+RedoAction::RedoAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-RedoCommand::~RedoCommand() {
+RedoAction::~RedoAction() {
 
 }
 
-void RedoCommand::Execute() {
+void RedoAction::Perform() {
 	HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 	if (!redoHistoryBook->IsEmpty())
 	{
@@ -24,10 +24,5 @@ void RedoCommand::Execute() {
 
 		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 		undoHistoryBook->Push(history);
-
-		((NotepadForm*)(this->parent))->Notify("CreateScrollBars");
-		((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-		((NotepadForm*)(this->parent))->Notify("ChangeCaret");
-		this->parent->Invalidate();
 	}
 }

@@ -47,6 +47,8 @@
 #include "ZoomInAction.h"
 #include "ZoomOutAction.h"
 #include "ZoomResetAction.h"
+#include "UndoAction.h"
+#include "RedoAction.h"
 
 #pragma warning(disable:4996)
 
@@ -186,11 +188,11 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 	case AppID::ID_ACTION_FIND:
 		action = new FindAction(parent, *findReplaceOption);
 		break;
-	case AppID::ID_ACTION_FIND_NEXT:
-		action = new FindNextAction(parent);
-		break;
 	case AppID::ID_ACTION_FIND_PREVIOUS:
 		action = new FindPreviousAction(parent);
+		break;
+	case AppID::ID_ACTION_FIND_NEXT:
+		action = new FindNextAction(parent);
 		break;
 	case AppID::ID_ACTION_CLOSE_FIND_REPLACE_DIALOG:
 		action = new CloseFindReplaceAction(parent);
@@ -203,6 +205,12 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_ZOOM_RESET:
 		action = new ZoomResetAction(parent);
+		break;
+	case AppID::ID_ACTION_UNDO:
+		action = new UndoAction(parent);
+		break;
+	case AppID::ID_ACTION_REDO:
+		action = new RedoAction(parent);
 		break;
 	default:
 		break;

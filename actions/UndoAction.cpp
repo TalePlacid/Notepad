@@ -1,21 +1,21 @@
 #include <afxwin.h>
-#include "UndoCommand.h"
-#include "../resource.h"
+#include "UndoAction.h"
 #include "../NotepadForm.h"
 #include "../HistoryBook.h"
+#include "../commands/Command.h"
 
 #pragma warning(disable:4996)
 
-UndoCommand::UndoCommand(CWnd* parent)
-	:Command(parent) {
+UndoAction::UndoAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-UndoCommand::~UndoCommand() {
+UndoAction::~UndoAction() {
 
 }
 
-void UndoCommand::Execute() {
+void UndoAction::Perform() {
 	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 	if (!undoHistoryBook->IsEmpty())
 	{
@@ -25,9 +25,4 @@ void UndoCommand::Execute() {
 		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 		redoHistoryBook->Push(history);
 	}
-
-	((NotepadForm*)(this->parent))->Notify("CreateScrollBars");
-	((NotepadForm*)(this->parent))->Notify("AdjustScrollBars");
-	((NotepadForm*)(this->parent))->Notify("ChangeCaret");
-	this->parent->Invalidate();
 }
