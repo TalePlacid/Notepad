@@ -3,13 +3,14 @@
 #include <afxwin.h>
 #include "AppID.h"
 
+class CFindReplaceDialog;
+
 class FindReplaceInterpreter {
 public:
 	FindReplaceInterpreter();
 	~FindReplaceInterpreter();
 
-	static AppID DetermineID(LPARAM lParam);
-	static BOOL IsCommand(AppID appID);
+	static AppID DetermineID(CFindReplaceDialog* findReplaceDialog);
 };
 
 #endif // !_FINDREPLACEINTERPRETER_H

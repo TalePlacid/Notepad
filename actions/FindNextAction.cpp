@@ -7,9 +7,8 @@
 
 #pragma warning(disable:4996)
 
-FindNextAction::FindNextAction(CWnd* parent, FindReplaceOption findReplaceOption)
+FindNextAction::FindNextAction(CWnd* parent)
 	:Action(parent) {
-	this->findReplaceOption = findReplaceOption;
 }
 
 FindNextAction::~FindNextAction() {
@@ -17,14 +16,9 @@ FindNextAction::~FindNextAction() {
 }
 
 void FindNextAction::Perform() {
-	Editor editor(this->parent);
-	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-	if (this->findReplaceOption != searchResultController->GetFindReplaceOption())
+	if (((NotepadForm*)(this->parent))->findReplaceDialog != NULL)
 	{
-		editor.Find(this->findReplaceOption);
-	}
-	else
-	{
+		Editor editor(this->parent);
 		editor.FindNext();
 	}
 }

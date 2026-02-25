@@ -16,6 +16,6 @@ CloseFindReplaceAction::~CloseFindReplaceAction() {
 }
 
 void CloseFindReplaceAction::Perform() {
-	((NotepadForm*)(this->parent))->hasFindReplaceDialog = FALSE;
+	((NotepadForm*)(this->parent))->findReplaceDialog = NULL;
 	((NotepadForm*)(this->parent))->searchResultController->ChangeFindReplaceOption(FindReplaceOption());
 }

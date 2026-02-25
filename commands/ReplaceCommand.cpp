@@ -2,7 +2,6 @@
 #include "ReplaceCommand.h"
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
-#include "../SearchResultController.h"
 #include "../glyphs/Glyph.h"
 #include "../Editor.h"
 
@@ -41,35 +40,23 @@ ReplaceCommand& ReplaceCommand::operator=(const ReplaceCommand& source) {
 }
 
 void ReplaceCommand::Execute() {
-	//1. 검색조건이 다르면, 다시 검색한다.
+	//1. 상태를 적는다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	this->offset = pagingBuffer->GetSelectionBeginOffset();
+	this->source = pagingBuffer->MakeSelectedString();
+	this->replaced = this->findReplaceOption.replaceString;
+
+	//2. 선택을 취소한다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
+
+	//3. 바꾼다.
 	Editor editor(this->parent);
-	if (this->findReplaceOption != searchResultController->GetFindReplaceOption())
-	{
-		editor.Find(this->findReplaceOption);
-	}
-	else if (pagingBuffer->GetSelectionBeginOffset() < 0) //2. 선택범위가 없으면, 다음으로 이동한다.
-	{
-		editor.FindNext();
-	}
-	else //3. 모두 아니면,
-	{
-		//3.1. 상태를 적는다.
-		this->offset = pagingBuffer->GetSelectionBeginOffset();
-		this->source = pagingBuffer->MakeSelectedString();
-		this->replaced = this->findReplaceOption.replaceString;
+	editor.Replace(this->offset, this->source, this->replaced, TRUE, this->columnIndex);
 
-		//3.2. 선택을 취소한다.
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		note->Select(false);
-		pagingBuffer->UnmarkSelectionBegin();
-
-		//3.3. 바꾼다.
-		editor.Replace(this->offset, this->source, this->replaced, TRUE, this->columnIndex);
-
-		//3.4. 다시 찾는다.
-		editor.Find(this->findReplaceOption);
+	//4. 다시 찾는다.
+	editor.Find(this->findReplaceOption);
 #if 0
 		//9. 실행이면, 다시 찾는다.
 		if (this->unexecuted)
@@ -84,7 +71,6 @@ void ReplaceCommand::Execute() {
 			searchResultController->ChangeFindReplaceOption(FindReplaceOption());
 		}
 #endif
-	}
 }
 
 void ReplaceCommand::Undo() {

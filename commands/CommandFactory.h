@@ -11,9 +11,9 @@ public:
 	CommandFactory();
 	~CommandFactory();
 
-	static Command* Create(CWnd* parent, AppID nID, const TCHAR(*character) = 0,
-		BOOL isCompositing = FALSE, BOOL isSelected = FALSE,
-		FindReplaceOption* findReplaceOption = 0);
+	static Command* Create(CWnd* parent, AppID nID,
+		const TCHAR(*character) = 0, BOOL isCompositing = FALSE,
+		BOOL isSelected = FALSE, FindReplaceOption* findReplaceOption = NULL);
 };
 
 #endif // !_COMMANDFACTORY_H

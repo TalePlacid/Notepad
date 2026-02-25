@@ -18,7 +18,7 @@ OpenFindDialogAction::~OpenFindDialogAction() {
 }
 
 void OpenFindDialogAction::Perform() {
-	if (!((NotepadForm*)(this->parent))->hasFindReplaceDialog)
+	if (((NotepadForm*)(this->parent))->findReplaceDialog == NULL)
 	{
 		CString findString("");
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -32,10 +32,10 @@ void OpenFindDialogAction::Perform() {
 			findString = searchResultController->GetFindReplaceOption().findString;
 		}
 
-		CFindReplaceDialog* findDialog = new CFindReplaceDialog;
+		((NotepadForm*)(this->parent))->findReplaceDialog = new CFindReplaceDialog;
+		CFindReplaceDialog* findDialog = ((NotepadForm*)(this->parent))->findReplaceDialog;
 		findDialog->Create(TRUE, (LPCTSTR)findString, NULL, 1, this->parent);
 
-		((NotepadForm*)(this->parent))->hasFindReplaceDialog = TRUE;
 		PostMessage(this->parent->GetSafeHwnd(), WM_FINDREPLACE_FOCUS, (WPARAM)findDialog, 0);
 	}
 }

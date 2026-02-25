@@ -10,6 +10,22 @@ KeyDownInterpreter::~KeyDownInterpreter() {
 
 }
 
+BOOL KeyDownInterpreter::IsFindReplace(AppID nID) {
+	BOOL isFindReplace = FALSE;
+
+	switch (nID)
+	{
+	case AppID::ID_ACTION_FIND_PREVIOUS:
+	case AppID::ID_ACTION_FIND_NEXT:
+		isFindReplace = TRUE;
+		break;
+	default:
+		break;
+	}
+
+	return isFindReplace;
+}
+
 BOOL KeyDownInterpreter::IsCommand(AppID nID) {
 	BOOL isCommand = FALSE;
 
@@ -35,6 +51,16 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 
 	switch (nChar)
 	{
+	case VK_F3:
+		if (onShiftKey)
+		{
+			nID = AppID::ID_ACTION_FIND_PREVIOUS;
+		}
+		else
+		{
+			nID = AppID::ID_ACTION_FIND_NEXT;
+		}
+		break;
 	case VK_UP:
 		if (onShiftKey)
 		{

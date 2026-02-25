@@ -41,6 +41,7 @@
 #include "OpenFindDialogAction.h"
 #include "OpenReplaceDialogAction.h"
 #include "FindAction.h"
+#include "FindPreviousAction.h"
 #include "FindNextAction.h"
 #include "CloseFindReplaceAction.h"
 #include "ZoomInAction.h"
@@ -186,7 +187,10 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		action = new FindAction(parent, *findReplaceOption);
 		break;
 	case AppID::ID_ACTION_FIND_NEXT:
-		action = new FindNextAction(parent, *findReplaceOption);
+		action = new FindNextAction(parent);
+		break;
+	case AppID::ID_ACTION_FIND_PREVIOUS:
+		action = new FindPreviousAction(parent);
 		break;
 	case AppID::ID_ACTION_CLOSE_FIND_REPLACE_DIALOG:
 		action = new CloseFindReplaceAction(parent);

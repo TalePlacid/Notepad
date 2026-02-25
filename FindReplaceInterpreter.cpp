@@ -11,45 +11,24 @@ FindReplaceInterpreter::~FindReplaceInterpreter() {
 
 }
 
-AppID FindReplaceInterpreter::DetermineID(LPARAM lParam) {
-	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
-
-	AppID appID;
+AppID FindReplaceInterpreter::DetermineID(CFindReplaceDialog* findReplaceDialog) {
+	AppID rawID = AppID::NONE;
 	if (findReplaceDialog->IsTerminating())
 	{
-		appID = AppID::ID_ACTION_CLOSE_FIND_REPLACE_DIALOG;
+		rawID = AppID::ID_FINDREPLACE_CLOSE_BUTTON;
 	}
 	else if (findReplaceDialog->FindNext())
 	{
-		appID = AppID::ID_ACTION_FIND_NEXT;
+		rawID = AppID::ID_FINDREPLACE_FIND_NEXT_BUTTON;
 	}
 	else if (findReplaceDialog->ReplaceCurrent())
 	{
-		appID = AppID::ID_COMMAND_REPLACE;
+		rawID = AppID::ID_FINDREPLACE_REPLACE_CURRENT_BUTTON;
 	}
 	else if (findReplaceDialog->ReplaceAll())
 	{
-		appID = AppID::ID_COMMAND_REPLACE_ALL;
-	}
-	else
-	{
-		appID = AppID::ID_ACTION_FIND;
+		rawID = AppID::ID_FINDREPLACE_REPLACE_ALL_BUTTON;
 	}
 
-	return appID;
-}
-
-BOOL FindReplaceInterpreter::IsCommand(AppID appID) {
-	BOOL isCommand = FALSE;
-
-	switch (appID)
-	{
-	case AppID::ID_COMMAND_REPLACE:
-	case AppID::ID_COMMAND_REPLACE_ALL:
-		isCommand = TRUE;
-	default:
-		break;
-	}
-
-	return isCommand;
+	return rawID;
 }

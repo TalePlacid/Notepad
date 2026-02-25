@@ -8,6 +8,7 @@ public:
 	KeyDownInterpreter();
 	~KeyDownInterpreter();
 
+	static BOOL IsFindReplace(AppID nID);
 	static BOOL IsCommand(AppID nID);
 	static AppID DetermineID(UINT nChar);
 };

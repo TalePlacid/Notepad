@@ -29,6 +29,8 @@
 #include "KeyDownInterpreter.h"
 #include "MenuInterpreter.h"
 #include "FindReplaceInterpreter.h"
+#include "FindReplaceOptionMaker.h"
+#include "FindReplaceRequestResolver.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -91,7 +93,7 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->searchResultController = NULL;
 	this->undoHistoryBook = NULL;
 	this->redoHistoryBook = NULL;
-	this->hasFindReplaceDialog = FALSE;
+	this->findReplaceDialog = NULL;
 	this->previewForm = NULL;
 	this->statusBarController = statusBarController;
 	this->mouseHandler = NULL;
@@ -389,7 +391,12 @@ void NotepadForm::OnMenuClicked(UINT nID) {
 	AppID appID = MenuInterpreter::DetermineID(nID);
 	if (appID != AppID::NONE)
 	{
-		if (MenuInterpreter::IsCommand(nID))
+		if (MenuInterpreter::IsFindReplace(nID))
+		{
+			FindReplaceOption findReplaceOption;
+			this->ResolveFindReplaceRequest(appID, findReplaceOption);
+		}
+		else if (MenuInterpreter::IsCommand(nID))
 		{
 			this->HandleCommand(appID);
 		}
@@ -404,7 +411,12 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	AppID nID = KeyDownInterpreter::DetermineID(nChar);
 	if (nID != AppID::NONE)
 	{
-		if (KeyDownInterpreter::IsCommand(nID))
+		if (KeyDownInterpreter::IsFindReplace(nID))
+		{
+			FindReplaceOption findReplaceOption;
+			this->ResolveFindReplaceRequest(nID, findReplaceOption);
+		}
+		else if (KeyDownInterpreter::IsCommand(nID))
 		{
 			this->HandleCommand(nID);
 		}
@@ -449,45 +461,11 @@ BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){
 }
 LRESULT NotepadForm::OnFindReplace(WPARAM wParam, LPARAM lParam) {
 	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
-	FindReplaceOption findReplaceOption;
-	findReplaceOption.findString = findReplaceDialog->GetFindString();
-	findReplaceOption.replaceString = findReplaceDialog->GetReplaceString();
-	findReplaceOption.isMatchCase = findReplaceDialog->MatchCase();
-	findReplaceOption.isMatchWhole = findReplaceDialog->MatchWholeWord();
-	findReplaceOption.isSearchDown = findReplaceDialog->SearchDown();
-	
-	AppID appID = FindReplaceInterpreter::DetermineID(lParam);
-	if (FindReplaceInterpreter::IsCommand(appID))
-	{
-		this->HandleCommand(appID, 0, 0, &findReplaceOption);
-	}
-	else
-	{
-		this->HandleAction(appID, &findReplaceOption);
-	}
-#if 0
-	CFindReplaceDialog* findReplaceDialog = CFindReplaceDialog::GetNotifier(lParam);
-	
-	FindReplaceCommandFactory findReplaceCommandFactory;
-	Command* command = findReplaceCommandFactory.Create(this, findReplaceDialog);
-	if (command != NULL)
-	{
-		command->Execute();
-		if (command->IsUndoable())
-		{
-			this->undoHistoryBook->Push(command);
-			this->redoHistoryBook->Clear();
-		}
-		else
-		{
-			delete command;
-		}
-	}
+	AppID rawID = FindReplaceInterpreter::DetermineID(findReplaceDialog);
+	FindReplaceOption findReplaceOption = FindReplaceOptionMaker::Make(findReplaceDialog);
 
-	this->Notify("UpdateScrollBars");
-	this->Notify("UpdateStatusBar"); 
-	this->Invalidate();
-#endif
+	this->ResolveFindReplaceRequest(rawID, findReplaceOption);
+
 	return 0;
 }
 
@@ -496,6 +474,25 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 	findReplaceForm->SetFocus();
 
 	return 0;
+}
+
+void NotepadForm::ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption) {
+	//1. 옵션이 없으면, 보충한다.
+	FindReplaceRequestResolver resolver(this);
+	resolver.SupplementOption(findReplaceOption);
+
+	//1. 문맥에 맞는 앱 아이디를 판별한다.
+	AppID nID = resolver.ResolveAppID(appID, findReplaceOption);
+
+	//3. 앱 아이디에 따라 핸들러로 이관한다.
+	if (resolver.IsCommand(nID))
+	{
+		this->HandleCommand(nID, 0, 0, &findReplaceOption);
+	}
+	else
+	{
+		this->HandleAction(nID, &findReplaceOption);
+	}
 }
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
@@ -550,10 +547,12 @@ void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
 	this->mouseHandler->PopUpContextMenu(point);
 }
 
-void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompositing, FindReplaceOption* findReplaceOption) {
+void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompositing, 
+	FindReplaceOption* findReplaceOption) {
 	BOOL isSelected = this->pagingBuffer->GetSelectionBeginOffset() >= 0;
-	
-	Command* command = CommandFactory::Create(this, nID, character, isCompositing, isSelected, findReplaceOption);
+
+	Command* command = CommandFactory::Create(this, nID, character, isCompositing,
+		isSelected, findReplaceOption);
 	if (command != NULL)
 	{
 		command->Execute();

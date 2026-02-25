@@ -16,6 +16,7 @@ public:
 		BOOL isSelected, Long& columnIndex);
 
 	Long Find(FindReplaceOption findReplaceOption);
+	bool FindPrevious();
 	bool FindNext();
 
 	bool GetSelectedRange(Long& frontOffset, Long& rearOffset);

@@ -135,6 +135,7 @@
     <ClCompile Include="actions\CopyAction.cpp" />
     <ClCompile Include="actions\FindAction.cpp" />
     <ClCompile Include="actions\FindNextAction.cpp" />
+    <ClCompile Include="actions\FindPreviousAction.cpp" />
     <ClCompile Include="actions\OpenFindDialogAction.cpp" />
     <ClCompile Include="actions\OpenReplaceDialogAction.cpp" />
     <ClCompile Include="actions\PreviewAction.cpp" />
@@ -202,6 +203,8 @@
     <ClCompile Include="FileStreamAdapter.cpp" />
     <ClCompile Include="FindReplaceInterpreter.cpp" />
     <ClCompile Include="FindReplaceOption.cpp" />
+    <ClCompile Include="FindReplaceOptionMaker.cpp" />
+    <ClCompile Include="FindReplaceRequestResolver.cpp" />
     <ClCompile Include="glyphs\Character.cpp" />
     <ClCompile Include="glyphs\Composite.cpp" />
     <ClCompile Include="glyphs\DummyRow.cpp" />
@@ -285,6 +288,7 @@
     <ClInclude Include="actions\CopyAction.h" />
     <ClInclude Include="actions\FindAction.h" />
     <ClInclude Include="actions\FindNextAction.h" />
+    <ClInclude Include="actions\FindPreviousAction.h" />
     <ClInclude Include="actions\OpenFindDialogAction.h" />
     <ClInclude Include="actions\OpenReplaceDialogAction.h" />
     <ClInclude Include="actions\PreviewAction.h" />
@@ -355,6 +359,8 @@
     <ClInclude Include="FileStreamAdapter.h" />
     <ClInclude Include="FindReplaceInterpreter.h" />
     <ClInclude Include="FindReplaceOption.h" />
+    <ClInclude Include="FindReplaceOptionMaker.h" />
+    <ClInclude Include="FindReplaceRequestResolver.h" />
     <ClInclude Include="glyphs\Character.h" />
     <ClInclude Include="glyphs\Composite.h" />
     <ClInclude Include="glyphs\DummyRow.h" />

@@ -22,6 +22,7 @@ class PreviewForm;
 class StatusBarController;
 class MouseHandler;
 class FindReplaceOption;
+class CFindReplaceDialog;
 
 class NotepadForm : public CWnd, public Subject {
 public:
@@ -42,10 +43,10 @@ public:
 	PageSetting pageSetting;
 	PreviewForm* previewForm;
 	MouseHandler* mouseHandler;
+	CFindReplaceDialog* findReplaceDialog;
 public:
 	CFont* originalFont;
 	CFont* displayFont;
-	BOOL hasFindReplaceDialog;
 	BOOL isAutoWrapped;
 	double magnification;
 	CString sourcePath;
@@ -82,7 +83,8 @@ protected:
 	void OnTimer(UINT_PTR nIDEvent);
 	DECLARE_MESSAGE_MAP()
 private:
-	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL isCompositing = FALSE, 
+	void ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption);
+	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL isCompositing = FALSE,
 		FindReplaceOption* findReplaceOption = NULL);
 	void HandleAction(AppID nID, FindReplaceOption* findReplaceOption = NULL);
 #if 0

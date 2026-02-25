@@ -7,13 +7,11 @@ class CWnd;
 
 class FindNextAction : public Action {
 public:
-	FindNextAction(CWnd* parent, FindReplaceOption findReplaceOption);
+	FindNextAction(CWnd* parent);
 	virtual ~FindNextAction();
 
 	virtual void Perform();
 	virtual bool ShouldKeepSelection();
-private:
-	FindReplaceOption findReplaceOption;
 };
 
 inline bool FindNextAction::ShouldKeepSelection() {

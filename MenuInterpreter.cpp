@@ -11,6 +11,23 @@ MenuInterpreter::~MenuInterpreter() {
 
 }
 
+BOOL MenuInterpreter::IsFindReplace(UINT nID) {
+	BOOL isFindReplace = FALSE;
+
+	switch (nID)
+	{
+	case ID_MENU_FINDPREVIOUS:
+	case ID_MENU_FINDNEXT:
+		isFindReplace = TRUE;
+		break;
+	default:
+		break;
+	}
+
+	return isFindReplace;
+}
+
+
 BOOL MenuInterpreter::IsCommand(UINT nID) {
 	BOOL isCommand = FALSE;
 
@@ -81,6 +98,12 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 		break;
 	case ID_MENU_REPLACE:
 		appID = AppID::ID_ACTION_OPEN_REPLACE_DIALOG;
+		break;
+	case ID_MENU_FINDPREVIOUS:
+		appID = AppID::ID_ACTION_FIND_PREVIOUS;
+		break;
+	case ID_MENU_FINDNEXT:
+		appID = AppID::ID_ACTION_FIND_NEXT;
 		break;
 	case ID_MENU_ZOOMIN:
 		appID = AppID::ID_ACTION_ZOOM_IN;
