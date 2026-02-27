@@ -4,8 +4,9 @@
 #include "../NotepadForm.h"
 #include "../NoteConverter.h"
 #include "../PagingBuffer.h"
-#include "../TextFileIO.h"
 #include "../ScrollController.h"
+#include "../HistoryBook.h"
+#include "../TextFileIO.h"
 
 #pragma warning(disable:4996)
 
@@ -54,8 +55,10 @@ void OpenAction::Perform() {
 		pagingBuffer->Add(CString(str));
 		pagingBuffer->FirstRow();
 
-		//2.5. 스크롤바 설정을 초기화한다.
+		//2.5. 스크롤바와 히스토리북 설정을 초기화한다.
 		notepadForm->scrollController->Initialize();
+		notepadForm->undoHistoryBook->Clear();
+		notepadForm->redoHistoryBook->Clear();
 
 		//2.6. 캡션을 수정한다.
 		notepadForm->parent->SetWindowTextA(fileDialog.GetFileName());

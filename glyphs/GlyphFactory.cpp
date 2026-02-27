@@ -39,6 +39,5 @@ Glyph* GlyphFactory::Create(char(*content), bool isSelected) {
 		glyph = new SingleByteCharacter(content[0], isSelected);
 	}
 
-
 	return glyph;
 }

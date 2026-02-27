@@ -24,5 +24,7 @@ void RedoAction::Perform() {
 
 		HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 		undoHistoryBook->Push(history);
+
+		((NotepadForm*)(this->parent))->isDirty = TRUE;
 	}
 }

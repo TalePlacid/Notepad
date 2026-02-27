@@ -31,10 +31,6 @@ ReplaceAllCommand::ReplaceAllCommand(const ReplaceAllCommand& source)
 	this->replaced = source.replaced;
 	this->columnIndex = source.columnIndex;
 
-	if (this->offsets != 0)
-	{
-		delete[] this->offsets;
-	}
 	this->offsets = new Long[source.length];
 	Long i = 0;
 	while (i < source.length)
@@ -81,6 +77,8 @@ void ReplaceAllCommand::Execute() {
 	if (count > 0)
 	{
 		//3.1. 상태를 적는다.
+		this->isUndoable = true;
+
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		this->source = pagingBuffer->MakeSelectedString();
 		this->replaced = this->findReplaceOption.replaceString;
@@ -95,37 +93,81 @@ void ReplaceAllCommand::Execute() {
 			i++;
 		}
 
-		//3.2. 선택을 취소한다.
+		//3.2. 끝까지 바꾼다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		note->Select(false);
-		pagingBuffer->UnmarkSelectionBegin();
-
-		//3.3. 끝까지 바꾼다.
+		Long difference = this->replaced.GetLength() - this->source.GetLength();
+		Long j;
 		i = 0;
-		editor.Replace(this->offsets[i], this->source, this->replaced, TRUE, this->columnIndex);
-		while (editor.FindNext())
+		while (i < this->length)
 		{
-			i++;
 			note->Select(false);
 			pagingBuffer->UnmarkSelectionBegin();
-
 			editor.Replace(this->offsets[i], this->source, this->replaced, TRUE, this->columnIndex);
+
+			j = i + 1;
+			while (j < this->length)
+			{
+				this->offsets[j] += difference;
+				j++;
+			}
+
+			i++;
 		}
+
+		((NotepadForm*)(this->parent))->searchResultController->ChangeFindReplaceOption(FindReplaceOption());
 	}
 }
 
 void ReplaceAllCommand::Undo() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Editor editor(this->parent);
 
+	Long difference = this->source.GetLength() - this->replaced.GetLength();
+	Long j;
+	Long i = 0;
+	while (i < this->length)
+	{
+		note->Select(false);
+		pagingBuffer->UnmarkSelectionBegin();
+		editor.Replace(this->offsets[i], this->replaced, this->source, TRUE, this->columnIndex);
+
+		j = i + 1;
+		while (j < this->length)
+		{
+			this->offsets[j] += difference;
+			j++;
+		}
+
+		i++;
+	}
 }
 
 void ReplaceAllCommand::Redo() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Editor editor(this->parent);
 
+	Long difference = this->replaced.GetLength() - this->source.GetLength();
+	Long j;
+	Long i = 0;
+	while (i < this->length)
+	{
+		note->Select(false);
+		pagingBuffer->UnmarkSelectionBegin();
+		editor.Replace(this->offsets[i], this->source, this->replaced, TRUE, this->columnIndex);
+
+		j = i + 1;
+		while (j < this->length)
+		{
+			this->offsets[j] += difference;
+			j++;
+		}
+
+		i++;
+	}
 }
 
 Command* ReplaceAllCommand::Clone() {
 	return new ReplaceAllCommand(*this);
-}
-
-AppID ReplaceAllCommand::GetID() {
-	return  AppID::ID_COMMAND_REPLACE_ALL;
 }

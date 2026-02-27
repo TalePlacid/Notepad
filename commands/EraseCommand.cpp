@@ -11,9 +11,9 @@
 
 #pragma warning(disable:4996)
 
-EraseCommand::EraseCommand(CWnd* parent, BOOL isCompositing)
+EraseCommand::EraseCommand(CWnd* parent, BOOL onChar)
 	:Command(parent) {
-	this->isCompositing = isCompositing;
+	this->onChar = onChar;
 	this->offset = -1;
 }
 
@@ -25,7 +25,7 @@ EraseCommand::EraseCommand(const EraseCommand& source)
 	:Command(source) {
 	this->character[0] = source.character[0];
 	this->character[1] = source.character[1];
-	this->isCompositing = source.isCompositing;
+	this->onChar = source.onChar;
 	this->offset = source.offset;
 }
 
@@ -34,7 +34,7 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 
 	this->character[0] = source.character[0];
 	this->character[1] = source.character[1];
-	this->isCompositing = source.isCompositing;
+	this->onChar = source.onChar;
 	this->offset = source.offset;
 
 	return *this;
@@ -45,8 +45,6 @@ void EraseCommand::Execute() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (pagingBuffer->GetCurrentOffset() > 0)
 	{
-		((NotepadForm*)(this->parent))->isDirty = TRUE;
-
 		//1.1. 현재 위치를 읽는다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long rowIndex = note->GetCurrent();
@@ -110,9 +108,10 @@ void EraseCommand::Execute() {
 		}
 
 		//1.4. 페이징버퍼에서 지운다.
-		if (!this->isCompositing)
+		if (this->onChar)
 		{
 			pagingBuffer->Remove();
+			this->isUndoable = true;
 		}
 
 		//1.5. 스크롤이 있으면, 적용한다.
@@ -176,11 +175,8 @@ void EraseCommand::Undo() {
 
 		//1.5. 페이징 버퍼에서 쓴다.
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		if (!this->isCompositing)
-		{
-			pagingBuffer->Add(this->character);
-		}
-
+		pagingBuffer->Add(this->character);
+	
 		//1.6. 수직 스크롤이 있으면, 반영한다.
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -256,11 +252,8 @@ void EraseCommand::Redo() {
 		}
 
 		//1.5. 페이징버퍼에서 지운다.
-		if (!this->isCompositing)
-		{
-			pagingBuffer->Remove();
-		}
-
+		pagingBuffer->Remove();
+	
 		//1.6. 수직 스크롤이 있다면, 반영한다.
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -278,12 +271,4 @@ void EraseCommand::Redo() {
 
 Command* EraseCommand::Clone() {
 	return new EraseCommand(*this);
-}
-
-AppID EraseCommand::GetID() {
-	return AppID::ID_COMMAND_ERASE;
-}
-
-bool EraseCommand::IsUndoable() {
-	return true;
 }

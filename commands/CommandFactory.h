@@ -12,7 +12,7 @@ public:
 	~CommandFactory();
 
 	static Command* Create(CWnd* parent, AppID nID,
-		const TCHAR(*character) = 0, BOOL isCompositing = FALSE,
+		const TCHAR(*character) = 0, BOOL onChar = FALSE,
 		BOOL isSelected = FALSE, FindReplaceOption* findReplaceOption = NULL);
 };
 

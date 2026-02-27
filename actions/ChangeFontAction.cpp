@@ -19,52 +19,55 @@ ChangeFontAction::~ChangeFontAction() {
 }
 
 void ChangeFontAction::Perform() {
-	CFontDialog cFontDialog;
+	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
+	LOGFONT logFont = { 0, };
+	notepadForm->originalFont->GetLogFont(&logFont);
+	CFontDialog cFontDialog(&logFont);
 	INT_PTR result = cFontDialog.DoModal();
 	if (result == IDOK)
 	{
 		LOGFONT logFont;
 		cFontDialog.GetCurrentFont(&logFont);
 
-		if (((NotepadForm*)(this->parent))->originalFont != NULL)
+		if (notepadForm->originalFont != NULL)
 		{
-			delete ((NotepadForm*)(this->parent))->originalFont;
-			((NotepadForm*)(this->parent))->originalFont = NULL;
+			delete notepadForm->originalFont;
+			notepadForm->originalFont = NULL;
 		}
-		((NotepadForm*)(this->parent))->originalFont = new CFont;
-		((NotepadForm*)(this->parent))->originalFont->CreateFontIndirectA(&logFont);
+		notepadForm->originalFont = new CFont;
+		notepadForm->originalFont->CreateFontIndirectA(&logFont);
 
 		double round = 0.5;
 		if (logFont.lfHeight < 0)
 		{
 			round = -0.5;
 		}
-		logFont.lfHeight = logFont.lfHeight * ((NotepadForm*)(this->parent))->magnification + round;
-		if (((NotepadForm*)(this->parent))->displayFont != NULL)
+		logFont.lfHeight = logFont.lfHeight * notepadForm->magnification + round;
+		if (notepadForm->displayFont != NULL)
 		{
-			delete ((NotepadForm*)(this->parent))->displayFont;
-			((NotepadForm*)(this->parent))->displayFont = NULL;
+			delete notepadForm->displayFont;
+			notepadForm->displayFont = NULL;
 		}
-		((NotepadForm*)(this->parent))->displayFont = new CFont;
-		((NotepadForm*)(this->parent))->displayFont->CreateFontIndirectA(&logFont);
+		notepadForm->displayFont = new CFont;
+		notepadForm->displayFont->CreateFontIndirectA(&logFont);
 
-		if (((NotepadForm*)(this->parent))->sizeCalculator != NULL)
+		if (notepadForm->sizeCalculator != NULL)
 		{
-			delete ((NotepadForm*)(this->parent))->sizeCalculator;
-			((NotepadForm*)(this->parent))->sizeCalculator = NULL;
+			delete notepadForm->sizeCalculator;
+			notepadForm->sizeCalculator = NULL;
 		}
-		((NotepadForm*)(this->parent))->sizeCalculator = new SizeCalculator(this->parent);
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		notepadForm->sizeCalculator = new SizeCalculator(this->parent);
+		SizeCalculator* sizeCalculator = notepadForm->sizeCalculator;
 
 		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
 		scrollBarAnalyzer.AnalyzeWithoutWrap();
 
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+		ScrollController* scrollController = notepadForm->scrollController;
 		if (scrollBarAnalyzer.GetVScrollNeeded())
 		{
 			scrollController->ShowVScroll();
 
-			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+			PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
 			Long rowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
 			Long max = rowCount * sizeCalculator->GetRowHeight();
 			scrollController->ResizeVRange(max);

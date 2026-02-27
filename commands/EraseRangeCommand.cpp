@@ -47,7 +47,7 @@ EraseRangeCommand& EraseRangeCommand::operator=(const EraseRangeCommand& source)
 void EraseRangeCommand::Execute() {
 	//1. 선택 범위를 읽는다.
 	Editor editor(this->parent);
-	editor.GetSelectedRange(this->frontOffset, this->rearOffset);
+	this->isUndoable = editor.GetSelectedRange(this->frontOffset, this->rearOffset);
 
 	//2. 선택범위를 지운다.
 	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
@@ -65,12 +65,4 @@ void EraseRangeCommand::Redo() {
 
 Command* EraseRangeCommand::Clone() {
 	return new EraseRangeCommand(*this);
-}
-
-AppID EraseRangeCommand::GetID() {
-	return AppID::ID_COMMAND_ERASE_RANGE;
-}
-
-bool EraseRangeCommand::IsUndoable() {
-	return true;
 }

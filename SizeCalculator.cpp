@@ -72,7 +72,7 @@ Long SizeCalculator::GetCharacterWidth(char(*character)) {
 Long SizeCalculator::GetRowWidth(CString contents) {
 	CDC* cdc = this->parent->GetDC();
 	Long rowWidth = cdc->GetTextExtent(contents).cx;
-	ReleaseDC(parent->GetSafeHwnd(), cdc->GetSafeHdc());
+	this->parent->ReleaseDC(cdc);
 
 	return rowWidth;
 }

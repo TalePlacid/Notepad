@@ -17,12 +17,15 @@ public:
 	virtual void Redo();
 	virtual Command* Clone();
 	virtual AppID GetID();
-	virtual bool IsUndoable();
 private:
 	Long frontOffset;
 	Long rearOffset;
 	Long columnIndex;
 	CString contents;
 };
+
+inline AppID EraseRangeCommand::GetID() {
+	return AppID::ID_COMMAND_ERASE_RANGE;
+}
 
 #endif // !_ERASERANGECOMMAND_H

@@ -84,7 +84,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 private:
 	void ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption);
-	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL isCompositing = FALSE,
+	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL onChar = TRUE,
 		FindReplaceOption* findReplaceOption = NULL);
 	void HandleAction(AppID nID, FindReplaceOption* findReplaceOption = NULL);
 #if 0

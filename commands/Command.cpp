@@ -4,6 +4,7 @@
 
 Command::Command(CWnd* parent) {
 	this->parent = parent;
+	this->isUndoable = false;
 }
 
 Command::~Command() {
@@ -12,10 +13,12 @@ Command::~Command() {
 
 Command::Command(const Command& source) {
 	this->parent = source.parent;
+	this->isUndoable = source.isUndoable;
 }
 
 Command& Command::operator=(const Command& source) {
 	this->parent = source.parent;
+	this->isUndoable = source.isUndoable;
 
 	return *this;
 }
@@ -30,10 +33,6 @@ void Command::Redo() {
 
 Command* Command::Clone() {
 	return 0;
-}
-
-bool Command::IsUndoable() {
-	return false;
 }
 
 Long Command::Add(Command* command) {

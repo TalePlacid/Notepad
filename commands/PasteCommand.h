@@ -19,7 +19,6 @@ public:
 	virtual void Redo();
 	virtual Command* Clone();
 	virtual AppID GetID();
-	virtual bool IsUndoable();
 private:
 	Long frontOffset;
 	Long rearOffset;
@@ -27,5 +26,9 @@ private:
 	CString erased;
 	CString contents;
 };
+
+inline AppID PasteCommand::GetID() {
+	return AppID::ID_COMMAND_PASTE;
+}
 
 #endif // !_PASTECOMMAND_H

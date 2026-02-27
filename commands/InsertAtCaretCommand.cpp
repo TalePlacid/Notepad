@@ -11,11 +11,11 @@
 
 #pragma warning(disable:4996)
 
-InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, const TCHAR(*character), BOOL isCompositing)
+InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, const TCHAR(*character), BOOL onChar)
 	:Command(parent) {
 	this->character[0] = character[0];
 	this->character[1] = character[1];
-	this->isCompositing = isCompositing;
+	this->onChar = onChar;
 	this->offset = -1;
 	this->columnIndex = -1;
 }
@@ -28,7 +28,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 	:Command(source) {
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
-	this->isCompositing = source.isCompositing;
+	this->onChar = source.onChar;
 	this->offset = source.offset;
 }
 
@@ -36,7 +36,7 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 	Command::operator=(source);
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
-	this->isCompositing = source.isCompositing;
+	this->onChar = source.onChar;
 	this->offset = source.offset;
 
 	return *this;
@@ -80,9 +80,10 @@ void InsertAtCaretCommand::Execute() {
 		}
 
 		//3.3. 조합 확정이면, 페이징버퍼에서 적는다. 
-		if (!this->isCompositing)
+		if (this->onChar)
 		{
 			pagingBuffer->Add(this->character);
+			this->isUndoable = TRUE;
 		}
 	}
 	else //4. 줄바꿈 문자라면,
@@ -95,6 +96,7 @@ void InsertAtCaretCommand::Execute() {
 	
 		//4.2. 페이징버퍼에서 적는다.
 		pagingBuffer->Add(this->character);
+		this->isUndoable = TRUE;
 
 		vScrollChanged = 1;
 	}
@@ -182,10 +184,7 @@ void InsertAtCaretCommand::Undo() {
 	}
 
 	//5. 페이징 버퍼에서 지운다.
-	if (!this->isCompositing)
-	{
-		pagingBuffer->Remove();
-	}
+	pagingBuffer->Remove();
 
 	//6. 수직 스크롤이 있다면, 반영한다.
 	if (scrollController->HasVScroll())
@@ -246,10 +245,7 @@ void InsertAtCaretCommand::Redo() {
 	}
 
 	//5. 페이징버퍼에서 적는다.
-	if (!this->isCompositing)
-	{
-		pagingBuffer->Add(this->character);
-	}
+	pagingBuffer->Add(this->character);
 
 	//6. 수직 스크롤이 있다면, 반영한다.
 	if (scrollController->HasVScroll())
@@ -265,12 +261,4 @@ void InsertAtCaretCommand::Redo() {
 
 Command* InsertAtCaretCommand::Clone() {
 	return new InsertAtCaretCommand(*this);
-}
-
-AppID InsertAtCaretCommand::GetID() {
-	return AppID::ID_COMMAND_INSERT_AT_CARET;
-}
-
-bool InsertAtCaretCommand::IsUndoable() {
-	return true;
 }

@@ -22,16 +22,16 @@ CommandFactory::~CommandFactory() {
 }
 
 Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character), 
-	BOOL isCompositing, BOOL isSelected, FindReplaceOption* findReplaceOption) {
+	BOOL onChar, BOOL isSelected, FindReplaceOption* findReplaceOption) {
 	Command* command = NULL;
 
 	switch (nID)
 	{
 	case AppID::ID_COMMAND_WRITE_AT_END:
-		command = new WriteAtEndCommand(parent, character, isCompositing);
+		command = new WriteAtEndCommand(parent, character, onChar);
 		break;
 	case AppID::ID_COMMAND_INSERT_AT_CARET:
-		command = new InsertAtCaretCommand(parent, character, isCompositing);
+		command = new InsertAtCaretCommand(parent, character, onChar);
 		break;
 	case AppID::ID_COMMAND_ERASE:
 		if (isSelected)
@@ -40,7 +40,7 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 		}
 		else
 		{
-			command = new EraseCommand(parent, isCompositing);
+			command = new EraseCommand(parent, onChar);
 		}
 		break;
 	case AppID::ID_COMMAND_PASTE:

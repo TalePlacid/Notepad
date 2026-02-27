@@ -21,7 +21,7 @@ public:
 	virtual Long Add(Command* command);
 	virtual Command* GetAt(Long index);
 
-	virtual bool IsUndoable();
+	virtual bool IsUndoable() const;
 	virtual bool IsMacroCommand();
 	virtual bool NeedScrollBarUpdate();
 
@@ -34,7 +34,12 @@ public:
 	virtual FindReplaceOption* GetFindReplaceOption();
 protected:
 	CWnd* parent;
+	bool isUndoable;
 };
+
+inline bool Command::IsUndoable() const {
+	return this->isUndoable;
+}
 
 inline CWnd* Command::GetParent() const {
 	return const_cast<CWnd*>(this->parent);

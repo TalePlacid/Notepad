@@ -41,6 +41,8 @@ ReplaceCommand& ReplaceCommand::operator=(const ReplaceCommand& source) {
 
 void ReplaceCommand::Execute() {
 	//1. 상태를 적는다.
+	this->isUndoable = true;
+
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	this->offset = pagingBuffer->GetSelectionBeginOffset();
 	this->source = pagingBuffer->MakeSelectedString();
@@ -57,34 +59,28 @@ void ReplaceCommand::Execute() {
 
 	//4. 다시 찾는다.
 	editor.Find(this->findReplaceOption);
-#if 0
-		//9. 실행이면, 다시 찾는다.
-		if (this->unexecuted)
-		{
-			this->unexecuted = FALSE;
-			FindCommand findCommand(this->parent, this->findReplaceDialog);
-			findCommand.Execute();
-		}
-		else //10. 실행이 아니면, 검색옵션을 초기화한다.
-		{
-			SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
-			searchResultController->ChangeFindReplaceOption(FindReplaceOption());
-		}
-#endif
 }
 
 void ReplaceCommand::Undo() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
 
+	Editor editor(this->parent);
+	editor.Replace(this->offset, this->replaced, this->source, TRUE, this->columnIndex);
 }
 
 void ReplaceCommand::Redo() {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	note->Select(false);
+	pagingBuffer->UnmarkSelectionBegin();
 
+	Editor editor(this->parent);
+	editor.Replace(this->offset, this->source, this->replaced, TRUE, this->columnIndex);
 }
 
 Command* ReplaceCommand::Clone() {
 	return new ReplaceCommand(*this);
-}
-
-AppID ReplaceCommand::GetID() {
-	return AppID::ID_COMMAND_REPLACE;
 }

@@ -6,13 +6,32 @@
 #include "../Editor.h"
 
 CutCommand::CutCommand(CWnd* parent)
-	:Command(parent) {
-	this->isExecuted = false;
+	:Command(parent), contents("") {
+	this->frontOffset = -1;
+	this->rearOffset = -1;
 	this->columnIndex = 0;
 }
 
 CutCommand::~CutCommand() {
 
+}
+
+CutCommand::CutCommand(const CutCommand& source)
+	:Command(source), contents(source.contents) {
+	this->frontOffset = source.frontOffset;
+	this->rearOffset = source.rearOffset;
+	this->columnIndex = source.columnIndex;
+}
+
+CutCommand& CutCommand::operator=(const CutCommand& source) {
+	Command::operator=(source);
+
+	this->frontOffset = source.frontOffset;
+	this->rearOffset = source.rearOffset;
+	this->columnIndex = source.columnIndex;
+	this->contents = source.contents;
+
+	return *this;
 }
 
 void CutCommand::Execute() {
@@ -23,21 +42,17 @@ void CutCommand::Execute() {
 		clipboardController->Copy();
 
 		Editor editor(this->parent);
-		Long frontOffset;
-		Long rearOffset;
-		editor.GetSelectedRange(frontOffset, rearOffset);
-		editor.EraseRange(frontOffset, rearOffset, this->columnIndex, this->erased);
-
-		this->isExecuted = true;
+		this->isUndoable = editor.GetSelectedRange(this->frontOffset, this->rearOffset);
+		editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
 	}
 }
 
 void CutCommand::Undo() {
+	Editor editor(this->parent);
+	editor.InsertTextAt(this->frontOffset, this->columnIndex, this->contents, true);
 }
 
 void CutCommand::Redo() {
-}
-
-AppID CutCommand::GetID() {
-	return AppID::ID_COMMAND_CUT;
+	Editor editor(this->parent);
+	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
 }

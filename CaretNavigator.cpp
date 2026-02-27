@@ -72,7 +72,8 @@ Long CaretNavigator::MoveTo(Long offset) {
 		while (currentOffset <= offset && previousOffset != currentOffset)
 		{
 			// 3.1.1. 아랫줄이 적재범위를 넘어서면, 재적재한다.
-			Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * sizeCalculator->GetRowHeight();
+			Scroll vScroll = scrollController->GetVScroll();
+			Long pageMax = vScroll.GetPos() + vScroll.GetPage();
 			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 			{
 				PageLoader::LoadNext(this->parent);

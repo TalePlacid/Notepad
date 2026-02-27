@@ -33,4 +33,8 @@ inline bool ReplaceAllCommand::ShouldKeepSelection() {
 	return true;
 }
 
+inline AppID ReplaceAllCommand::GetID() {
+	return  AppID::ID_COMMAND_REPLACE_ALL;
+}
+
 #endif // !_REPLACEALLCOMMAND_H

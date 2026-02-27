@@ -8,6 +8,8 @@ class CutCommand : public Command {
 public:
 	CutCommand(CWnd* parent);
 	virtual ~CutCommand();
+	CutCommand(const CutCommand& source);
+	CutCommand& operator=(const CutCommand& source);
 
 	virtual void Execute();
 	virtual void Undo();
@@ -15,9 +17,14 @@ public:
 
 	virtual AppID GetID();
 private:
+	Long frontOffset;
+	Long rearOffset;
 	Long columnIndex;
-	bool isExecuted;
-	CString erased;
+	CString contents;
 };
+
+inline AppID CutCommand::GetID() {
+	return AppID::ID_COMMAND_CUT;
+}
 
 #endif // !_CUTCOMMAND_H

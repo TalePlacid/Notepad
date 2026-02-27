@@ -7,7 +7,7 @@ typedef signed long int Long;
 
 class EraseCommand : public Command {
 public:
-	EraseCommand(CWnd* parent, BOOL isCompositing = FALSE);
+	EraseCommand(CWnd* parent, BOOL onChar = TRUE);
 	virtual ~EraseCommand();
 	EraseCommand(const EraseCommand& source);
 	EraseCommand& operator=(const EraseCommand& source);
@@ -17,12 +17,15 @@ public:
 	virtual void Redo();
 	virtual Command* Clone();
 	virtual AppID GetID();
-	virtual bool IsUndoable();
 private:
 	char character[2];
-	BOOL isCompositing;
+	BOOL onChar;
 	Long offset;
 	Long columnIndex;
 };
+
+inline AppID EraseCommand::GetID() {
+	return AppID::ID_COMMAND_ERASE;
+}
 
 #endif // !_ERASECOMMAND_H

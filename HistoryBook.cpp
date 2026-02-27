@@ -24,7 +24,7 @@ HistoryBook::~HistoryBook() {
 HistoryBook::HistoryBook(const HistoryBook& source)
 	:histories(source.capacity), latestPushTime(source.latestPushTime) {
 	DropOldestStack<Command*>::Node* it = source.histories.GetBottom();
-	while (it == 0)
+	while (it != 0)
 	{
 		this->histories.Push(it->GetElement()->Clone());
 		it = it->GetNext();
@@ -37,7 +37,7 @@ HistoryBook::HistoryBook(const HistoryBook& source)
 HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 	this->histories = source.histories;
 	DropOldestStack<Command*>::Node* it = source.histories.GetBottom();
-	while (it == 0)
+	while (it != 0)
 	{
 		this->histories.Push(it->GetElement()->Clone());
 		it = it->GetNext();

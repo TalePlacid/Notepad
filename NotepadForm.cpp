@@ -269,7 +269,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		{
 			character[1] = '\n';
 		}
-		this->HandleCommand(nID, character, FALSE);
+		this->HandleCommand(nID, character, TRUE);
 	}
 }
 
@@ -289,12 +289,12 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		if (length > 0)
 		{
 			AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-			this->HandleCommand(nID, character, this->isCompositing);
+			this->HandleCommand(nID, character, FALSE);
 			this->isCompositing = TRUE;
 		}
 		else if (length == 0)
 		{
-			this->HandleCommand(AppID::ID_COMMAND_ERASE, NULL, this->isCompositing);
+			this->HandleCommand(AppID::ID_COMMAND_ERASE, NULL, FALSE);
 			this->isCompositing = FALSE;
 		}
 
@@ -547,11 +547,11 @@ void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
 	this->mouseHandler->PopUpContextMenu(point);
 }
 
-void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompositing, 
+void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar, 
 	FindReplaceOption* findReplaceOption) {
 	BOOL isSelected = this->pagingBuffer->GetSelectionBeginOffset() >= 0;
 
-	Command* command = CommandFactory::Create(this, nID, character, isCompositing,
+	Command* command = CommandFactory::Create(this, nID, character, onChar,
 		isSelected, findReplaceOption);
 	if (command != NULL)
 	{
@@ -564,9 +564,10 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL isCompo
 
 		if (command->IsUndoable())
 		{
-			//command = this->undoHistoryBook->Bind(command);
+			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
 			this->redoHistoryBook->Clear();
+			this->isDirty = TRUE;
 		}
 		else
 		{
