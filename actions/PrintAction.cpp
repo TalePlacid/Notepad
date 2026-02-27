@@ -15,14 +15,9 @@
 
 PrintAction::PrintAction(CWnd* parent)
 	:Action(parent) {
-	this->previewPaginator = NULL;
 }
 
 PrintAction::~PrintAction() {
-	if (this->previewPaginator != NULL)
-	{
-		delete this->previewPaginator;
-	}
 }
 
 void PrintAction::Perform() {
@@ -31,8 +26,8 @@ void PrintAction::Perform() {
 	PageLoader::LoadFirst(this->parent);
 
 	//2. 페이징 한다.
-	this->previewPaginator = new PreviewPaginator(this->parent);
-	this->previewPaginator->Paginate();
+	PreviewPaginator previewPaginator(this->parent);
+	previewPaginator.Paginate();
 
 	//3. 인쇄 대화상자를 연다.
 	CPrintDialog printDialog(FALSE);
@@ -40,9 +35,9 @@ void PrintAction::Perform() {
 	printDialog.m_pd.Flags |= PD_NOSELECTION; //선택 영역 프린트 기능 OFF
 	printDialog.m_pd.Flags |= PD_USEDEVMODECOPIESANDCOLLATE; // 인쇄 매수 설정 기능 ON
 	printDialog.m_pd.nMinPage = 1; //최소 페이지
-	printDialog.m_pd.nMaxPage = this->previewPaginator->GetPageCount(); //최대 페이지
+	printDialog.m_pd.nMaxPage = previewPaginator.GetPageCount(); //최대 페이지
 	printDialog.m_pd.nFromPage = 1; //기본 최소 페이지
-	printDialog.m_pd.nToPage = this->previewPaginator->GetPageCount(); //기본 최대 페이지
+	printDialog.m_pd.nToPage = previewPaginator.GetPageCount(); //기본 최대 페이지
 	printDialog.m_pd.nCopies = 1; // 기본 인쇄 매수
 	INT_PTR ret = printDialog.DoModal();
 
@@ -55,7 +50,7 @@ void PrintAction::Perform() {
 		printerResource.LoadMetrics();
 
 		Long fromPage = 1;
-		Long toPage = this->previewPaginator->GetPageCount();
+		Long toPage = previewPaginator.GetPageCount();
 		if (!printDialog.PrintAll())
 		{
 			fromPage = printDialog.GetFromPage();
@@ -87,10 +82,10 @@ void PrintAction::Perform() {
 			//3.4.1. 한 부씩 인쇄이면,
 			CFont* oldFont = dc.SelectObject(printerResource.GetFont());
 
-			PrintRenderer printRenderer(this->parent, this->previewPaginator, &printerResource);
+			PrintRenderer printRenderer(this->parent, &previewPaginator, &printerResource);
 			Long i;
 			Long previous;
-			Long current = this->previewPaginator->GetCurrent();
+			Long current = previewPaginator.GetCurrent();
 			if (printDialog.PrintCollate())
 			{
 				i = 0;
@@ -98,7 +93,7 @@ void PrintAction::Perform() {
 				{
 					while (current < fromPage)
 					{
-						current = this->previewPaginator->Next();
+						current = previewPaginator.Next();
 					}
 
 					previous = 0;
@@ -108,10 +103,10 @@ void PrintAction::Perform() {
 						printRenderer.Render(&dc);
 						dc.EndPage();
 						previous = current;
-						current = this->previewPaginator->Next();
+						current = previewPaginator.Next();
 					}
 
-					current = this->previewPaginator->First();
+					current = previewPaginator.First();
 					i++;
 				}
 			}
@@ -119,7 +114,7 @@ void PrintAction::Perform() {
 			{
 				while (current < fromPage)
 				{
-					current = this->previewPaginator->Next();
+					current = previewPaginator.Next();
 				}
 
 				previous = 0;
@@ -134,7 +129,7 @@ void PrintAction::Perform() {
 						i++;
 					}
 					previous = current;
-					current = this->previewPaginator->Next();
+					current = previewPaginator.Next();
 				}
 			}
 

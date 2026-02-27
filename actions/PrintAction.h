@@ -3,7 +3,6 @@
 #include "Action.h"
 
 class CWnd;
-class PreviewPaginator;
 
 class PrintAction : public Action {
 public:
@@ -11,8 +10,6 @@ public:
 	virtual ~PrintAction();
 
 	virtual void Perform();
-private:
-	PreviewPaginator* previewPaginator;
 };
 
 #endif // !_PRINTACTION_H

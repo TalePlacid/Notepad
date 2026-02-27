@@ -248,6 +248,12 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 			nID = AppID::ID_ACTION_OPEN;
 		}
 		break;
+	case 'P':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_PRINT;
+		}
+		break;
 	case 'S':
 		if (onCtrlKey && onShiftKey)
 		{
