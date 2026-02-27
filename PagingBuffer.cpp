@@ -413,6 +413,11 @@ Long PagingBuffer::Replace(Long offset, CString str) {
 		this->file = fopen(this->tempPath, "rb+");
 
 		fseek(this->file, offset + str.GetLength(), SEEK_SET);
+
+		if (contents != 0)
+		{
+			delete[] contents;
+		}
 	}
 
 	return ftell(this->file);
