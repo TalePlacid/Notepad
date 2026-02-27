@@ -52,7 +52,7 @@ Caret* CaretController::Create() {
 
 	//4. 캐럿 너비를 구한다.
 	Long caretWidth = 1;
-	if (columnIndex < row->GetLength())
+	if (columnIndex < row->GetLength() && pagingBuffer->GetSelectionBeginOffset() < 0)
 	{
 		character = row->GetAt(columnIndex);
 		if (character->IsMultiByteCharacter())
@@ -78,6 +78,8 @@ Caret* CaretController::Destroy() {
 void CaretController::Update(Subject *subject, string interest) {
 	if (interest == "ChangeCaret")
 	{
+		this->Create();
+#if 0
 		//1. 기존 캐럿이 있다면, 지운다.
 		if (this->caret != NULL)
 		{
@@ -122,5 +124,6 @@ void CaretController::Update(Subject *subject, string interest) {
 
 		//6. 새 캐럿을 만든다.
 		this->caret = new Caret(this->parent, x, y, caretWidth, rowHeight);
+#endif
 	}
 }
