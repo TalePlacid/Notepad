@@ -111,6 +111,9 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 	case ID_MENU_REPLACE:
 		appID = AppID::ID_ACTION_OPEN_REPLACE_DIALOG;
 		break;
+	case ID_MENU_GOTO:
+		appID = AppID::ID_ACTION_GOTO;
+		break;
 	case ID_MENU_FINDPREVIOUS:
 		appID = AppID::ID_ACTION_FIND_PREVIOUS;
 		break;

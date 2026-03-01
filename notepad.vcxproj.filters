@@ -467,6 +467,9 @@
     <ClCompile Include="actions\OpenReplaceDialogAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\GoToAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
     <ClCompile Include="actions\PreviewAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -513,6 +516,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="FontSelector.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GoToForm.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="actions\FindPreviousAction.cpp">
@@ -955,6 +961,9 @@
     <ClInclude Include="actions\OpenReplaceDialogAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
+    <ClInclude Include="actions\GoToAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
     <ClInclude Include="actions\PreviewAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
@@ -1001,6 +1010,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="FontSelector.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GoToForm.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="actions\FindPreviousAction.h">

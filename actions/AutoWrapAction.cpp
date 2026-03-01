@@ -53,5 +53,8 @@ void AutoWrapAction::Perform() {
 
 	pagingBuffer->UnmarkSelectionBegin();
 	notepadForm->note->Select(false);
+	notepadFrame->DrawMenuBar();
 }
+
+
 

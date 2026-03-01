@@ -14,6 +14,8 @@ public:
 	void EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex);
 	void Replace(Long offset, CString sourceText, CString replacingText, 
 		BOOL isSelected, Long& columnIndex);
+	void MoveUp();
+	void MoveDown();
 
 	Long Find(FindReplaceOption findReplaceOption);
 	bool FindPrevious();

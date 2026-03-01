@@ -6,6 +6,7 @@
 #define IDD_DIALOG_PAGESETTING          102
 #define IDD_DIALOG_ABOUT_NOTEPAD        103
 #define IDR_MENU_CONTEXT                104
+#define IDD_DIALOG_GOTO                 105
 #define IDC_GROUP_PAPER                 1001
 #define IDC_STATIC_SIZE                 1002
 #define IDC_STATIC_SOURCE               1003
@@ -31,6 +32,8 @@
 #define IDC_BUTTON_CANCEL               1023
 #define IDC_BUTTON_OK                   1024
 #define IDC_STATIC_ABOUT_MESSAGE        1025
+#define IDC_STATIC_GOTO_LINE            1026
+#define IDC_EDIT_GOTO_LINE              1027
 #define ID_MENU_UNDO                    40095
 #define ID_MENU_CUT                     40096
 #define ID_MENU_COPY                    40097
@@ -83,4 +86,5 @@
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif
+
 

@@ -41,6 +41,7 @@
 #include "CopyAction.h"
 #include "OpenFindDialogAction.h"
 #include "OpenReplaceDialogAction.h"
+#include "GoToAction.h"
 #include "FindAction.h"
 #include "FindPreviousAction.h"
 #include "FindNextAction.h"
@@ -190,6 +191,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_OPEN_REPLACE_DIALOG:
 		action = new OpenReplaceDialogAction(parent);
+		break;
+	case AppID::ID_ACTION_GOTO:
+		action = new GoToAction(parent);
 		break;
 	case AppID::ID_ACTION_FIND:
 		action = new FindAction(parent, *findReplaceOption);
