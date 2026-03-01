@@ -2,6 +2,7 @@
 #include "../FindReplaceOption.h"
 #include "NewAction.h"
 #include "NewWindowAction.h"
+#include "CloseAction.h"
 #include "OpenAction.h"
 #include "SaveAction.h"
 #include "SaveAsAction.h"
@@ -72,6 +73,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_NEW_WINDOW:
 		action = new NewWindowAction(parent);
+		break;
+	case AppID::ID_ACTION_CLOSE:
+		action = new CloseAction(parent);
 		break;
 	case AppID::ID_ACTION_OPEN:
 		action = new OpenAction(parent);

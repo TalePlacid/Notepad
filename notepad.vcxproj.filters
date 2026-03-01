@@ -431,6 +431,9 @@
     <ClCompile Include="actions\NewWIndowAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\CloseAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
     <ClCompile Include="actions\OpenAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -914,6 +917,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="actions\NewWindowAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\CloseAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\OpenAction.h">

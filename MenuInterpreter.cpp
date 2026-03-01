@@ -57,6 +57,9 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 	case ID_MENU_NEWWINDOW:
 		appID = AppID::ID_ACTION_NEW_WINDOW;
 		break;
+	case ID_MENU_CLOSE:
+		appID = AppID::ID_ACTION_CLOSE;
+		break;
 	case ID_MENU_OPEN:
 		appID = AppID::ID_ACTION_OPEN;
 		break;
@@ -98,6 +101,9 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 		break;
 	case ID_MENU_DELETE:
 		appID = AppID::ID_COMMAND_ERASE;
+		break;
+	case ID_MENU_SELECTALL:
+		appID = AppID::ID_ACTION_SELECT_ALL;
 		break;
 	case ID_MENU_FIND:
 		appID = AppID::ID_ACTION_OPEN_FIND_DIALOG;

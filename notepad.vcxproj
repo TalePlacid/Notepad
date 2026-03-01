@@ -160,6 +160,7 @@
     <ClCompile Include="actions\MoveLeftAction.cpp" />
     <ClCompile Include="actions\NewAction.cpp" />
     <ClCompile Include="actions\NewWIndowAction.cpp" />
+    <ClCompile Include="actions\CloseAction.cpp" />
     <ClCompile Include="actions\OpenAction.cpp" />
     <ClCompile Include="actions\MovePageDownAction.cpp" />
     <ClCompile Include="actions\MovePageUpAction.cpp" />
@@ -317,6 +318,7 @@
     <ClInclude Include="actions\MoveLeftAction.h" />
     <ClInclude Include="actions\NewAction.h" />
     <ClInclude Include="actions\NewWindowAction.h" />
+    <ClInclude Include="actions\CloseAction.h" />
     <ClInclude Include="actions\OpenAction.h" />
     <ClInclude Include="actions\MovePageDownAction.h" />
     <ClInclude Include="actions\MovePageUpAction.h" />
