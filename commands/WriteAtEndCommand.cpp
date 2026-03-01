@@ -8,6 +8,7 @@
 #include "../CaretNavigator.h"
 #include "../NoteWrapper.h"
 #include "../PageLoader.h"
+#include "../Editor.h"
 
 #pragma warning(disable:4996)
 
@@ -18,6 +19,11 @@ WriteAtEndCommand::WriteAtEndCommand(CWnd* parent, const TCHAR(*character), BOOL
 	this->onChar = onChar;
 	this->offset = -1;
 	this->columnIndex = 0;
+	this->isErased = FALSE;
+	this->erasedFrontOffset = -1;
+	this->erasedRearOffset = -1;
+	this->erasedColumnIndex = 0;
+	this->erasedContents = "";
 }
 
 WriteAtEndCommand::~WriteAtEndCommand() {
@@ -31,6 +37,11 @@ WriteAtEndCommand::WriteAtEndCommand(const WriteAtEndCommand& source)
 	this->onChar = source.onChar;
 	this->offset = source.offset;
 	this->columnIndex = source.columnIndex;
+	this->isErased = source.isErased;
+	this->erasedFrontOffset = source.erasedFrontOffset;
+	this->erasedRearOffset = source.erasedRearOffset;
+	this->erasedColumnIndex = source.erasedColumnIndex;
+	this->erasedContents = source.erasedContents;
 }
 
 WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source) {
@@ -41,11 +52,34 @@ WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source)
 	this->onChar = source.onChar;
 	this->offset = source.offset;
 	this->columnIndex = source.columnIndex;
+	this->isErased = source.isErased;
+	this->erasedFrontOffset = source.erasedFrontOffset;
+	this->erasedRearOffset = source.erasedRearOffset;
+	this->erasedColumnIndex = source.erasedColumnIndex;
+	this->erasedContents = source.erasedContents;
 
 	return *this;
 }
 
 void WriteAtEndCommand::Execute() {
+	this->isErased = FALSE;
+	this->erasedFrontOffset = -1;
+	this->erasedRearOffset = -1;
+	this->erasedColumnIndex = 0;
+	this->erasedContents = "";
+
+	if (this->onChar)
+	{
+		Editor editor(this->parent);
+		this->isErased = editor.GetSelectedRange(this->erasedFrontOffset, this->erasedRearOffset);
+		if (this->isErased)
+		{
+			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+			this->erasedContents = pagingBuffer->MakeSelectedString();
+			editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+		}
+	}
+
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
 	
@@ -160,9 +194,21 @@ void WriteAtEndCommand::Undo() {
 	pagingBuffer->Remove();
 
 	this->offset = pagingBuffer->GetCurrentOffset();
+
+	if (this->isErased)
+	{
+		Editor editor(this->parent);
+		editor.InsertTextAt(this->erasedFrontOffset, this->erasedColumnIndex, this->erasedContents, true);
+	}
 }
 
 void WriteAtEndCommand::Redo() {
+	if (this->isErased)
+	{
+		Editor editor(this->parent);
+		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+	}
+
 	//1. 원래 위치로 이동한다.
 	GlyphFactory glyphFactory;
 	Glyph* glyph = glyphFactory.Create(this->character);
@@ -224,4 +270,3 @@ void WriteAtEndCommand::Redo() {
 Command* WriteAtEndCommand::Clone() {
 	return new WriteAtEndCommand(*this);
 }
-

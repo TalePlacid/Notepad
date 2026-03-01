@@ -8,6 +8,7 @@
 #include "../caretNavigator.h"
 #include "../NoteWrapper.h"
 #include "../PageLoader.h"
+#include "../Editor.h"
 
 #pragma warning(disable:4996)
 
@@ -18,6 +19,11 @@ InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, const TCHAR(*character)
 	this->onChar = onChar;
 	this->offset = -1;
 	this->columnIndex = -1;
+	this->isErased = FALSE;
+	this->erasedFrontOffset = -1;
+	this->erasedRearOffset = -1;
+	this->erasedColumnIndex = 0;
+	this->erasedContents = "";
 }
 
 InsertAtCaretCommand::~InsertAtCaretCommand() {
@@ -31,6 +37,11 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 	this->onChar = source.onChar;
 	this->offset = source.offset;
 	this->columnIndex = source.columnIndex;
+	this->isErased = source.isErased;
+	this->erasedFrontOffset = source.erasedFrontOffset;
+	this->erasedRearOffset = source.erasedRearOffset;
+	this->erasedColumnIndex = source.erasedColumnIndex;
+	this->erasedContents = source.erasedContents;
 }
 
 InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand& source){
@@ -40,11 +51,34 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 	this->onChar = source.onChar;
 	this->offset = source.offset;
 	this->columnIndex = source.columnIndex;
+	this->isErased = source.isErased;
+	this->erasedFrontOffset = source.erasedFrontOffset;
+	this->erasedRearOffset = source.erasedRearOffset;
+	this->erasedColumnIndex = source.erasedColumnIndex;
+	this->erasedContents = source.erasedContents;
 
 	return *this;
 }
 
 void InsertAtCaretCommand::Execute() {
+	this->isErased = FALSE;
+	this->erasedFrontOffset = -1;
+	this->erasedRearOffset = -1;
+	this->erasedColumnIndex = 0;
+	this->erasedContents = "";
+
+	if (this->onChar)
+	{
+		Editor editor(this->parent);
+		this->isErased = editor.GetSelectedRange(this->erasedFrontOffset, this->erasedRearOffset);
+		if (this->isErased)
+		{
+			PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+			this->erasedContents = pagingBuffer->MakeSelectedString();
+			editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+		}
+	}
+
 	//1. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
@@ -198,9 +232,21 @@ void InsertAtCaretCommand::Undo() {
 
 	this->offset = pagingBuffer->GetCurrentOffset();
 	this->columnIndex = columnIndex;
+
+	if (this->isErased)
+	{
+		Editor editor(this->parent);
+		editor.InsertTextAt(this->erasedFrontOffset, this->erasedColumnIndex, this->erasedContents, true);
+	}
 }
 
 void InsertAtCaretCommand::Redo() {
+	if (this->isErased)
+	{
+		Editor editor(this->parent);
+		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+	}
+
 	//1. 오프셋 기반으로 이동한다.
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(this->offset);
@@ -264,4 +310,3 @@ void InsertAtCaretCommand::Redo() {
 Command* InsertAtCaretCommand::Clone() {
 	return new InsertAtCaretCommand(*this);
 }
-

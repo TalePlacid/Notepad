@@ -23,6 +23,11 @@ private:
 	BOOL onChar;
 	Long offset;
 	Long columnIndex;
+	BOOL isErased;
+	Long erasedFrontOffset;
+	Long erasedRearOffset;
+	Long erasedColumnIndex;
+	CString erasedContents;
 };
 
 inline AppID WriteAtEndCommand::GetID() {
