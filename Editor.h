@@ -11,7 +11,7 @@ public:
 	~Editor();
 
 	void InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSelected = FALSE);
-	void EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex, CString& contents);
+	void EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex);
 	void Replace(Long offset, CString sourceText, CString replacingText, 
 		BOOL isSelected, Long& columnIndex);
 

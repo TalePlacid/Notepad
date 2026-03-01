@@ -43,7 +43,8 @@ void CutCommand::Execute() {
 
 		Editor editor(this->parent);
 		this->isUndoable = editor.GetSelectedRange(this->frontOffset, this->rearOffset);
-		editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
+		this->contents = pagingBuffer->MakeSelectedString();
+		editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
 	}
 }
 
@@ -54,5 +55,5 @@ void CutCommand::Undo() {
 
 void CutCommand::Redo() {
 	Editor editor(this->parent);
-	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
+	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
 }

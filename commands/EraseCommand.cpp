@@ -43,7 +43,8 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 void EraseCommand::Execute() {
 	//1. 파일의 시작 위치가 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (pagingBuffer->GetCurrentOffset() > 0)
+	if (pagingBuffer->GetCurrentOffset() > 0
+		|| (!this->onChar && ((NotepadForm*)(this->parent))->IsCompositing()))
 	{
 		//1.1. 현재 위치를 읽는다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;

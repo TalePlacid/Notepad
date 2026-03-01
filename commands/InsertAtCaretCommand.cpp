@@ -30,6 +30,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 	this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
 	this->onChar = source.onChar;
 	this->offset = source.offset;
+	this->columnIndex = source.columnIndex;
 }
 
 InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand& source){
@@ -38,6 +39,7 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 	this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
 	this->onChar = source.onChar;
 	this->offset = source.offset;
+	this->columnIndex = source.columnIndex;
 
 	return *this;
 }
@@ -218,7 +220,7 @@ void InsertAtCaretCommand::Redo() {
 	{
 		//3.1. 노트에서 더한다.
 		GlyphFactory glyphFactory;
-		Glyph* glyph = glyphFactory.Create(this->character);
+		Glyph* glyph = glyphFactory.Create(this->character, true);
 		columnIndex = row->Add(columnIndex, glyph);
 		columnIndex = row->GetCurrent();
 
@@ -251,7 +253,7 @@ void InsertAtCaretCommand::Redo() {
 	if (scrollController->HasVScroll())
 	{
 		Scroll vScroll = scrollController->GetVScroll();
-		Long max = vScroll.GetMax() + sizeCalculator->GetRowHeight();
+		Long max = vScroll.GetMax() + vScrollChanged * sizeCalculator->GetRowHeight();
 		scrollController->ResizeVRange(max);
 	}
 

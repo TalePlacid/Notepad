@@ -96,10 +96,9 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 	}
 }
 
-void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex, CString& contents) {
+void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 	//1. 앞 위치로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	contents = pagingBuffer->MakeSelectedString();
 
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(frontOffset);

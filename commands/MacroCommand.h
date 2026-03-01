@@ -17,6 +17,8 @@ public:
 	virtual void Undo();
 	virtual void Redo();
 
+	virtual Command* Clone();
+
 	virtual Long Add(Command* command);
 	virtual Command* GetAt(Long index);
 	

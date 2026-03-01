@@ -2,6 +2,8 @@
 #include "UndoAction.h"
 #include "../NotepadForm.h"
 #include "../HistoryBook.h"
+#include "../glyphs/Glyph.h"
+#include "../PagingBuffer.h"
 #include "../commands/Command.h"
 
 #pragma warning(disable:4996)
@@ -16,6 +18,9 @@ UndoAction::~UndoAction() {
 }
 
 void UndoAction::Perform() {
+	((NotepadForm*)(this->parent))->note->Select(false);
+	((NotepadForm*)(this->parent))->pagingBuffer->UnmarkSelectionBegin();
+
 	HistoryBook* undoHistoryBook = ((NotepadForm*)(this->parent))->undoHistoryBook;
 	if (!undoHistoryBook->IsEmpty())
 	{

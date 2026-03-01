@@ -21,7 +21,7 @@ MacroCommand::~MacroCommand() {
 }
 
 MacroCommand::MacroCommand(const MacroCommand& source)
-	:commands(source.commands) {
+	:Command(source), commands(source.commands) {
 	Long i = 0;
 	while (i < source.length)
 	{
@@ -116,4 +116,7 @@ AppID MacroCommand::GetID() {
 
 Command* MacroCommand::operator[](Long index) {
 	return this->commands[index];
+}
+Command* MacroCommand::Clone() {
+	return new MacroCommand(*this);
 }

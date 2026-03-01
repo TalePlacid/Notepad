@@ -49,8 +49,13 @@ void EraseRangeCommand::Execute() {
 	Editor editor(this->parent);
 	this->isUndoable = editor.GetSelectedRange(this->frontOffset, this->rearOffset);
 
-	//2. 선택범위를 지운다.
-	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
+	//2. 선택범위가 있으면, 지운다.
+	if (this->isUndoable)
+	{
+		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		this->contents = pagingBuffer->MakeSelectedString();
+		editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
+	}
 }
 
 void EraseRangeCommand::Undo() {
@@ -60,7 +65,7 @@ void EraseRangeCommand::Undo() {
 
 void EraseRangeCommand::Redo() {
 	Editor editor(this->parent);
-	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->contents);
+	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
 }
 
 Command* EraseRangeCommand::Clone() {

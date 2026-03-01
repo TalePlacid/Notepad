@@ -60,7 +60,8 @@ void PasteCommand::Execute() {
 		BOOL isSelected = editor.GetSelectedRange(frontOffset, rearOffset);
 		if (isSelected)
 		{
-			editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->erased);
+			this->erased = ((NotepadForm*)(this->parent))->pagingBuffer->MakeSelectedString();
+			editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
 		}
 
 		//3. 내용을 붙여넣는다.
@@ -75,8 +76,7 @@ void PasteCommand::Undo() {
 	//1. 붙여넣은 내용을 지운다.
 	Editor editor(this->parent);
 	Long rearOffset = this->frontOffset + this->contents.GetLength();
-	CString erased;
-	editor.EraseRange(this->frontOffset, rearOffset, this->columnIndex, erased);
+	editor.EraseRange(this->frontOffset, rearOffset, this->columnIndex);
 	
 	//2. 삭제한 내용이 있으면, 삽입한다.
 	if (this->erased != "")
@@ -89,7 +89,7 @@ void PasteCommand::Redo() {
 	Editor editor(this->parent);
 	if (this->erased != "")
 	{
-		editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex, this->erased);
+		editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
 	}
 
 	editor.InsertTextAt(this->frontOffset, this->columnIndex, this->contents, TRUE);
