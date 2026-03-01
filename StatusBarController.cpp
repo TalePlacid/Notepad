@@ -1,6 +1,5 @@
 #include <afxext.h>
 #include "StatusBarController.h"
-#include "NotepadFrame.h"
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
 #include "PagingBuffer.h"
@@ -9,8 +8,7 @@
 
 #pragma warning(disable:4996)
 
-StatusBarController::StatusBarController(CWnd* parent) {
-	this->parent = parent;
+StatusBarController::StatusBarController() {
 	this->statusBar = NULL;
 }
 
@@ -21,7 +19,7 @@ StatusBarController::~StatusBarController() {
 	}
 }
 
-void StatusBarController::Create() {
+void StatusBarController::Create(CWnd* parent) {
 	this->statuses[0] = IDC_STATUS_SEPARATOR;
 	this->statuses[1] = IDC_STATUS_CURRENT;
 	this->statuses[2] = IDC_STATUS_MAGNIFICATION;
@@ -29,7 +27,7 @@ void StatusBarController::Create() {
 	this->statuses[4] = IDC_STATUS_ENCODING;
 
 	this->statusBar = new CStatusBar;
-	this->statusBar->Create(this->parent);
+	this->statusBar->Create(parent);
 
 	this->statusBar->SetIndicators(statuses, sizeof(statuses) / sizeof(statuses[0]));
 	this->statusBar->SetPaneStyle(0, SBPS_STRETCH);
@@ -38,13 +36,27 @@ void StatusBarController::Create() {
 	this->statusBar->SetPaneInfo(3, this->statuses[0], SBPS_NORMAL, 150);
 	this->statusBar->SetPaneInfo(4, this->statuses[0], SBPS_NORMAL, 150);
 
-	NotepadForm* notepadForm = (NotepadForm*)((NotepadFrame*)(this->parent))->GetNotepadForm();
-	CString magnification;
-	Long percentage = notepadForm->GetMagnification() * 100;
-	magnification.Format("%ld%%", percentage);
-	this->statusBar->SetPaneText(2, magnification);
 	this->statusBar->SetPaneText(3, "Windows(CRLF)");
 	this->statusBar->SetPaneText(4, "ANSI");
+	this->statusBar->ShowWindow(SW_HIDE);
+}
+
+BOOL StatusBarController::IsVisible() const {
+	return this->statusBar->IsWindowVisible();
+}
+
+BOOL StatusBarController::ToggleVisible() {
+	BOOL isVisible = this->statusBar->IsWindowVisible();
+	if (isVisible)
+	{
+		this->statusBar->ShowWindow(SW_HIDE);
+	}
+	else
+	{
+		this->statusBar->ShowWindow(SW_SHOW);
+	}
+
+	return !isVisible;
 }
 
 void StatusBarController::Update(Subject* subject, string interest) {
@@ -90,4 +102,3 @@ void StatusBarController::Update(Subject* subject, string interest) {
 		this->statusBar->SetPaneText(4, encoding);
 	}
 }
-

@@ -230,9 +230,10 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->searchResultController = new SearchResultController(this);
 	this->undoHistoryBook = new HistoryBook;
 	this->redoHistoryBook = new HistoryBook;
-
-	this->statusBarController->Create();
-	this->Register(this->statusBarController);
+	if (this->statusBarController != NULL)
+	{
+		this->Register(this->statusBarController);
+	}
 
 	this->mouseHandler = new MouseHandler(this);
 
@@ -638,6 +639,10 @@ void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zD
 	this->parent->Invalidate();
 }
 #endif
+
+
+
+
 
 
 

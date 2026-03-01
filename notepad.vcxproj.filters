@@ -518,6 +518,9 @@
     <ClCompile Include="actions\RedoAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\ToggleStatusBarAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
     <ClCompile Include="AboutNotepadForm.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -995,6 +998,9 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\RedoAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ToggleStatusBarAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="AboutNotepadForm.h">

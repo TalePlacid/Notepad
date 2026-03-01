@@ -48,7 +48,8 @@
 #include "ZoomOutAction.h"
 #include "ZoomResetAction.h"
 #include "UndoAction.h"
-#include "RedoAction.h"
+ #include "RedoAction.h"
+#include "ToggleStatusBarAction.h"
 #include "AboutNotepadAction.h"
 
 #pragma warning(disable:4996)
@@ -213,6 +214,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 	case AppID::ID_ACTION_REDO:
 		action = new RedoAction(parent);
 		break;
+	case AppID::ID_ACTION_TOGGLE_STATUSBAR:
+		action = new ToggleStatusBarAction(parent);
+		break;
 	case AppID::ID_ACTION_ABOUT_NOTEPAD:
 		action = new AboutNotepadAction(parent);
 		break;
@@ -222,3 +226,8 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 
 	return action;
 }
+
+
+
+
+

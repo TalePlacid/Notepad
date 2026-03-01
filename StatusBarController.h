@@ -4,16 +4,18 @@
 #include "Observer.h"
 
 class CStatusBar;
+class CWnd;
 
 class StatusBarController : public Observer {
 public:
-	StatusBarController(CWnd* parent);
+	StatusBarController();
 	~StatusBarController();
 
-	void Create();
+	void Create(CWnd* parent);
+	BOOL ToggleVisible();
+	BOOL IsVisible() const;
 	virtual void Update(Subject* subject, string interest);
 private:
-	CWnd* parent;
 	UINT statuses[5];
 	CStatusBar* statusBar;
 };

@@ -120,6 +120,9 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 	case ID_MENU_ZOOMRESET:
 		appID = AppID::ID_ACTION_ZOOM_RESET;
 		break;
+	case ID_MENU_STATUSBAR:
+		appID = AppID::ID_ACTION_TOGGLE_STATUSBAR;
+		break;
 	case ID_MENU_INFO:
 		appID = AppID::ID_ACTION_ABOUT_NOTEPAD;
 		break;
@@ -129,3 +132,7 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 
 	return appID;
 }
+
+
+
+

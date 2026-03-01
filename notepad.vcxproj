@@ -142,6 +142,7 @@
     <ClCompile Include="actions\PreviewAction.cpp" />
     <ClCompile Include="actions\PrintAction.cpp" />
     <ClCompile Include="actions\RedoAction.cpp" />
+    <ClCompile Include="actions\ToggleStatusBarAction.cpp" />
     <ClCompile Include="actions\SelectAllAction.cpp" />
     <ClCompile Include="actions\MoveDocRearAction.cpp" />
     <ClCompile Include="actions\MoveDocFrontAction.cpp" />
@@ -297,6 +298,7 @@
     <ClInclude Include="actions\PreviewAction.h" />
     <ClInclude Include="actions\PrintAction.h" />
     <ClInclude Include="actions\RedoAction.h" />
+    <ClInclude Include="actions\ToggleStatusBarAction.h" />
     <ClInclude Include="actions\SelectAllAction.h" />
     <ClInclude Include="actions\MoveDocRearAction.h" />
     <ClInclude Include="actions\MoveDocFrontAction.h" />
@@ -449,3 +451,5 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
+
+

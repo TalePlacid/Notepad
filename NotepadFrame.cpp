@@ -37,7 +37,9 @@ int NotepadFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->SetMenu(&(this->menu));
 
 	//상태바
-	this->statusBarController = new StatusBarController(this);
+	this->statusBarController = new StatusBarController;
+	this->statusBarController->Create(this);
+	this->menu.CheckMenuItem(ID_MENU_STATUSBAR, MF_BYCOMMAND | MF_UNCHECKED);
 
 	//에디터
 	this->notepadForm = new NotepadForm(this, this->startedPath, this->statusBarController);
@@ -102,5 +104,7 @@ void NotepadFrame::OnClose() {
 
 	CFrameWnd::OnClose();
 }
+
+
 
 
