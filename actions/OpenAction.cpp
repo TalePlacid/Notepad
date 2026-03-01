@@ -62,7 +62,13 @@ void OpenAction::Perform() {
 		notepadForm->redoHistoryBook->Clear();
 
 		//2.6. 캡션을 수정한다.
-		notepadForm->parent->SetWindowTextA(fileDialog.GetFileName());
+		CString caption = fileDialog.GetFileName();
+		Long extensionIndex = caption.ReverseFind('.');
+		if (extensionIndex > 0)
+		{
+			caption = caption.Left(extensionIndex);
+		}
+		notepadForm->parent->SetWindowTextA((LPCTSTR)caption);
 		notepadForm->ApplyEncoding(encoding);
 		notepadForm->MarkClean();
 
@@ -72,4 +78,6 @@ void OpenAction::Perform() {
 		}
 	}
 }
+
+
 

@@ -44,7 +44,15 @@ void SaveAsAction::Perform() {
 		notepadForm->AssignSourcePath(fileDialog.GetPathName());
 		notepadForm->ApplyEncoding(encoding);
 		notepadForm->MarkClean();
-		notepadForm->parent->SetWindowText(fileDialog.GetFileName());
+		CString caption = fileDialog.GetFileName();
+		Long extensionIndex = caption.ReverseFind('.');
+		if (extensionIndex > 0)
+		{
+			caption = caption.Left(extensionIndex);
+		}
+		notepadForm->parent->SetWindowText((LPCTSTR)caption);
 	}
 }
+
+
 

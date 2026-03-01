@@ -249,7 +249,11 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	{
 		Long index = this->sourcePath.ReverseFind('\\');
 		CString fileName = this->sourcePath.Right(this->sourcePath.GetLength() - (index + 1));
-		fileName = fileName.Left(fileName.GetLength() - 4);
+		Long extensionIndex = fileName.ReverseFind('.');
+		if (extensionIndex > 0)
+		{
+			fileName = fileName.Left(extensionIndex);
+		}
 		this->parent->SetWindowTextA((LPCTSTR)fileName);
 	}
 
@@ -634,5 +638,7 @@ void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zD
 	this->parent->Invalidate();
 }
 #endif
+
+
 
 

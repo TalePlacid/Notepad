@@ -56,10 +56,16 @@ void SaveAction::Perform() {
 		//2.2. 윈도우의 값들을 수정한다.
 		Long index = sourcePath.ReverseFind('\\');
 		CString fileName = sourcePath.Right(sourcePath.GetLength() - (index + 1));
-		fileName.Left(fileName.GetLength() - 4);
-		notepadForm->parent->SetWindowTextA(fileName);
+		Long extensionIndex = fileName.ReverseFind('.');
+		if (extensionIndex > 0)
+		{
+			fileName = fileName.Left(extensionIndex);
+		}
+		notepadForm->parent->SetWindowTextA((LPCTSTR)fileName);
 		notepadForm->ApplyEncoding(encoding);
 		notepadForm->MarkClean();
 	}
 }
+
+
 

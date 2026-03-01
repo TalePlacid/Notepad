@@ -203,123 +203,92 @@ Glyph* PagingBuffer::LoadNext() {
 Long PagingBuffer::Add(char(*character)) {
 	Long currentOffset = ftell(this->file);
 
-	//1. 새 임시파일을 만든다.
-	Long index = this->tempPath.ReverseFind('.');
-	CString addedPath = this->tempPath.Left(index) + "AddedFile.tmp";
-	FILE* addedFile = fopen((LPCTSTR)addedPath, "wb+");
-
-	if (addedFile != NULL)
+	Long characterLength = 1;
+	ByteChecker byteChecker;
+	if (byteChecker.IsLeadByte(character) || character[0] == '\r')
 	{
-		//2. 글자 크기를 구한다.
-		Long characterLength = 1;
-		ByteChecker byteChecker;
-		if (byteChecker.IsLeadByte(character) || character[0] == '\r')
-		{
-			characterLength = 2;
-		}
-
-		//3. 임시파일에 문자를 추가한 전체파일을 옮겨적는다.
-		fseek(this->file, 0, SEEK_END);
-		Long fileEndOffset = ftell(this->file);
-		TCHAR(*contents) = new TCHAR[fileEndOffset + characterLength + 1];
-
-		fseek(this->file, 0, SEEK_SET);
-		fread(contents, 1, currentOffset, this->file);
-
-		memcpy(contents + currentOffset, character, characterLength);
-		
-		Long backwardStart = currentOffset + characterLength;
-		fseek(this->file, currentOffset, SEEK_SET);
-		fread(contents + backwardStart, 1, fileEndOffset - currentOffset, this->file);
-		contents[fileEndOffset + characterLength] = '\0';
-
-		fwrite(contents, 1, fileEndOffset + characterLength, addedFile);
-
-		if (this->selectionBeginOffset > currentOffset)
-		{
-			this->selectionBeginOffset += characterLength;
-		}
-
-		if (contents != NULL)
-		{
-			delete[] contents;
-		}
-
-		//4. 임시파일과 기존파일을 맞바꾼다.
-		fclose(addedFile);
-		fclose(this->file);
-		remove(this->tempPath);
-		rename(addedPath, this->tempPath);
-		this->file = fopen(this->tempPath, "rb+");
-
-		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
-		fseek(this->file, currentOffset + characterLength, SEEK_SET);
+		characterLength = 2;
 	}
+
+	fseek(this->file, 0, SEEK_END);
+	Long fileEndOffset = ftell(this->file);
+	Long tailLength = fileEndOffset - currentOffset;
+
+	TCHAR(*tailContents) = NULL;
+	if (tailLength > 0)
+	{
+		tailContents = new TCHAR[tailLength];
+		fseek(this->file, currentOffset, SEEK_SET);
+		fread(tailContents, 1, tailLength, this->file);
+	}
+
+	fseek(this->file, currentOffset, SEEK_SET);
+	fwrite(character, 1, characterLength, this->file);
+	if (tailLength > 0)
+	{
+		fwrite(tailContents, 1, tailLength, this->file);
+	}
+	fflush(this->file);
+
+	if (this->selectionBeginOffset > currentOffset)
+	{
+		this->selectionBeginOffset += characterLength;
+	}
+
+	if (tailContents != NULL)
+	{
+		delete[] tailContents;
+	}
+
+	fseek(this->file, currentOffset + characterLength, SEEK_SET);
 
 	return ftell(this->file);
 }
 
 Long PagingBuffer::Add(CString str) {
-	Long index = this->tempPath.ReverseFind('.');
-	CString addedPath = this->tempPath.Left(index) + "AddedFile.tmp";
-	FILE* addedFile = fopen(addedPath, "wb+");
+	Long currentOffset = ftell(this->file);
+	Long stringLength = str.GetLength();
 
-	if (addedFile != NULL)
+	fseek(this->file, 0, SEEK_END);
+	Long fileEndOffset = ftell(this->file);
+	Long tailLength = fileEndOffset - currentOffset;
+
+	TCHAR(*tailContents) = NULL;
+	if (tailLength > 0)
 	{
-		Long currentOffset = ftell(this->file);
-	
-		FilePointerCalculator filePointerCalculator(this);
-		Long fileEndOffset = filePointerCalculator.FileEnd();
-
-		TCHAR(*contents) = new TCHAR[fileEndOffset + str.GetLength() + 1];
-
-		fseek(this->file, 0, SEEK_SET);
-		fread(contents, 1, currentOffset, this->file);
-
-		memcpy(contents + currentOffset, (LPCTSTR)str, str.GetLength());
-
-		Long backwardStart = currentOffset + str.GetLength();
+		tailContents = new TCHAR[tailLength];
 		fseek(this->file, currentOffset, SEEK_SET);
-		fread(contents + backwardStart, 1, fileEndOffset - currentOffset, this->file);
-		contents[fileEndOffset + str.GetLength()] = '\0';
-
-		fwrite(contents, 1, fileEndOffset + str.GetLength(), addedFile);
-
-		if (this->selectionBeginOffset > currentOffset)
-		{
-			this->selectionBeginOffset += str.GetLength();
-		}
-
-		if (contents != NULL)
-		{
-			delete[] contents;
-		}
-
-		//4. 임시파일과 기존파일을 맞바꾼다.
-		fclose(addedFile);
-		fclose(this->file);
-		remove(this->tempPath);
-		rename(addedPath, this->tempPath);
-		this->file = fopen(this->tempPath, "rb+");
-
-		//5. 페이징 버퍼에서 노트와의 맵핑정보를 갱신한다.
-		fseek(this->file, currentOffset + str.GetLength(), SEEK_SET);
+		fread(tailContents, 1, tailLength, this->file);
 	}
+
+	fseek(this->file, currentOffset, SEEK_SET);
+	fwrite((LPCTSTR)str, 1, stringLength, this->file);
+	if (tailLength > 0)
+	{
+		fwrite(tailContents, 1, tailLength, this->file);
+	}
+	fflush(this->file);
+
+	if (this->selectionBeginOffset > currentOffset)
+	{
+		this->selectionBeginOffset += stringLength;
+	}
+
+	if (tailContents != NULL)
+	{
+		delete[] tailContents;
+	}
+
+	fseek(this->file, currentOffset + stringLength, SEEK_SET);
 
 	return ftell(this->file);
 }
 
 Long PagingBuffer::Remove() {
 	Long ret = 0;
-
-	//1. 새 임시파일을 만든다.
-	Long index = this->tempPath.ReverseFind('.');
-	CString removedPath = this->tempPath.Left(index) + "RemovedFile.tmp";
-	FILE* removedFile = fopen(removedPath, "wb+");
-	if (removedFile != NULL)
+	Long currentOffset = ftell(this->file);
+	if (currentOffset > 0)
 	{
-		//2. 지울 문자의 길이를 구한다.
-		Long currentOffset = ftell(this->file);
 		fseek(this->file, currentOffset - 1, SEEK_SET);
 		TCHAR character;
 		fread(&character, 1, 1, this->file);
@@ -331,38 +300,38 @@ Long PagingBuffer::Remove() {
 			characterLength = 2;
 		}
 
-		//3. 지울 문자를 제외하고 내용을 읽는다.
 		fseek(this->file, 0, SEEK_END);
-		Long fileEnd = ftell(this->file);
-		TCHAR(*contents) = new TCHAR[fileEnd];
+		Long fileEndOffset = ftell(this->file);
+		Long removeStartOffset = currentOffset - characterLength;
+		Long tailLength = fileEndOffset - currentOffset;
 
-		Long withoutCharacterOffset = currentOffset - characterLength;
-		fseek(this->file, 0, SEEK_SET);
-		fread(contents, 1, withoutCharacterOffset, this->file);
-		fseek(this->file, currentOffset, SEEK_SET);
-		fread(contents + withoutCharacterOffset, 1, fileEnd - currentOffset, this->file);
-		
-		//4. 새 파일에 내용을 쓴다.
-		fwrite(contents, 1, fileEnd - characterLength, removedFile);
+		TCHAR(*tailContents) = NULL;
+		if (tailLength > 0)
+		{
+			tailContents = new TCHAR[tailLength];
+			fseek(this->file, currentOffset, SEEK_SET);
+			fread(tailContents, 1, tailLength, this->file);
+		}
+
+		fseek(this->file, removeStartOffset, SEEK_SET);
+		if (tailLength > 0)
+		{
+			fwrite(tailContents, 1, tailLength, this->file);
+		}
+		fflush(this->file);
+		_chsize_s(_fileno(this->file), fileEndOffset - characterLength);
 
 		if (this->selectionBeginOffset >= currentOffset)
 		{
 			this->selectionBeginOffset -= characterLength;
 		}
 
-		if (contents != NULL)
+		if (tailContents != NULL)
 		{
-			delete[] contents;
+			delete[] tailContents;
 		}
 
-		//5. 새 파일과 기존파일을 맞바꾼다.
-		fclose(removedFile);
-		fclose(this->file);
-		remove(this->tempPath);
-		rename(removedPath, this->tempPath);
-		this->file = fopen(this->tempPath, "rb+");
-
-		fseek(this->file, currentOffset - characterLength, SEEK_SET);
+		fseek(this->file, removeStartOffset, SEEK_SET);
 		ret = -1;
 	}
 
@@ -371,50 +340,43 @@ Long PagingBuffer::Remove() {
 
 Long PagingBuffer::Remove(Long toOffset) {
 	Long ret = 0;
+	Long currentOffset = ftell(this->file);
 
-	Long index = this->tempPath.ReverseFind('.');
-	CString removedPath = this->tempPath.Left(index) + "RemovedFile.tmp";
-	FILE* removedFile = fopen(removedPath, "wb+");
-	if (removedFile != NULL) {
-		Long currentOffset = ftell(this->file);
+	Long forwardOffset = currentOffset;
+	Long backwardOffset = toOffset;
+	if (currentOffset > toOffset)
+	{
+		forwardOffset = toOffset;
+		backwardOffset = currentOffset;
+	}
 
-		FilePointerCalculator filePointerCalculator(this);
-		Long fileEndOffset = filePointerCalculator.FileEnd();
+	Long removingLength = backwardOffset - forwardOffset;
+	if (removingLength > 0)
+	{
+		fseek(this->file, 0, SEEK_END);
+		Long fileEndOffset = ftell(this->file);
+		Long tailLength = fileEndOffset - backwardOffset;
 
-		TCHAR(*contents) = new TCHAR[fileEndOffset];
-
-		Long forwardOffset = 0;
-		Long backwardOffset = 0;
-		if (currentOffset < toOffset)
+		TCHAR(*tailContents) = NULL;
+		if (tailLength > 0)
 		{
-			forwardOffset = currentOffset;
-			backwardOffset = toOffset;
-		}
-		else if (currentOffset > toOffset)
-		{
-			forwardOffset = toOffset;
-			backwardOffset = currentOffset;
-		}
-
-		Long count = 0;
-		fseek(this->file, 0, SEEK_SET);
-		count += fread(contents, 1, forwardOffset, this->file);
-		fseek(this->file, backwardOffset, SEEK_SET);
-		count += fread(contents + forwardOffset, 1, fileEndOffset - backwardOffset, this->file);
-		contents[count] = '\0';
-
-		fwrite(contents, 1, count, removedFile);
-
-		if (contents != NULL)
-		{
-			delete[] contents;
+			tailContents = new TCHAR[tailLength];
+			fseek(this->file, backwardOffset, SEEK_SET);
+			fread(tailContents, 1, tailLength, this->file);
 		}
 
-		fclose(removedFile);
-		fclose(this->file);
-		remove(this->tempPath);
-		rename(removedPath, this->tempPath);
-		this->file = fopen(this->tempPath, "rb+");
+		fseek(this->file, forwardOffset, SEEK_SET);
+		if (tailLength > 0)
+		{
+			fwrite(tailContents, 1, tailLength, this->file);
+		}
+		fflush(this->file);
+		_chsize_s(_fileno(this->file), fileEndOffset - removingLength);
+
+		if (tailContents != NULL)
+		{
+			delete[] tailContents;
+		}
 
 		fseek(this->file, forwardOffset, SEEK_SET);
 		ret = -1;
@@ -429,42 +391,11 @@ void PagingBuffer::Clear() {
 }
 
 Long PagingBuffer::Replace(Long offset, CString str) {
-	Long index = this->tempPath.ReverseFind('.');
-	CString replacedPath = this->tempPath.Left(index) + "ReplacedFile.tmp";
-	FILE* replacedFile = fopen(replacedPath, "wb+");
-
-	if (replacedFile != NULL)
-	{
-		FilePointerCalculator filePointerCalculator(this);
-		Long fileEndOffset = filePointerCalculator.FileEnd();
-
-		TCHAR(*contents) = new TCHAR[fileEndOffset + 1];
-		
-		fseek(this->file, 0, SEEK_SET);
-		fread(contents, 1, offset, this->file);
-		
-		memcpy(contents + offset, (LPCTSTR)str, str.GetLength());
-		fseek(this->file, offset + str.GetLength(), SEEK_SET);
-
-		fread(contents + (offset+str.GetLength()), 1, fileEndOffset - (offset + str.GetLength()), this->file);
-		contents[fileEndOffset] = '\0';
-
-		fwrite(contents, 1, fileEndOffset, replacedFile);
-		
-		fclose(replacedFile);
-		fclose(this->file);
-
-		remove(this->tempPath);
-		rename(replacedPath, this->tempPath);
-		this->file = fopen(this->tempPath, "rb+");
-
-		fseek(this->file, offset + str.GetLength(), SEEK_SET);
-
-		if (contents != 0)
-		{
-			delete[] contents;
-		}
-	}
+	Long stringLength = str.GetLength();
+	fseek(this->file, offset, SEEK_SET);
+	fwrite((LPCTSTR)str, 1, stringLength, this->file);
+	fflush(this->file);
+	fseek(this->file, offset + stringLength, SEEK_SET);
 
 	return ftell(this->file);
 }
@@ -708,6 +639,7 @@ Long PagingBuffer::GetFileEndOffset() const {
 	FilePointerCalculator filePointerCalculator(const_cast<PagingBuffer*>(this));
 	return filePointerCalculator.FileEnd();
 }          
+
 
 
 
