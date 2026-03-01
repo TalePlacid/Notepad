@@ -81,7 +81,7 @@ void PrinterResource::LoadMetrics() {
 		this->font = NULL;
 	}
 	this->font = new CFont;
-	this->font->CreateFontIndirectA(&logFont);
+	this->font->CreateFontIndirect(&logFont);
 
 	CFont* oldFont = dc.SelectObject(this->font);
 
@@ -94,4 +94,5 @@ void PrinterResource::LoadMetrics() {
 	dc.Detach();
 	DeleteDC(printHDC);
 }
+
 

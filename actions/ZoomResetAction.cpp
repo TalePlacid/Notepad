@@ -28,7 +28,7 @@ void ZoomResetAction::Perform() {
 		notepadForm->ReplaceDisplayFont(NULL);
 	}
 	notepadForm->ReplaceDisplayFont(new CFont);
-	notepadForm->GetDisplayFont()->CreateFontIndirectA(&logFont);
+	notepadForm->GetDisplayFont()->CreateFontIndirect(&logFont);
 
 	if (notepadForm->sizeCalculator != NULL)
 	{
@@ -37,5 +37,6 @@ void ZoomResetAction::Perform() {
 	}
 	notepadForm->sizeCalculator = new SizeCalculator(this->parent);
 }
+
 
 

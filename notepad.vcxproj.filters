@@ -509,6 +509,9 @@
     <ClCompile Include="FindReplaceRequestResolver.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="FontSelector.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="actions\FindPreviousAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -989,6 +992,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="FindReplaceRequestResolver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FontSelector.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="actions\FindPreviousAction.h">

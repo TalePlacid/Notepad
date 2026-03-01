@@ -208,6 +208,7 @@
     <ClCompile Include="FindReplaceOption.cpp" />
     <ClCompile Include="FindReplaceOptionMaker.cpp" />
     <ClCompile Include="FindReplaceRequestResolver.cpp" />
+    <ClCompile Include="FontSelector.cpp" />
     <ClCompile Include="glyphs\Character.cpp" />
     <ClCompile Include="glyphs\Composite.cpp" />
     <ClCompile Include="glyphs\DummyRow.cpp" />
@@ -367,6 +368,7 @@
     <ClInclude Include="FindReplaceOption.h" />
     <ClInclude Include="FindReplaceOptionMaker.h" />
     <ClInclude Include="FindReplaceRequestResolver.h" />
+    <ClInclude Include="FontSelector.h" />
     <ClInclude Include="glyphs\Character.h" />
     <ClInclude Include="glyphs\Composite.h" />
     <ClInclude Include="glyphs\DummyRow.h" />

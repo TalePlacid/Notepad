@@ -165,7 +165,7 @@ void PageSettingForm::OnPaint() {
 	pFont->GetLogFont(&logFont);
 	logFont.lfHeight = -4;
 	CFont smallFont;
-	smallFont.CreateFontIndirectA(&logFont);
+	smallFont.CreateFontIndirect(&logFont);
 	CFont* oldFont = dc.SelectObject(&smallFont);
 
 	TEXTMETRIC tm = {};
@@ -248,4 +248,5 @@ void PageSettingForm::OnClose() {
 
 	CDialog::OnClose();
 }
+
 

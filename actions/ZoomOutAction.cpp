@@ -2,6 +2,7 @@
 #include "ZoomOutAction.h"
 #include "../NotepadForm.h"
 #include "../SizeCalculator.h"
+#include "../FontSelector.h"
 
 #pragma warning(disable:4996)
 
@@ -26,19 +27,15 @@ void ZoomOutAction::Perform() {
 	LOGFONT logFont;
 	notepadForm->GetOriginalFont()->GetLogFont(&logFont);
 
-	double round = 0.5;
-	if (logFont.lfHeight < 0)
-	{
-		round = -0.5;
-	}
-	logFont.lfHeight = logFont.lfHeight * notepadForm->GetMagnification() + round;
+	FontSelector fontSelector;
+	logFont = fontSelector.SelectScaledLogFont(logFont, notepadForm->GetMagnification());
 	if (notepadForm->GetDisplayFont() != NULL)
 	{
 		delete notepadForm->GetDisplayFont();
 		notepadForm->ReplaceDisplayFont(NULL);
 	}
 	notepadForm->ReplaceDisplayFont(new CFont);
-	notepadForm->GetDisplayFont()->CreateFontIndirectA(&logFont);
+	notepadForm->GetDisplayFont()->CreateFontIndirect(&logFont);
 
 	if (notepadForm->sizeCalculator != NULL)
 	{
@@ -47,5 +44,6 @@ void ZoomOutAction::Perform() {
 	}
 	notepadForm->sizeCalculator = new SizeCalculator(this->parent);
 }
+
 
 

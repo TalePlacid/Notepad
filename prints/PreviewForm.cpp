@@ -116,7 +116,7 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
 	logFont.lfHeight = -pageNumberHeight;
 	this->pageNumberFont = new CFont;
-	this->pageNumberFont->CreateFontIndirectA(&logFont);
+	this->pageNumberFont->CreateFontIndirect(&logFont);
 	this->pageNumber.SetFont(this->pageNumberFont);
 
 	return 0;
@@ -140,7 +140,7 @@ void PreviewForm::OnSize(UINT nType, int cx, int cy) {
 		delete this->pageNumberFont;
 	}
 	this->pageNumberFont = new CFont;
-	this->pageNumberFont->CreateFontIndirectA(&logFont);
+	this->pageNumberFont->CreateFontIndirect(&logFont);
 	this->pageNumber.SetFont(this->pageNumberFont);
 }
 
@@ -285,3 +285,4 @@ void PreviewForm::OnClose() {
 
 	CFrameWnd::OnClose();
 }
+
