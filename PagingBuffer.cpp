@@ -13,12 +13,58 @@
 PagingBuffer::PagingBuffer(CWnd* parent, TCHAR(*sourceContents), Long sourceCount, Long pageSize) {
 	this->parent = parent;
 	this->pageSize = pageSize;
+	CString prefix = "Notepad_";
 
 	TCHAR path[MAX_PATH];
 	GetTempPath(MAX_PATH, path);
 
+	// 비정상 종료 임시 파일을 찾는다.
+	char pattern[MAX_PATH];
+	sprintf_s(pattern, "%s%s*.tmp", path, (LPCTSTR)prefix);
+	_finddata_t findData;
+	intptr_t handle = _findfirst(pattern, &findData);
+	if (handle != -1L)
+	{
+		char fullPath[MAX_PATH];
+		if (!(findData.attrib & _A_SUBDIR))
+		{
+			sprintf_s(fullPath, "%s%s", path, findData.name);
+			remove(fullPath);
+		}
+
+		int findResult = _findnext(handle, &findData);
+		while (findResult == 0)
+		{
+			if (!(findData.attrib & _A_SUBDIR))
+			{
+				sprintf_s(fullPath, "%s%s", path, findData.name);
+				remove(fullPath);
+			}
+
+			findResult = _findnext(handle, &findData);
+		}
+
+		_findclose(handle);
+	}
+
+	TCHAR createdPath[MAX_PATH];
+	GetTempFileNameA(path, "Npd", 0, createdPath);
+
+	char* fileName = strrchr(createdPath, '\\');
+	if (fileName != NULL)
+	{
+		fileName++;
+	}
+	else
+	{
+		fileName = createdPath;
+	}
+
+	// 임시 파일을 생성한다.
 	TCHAR tempPath[MAX_PATH];
-	GetTempFileNameA(path, NULL, 0, tempPath);
+	sprintf_s(tempPath, "%s%s%s", path, (LPCTSTR)prefix, fileName);
+	remove(tempPath);
+	rename(createdPath, tempPath);
 
 	this->tempPath = CString(tempPath);
 	this->file = fopen((LPCTSTR)(this->tempPath), "wb+");
@@ -662,5 +708,19 @@ Long PagingBuffer::GetFileEndOffset() const {
 	FilePointerCalculator filePointerCalculator(const_cast<PagingBuffer*>(this));
 	return filePointerCalculator.FileEnd();
 }          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
