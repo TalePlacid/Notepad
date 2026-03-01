@@ -2,10 +2,11 @@
 #include <afxdlgs.h>
 #include "OpenAction.h"
 #include "../NotepadForm.h"
-#include "../NoteConverter.h"
+#include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../HistoryBook.h"
+#include "../NoteConverter.h"
 #include "../TextFileIO.h"
 
 #pragma warning(disable:4996)
