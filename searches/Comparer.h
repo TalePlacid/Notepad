@@ -10,3 +10,4 @@ public:
 };
 
 #endif // !_COMPARER_H
+

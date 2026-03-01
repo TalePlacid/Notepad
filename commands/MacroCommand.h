@@ -43,3 +43,4 @@ inline Long MacroCommand::GetLength() const {
 }
 
 #endif // !_MACROCOMMAND_H
+

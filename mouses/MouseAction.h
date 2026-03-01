@@ -18,3 +18,4 @@ inline bool MouseAction::NeedUpdateLatest() {
 }
 
 #endif // !_MOUSEACTION_H
+

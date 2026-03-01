@@ -20,3 +20,4 @@ inline bool SelectLineRearAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTLINEREARACTION_H
+

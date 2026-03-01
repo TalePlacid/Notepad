@@ -22,3 +22,4 @@ inline bool DragUpAction::NeedUpdateLatest() {
 }
 
 #endif // !_DRAGUPACTION_H\
+

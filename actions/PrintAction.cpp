@@ -45,7 +45,7 @@ void PrintAction::Perform() {
 	if (ret == IDOK)
 	{
 		//4.1. 프린터 리소스를 읽는다.
-		PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
+		PageSetting pageSetting = ((NotepadForm*)(this->parent))->GetPageSetting();
 		PrinterResource printerResource(this->parent, &printDialog);
 		printerResource.LoadMetrics();
 
@@ -139,3 +139,4 @@ void PrintAction::Perform() {
 		}
 	}
 }
+

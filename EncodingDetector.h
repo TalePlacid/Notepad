@@ -13,3 +13,4 @@ public:
 };
 
 #endif // !_ENCODINGDETECTOR_H
+

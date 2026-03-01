@@ -61,3 +61,4 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 
 	return command;
 }
+

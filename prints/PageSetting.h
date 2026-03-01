@@ -24,3 +24,4 @@ struct PageSetting {
 };
 
 #endif // !_PAGESETTING_H
+

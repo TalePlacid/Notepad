@@ -22,3 +22,4 @@ struct FindReplaceOption {
 };
 
 #endif // !_FINDREPLACEOPTION_H
+

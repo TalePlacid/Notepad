@@ -20,7 +20,7 @@ SaveAction::~SaveAction() {
 void SaveAction::Perform() {
 	//1. 원본 파일이 없다면,
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-	if (notepadForm->sourcePath == "")
+	if (notepadForm->GetSourcePath() == "")
 	{
 		//1.1. 파일 탐색 대화상자를 연다.
 		CFileDialog fileDialog(FALSE, "txt", "NoName.txt",
@@ -39,12 +39,12 @@ void SaveAction::Perform() {
 		INT_PTR result = fileDialog.DoModal();
 		if (result == IDOK)
 		{
-			notepadForm->sourcePath = fileDialog.GetPathName();
+			notepadForm->AssignSourcePath(fileDialog.GetPathName());
 		}
 	}
 
 	//2. 원본파일이 있으면,
-	CString sourcePath(notepadForm->sourcePath);
+	CString sourcePath(notepadForm->GetSourcePath());
 	if (sourcePath != "")
 	{
 		//2.1. 경로에 저장한다.
@@ -58,7 +58,8 @@ void SaveAction::Perform() {
 		CString fileName = sourcePath.Right(sourcePath.GetLength() - (index + 1));
 		fileName.Left(fileName.GetLength() - 4);
 		notepadForm->parent->SetWindowTextA(fileName);
-		notepadForm->encoding = encoding;
-		notepadForm->isDirty = FALSE;
+		notepadForm->ApplyEncoding(encoding);
+		notepadForm->MarkClean();
 	}
 }
+

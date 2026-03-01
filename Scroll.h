@@ -46,3 +46,4 @@ inline Long Scroll::GetPos() const {
 	return this->pos;
 }
 #endif // !_SCROLL_H
+

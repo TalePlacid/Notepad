@@ -66,3 +66,4 @@ inline bool ScrollController::HasHScroll() const {
 }
 
 #endif // !_SCROLLCONTROLLER_H
+

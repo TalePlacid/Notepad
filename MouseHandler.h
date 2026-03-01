@@ -37,3 +37,4 @@ inline BOOL MouseHandler::OnDrag() {
 }
 
 #endif // !_MOUSEHANDLER_H
+

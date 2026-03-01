@@ -20,3 +20,4 @@ inline bool SelectWordRightAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTWORDRIGHTACTION_H
+

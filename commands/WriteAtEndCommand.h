@@ -30,3 +30,4 @@ inline AppID WriteAtEndCommand::GetID() {
 }
 
 #endif // !_WRITEATENDCOMMAND_H
+

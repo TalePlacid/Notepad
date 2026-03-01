@@ -24,3 +24,4 @@ inline bool Action::ShouldKeepSelection() {
 }
 
 #endif // !_ACTION_H
+

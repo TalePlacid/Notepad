@@ -35,9 +35,10 @@ void NewAction::Perform() {
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	pagingBuffer->CacheRowStartIndex(-rowStartIndex);
 
-	notepadForm->sourcePath = CString("");
+	notepadForm->AssignSourcePath(CString(""));
 
 	notepadForm->parent->SetWindowTextA("메모장 ~제목없음");
 
 	this->parent->Invalidate();
 }
+

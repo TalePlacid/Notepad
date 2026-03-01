@@ -47,3 +47,4 @@ inline Long SizeCalculator::GetMaxCharacterWidth() const {
 }
 
 #endif // !_SIZECALCULATOR_H
+

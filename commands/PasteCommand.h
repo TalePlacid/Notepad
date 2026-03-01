@@ -32,3 +32,4 @@ inline AppID PasteCommand::GetID() {
 }
 
 #endif // !_PASTECOMMAND_H
+

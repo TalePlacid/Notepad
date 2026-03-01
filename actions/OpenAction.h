@@ -13,3 +13,4 @@ public:
 };
 
 #endif // !_OPENACTION_H
+

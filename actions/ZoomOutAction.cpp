@@ -17,28 +17,28 @@ ZoomOutAction::~ZoomOutAction() {
 void ZoomOutAction::Perform() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 
-	notepadForm->magnification -= 0.1;
-	if (notepadForm->magnification < 0.1)
+	notepadForm->ChangeMagnification(notepadForm->GetMagnification() - 0.1);
+	if (notepadForm->GetMagnification() < 0.1)
 	{
-		notepadForm->magnification = 0.1;
+		notepadForm->ChangeMagnification(0.1);
 	}
 
 	LOGFONT logFont;
-	notepadForm->originalFont->GetLogFont(&logFont);
+	notepadForm->GetOriginalFont()->GetLogFont(&logFont);
 
 	double round = 0.5;
 	if (logFont.lfHeight < 0)
 	{
 		round = -0.5;
 	}
-	logFont.lfHeight = logFont.lfHeight * notepadForm->magnification + round;
-	if (notepadForm->displayFont != NULL)
+	logFont.lfHeight = logFont.lfHeight * notepadForm->GetMagnification() + round;
+	if (notepadForm->GetDisplayFont() != NULL)
 	{
-		delete notepadForm->displayFont;
-		notepadForm->displayFont = NULL;
+		delete notepadForm->GetDisplayFont();
+		notepadForm->ReplaceDisplayFont(NULL);
 	}
-	notepadForm->displayFont = new CFont;
-	notepadForm->displayFont->CreateFontIndirectA(&logFont);
+	notepadForm->ReplaceDisplayFont(new CFont);
+	notepadForm->GetDisplayFont()->CreateFontIndirectA(&logFont);
 
 	if (notepadForm->sizeCalculator != NULL)
 	{
@@ -47,3 +47,5 @@ void ZoomOutAction::Perform() {
 	}
 	notepadForm->sizeCalculator = new SizeCalculator(this->parent);
 }
+
+

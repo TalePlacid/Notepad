@@ -18,3 +18,4 @@ private:
 };
 
 #endif // !_FINDREPLACEREQUESTRESOLVER_H
+

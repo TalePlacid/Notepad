@@ -42,3 +42,4 @@ inline CMenu* NotepadFrame::GetMenu() {
 }
 
 #endif // !_NOTEPADFRAME_H
+

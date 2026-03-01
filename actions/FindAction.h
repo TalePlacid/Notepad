@@ -21,3 +21,4 @@ inline bool FindAction::ShouldKeepSelection() {
 }
 
 #endif // !_FINDACTION_H
+

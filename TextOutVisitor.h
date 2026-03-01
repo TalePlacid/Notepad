@@ -34,3 +34,4 @@ inline Long TextOutVisitor::GetLogicalY() const {
 }
 
 #endif // !_TEXTOUTVISITOR_H
+

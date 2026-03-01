@@ -16,3 +16,4 @@ private:
 
 
 #endif // !_MOUSEACTIONFACTORY_H
+

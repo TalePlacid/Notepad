@@ -38,3 +38,4 @@ inline AppID ReplaceCommand::GetID() {
 }
 
 #endif // !_REPLACECOMMAND_H
+

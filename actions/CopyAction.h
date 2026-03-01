@@ -18,3 +18,4 @@ inline bool CopyAction::ShouldKeepSelection() {
 }
 
 #endif // !_COPYACTION_H
+

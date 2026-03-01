@@ -18,3 +18,4 @@ inline bool FindPreviousAction::ShouldKeepSelection() {
 }
 
 #endif // !_FINDPREVIOUSACTION_H
+

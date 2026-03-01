@@ -17,3 +17,4 @@ private:
 };
 
 #endif // !_MOUSECTRLWHEELACTION_H
+

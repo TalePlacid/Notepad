@@ -90,3 +90,4 @@ inline bool Glyph::IsBelowBottomLine(Long index) {
 }
 
 #endif // !_GLYPH_H
+

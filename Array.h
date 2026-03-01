@@ -561,3 +561,4 @@ inline Long Array<T>::GetLength() const {
 
 
 #endif // !_ARRAY_H
+

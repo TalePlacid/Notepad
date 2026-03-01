@@ -15,3 +15,4 @@ private:
 };
 
 #endif // !_MOUSEWHEELACTION_H
+

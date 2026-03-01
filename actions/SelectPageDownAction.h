@@ -18,3 +18,4 @@ inline bool SelectPageDownAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTPAGEDOWNACTION_H
+

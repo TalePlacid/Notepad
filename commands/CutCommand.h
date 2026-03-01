@@ -28,3 +28,4 @@ inline AppID CutCommand::GetID() {
 }
 
 #endif // !_CUTCOMMAND_H
+

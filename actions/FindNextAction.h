@@ -19,3 +19,4 @@ inline bool FindNextAction::ShouldKeepSelection() {
 }
 
 #endif // !_FINDNEXTACTION_H
+

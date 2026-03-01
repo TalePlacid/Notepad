@@ -71,3 +71,4 @@ enum class AppID : ULong
 };
 
 #endif // !_APPID_H
+

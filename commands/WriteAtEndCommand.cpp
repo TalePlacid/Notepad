@@ -71,7 +71,7 @@ void WriteAtEndCommand::Execute() {
 			this->isUndoable = true;
 		}
 
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			NoteWrapper noteWrapper(this->parent);
 			Long dummied = noteWrapper.Rewrap();
@@ -121,7 +121,7 @@ void WriteAtEndCommand::Undo() {
 	{
 		row->Remove();
 
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			NoteWrapper noteWrapper(this->parent);
 			Long dummied = noteWrapper.Rewrap();
@@ -185,7 +185,7 @@ void WriteAtEndCommand::Redo() {
 		row->Add(glyph);
 		pagingBuffer->Add((char*)(*glyph));
 	
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			NoteWrapper noteWrapper(this->parent);
 			Long dummied = noteWrapper.Rewrap();
@@ -224,3 +224,4 @@ void WriteAtEndCommand::Redo() {
 Command* WriteAtEndCommand::Clone() {
 	return new WriteAtEndCommand(*this);
 }
+

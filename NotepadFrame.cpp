@@ -81,7 +81,7 @@ BOOL NotepadFrame::OnEraseBkgnd(CDC* pDC) {
 
 
 void NotepadFrame::OnClose() {
-	if (((NotepadForm*)(this->notepadForm))->isDirty)
+	if (((NotepadForm*)(this->notepadForm))->IsDirty())
 	{
 		int ret = this->MessageBox("저장하시겠습니까?", "경고", MB_YESNO);
 		if (ret == IDYES)
@@ -102,3 +102,5 @@ void NotepadFrame::OnClose() {
 
 	CFrameWnd::OnClose();
 }
+
+

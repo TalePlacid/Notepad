@@ -40,7 +40,7 @@ void StatusBarController::Create() {
 
 	NotepadForm* notepadForm = (NotepadForm*)((NotepadFrame*)(this->parent))->GetNotepadForm();
 	CString magnification;
-	Long percentage = notepadForm->magnification * 100;
+	Long percentage = notepadForm->GetMagnification() * 100;
 	magnification.Format("%ld%%", percentage);
 	this->statusBar->SetPaneText(2, magnification);
 	this->statusBar->SetPaneText(3, "Windows(CRLF)");
@@ -62,12 +62,12 @@ void StatusBarController::Update(Subject* subject, string interest) {
 		this->statusBar->SetPaneText(1, (LPCTSTR)current);
 
 		CString magnification;
-		Long percentage = notepadForm->magnification * 100;
+		Long percentage = notepadForm->GetMagnification() * 100;
 		magnification.Format("%ld%%", percentage);
 		this->statusBar->SetPaneText(2, magnification);
 
 		CString encoding;
-		switch (notepadForm->encoding)
+		switch (notepadForm->GetEncoding())
 		{
 		case UTF16LE:
 			encoding = "UTF-16 LE";
@@ -90,3 +90,4 @@ void StatusBarController::Update(Subject* subject, string interest) {
 		this->statusBar->SetPaneText(4, encoding);
 	}
 }
+

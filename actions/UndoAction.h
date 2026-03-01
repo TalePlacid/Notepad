@@ -18,3 +18,4 @@ inline bool UndoAction::ShouldKeepSelection() {
 }
 
 #endif // !_UNDOACTION_H
+

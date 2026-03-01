@@ -28,3 +28,4 @@ bool CaseInsensitiveComparer::Compare(char& one, char& other) {
 
 	return one_ == other_;
 }
+

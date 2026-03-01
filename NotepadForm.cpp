@@ -83,8 +83,8 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->parent = parent;
 	this->note = NULL;
 	this->isCompositing = FALSE;
-	this->originalFont = NULL;
-	this->displayFont = NULL;
+	this->ReplaceOriginalFont(NULL);
+	this->ReplaceDisplayFont(NULL);
 	this->sizeCalculator = NULL;
 	this->caretController = NULL;
 	this->scrollController = NULL;
@@ -98,9 +98,9 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->statusBarController = statusBarController;
 	this->mouseHandler = NULL;
 	this->isCompositing = FALSE;
-	this->isAutoWrapped = FALSE;
-	this->magnification = 1.0;
-	this->isDirty = FALSE;
+	this->DisableAutoWrap();
+	this->ChangeMagnification(1.0);
+	this->MarkClean();
 
 	this->sourcePath = sourcePath;
 }
@@ -120,12 +120,12 @@ NotepadForm::~NotepadForm() {
 
 	if (this->originalFont != NULL)
 	{
-		delete this->originalFont;
+		delete this->GetOriginalFont();
 	}
 
 	if (this->displayFont != NULL)
 	{
-		delete this->displayFont;
+		delete this->GetDisplayFont();
 	}
 
 	if (this->sizeCalculator != NULL)
@@ -192,17 +192,17 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	logFont.lfCharSet = HANGUL_CHARSET;
 	_tcscpy_s(logFont.lfFaceName, "¸¼Àº °íµñ");
 
-	this->originalFont = new CFont;
-	this->originalFont->CreateFontIndirectA(&logFont);
+	this->ReplaceOriginalFont(new CFont);
+	this->GetOriginalFont()->CreateFontIndirectA(&logFont);
 
 	double round = 0.5;
 	if (logFont.lfHeight < 0)
 	{
 		round = -0.5;
 	}
-	logFont.lfHeight = logFont.lfHeight * this->magnification + round;
-	this->displayFont = new CFont;
-	this->displayFont->CreateFontIndirectA(&logFont);
+	logFont.lfHeight = logFont.lfHeight * this->GetMagnification() + round;
+	this->ReplaceDisplayFont(new CFont);
+	this->GetDisplayFont()->CreateFontIndirectA(&logFont);
 
 	this->sizeCalculator = new SizeCalculator(this);
 
@@ -324,7 +324,7 @@ LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 	CWnd::OnSize(nType, cx, cy);
 
-	if (this->isAutoWrapped)
+	if (this->IsAutoWrapped())
 	{
 		NoteWrapper noteWrapper(this);
 		noteWrapper.Unwrap();
@@ -567,7 +567,7 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 			command = this->undoHistoryBook->Bind(command);
 			this->undoHistoryBook->Push(command);
 			this->redoHistoryBook->Clear();
-			this->isDirty = TRUE;
+			this->MarkDirty();
 		}
 		else
 		{
@@ -575,7 +575,7 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 		}
 	}
 
-	this->isDirty = TRUE;
+	this->MarkDirty();
 	this->Notify("UpdateStatusBar");
 	this->Invalidate();
 }
@@ -634,3 +634,5 @@ void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zD
 	this->parent->Invalidate();
 }
 #endif
+
+

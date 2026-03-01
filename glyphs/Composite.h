@@ -60,3 +60,4 @@ inline Long Composite::GetCurrent() const {
 }
 
 #endif // !_COMPOSITE_H
+

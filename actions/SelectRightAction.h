@@ -20,3 +20,4 @@ inline bool SelectRightAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTRIGHTACTION_H
+

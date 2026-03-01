@@ -14,3 +14,4 @@ public:
 };
 
 #endif // !_WRITINGMODESELECTOR_H
+

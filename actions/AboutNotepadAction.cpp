@@ -17,3 +17,4 @@ void AboutNotepadAction::Perform() {
 	AboutNotepadForm aboutNotepadForm(this->parent);
 	aboutNotepadForm.DoModal();
 }
+

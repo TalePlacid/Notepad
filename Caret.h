@@ -40,3 +40,4 @@ inline Long Caret::GetHeight() const {
 }
 
 #endif // !_CARET_H
+

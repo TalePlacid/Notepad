@@ -22,7 +22,7 @@ PrintRenderer::~PrintRenderer() {
 
 void PrintRenderer::Render(CDC* dc) {
     //1. 페이지 설정을 읽는다.
-    PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
+    PageSetting pageSetting = ((NotepadForm*)(this->parent))->GetPageSetting();
 
     //2. 머리글을 쓴다.
     Margin margin = this->printerResource->GetPixelMargin();
@@ -54,3 +54,4 @@ void PrintRenderer::Render(CDC* dc) {
     y = (this->printerResource->GetPhysicalHeight() - margin.down / 2);
     dc->TextOut(x, y, pageSetting.footer, pageSetting.footer.GetLength());
 }
+

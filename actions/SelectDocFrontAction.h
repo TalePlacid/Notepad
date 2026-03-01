@@ -20,3 +20,4 @@ inline bool SelectDocFrontAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTDOCFRONTACTION_H
+

@@ -14,3 +14,4 @@ public:
 };
 
 #endif // !_TEXTFILEIO_H
+

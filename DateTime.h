@@ -88,3 +88,4 @@ inline int DateTime::GetSecond() const {
 }
 
 #endif // !_DATETIME_H
+

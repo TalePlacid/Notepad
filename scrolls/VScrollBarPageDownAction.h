@@ -13,3 +13,4 @@ public:
 };
 
 #endif // !_VSCROLLBARPAGEDOWNACTION_H
+

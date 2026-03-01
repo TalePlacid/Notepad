@@ -71,7 +71,7 @@ void InsertAtCaretCommand::Execute() {
 		columnIndex = row->GetCurrent();
 
 		//3.2. 자동개행이 켜져 있다면,
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			//3.2.1. 재개행한다.
 			NoteWrapper noteWrapper(this->parent);
@@ -139,7 +139,7 @@ void InsertAtCaretCommand::Undo() {
 		columnIndex = row->GetCurrent();
 
 		//3.2. 자동개행중이라면,
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			//3.2.1. 재개행한다.
 			vScrollChanged = noteWrapper.Rewrap();
@@ -170,7 +170,7 @@ void InsertAtCaretCommand::Undo() {
 			columnIndex = row->Move(columnIndex);
 
 			//4.2.2. 자동개행중이라면, 재개행한다.
-			if (((NotepadForm*)(this->parent))->isAutoWrapped)
+			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 			{
 				//4.2.2.1. 재개행한다.
 				vScrollChanged = noteWrapper.Rewrap();
@@ -225,7 +225,7 @@ void InsertAtCaretCommand::Redo() {
 		columnIndex = row->GetCurrent();
 
 		//3.2. 자동개행이 켜져 있다면,
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			//3.2.1. 재개행한다.
 			NoteWrapper noteWrapper(this->parent);
@@ -264,3 +264,4 @@ void InsertAtCaretCommand::Redo() {
 Command* InsertAtCaretCommand::Clone() {
 	return new InsertAtCaretCommand(*this);
 }
+

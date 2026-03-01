@@ -23,3 +23,4 @@ struct Paper {
 };
 
 #endif // !_PAPER_H
+

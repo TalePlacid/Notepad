@@ -17,3 +17,4 @@ inline bool MouseLeftDownAction::NeedUpdateLatest() {
 }
 
 #endif // !_MOUSELEFTDOWNACTION_H
+

@@ -25,3 +25,4 @@ private:
 };
 
 #endif // !_EDITOR_H
+

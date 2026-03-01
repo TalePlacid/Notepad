@@ -14,3 +14,4 @@ public:
 };
 
 #endif // !_FINDREPLACEINTERPRETER_H
+

@@ -25,7 +25,7 @@ void AutoWrapAction::Perform() {
 	PageLoader::LoadFirst(this->parent);
 
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-	notepadForm->isAutoWrapped = !notepadForm->isAutoWrapped;
+	notepadForm->ToggleAutoWrap();
 	NoteWrapper noteWrapper(this->parent);
 
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
@@ -34,7 +34,7 @@ void AutoWrapAction::Perform() {
 	Long fileRowCount = pagingBuffer->CountRow(pagingBuffer->GetFileEndOffset());
 	Long max = fileRowCount * sizeCalculator->GetRowHeight();
 	NotepadFrame* notepadFrame = (NotepadFrame*)(notepadForm->GetParent());
-	if (notepadForm->isAutoWrapped)
+	if (notepadForm->IsAutoWrapped())
 	{
 		Long dummyRowCount = noteWrapper.Wrap();
 		max += dummyRowCount * sizeCalculator->GetRowHeight();
@@ -54,3 +54,4 @@ void AutoWrapAction::Perform() {
 	pagingBuffer->UnmarkSelectionBegin();
 	notepadForm->note->Select(false);
 }
+

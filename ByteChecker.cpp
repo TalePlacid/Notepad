@@ -94,3 +94,4 @@ bool ByteChecker::IsUtf8ContinuationByte(const char* character) {
 
 	return ret;
 }
+

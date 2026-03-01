@@ -18,3 +18,4 @@ inline bool MovePageLeftAction::NeedScrollBarUpdate() {
 }
 
 #endif // !_MOVEPAGELEFTACTION_H
+

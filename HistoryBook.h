@@ -35,3 +35,4 @@ inline DateTime& HistoryBook::GetLatestPushTime() const {
 }
 
 #endif // !_HISTORYBOOK_H
+

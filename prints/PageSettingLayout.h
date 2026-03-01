@@ -28,3 +28,4 @@ inline RECT& PageSettingLayout::GetWritingArea() const {
 }
 
 #endif // !_PAGESETTINGLAYOUT_H
+

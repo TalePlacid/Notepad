@@ -16,7 +16,7 @@ PreviewLayout::~PreviewLayout() {
 void PreviewLayout::Locate() {
 	//1. 페이지 설정을 읽는다.
 	PreviewForm* previewForm = (PreviewForm*)(this->parent);
-	PageSetting pageSetting = ((NotepadForm*)(previewForm->parent))->pageSetting;
+	PageSetting pageSetting = ((NotepadForm*)(previewForm->parent))->GetPageSetting();
 	PaperSize paperSize = Paper::GetPaperSize(pageSetting.paperName);
 	if (!pageSetting.isVertical)
 	{
@@ -97,3 +97,4 @@ void PreviewLayout::Locate() {
 	this->pageNumberArea.top = pageBarTop;
 	this->pageNumberArea.bottom = pageBarBottom;
 }
+

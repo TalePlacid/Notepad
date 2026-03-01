@@ -21,3 +21,4 @@ inline CString& ClipboardController::GetContent() const {
 }
 
 #endif // !_CLIPBOARDCONTROLLER_H
+

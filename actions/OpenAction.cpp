@@ -41,11 +41,11 @@ void OpenAction::Perform() {
 		pagingBuffer->Clear();
 
 		//2.2. 문자열을 적재한다.
-		notepadForm->sourcePath = fileDialog.GetPathName();
+		notepadForm->AssignSourcePath(fileDialog.GetPathName());
 		TextFileIO textFileIO;
 		TCHAR(*str) = NULL;
 		Long count;
-		Encoding encoding = textFileIO.Load((LPCTSTR)(notepadForm->sourcePath), &str, count);
+		Encoding encoding = textFileIO.Load((LPCTSTR)(notepadForm->GetSourcePath()), &str, count);
 
 		//2.3. 노트를 생성한다.
 		NoteConverter noteConverter;
@@ -62,8 +62,8 @@ void OpenAction::Perform() {
 
 		//2.6. 캡션을 수정한다.
 		notepadForm->parent->SetWindowTextA(fileDialog.GetFileName());
-		notepadForm->encoding = encoding;
-		notepadForm->isDirty = FALSE;
+		notepadForm->ApplyEncoding(encoding);
+		notepadForm->MarkClean();
 
 		if (str != NULL)
 		{
@@ -71,3 +71,4 @@ void OpenAction::Perform() {
 		}
 	}
 }
+

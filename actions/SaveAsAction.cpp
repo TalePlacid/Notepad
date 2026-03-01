@@ -41,9 +41,10 @@ void SaveAsAction::Perform() {
 		TextFileIO textFileIO;
 		Encoding encoding = textFileIO.Save(fileDialog.GetPathName(), (LPCTSTR)ansi, ansi.GetLength());
 
-		notepadForm->sourcePath = fileDialog.GetPathName();
-		notepadForm->encoding = encoding;
-		notepadForm->isDirty = FALSE;
+		notepadForm->AssignSourcePath(fileDialog.GetPathName());
+		notepadForm->ApplyEncoding(encoding);
+		notepadForm->MarkClean();
 		notepadForm->parent->SetWindowText(fileDialog.GetFileName());
 	}
 }
+

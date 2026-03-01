@@ -21,3 +21,4 @@ public:
 };
 
 #endif // !_TEXTENCODER_H
+

@@ -16,3 +16,4 @@ private:
 };
 
 #endif // !_COORDINATECONVERTER_H
+

@@ -18,3 +18,4 @@ inline bool MovePageRightAction::NeedScrollBarUpdate() {
 }
 
 #endif // !_MOVEPAGERIGHTACTION_H
+

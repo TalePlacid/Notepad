@@ -39,3 +39,4 @@ inline Long PreviewPaginator::GetRowCountPerPage() const {
 }
 
 #endif // !_PREVIEWPAGINATOR_H
+

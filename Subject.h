@@ -25,3 +25,4 @@ private:
 int CompareObservers(void* one, void* other);
 
 #endif // !_SUBJECT_H
+

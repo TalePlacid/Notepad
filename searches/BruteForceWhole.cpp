@@ -63,3 +63,4 @@ void BruteForceWhole::DoAlgorithm(Long* (*offsets), Long* count) {
 		i++;
 	}
 }
+

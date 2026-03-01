@@ -20,3 +20,4 @@ private:
 
 
 #endif // !_STATUSBARCONTROLLER_H
+

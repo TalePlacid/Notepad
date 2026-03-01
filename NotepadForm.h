@@ -45,16 +45,27 @@ public:
 	MouseHandler* mouseHandler;
 	CFindReplaceDialog* findReplaceDialog;
 public:
-	CFont* originalFont;
-	CFont* displayFont;
-	BOOL isAutoWrapped;
-	double magnification;
-	CString sourcePath;
-	Encoding encoding;
-	BOOL isDirty;
-public:
 	BOOL IsCompositing() const;
 	CWnd* GetParent();
+	CFont* GetOriginalFont() const;
+	void ReplaceOriginalFont(CFont* font);
+	CFont* GetDisplayFont() const;
+	void ReplaceDisplayFont(CFont* font);
+	BOOL IsAutoWrapped() const;
+	void EnableAutoWrap();
+	void DisableAutoWrap();
+	void ToggleAutoWrap();
+	double GetMagnification() const;
+	void ChangeMagnification(double magnification);
+	CString GetSourcePath() const;
+	void AssignSourcePath(CString sourcePath);
+	Encoding GetEncoding() const;
+	void ApplyEncoding(Encoding encoding);
+	BOOL IsDirty() const;
+	void MarkDirty();
+	void MarkClean();
+	PageSetting GetPageSetting() const;
+	void ApplyPageSetting(const PageSetting& pageSetting);
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -91,6 +102,13 @@ private:
 	void HandleMouseEvent(AppID nID, UINT nFlags, CPoint point, short zDelta = 0);
 #endif
 private:
+	CFont* originalFont;
+	CFont* displayFont;
+	BOOL isAutoWrapped;
+	double magnification;
+	CString sourcePath;
+	Encoding encoding;
+	BOOL isDirty;
 	BOOL isCompositing;
 	BOOL nextIsLastOnSize;
 };
@@ -103,4 +121,81 @@ inline CWnd* NotepadForm::GetParent() {
 	return this->parent;
 }
 
+inline CFont* NotepadForm::GetOriginalFont() const {
+	return this->originalFont;
+}
+
+inline void NotepadForm::ReplaceOriginalFont(CFont* font) {
+	this->originalFont = font;
+}
+
+inline CFont* NotepadForm::GetDisplayFont() const {
+	return this->displayFont;
+}
+
+inline void NotepadForm::ReplaceDisplayFont(CFont* font) {
+	this->displayFont = font;
+}
+
+inline BOOL NotepadForm::IsAutoWrapped() const {
+	return this->isAutoWrapped;
+}
+
+inline void NotepadForm::EnableAutoWrap() {
+	this->isAutoWrapped = TRUE;
+}
+
+inline void NotepadForm::DisableAutoWrap() {
+	this->isAutoWrapped = FALSE;
+}
+
+inline void NotepadForm::ToggleAutoWrap() {
+	this->isAutoWrapped = !this->isAutoWrapped;
+}
+
+inline double NotepadForm::GetMagnification() const {
+	return this->magnification;
+}
+
+inline void NotepadForm::ChangeMagnification(double magnification) {
+	this->magnification = magnification;
+}
+
+inline CString NotepadForm::GetSourcePath() const {
+	return this->sourcePath;
+}
+
+inline void NotepadForm::AssignSourcePath(CString sourcePath) {
+	this->sourcePath = sourcePath;
+}
+
+inline Encoding NotepadForm::GetEncoding() const {
+	return this->encoding;
+}
+
+inline void NotepadForm::ApplyEncoding(Encoding encoding) {
+	this->encoding = encoding;
+}
+
+inline BOOL NotepadForm::IsDirty() const {
+	return this->isDirty;
+}
+
+inline void NotepadForm::MarkDirty() {
+	this->isDirty = TRUE;
+}
+
+inline void NotepadForm::MarkClean() {
+	this->isDirty = FALSE;
+}
+
+inline PageSetting NotepadForm::GetPageSetting() const {
+	return this->pageSetting;
+}
+
+inline void NotepadForm::ApplyPageSetting(const PageSetting& pageSetting) {
+	this->pageSetting = pageSetting;
+}
+
 #endif // !_NOTEPADFORM_H
+

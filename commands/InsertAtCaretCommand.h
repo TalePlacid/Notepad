@@ -29,3 +29,4 @@ inline AppID InsertAtCaretCommand::GetID() {
 }
 
 #endif // !_INSERTATCARETCOMMAND_H
+

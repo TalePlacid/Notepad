@@ -9,7 +9,7 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	this->parent = parent;
 	
 	CDC *cdc = this->parent->GetDC();
-	CFont* oldFont = cdc->SelectObject(((NotepadForm*)parent)->displayFont);
+	CFont* oldFont = cdc->SelectObject(((NotepadForm*)parent)->GetDisplayFont());
 	char character;
 	this->singleByteWidths = new Long[95];
 	Long maxCharacterWidth = 0;
@@ -136,3 +136,5 @@ Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
 
 	return index;
 }
+
+

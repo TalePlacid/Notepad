@@ -20,3 +20,4 @@ inline bool SelectLineFrontAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTLINEFRONTACTION_H
+

@@ -17,3 +17,4 @@ public:
 };
 
 #endif // !_COMMANDFACTORY_H
+

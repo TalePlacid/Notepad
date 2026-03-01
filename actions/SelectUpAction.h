@@ -20,3 +20,4 @@ inline bool SelectUpAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTUPACTION_H
+

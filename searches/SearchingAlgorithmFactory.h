@@ -20,3 +20,4 @@ public:
 };
 
 #endif // !_SEARCHINGALGORITHMFACTORY_H
+

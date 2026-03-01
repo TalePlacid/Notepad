@@ -29,3 +29,4 @@ inline AppID EraseCommand::GetID() {
 }
 
 #endif // !_ERASECOMMAND_H
+

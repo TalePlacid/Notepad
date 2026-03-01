@@ -67,7 +67,7 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 		}
 
 		//3.4. 자동개행중이면, 재개행한다.
-		if (((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			dummied += noteWrapper.Rewrap();
 			currentRowIndex = note->GetCurrent();
@@ -162,7 +162,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 
 	//4. 자동개행중이면, 재개행한다.
 	Long dummied = 0;
-	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 	{
 		NoteWrapper noteWrapper(this->parent);
 		dummied = noteWrapper.Rewrap();
@@ -304,7 +304,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 	}
 
 	//6. 자동개행중이면, 재개행한다.
-	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 	{
 		NoteWrapper noteWrapper(this->parent);
 		noteWrapper.Rewrap();
@@ -589,4 +589,6 @@ bool Editor::GetSelectedRange(Long& frontOffset, Long& rearOffset) {
 
 	return ret;
 }
+
+
 

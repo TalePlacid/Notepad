@@ -20,3 +20,4 @@ inline bool SelectDownAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTDOWNACTION_H
+

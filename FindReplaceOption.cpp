@@ -60,3 +60,4 @@ BOOL FindReplaceOption::operator!=(const FindReplaceOption& other) {
 		|| (this->isMatchCase != other.isMatchCase)
 		|| (this->isSearchDown != other.isSearchDown);
 }
+

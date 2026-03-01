@@ -17,18 +17,18 @@ ZoomResetAction::~ZoomResetAction() {
 void ZoomResetAction::Perform() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 
-	notepadForm->magnification = 1.0;
+	notepadForm->ChangeMagnification(1.0);
 
 	LOGFONT logFont;
-	notepadForm->originalFont->GetLogFont(&logFont);
+	notepadForm->GetOriginalFont()->GetLogFont(&logFont);
 
-	if (notepadForm->displayFont != NULL)
+	if (notepadForm->GetDisplayFont() != NULL)
 	{
-		delete notepadForm->displayFont;
-		notepadForm->displayFont = NULL;
+		delete notepadForm->GetDisplayFont();
+		notepadForm->ReplaceDisplayFont(NULL);
 	}
-	notepadForm->displayFont = new CFont;
-	notepadForm->displayFont->CreateFontIndirectA(&logFont);
+	notepadForm->ReplaceDisplayFont(new CFont);
+	notepadForm->GetDisplayFont()->CreateFontIndirectA(&logFont);
 
 	if (notepadForm->sizeCalculator != NULL)
 	{
@@ -37,3 +37,5 @@ void ZoomResetAction::Perform() {
 	}
 	notepadForm->sizeCalculator = new SizeCalculator(this->parent);
 }
+
+

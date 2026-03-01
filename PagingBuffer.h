@@ -79,3 +79,4 @@ inline Long PagingBuffer::GetSelectionBeginOffset() const {
 }
 
 #endif // !_PAGINGBUFFER_H
+

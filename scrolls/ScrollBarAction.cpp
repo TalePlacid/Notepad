@@ -11,3 +11,4 @@ ScrollBarAction::ScrollBarAction(CWnd* parent)
 ScrollBarAction::~ScrollBarAction() {
 
 }
+

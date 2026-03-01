@@ -60,3 +60,4 @@ inline Long ScrollBarAnalyzer::GetScrollBarThickness() const {
 }
 
 #endif // !_SCROLLBARANALYZER_H
+

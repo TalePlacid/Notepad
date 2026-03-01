@@ -26,7 +26,7 @@ PrinterResource::~PrinterResource() {
 
 void PrinterResource::LoadMetrics() {
 	//1. 페이지 설정을 읽는다.
-	PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
+	PageSetting pageSetting = ((NotepadForm*)(this->parent))->GetPageSetting();
 
 	//2. 프린터 설정을 변경한다.
 	DEVMODE* devMode = (DEVMODE*)GlobalLock(this->printDialog->m_pd.hDevMode);
@@ -61,7 +61,7 @@ void PrinterResource::LoadMetrics() {
 	Long writingAreaHeight = this->physicalHeight - this->pixelMargin.up - this->pixelMargin.down;
 
 	//7. 폰트를 구한다.
-	CFont* originalFont = ((NotepadForm*)(this->parent))->displayFont;
+	CFont* originalFont = ((NotepadForm*)(this->parent))->GetDisplayFont();
 
 	LOGFONT logFont;
 	originalFont->GetLogFont(&logFont);
@@ -94,3 +94,4 @@ void PrinterResource::LoadMetrics() {
 	dc.Detach();
 	DeleteDC(printHDC);
 }
+

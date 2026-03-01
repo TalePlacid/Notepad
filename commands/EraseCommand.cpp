@@ -70,7 +70,7 @@ void EraseCommand::Execute() {
 			columnIndex = row->GetCurrent();
 
 			//1.2.2. 자동개행중이라면,
-			if (((NotepadForm*)(this->parent))->isAutoWrapped)
+			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 			{
 				//1.2.2.1. 재개행한다.
 				NoteWrapper noteWrapper(this->parent);
@@ -154,7 +154,7 @@ void EraseCommand::Undo() {
 			columnIndex = row->GetCurrent();
 
 			//1.3.2. 자동개행중이면, 재개행한다.
-			if (((NotepadForm*)(this->parent))->isAutoWrapped)
+			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 			{
 				NoteWrapper noteWrapper(this->parent);
 				vScrollChanged = noteWrapper.Rewrap();
@@ -218,7 +218,7 @@ void EraseCommand::Redo() {
 			columnIndex = row->GetCurrent();
 
 			//1.3.2. 자동개행중이라면,
-			if (((NotepadForm*)(this->parent))->isAutoWrapped)
+			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 			{
 				NoteWrapper noteWrapper(this->parent);
 				vScrollChanged = noteWrapper.Rewrap();
@@ -273,3 +273,4 @@ void EraseCommand::Redo() {
 Command* EraseCommand::Clone() {
 	return new EraseCommand(*this);
 }
+

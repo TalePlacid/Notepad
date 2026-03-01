@@ -18,3 +18,4 @@ inline bool ZoomResetAction::ShouldKeepSelection() {
 }
 
 #endif // !_ZOOMRESETACTION_H
+

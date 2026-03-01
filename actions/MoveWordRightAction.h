@@ -11,3 +11,4 @@ public:
 };
 
 #endif // !_MOVEWORDRIGHTACTION_H
+

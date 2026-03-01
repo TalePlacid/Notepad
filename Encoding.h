@@ -12,3 +12,4 @@ enum Encoding : Long {
 };
 
 #endif // !_ENCODING_H
+

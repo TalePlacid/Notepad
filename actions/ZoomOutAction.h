@@ -19,3 +19,4 @@ inline bool ZoomOutAction::ShouldKeepSelection() {
 }
 
 #endif // !_ZOOMOUTACTION_H
+

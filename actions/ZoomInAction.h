@@ -18,3 +18,4 @@ inline bool ZoomInAction::ShouldKeepSelection() {
 }
 
 #endif // !_ZOOMINACTION_H
+

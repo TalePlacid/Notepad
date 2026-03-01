@@ -18,3 +18,4 @@ inline bool CloseFindReplaceAction::ShouldKeepSelection() {
 }
 
 #endif // !_CLOSEFINDREPLACEDIALOGACTION_H
+

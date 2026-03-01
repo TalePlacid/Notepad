@@ -144,7 +144,7 @@ Long CaretNavigator::MoveTo(Long offset) {
 }
 
 void CaretNavigator::NormalizeColumn(Long columnIndex) {
-	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 	{
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long currentRowIndex = note->GetCurrent();
@@ -317,3 +317,4 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 		i++;
 	}
 }
+

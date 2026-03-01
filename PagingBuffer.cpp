@@ -663,3 +663,4 @@ Long PagingBuffer::GetFileEndOffset() const {
 	return filePointerCalculator.FileEnd();
 }          
 
+

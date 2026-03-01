@@ -120,3 +120,4 @@ Command* MacroCommand::operator[](Long index) {
 Command* MacroCommand::Clone() {
 	return new MacroCommand(*this);
 }
+

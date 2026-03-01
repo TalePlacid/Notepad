@@ -20,3 +20,4 @@ protected:
 
 
 #endif // !_VISITOR_H
+

@@ -33,7 +33,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 	{
 		// 1. 스크롤바 필요 여부를 체크한다.
 		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
-		if (!((NotepadForm*)(this->parent))->isAutoWrapped)
+		if (!((NotepadForm*)(this->parent))->IsAutoWrapped())
 		{
 			scrollBarAnalyzer.AnalyzeWithoutWrap();
 		}
@@ -433,3 +433,4 @@ Long ScrollController::MoveHScroll(Long pos) {
 
 	return pos;
 }
+

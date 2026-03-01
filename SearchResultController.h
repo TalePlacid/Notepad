@@ -57,3 +57,4 @@ inline Long SearchResultController::GetCurrent() const {
 }
 
 #endif // !_SEARCHRESULTCONTROLLER_H
+

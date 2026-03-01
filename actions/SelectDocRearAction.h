@@ -20,3 +20,4 @@ inline bool SelectDocRearAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTDOCREARACTION_H
+

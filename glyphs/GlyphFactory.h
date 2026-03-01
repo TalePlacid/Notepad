@@ -14,3 +14,4 @@ public:
 };
 
 #endif // !_GLYPHFACTORY_H
+

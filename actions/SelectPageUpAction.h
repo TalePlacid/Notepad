@@ -18,3 +18,4 @@ inline bool SelectPageUpAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTPAGEUPACTION_H
+

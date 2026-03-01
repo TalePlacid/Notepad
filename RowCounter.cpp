@@ -45,3 +45,4 @@ Long RowCounter::CountCharacters(CString row) {
 
 	return count;
 }
+

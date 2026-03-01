@@ -12,7 +12,7 @@
 SuspendAutoWrap::SuspendAutoWrap(CWnd* parent) {
 	this->parent = parent;
 
-	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 	{
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -37,7 +37,7 @@ SuspendAutoWrap::SuspendAutoWrap(CWnd* parent) {
 }
 
 SuspendAutoWrap::~SuspendAutoWrap() {
-	if (((NotepadForm*)(this->parent))->isAutoWrapped)
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 	{
 		NoteWrapper noteWrapper(this->parent);
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
@@ -63,3 +63,4 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 		scrollController->MoveVScroll(pos);
 	}
 }
+

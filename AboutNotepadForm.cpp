@@ -106,3 +106,4 @@ void AboutNotepadForm::OnPaint() {
 
 	dc.SelectObject(oldFont);
 }
+

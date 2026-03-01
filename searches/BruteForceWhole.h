@@ -15,3 +15,4 @@ public:
 };
 
 #endif // !_BRUTEFORCEWHOLE_H
+

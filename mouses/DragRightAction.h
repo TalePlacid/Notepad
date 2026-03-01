@@ -22,3 +22,4 @@ inline bool DragRightAction::NeedUpdateLatest() {
 }
 
 #endif // !_DRAGRIGHTACTION_H
+

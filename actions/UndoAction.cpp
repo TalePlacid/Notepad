@@ -30,6 +30,8 @@ void UndoAction::Perform() {
 		HistoryBook* redoHistoryBook = ((NotepadForm*)(this->parent))->redoHistoryBook;
 		redoHistoryBook->Push(history);
 
-		((NotepadForm*)(this->parent))->isDirty = TRUE;
+		((NotepadForm*)(this->parent))->MarkDirty();
 	}
 }
+
+

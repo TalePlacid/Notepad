@@ -15,3 +15,4 @@ private:
 };
 
 #endif // !_SUSPENDAUTOWRAP_H
+

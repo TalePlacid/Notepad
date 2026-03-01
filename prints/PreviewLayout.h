@@ -76,3 +76,4 @@ inline CPoint& PreviewLayout::GetFooterPoint() const {
 }
 
 #endif // !_PREVIEWLAYOUT_H
+

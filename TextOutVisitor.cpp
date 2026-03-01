@@ -45,7 +45,7 @@ void TextOutVisitor::VisitRow(Glyph* row) {
 void TextOutVisitor::VisitCharacter(Glyph* character) {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 
-	CFont* oldFont = dc->SelectObject(notepadForm->displayFont);
+	CFont* oldFont = dc->SelectObject(notepadForm->GetDisplayFont());
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long characterWidth = sizeCalculator->GetCharacterWidth((char*)(*character));
@@ -68,3 +68,4 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 
 	dc->SelectObject(oldFont);
 }
+

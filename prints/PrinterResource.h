@@ -62,3 +62,4 @@ inline Long PrinterResource::GetRowHeight() const {
 }
 
 #endif // !_PRINTERRESOURCE_H
+

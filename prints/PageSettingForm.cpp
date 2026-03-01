@@ -39,11 +39,11 @@ PageSettingForm::~PageSettingForm() {
 BOOL PageSettingForm::OnInitDialog() {
 	CDialog::OnInitDialog();
 
-	//1. 페이지 설정을 읽는다.
-	PageSetting pageSetting = ((NotepadForm*)(this->parent))->pageSetting;
+	//1. ?�이지 ?�정???�는??
+	PageSetting pageSetting = ((NotepadForm*)(this->parent))->GetPageSetting();
 
-	//1. 컨트롤들에서 기본 값을 설정한다.
-	CString sizes[] = { "A4", "A5", "A6", "B4", "B5", "레터", "리걸" };
+	//1. 컨트롤들?�서 기본 값을 ?�정?�다.
+	CString sizes[] = { "A4", "A5", "A6", "B4", "B5", "?�터", "리걸" };
 	for (Long i = 0; i < sizeof(sizes) / sizeof(sizes[0]); i++)
 	{
 		((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->AddString(sizes[i]);
@@ -69,7 +69,7 @@ BOOL PageSettingForm::OnInitDialog() {
 	text.Format("%ld", pageSetting.margin.down);
 	this->GetDlgItem(IDC_EDIT_DOWN)->SetWindowText(text);
 
-	//2. 미리보기의 위치를 정한다.
+	//2. 미리보기???�치�??�한??
 	this->pageSettingLayout = new PageSettingLayout(this);
 	this->pageSettingLayout->Locate();
 
@@ -81,7 +81,7 @@ BOOL PageSettingForm::OnInitDialog() {
 void PageSettingForm::OnOptionChanged() {
 	if (isInitialized)
 	{
-		//1. 용지크기와 여백을 읽는다.
+		//1. ?��??�기?� ?�백???�는??
 		CString paperName;
 		this->GetDlgItem(IDC_COMBO_SIZE)->GetWindowText(paperName);
 
@@ -94,7 +94,7 @@ void PageSettingForm::OnOptionChanged() {
 		this->GetDlgItem(IDC_EDIT_UP)->GetWindowText(up);
 		this->GetDlgItem(IDC_EDIT_DOWN)->GetWindowText(down);
 
-		//2. 빈 공간이 있다면 기본값으로 채워넣는다.
+		//2. �?공간???�다�?기본값으�?채워?�는??
 		if (paperName == "")
 		{
 			((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->SelectString(0, "A4");
@@ -120,7 +120,7 @@ void PageSettingForm::OnOptionChanged() {
 			this->GetDlgItem(IDC_EDIT_DOWN)->SetWindowText("0");
 		}
 
-		//2. 미리보기의 위치를 정한다.
+		//2. 미리보기???�치�??�한??
 		this->pageSettingLayout->Locate();
 
 		this->Invalidate();
@@ -130,9 +130,9 @@ void PageSettingForm::OnOptionChanged() {
 void PageSettingForm::OnPaint() {
 	CPaintDC dc(this);
 
-	//1. 종이 그림자 영역을 그린다.
-	CPen solidPen(PS_SOLID, 1, RGB(0, 0, 0));   // 검은색 1픽셀 펜
-	CBrush blackBrush(RGB(0, 0, 0));      // 검은색 채움
+	//1. 종이 그림???�역??그린??
+	CPen solidPen(PS_SOLID, 1, RGB(0, 0, 0));   // 검?�??1?��? ??
+	CBrush blackBrush(RGB(0, 0, 0));      // 검?�??채�?
 
 	CPen* pOldPen = dc.SelectObject(&solidPen);
 	CBrush* pOldBrush = dc.SelectObject(&blackBrush);
@@ -140,13 +140,13 @@ void PageSettingForm::OnPaint() {
 	RECT paperArea = this->pageSettingLayout->GetPaperArea();
 	dc.Rectangle(paperArea.left + 5, paperArea.top + 5, paperArea.right + 5, paperArea.bottom + 5);
 
-	//2. 종이 영역을 그린다.
+	//2. 종이 ?�역??그린??
 	CBrush whiteBrush(RGB(255, 255, 255));
-	dc.SelectObject(&whiteBrush); //흰색 채움.
+	dc.SelectObject(&whiteBrush); //?�색 채�?.
 
 	dc.Rectangle(paperArea.left, paperArea.top, paperArea.right, paperArea.bottom);
 
-	//3. 클리핑 영역을 설정한다.
+	//3. ?�리???�역???�정?�다.
 	RECT writingArea = pageSettingLayout->GetWritingArea();
 	RECT clipingArea;
 	clipingArea.left = writingArea.left;
@@ -158,7 +158,7 @@ void PageSettingForm::OnPaint() {
 	clipRgn.CreateRectRgnIndirect(&clipingArea);
 	dc.SelectClipRgn(&clipRgn);
 
-	//3. 폰트를 설정한다.
+	//3. ?�트�??�정?�다.
 	HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 	CFont* pFont = CFont::FromHandle(hFont);
 	LOGFONT logFont;
@@ -192,22 +192,22 @@ void PageSettingForm::OnPaint() {
 	y = writingArea.bottom + (paperArea.bottom - writingArea.bottom) / 2;
 	dc.TextOut(x, y, footer);
 
-	//4. 쓰기 영역을 그린다.
+	//4. ?�기 ?�역??그린??
 	CBrush* nullBrush = CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH));
-	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // 점선, 적색.
+	CPen dotPen(PS_DOT, 1, RGB(255, 0, 0)); // ?�선, ?�색.
 	dc.SelectObject(&dotPen);
 	dc.SelectObject(nullBrush);
 
 	dc.Rectangle(writingArea.left, writingArea.top, writingArea.right, writingArea.bottom);
 
-	//5. 원래 펜/브러시를 복원한다.
+	//5. ?�래 ??브러?��? 복원?�다.
 	dc.SelectObject(pOldPen);
 	dc.SelectObject(pOldBrush);
 	dc.SelectObject(oldFont);
 }
 
 void PageSettingForm::OnOK() {
-	//1. 용지크기와 여백을 읽는다.
+	//1. ?��??�기?� ?�백???�는??
 	CString paperName;
 	this->GetDlgItem(IDC_COMBO_SIZE)->GetWindowText(paperName);
 
@@ -228,7 +228,7 @@ void PageSettingForm::OnOK() {
 	this->GetDlgItem(IDC_EDIT_HEADER)->GetWindowText(header);
 	this->GetDlgItem(IDC_EDIT_FOOTER)->GetWindowText(footer);
 
-	//2. 메모장폼에 적는다.
+	//2. 메모?�폼???�는??
 	PageSetting pageSetting;
 	pageSetting.paperName = paperName;
 	pageSetting.isVertical = isVertical;
@@ -238,7 +238,7 @@ void PageSettingForm::OnOK() {
 	pageSetting.margin.down = atoi(down);
 	pageSetting.header = header;
 	pageSetting.footer = footer;
-	((NotepadForm*)(this->GetParent()))->pageSetting = pageSetting;
+	((NotepadForm*)(this->GetParent()))->ApplyPageSetting(pageSetting);
 
 	CDialog::OnOK();
 }
@@ -248,3 +248,4 @@ void PageSettingForm::OnClose() {
 
 	CDialog::OnClose();
 }
+

@@ -18,3 +18,4 @@ inline bool SelectAllAction::ShouldKeepSelection() {
 }
 
 #endif // !_SELECTALLACTION_H
+

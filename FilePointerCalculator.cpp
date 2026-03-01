@@ -377,3 +377,4 @@ Long FilePointerCalculator::FileEnd() {
 
 	return fileEndOffset;
 }
+

@@ -288,3 +288,4 @@ inline Long DropOldestStack<T>::GetLength() const {
 
 
 #endif // !_DROPOLDESTSTACK_H
+

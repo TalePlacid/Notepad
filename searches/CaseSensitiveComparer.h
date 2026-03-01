@@ -11,3 +11,4 @@ public:
 };
 
 #endif // !_CASESENSITIVECOMPARER_H
+

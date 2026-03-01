@@ -18,3 +18,4 @@ inline bool RedoAction::ShouldKeepSelection() {
 }
 
 #endif // !_REDOACTION_H
+

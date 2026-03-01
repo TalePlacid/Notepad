@@ -17,3 +17,4 @@ private:
 };
 
 #endif // !_VSCROLLBARDRAGACTION_H
+
