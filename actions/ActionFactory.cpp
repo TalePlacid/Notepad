@@ -49,6 +49,7 @@
 #include "ZoomResetAction.h"
 #include "UndoAction.h"
 #include "RedoAction.h"
+#include "AboutNotepadAction.h"
 
 #pragma warning(disable:4996)
 
@@ -211,6 +212,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_REDO:
 		action = new RedoAction(parent);
+		break;
+	case AppID::ID_ACTION_ABOUT_NOTEPAD:
+		action = new AboutNotepadAction(parent);
 		break;
 	default:
 		break;

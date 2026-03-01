@@ -35,7 +35,7 @@ Long RowCounter::CountCharacters(CString row) {
 	while (i < row.GetLength())
 	{
 		character[0] = row[i];
-		if (byteChecker.IsLeadByte(character[0]))
+		if (byteChecker.IsLeadByte(character))
 		{
 			character[1] = row[++i];
 		}

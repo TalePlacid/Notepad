@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="actions\Action.cpp" />
     <ClCompile Include="actions\ActionFactory.cpp" />
+    <ClCompile Include="actions\AboutNotepadAction.cpp" />
     <ClCompile Include="actions\AutoWrapAction.cpp" />
     <ClCompile Include="actions\ChangeFontAction.cpp" />
     <ClCompile Include="actions\CloseFindReplaceAction.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="actions\ZoomInAction.cpp" />
     <ClCompile Include="actions\ZoomOutAction.cpp" />
     <ClCompile Include="actions\ZoomResetAction.cpp" />
+    <ClCompile Include="AboutNotepadForm.cpp" />
     <ClCompile Include="AutoScroller.cpp" />
     <ClCompile Include="ByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
@@ -282,6 +284,7 @@
   <ItemGroup>
     <ClInclude Include="actions\Action.h" />
     <ClInclude Include="actions\ActionFactory.h" />
+    <ClInclude Include="actions\AboutNotepadAction.h" />
     <ClInclude Include="actions\AutoWrapAction.h" />
     <ClInclude Include="actions\ChangeFontAction.h" />
     <ClInclude Include="actions\CloseFindReplaceAction.h" />
@@ -331,6 +334,7 @@
     <ClInclude Include="actions\ZoomInAction.h" />
     <ClInclude Include="actions\ZoomOutAction.h" />
     <ClInclude Include="actions\ZoomResetAction.h" />
+    <ClInclude Include="AboutNotepadForm.h" />
     <ClInclude Include="AppID.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="AutoScroller.h" />

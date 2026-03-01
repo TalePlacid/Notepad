@@ -10,16 +10,16 @@ ByteChecker::~ByteChecker() {
 
 }
 
-bool ByteChecker::IsASCII(char character) {
-	return static_cast<unsigned char>(character) <= 0x7F;
+bool ByteChecker::IsASCII(char* character) {
+	return static_cast<unsigned char>(*character) <= 0x7F;
 }
 
-bool ByteChecker::IsLeadByte(char character) {
-	return static_cast<unsigned char>(character) & 0x80;
+bool ByteChecker::IsLeadByte(char* character) {
+	return static_cast<unsigned char>(*character) & 0x80;
 }
 
-bool ByteChecker::IsTailByte(char character) {
-	unsigned char character_ = static_cast<unsigned char>(character);
+bool ByteChecker::IsTailByte(char* character) {
+	unsigned char character_ = static_cast<unsigned char>(*character);
 
 	return (character_ > 0x7F) && !(character_ & 0x80);
 }
@@ -37,14 +37,14 @@ bool ByteChecker::IsAlphabet(char* character) {
 	return ret;
 }
 
-bool ByteChecker::IsCapital(char character) {
-	unsigned char character_ = static_cast<unsigned char>(character);
+bool ByteChecker::IsCapital(char* character) {
+	unsigned char character_ = static_cast<unsigned char>(*character);
 	
-	return character_ >= 65 && character <= 90;
+	return character_ >= 65 && *character <= 90;
 }
 
-bool ByteChecker::IsWordCharacter(char character) {
-	unsigned char character_ = static_cast<unsigned char>(character);
+bool ByteChecker::IsWordCharacter(char* character) {
+	unsigned char character_ = static_cast<unsigned char>(*character);
 	bool ret = false;
 
 	if ((character_ >= 48 && character_ <= 57)

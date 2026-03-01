@@ -4,6 +4,7 @@
 //
 #define IDR_MENU_MAIN                   101
 #define IDD_DIALOG_PAGESETTING          102
+#define IDD_DIALOG_ABOUT_NOTEPAD        103
 #define IDR_MENU_CONTEXT                104
 #define IDC_GROUP_PAPER                 1001
 #define IDC_STATIC_SIZE                 1002
@@ -29,6 +30,7 @@
 #define IDC_GROUP_PREVIEW               1022
 #define IDC_BUTTON_CANCEL               1023
 #define IDC_BUTTON_OK                   1024
+#define IDC_STATIC_ABOUT_MESSAGE        1025
 #define ID_MENU_UNDO                    40095
 #define ID_MENU_CUT                     40096
 #define ID_MENU_COPY                    40097
@@ -75,9 +77,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        106
+#define _APS_NEXT_RESOURCE_VALUE        107
 #define _APS_NEXT_COMMAND_VALUE         40124
-#define _APS_NEXT_CONTROL_VALUE         1032
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

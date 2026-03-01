@@ -73,7 +73,7 @@ Glyph* PagingBuffer::LoadPrevious() {
 	{
 		fseek(this->file, j, SEEK_SET);
 		fread(&character, 1, 1, this->file);
-		if (byteChecker.IsTailByte(character) || character == '\n')
+		if (byteChecker.IsTailByte(&character) || character == '\n')
 		{
 			i--;
 			j++;
@@ -129,7 +129,7 @@ Glyph* PagingBuffer::LoadNext() {
 
 	//2. 페이지 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.
 	ByteChecker byteChecker;
-	if (i >= this->pageSize && (byteChecker.IsLeadByte(contents[i - 1]) || contents[i - 1] == '\r'))
+	if (i >= this->pageSize && (byteChecker.IsLeadByte(contents + i - 1) || contents[i - 1] == '\r'))
 	{
 		i -= 2;
 	}
@@ -167,7 +167,7 @@ Long PagingBuffer::Add(char(*character)) {
 		//2. 글자 크기를 구한다.
 		Long characterLength = 1;
 		ByteChecker byteChecker;
-		if (byteChecker.IsLeadByte(character[0]) || character[0] == '\r')
+		if (byteChecker.IsLeadByte(character) || character[0] == '\r')
 		{
 			characterLength = 2;
 		}
@@ -280,7 +280,7 @@ Long PagingBuffer::Remove() {
 
 		Long characterLength = 1;
 		ByteChecker byteChecker;
-		if (!byteChecker.IsASCII(character) || character == '\n')
+		if (!byteChecker.IsASCII(&character) || character == '\n')
 		{
 			characterLength = 2;
 		}
@@ -662,3 +662,4 @@ Long PagingBuffer::GetFileEndOffset() const {
 	FilePointerCalculator filePointerCalculator(const_cast<PagingBuffer*>(this));
 	return filePointerCalculator.FileEnd();
 }          
+

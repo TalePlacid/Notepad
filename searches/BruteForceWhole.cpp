@@ -27,7 +27,7 @@ void BruteForceWhole::DoAlgorithm(Long* (*offsets), Long* count) {
 	while (i < this->contents.length())
 	{
 		previousIsWord = currentIsWord;
-		currentIsWord = byteChecker.IsWordCharacter(this->contents[i]);
+		currentIsWord = byteChecker.IsWordCharacter(&this->contents[i]);
 		if (!previousIsWord && currentIsWord)
 		{
 			j = 0;
@@ -35,7 +35,7 @@ void BruteForceWhole::DoAlgorithm(Long* (*offsets), Long* count) {
 				comparer->Compare(this->contents[i], this->key[j]) == true)
 			{
 				previousIsWord = currentIsWord;
-				currentIsWord = byteChecker.IsWordCharacter(this->contents[i]);
+				currentIsWord = byteChecker.IsWordCharacter(&this->contents[i]);
 				i++;
 				j++;
 			}
@@ -44,7 +44,7 @@ void BruteForceWhole::DoAlgorithm(Long* (*offsets), Long* count) {
 			{
 				if (i < this->contents.length())
 				{
-					if (!byteChecker.IsWordCharacter(this->contents[i]))
+					if (!byteChecker.IsWordCharacter(&this->contents[i]))
 					{
 						(*offsets)[k] = i - key.length();
 						k++;

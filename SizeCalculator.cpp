@@ -85,7 +85,7 @@ Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
 	while (i < columnIndex && i < row->GetLength())
 	{
 		character = (char*)(*row->GetAt(i));
-		if (byteChecker.IsLeadByte(*character))
+		if (byteChecker.IsLeadByte(character))
 		{
 			width += this->multiByteWidth;
 		}
@@ -113,7 +113,7 @@ Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
 	{
 		previousRowWidth = rowWidth;
 		character = (char*)(*row->GetAt(i));
-		if (byteChecker.IsLeadByte(*character))
+		if (byteChecker.IsLeadByte(character))
 		{
 			rowWidth += this->multiByteWidth;
 		}

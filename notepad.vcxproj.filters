@@ -422,6 +422,9 @@
     <ClCompile Include="actions\ActionFactory.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\AboutNotepadAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
     <ClCompile Include="KeyDownInterpreter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -514,6 +517,9 @@
     </ClCompile>
     <ClCompile Include="actions\RedoAction.cpp">
       <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="AboutNotepadForm.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -895,6 +901,9 @@
     <ClInclude Include="actions\ActionFactory.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
+    <ClInclude Include="actions\AboutNotepadAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
     <ClInclude Include="KeyDownInterpreter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -987,6 +996,9 @@
     </ClInclude>
     <ClInclude Include="actions\RedoAction.h">
       <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="AboutNotepadForm.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

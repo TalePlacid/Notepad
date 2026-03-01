@@ -50,7 +50,7 @@ Long FilePointerCalculator::Previous(Long offset) {
 		fread(&character, 1, 1, file);
 
 		ByteChecker byteChecker;
-		if (!byteChecker.IsASCII(character))
+		if (!byteChecker.IsASCII(&character))
 		{
 			previousOffset = offset - 2;
 		}
