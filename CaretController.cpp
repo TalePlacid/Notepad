@@ -60,6 +60,12 @@ Caret* CaretController::Create() {
 			caretWidth = sizeCalculator->GetMultiByteWidth();
 		}
 	}
+
+	if (this->caret != NULL)
+	{
+		delete this->caret;
+		this->caret = NULL;
+	}
 	this->caret = new Caret(this->parent, x, y, caretWidth, ((NotepadForm*)(this->parent))->sizeCalculator->GetRowHeight());
 
 	return this->caret;

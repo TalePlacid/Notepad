@@ -9,3 +9,4 @@ Release/
 *.zip
 *.tmp
 .gemini/
+*.md

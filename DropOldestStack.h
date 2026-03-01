@@ -114,6 +114,8 @@ DropOldestStack<T>::~DropOldestStack() {
 template <typename T>
 DropOldestStack<T>::DropOldestStack(const DropOldestStack& source) {
 	Node* node = 0;
+	this->bottom = 0;
+	this->top = 0;
 	Node* sourceCurrent = source.bottom;
 	while (sourceCurrent != 0)
 	{
@@ -201,6 +203,7 @@ typename DropOldestStack<T>::Node* DropOldestStack<T>::Push(T element) {
 
 		node = this->bottom;
 		this->bottom = this->bottom->next;
+		this->bottom->previous = 0;
 		delete node;
 	}
 
@@ -236,7 +239,7 @@ typename DropOldestStack<T>::Node* DropOldestStack<T>::Clear() {
 	Node* previous = 0;
 	Node* it = this->bottom;
 
-	if (it != NULL)
+	while (it != NULL)
 	{
 		previous = it;
 		it = it->next;

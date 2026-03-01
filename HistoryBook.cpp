@@ -54,7 +54,7 @@ Command* HistoryBook::Bind(Command* command) {
 	Command* history = command;
 	DateTime now = DateTime::Now();
 	DateTime latest = this->latestPushTime.AddSeconds(1);
-	if ((this->latestPushTime == DateTime() || DateTime::Now() <= this->latestPushTime.AddSeconds(1))
+	if ((this->latestPushTime == DateTime() || now <= latest)
 		&& this->histories.Peek() != 0)
 	{
 		DropOldestStack<Command*>::Node top = this->histories.Pop();
@@ -88,6 +88,16 @@ Command* HistoryBook::Bind(Command* command) {
 }
 
 Command** HistoryBook::Push(Command* history) {
+	if (this->length >= this->capacity)
+	{
+		DropOldestStack<Command*>::Node* bottom = this->histories.GetBottom();
+		if (bottom->GetElement() != 0)
+		{
+			delete bottom->GetElement();
+			bottom->GetElement() = 0;
+		}
+	}
+	
 	DropOldestStack<Command*>::Node* node = this->histories.Push(history);
 	if (this->length < this->capacity)
 	{
