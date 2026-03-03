@@ -473,12 +473,12 @@ void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
 			SetTimer(0, 30, NULL);
 		}
 
-		//this->HandleMouseEvent(WM_MOUSEMOVE, nFlags, point);
+		this->ResolveMouseEvent(AppID::ID_MOUSE_MOVE, nFlags, point);
 	}
 }
 
 void NotepadForm::OnLButtonUp(UINT nFlags, CPoint point) {
-	this->mouseHandler->EndDrag();
+	this->ResolveMouseEvent(AppID::ID_MOUSE_LBUTTON_UP, nFlags, point);
 	KillTimer(0);
 }
 

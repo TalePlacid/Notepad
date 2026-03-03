@@ -533,6 +533,12 @@
     <ClCompile Include="actions\MoveToPointAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\DragAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\EndDragAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -1028,6 +1034,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="actions\MoveToPointAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\DragAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\EndDragAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
   </ItemGroup>

@@ -134,6 +134,8 @@
     <ClCompile Include="actions\ChangeFontAction.cpp" />
     <ClCompile Include="actions\CloseFindReplaceAction.cpp" />
     <ClCompile Include="actions\CopyAction.cpp" />
+    <ClCompile Include="actions\DragAction.cpp" />
+    <ClCompile Include="actions\EndDragAction.cpp" />
     <ClCompile Include="actions\FindAction.cpp" />
     <ClCompile Include="actions\FindNextAction.cpp" />
     <ClCompile Include="actions\FindPreviousAction.cpp" />
@@ -295,6 +297,8 @@
     <ClInclude Include="actions\ChangeFontAction.h" />
     <ClInclude Include="actions\CloseFindReplaceAction.h" />
     <ClInclude Include="actions\CopyAction.h" />
+    <ClInclude Include="actions\DragAction.h" />
+    <ClInclude Include="actions\EndDragAction.h" />
     <ClInclude Include="actions\FindAction.h" />
     <ClInclude Include="actions\FindNextAction.h" />
     <ClInclude Include="actions\FindPreviousAction.h" />

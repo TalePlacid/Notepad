@@ -26,6 +26,8 @@
 #include "MovePageLeftAction.h"
 #include "MovePageRightAction.h"
 #include "MoveToPointAction.h"
+#include "DragAction.h"
+#include "EndDragAction.h"
 #include "SelectUpAction.h"
 #include "SelectDownAction.h"
 #include "SelectLeftAction.h"
@@ -155,6 +157,12 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_MOVE_TO_POINT:
 		action = new MoveToPointAction(parent, *point);
+		break;
+	case AppID::ID_ACTION_DRAG:
+		action = new DragAction(parent, *point);
+		break;
+	case AppID::ID_ACTION_END_DRAG:
+		action = new EndDragAction(parent);
 		break;
 	case AppID::ID_ACTION_MOVE_PAGE_RIGHT:
 		action = new MovePageRightAction(parent);

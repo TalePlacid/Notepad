@@ -16,6 +16,10 @@ public:
 		BOOL isSelected, Long& columnIndex);
 	void MoveUp();
 	void MoveDown();
+	void DragUp(CPoint point);
+	void DragDown(CPoint point);
+	void DragLeft(CPoint point);
+	void DragRight(CPoint point);
 
 	Long Find(FindReplaceOption findReplaceOption);
 	bool FindPrevious();

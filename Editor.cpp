@@ -6,6 +6,7 @@
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "CaretNavigator.h"
+#include "CoordinateConverter.h"
 #include "NoteWrapper.h"
 #include "PageLoader.h"
 #include "ByteChecker.h"
@@ -418,6 +419,167 @@ void Editor::MoveDown() {
 	}
 }
 
+void Editor::DragUp(CPoint point) {
+	//1. ??? ?? ??? ????.
+	CoordinateConverter coordinateConverter(this->parent);
+	Long rowIndex;
+	Long columnIndex;
+	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
+	//2. ?? ?? ??? ???.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = row->GetCurrent();
+	//3. ?? ??? ?? ?? ????.
+	Glyph* previousRow;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Scroll vScroll;
+	Long difference;
+	while (currentRowIndex > rowIndex)
+	{
+		//3.1. ?? ?? ??? ????.
+		while (currentColumnIndex > 0)
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			currentColumnIndex = row->Previous();
+			row->GetAt(currentColumnIndex)->ToggleSelection();
+			pagingBuffer->Previous();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
+		//3.2. ???? ?? ???? ????.
+		if (note->IsAboveTopLine(currentRowIndex) && vScroll.GetPos() > 0)
+		{
+			difference = currentRowIndex - rowIndex;
+			PageLoader::LoadPrevious(this->parent);
+			currentRowIndex = note->GetCurrent();
+			rowIndex = currentRowIndex - difference;
+		}
+		//3.3. ?? ?? ????.
+		previousRow = row;
+		currentRowIndex = note->Previous();
+		row = note->GetAt(currentRowIndex);
+		currentColumnIndex = row->Last();
+		if (!previousRow->IsDummyRow())
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->PreviousRow();
+			pagingBuffer->Last();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
+		//3.4. ?? ??? ????.
+		while (currentColumnIndex > columnIndex)
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			currentColumnIndex = row->Previous();
+			row->GetAt(currentColumnIndex)->ToggleSelection();
+			pagingBuffer->Previous();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
+	}
+}
+void Editor::DragDown(CPoint point) {
+	//1. ??? ?? ??? ????.
+	CoordinateConverter coordinateConverter(this->parent);
+	Long rowIndex;
+	Long columnIndex;
+	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
+	//2. ?? ?? ??? ???.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = row->GetCurrent();
+	//3. ?? ??? ??? ?? ????.
+	Glyph* previousRow;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Scroll vScroll = scrollController->GetVScroll();
+	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
+	Long difference;
+	while (currentRowIndex < rowIndex)
+	{
+		//3.1. ?? ?? ??? ????.
+		while (currentColumnIndex < row->GetLength())
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			row->GetAt(currentColumnIndex)->ToggleSelection();
+			currentColumnIndex = row->Next();
+			pagingBuffer->Next();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
+		//3.2. ???? ?? ???? ????.
+		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetPos())
+		{
+			difference = rowIndex - currentRowIndex;
+			PageLoader::LoadNext(this->parent);
+			currentRowIndex = note->GetCurrent();
+			rowIndex = currentRowIndex + difference;
+		}
+		//3.3. ?? ?? ????.
+		previousRow = row;
+		currentRowIndex = note->Next();
+		row = note->GetAt(currentRowIndex);
+		currentColumnIndex = row->First();
+		if (!row->IsDummyRow())
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			pagingBuffer->NextRow();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
+		//3.4. ?? ??? ????.
+		while (currentColumnIndex < columnIndex && currentColumnIndex < row->GetLength())
+		{
+			pagingBuffer->BeginSelectionIfNeeded();
+			row->GetAt(currentColumnIndex)->ToggleSelection();
+			currentColumnIndex = row->Next();
+			pagingBuffer->Next();
+			pagingBuffer->EndSelectionIfCollapsed();
+		}
+	}
+}
+void Editor::DragLeft(CPoint point) {
+	//1. ??? ?? ??? ????.
+	CoordinateConverter coordinateConverter(this->parent);
+	Long rowIndex;
+	Long columnIndex;
+	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
+	//2. ?? ?? ??? ???.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = row->GetCurrent();
+	//3. ?? ??? ???? ?? ????.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	while (currentColumnIndex > columnIndex)
+	{
+		pagingBuffer->BeginSelectionIfNeeded();
+		currentColumnIndex = row->Previous();
+		row->GetAt(currentColumnIndex)->ToggleSelection();
+		pagingBuffer->Previous();
+		pagingBuffer->EndSelectionIfCollapsed();
+	}
+}
+void Editor::DragRight(CPoint point) {
+	//1. ??? ?? ??? ????.
+	CoordinateConverter coordinateConverter(this->parent);
+	Long rowIndex;
+	Long columnIndex;
+	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
+	//2. ?? ?? ??? ???.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = row->GetCurrent();
+	//3. ?? ??? ????? ?? ????.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	while (currentColumnIndex < columnIndex)
+	{
+		pagingBuffer->BeginSelectionIfNeeded();
+		row->GetAt(currentColumnIndex)->ToggleSelection();
+		currentColumnIndex = row->Next();
+		pagingBuffer->Next();
+		pagingBuffer->EndSelectionIfCollapsed();
+	}
+}
 Long Editor::Find(FindReplaceOption findReplaceOption) {
 	//1. 검색옵션을 최신화한다.
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;

@@ -17,6 +17,15 @@ AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, short 
 	case AppID::ID_MOUSE_LBUTTON_DOWN:
 		appID = AppID::ID_ACTION_MOVE_TO_POINT;
 		break;
+	case AppID::ID_MOUSE_MOVE:
+		if (nFlags == MK_LBUTTON)
+		{
+			appID = AppID::ID_ACTION_DRAG;
+		}
+		break;
+	case AppID::ID_MOUSE_LBUTTON_UP:
+		appID = AppID::ID_ACTION_END_DRAG;
+		break;
 	case AppID::ID_MOUSE_WHEEL:
 		if (nFlags == MK_CONTROL)
 		{
@@ -24,6 +33,14 @@ AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, short 
 			if (zDelta < 0)
 			{
 				appID = AppID::ID_ACTION_ZOOM_OUT;
+			}
+		}
+		else
+		{
+			appID = AppID::ID_ACTION_VSCROLL_LINE_UP;
+			if (zDelta < 0)
+			{
+				appID = AppID::ID_ACTION_VSCROLL_LINE_DOWN;
 			}
 		}
 		break;
