@@ -71,7 +71,9 @@ Long SizeCalculator::GetCharacterWidth(char(*character)) {
 
 Long SizeCalculator::GetRowWidth(CString contents) {
 	CDC* cdc = this->parent->GetDC();
+	CFont* oldFont = cdc->SelectObject(((NotepadForm*)this->parent)->GetDisplayFont());
 	Long rowWidth = cdc->GetTextExtent(contents).cx;
+	cdc->SelectObject(oldFont);
 	this->parent->ReleaseDC(cdc);
 
 	return rowWidth;

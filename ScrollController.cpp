@@ -97,7 +97,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 				scrollInfo.nMin = this->hScroll.GetMin();
 				scrollInfo.nMax = this->hScroll.GetMax();
 				scrollInfo.nPage = this->hScroll.GetPage();
-				scrollInfo.nPos = scrollBarAnalyzer.GetContentsHeight();
+				scrollInfo.nPos = this->hScroll.GetPos();
 
 				SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 				this->parent->ModifyStyle(0, WS_HSCROLL);
@@ -285,12 +285,12 @@ bool ScrollController::ShowHScroll(bool visible) {
 	if (visible)
 	{
 		ret = this->parent->ModifyStyle(0, WS_HSCROLL);
-		this->hasVScroll = true;
+		this->hasHScroll = true;
 	}
 	else
 	{
 		ret = this->parent->ModifyStyle(WS_HSCROLL, 0);
-		this->hasVScroll = false;
+		this->hasHScroll = false;
 	}
 
 	return ret;

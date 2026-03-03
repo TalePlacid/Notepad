@@ -2,6 +2,7 @@
 #include "ZoomOutAction.h"
 #include "../NotepadForm.h"
 #include "../SizeCalculator.h"
+#include "../ScrollController.h"
 #include "../FontSelector.h"
 
 #pragma warning(disable:4996)
@@ -17,6 +18,16 @@ ZoomOutAction::~ZoomOutAction() {
 
 void ZoomOutAction::Perform() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
+	Long oldRowHeight = 0;
+	Long oldVScrollMax = 0;
+	if (notepadForm->sizeCalculator != NULL)
+	{
+		oldRowHeight = notepadForm->sizeCalculator->GetRowHeight();
+	}
+	if (notepadForm->scrollController != NULL)
+	{
+		oldVScrollMax = notepadForm->scrollController->GetVScroll().GetMax();
+	}
 
 	notepadForm->ChangeMagnification(notepadForm->GetMagnification() - 0.1);
 	if (notepadForm->GetMagnification() < 0.1)
@@ -43,6 +54,17 @@ void ZoomOutAction::Perform() {
 		notepadForm->sizeCalculator = NULL;
 	}
 	notepadForm->sizeCalculator = new SizeCalculator(this->parent);
+
+	if (notepadForm->scrollController != NULL && notepadForm->scrollController->HasVScroll())
+	{
+		Long newRowHeight = notepadForm->sizeCalculator->GetRowHeight();
+		if (oldRowHeight > 0 && newRowHeight > 0)
+		{
+			Long rowCount = oldVScrollMax / oldRowHeight;
+			Long newVScrollMax = rowCount * newRowHeight;
+			notepadForm->scrollController->ResizeVRange(newVScrollMax);
+		}
+	}
 }
 
 
