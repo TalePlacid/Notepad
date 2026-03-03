@@ -1,6 +1,5 @@
 #include <afxwin.h>
-#include "VScrollBarUpClickAction.h"
-#include "../resource.h"
+#include "VScrollLineUpAction.h"
 #include "../NotepadForm.h"
 #include "../SizeCalculator.h"
 #include "../ScrollController.h"
@@ -10,17 +9,16 @@
 
 #pragma warning(disable:4996)
 
-VScrollBarUpClickAction::VScrollBarUpClickAction(CWnd* parent)
-	:ScrollBarAction(parent) {
+VScrollLineUpAction::VScrollLineUpAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-VScrollBarUpClickAction::~VScrollBarUpClickAction() {
+VScrollLineUpAction::~VScrollLineUpAction() {
 
 }
 
-void VScrollBarUpClickAction::Perform() {
-	//1. 스크롤을 한 줄 올린다.
+void VScrollLineUpAction::Perform() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long rowHeight = sizeCalculator->GetRowHeight();
@@ -32,7 +30,6 @@ void VScrollBarUpClickAction::Perform() {
 	}
 	pos = scrollController->MoveVScroll(pos);
 
-	//2. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
@@ -43,10 +40,13 @@ void VScrollBarUpClickAction::Perform() {
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
 
-	//3. 보이는 영역을 벗어났다면, 한 줄 올린다.
 	if (currentPos + rowHeight > pos + vScroll.GetPage())
 	{
 		CaretNavigator caretNavigator(this->parent);
 		caretNavigator.AdjustCaretDownToVScroll(rowWidth);
 	}
+}
+
+bool VScrollLineUpAction::NeedScrollBarUpdate() {
+	return false;
 }

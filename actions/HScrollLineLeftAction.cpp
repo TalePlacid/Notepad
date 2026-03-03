@@ -1,30 +1,37 @@
 #include <afxwin.h>
-#include "HScrollBarRightClickAction.h"
+#include "HScrollLineLeftAction.h"
 #include "../NotepadForm.h"
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
 
 #pragma warning(disable:4996)
 
-HScrollBarRightClickAction::HScrollBarRightClickAction(CWnd* parent)
-	:ScrollBarAction(parent) {
+HScrollLineLeftAction::HScrollLineLeftAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-HScrollBarRightClickAction::~HScrollBarRightClickAction() {
+HScrollLineLeftAction::~HScrollLineLeftAction() {
 
 }
 
-void HScrollBarRightClickAction::Perform() {
+void HScrollLineLeftAction::Perform() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll hScroll = scrollController->GetHScroll();
 
 	Long averageWidth = ((NotepadForm*)(this->parent))->sizeCalculator->GetAverageCharacterWidth();
-	Long pos = hScroll.GetPos() + averageWidth;
-	Long posLimit = hScroll.GetMax() - hScroll.GetPage();
-	if (pos > posLimit)
+	Long pos = hScroll.GetPos() - averageWidth;
+	if (pos < 0)
 	{
-		pos = posLimit;
+		pos = 0;
 	}
 	scrollController->MoveHScroll(pos);
+}
+
+bool HScrollLineLeftAction::NeedScrollBarUpdate() {
+	return false;
+}
+
+bool HScrollLineLeftAction::ShouldKeepSelection() {
+	return true;
 }

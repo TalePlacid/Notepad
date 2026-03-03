@@ -1,20 +1,20 @@
 #include <afxwin.h>
-#include "HScrollBarPageLeftAction.h"
+#include "HScrollPageLeftAction.h"
 #include "../NotepadForm.h"
 #include "../ScrollController.h"
 
 #pragma warning(disable:4996)
 
-HScrollBarPageLeftAction::HScrollBarPageLeftAction(CWnd* parent)
-	:ScrollBarAction(parent) {
+HScrollPageLeftAction::HScrollPageLeftAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-HScrollBarPageLeftAction::~HScrollBarPageLeftAction() {
+HScrollPageLeftAction::~HScrollPageLeftAction() {
 
 }
 
-void HScrollBarPageLeftAction::Perform() {
+void HScrollPageLeftAction::Perform() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll hScroll = scrollController->GetHScroll();
 	Long pos = hScroll.GetPos() - hScroll.GetPage();
@@ -23,4 +23,12 @@ void HScrollBarPageLeftAction::Perform() {
 		pos = 0;
 	}
 	scrollController->MoveHScroll(pos);
+}
+
+bool HScrollPageLeftAction::NeedScrollBarUpdate() {
+	return false;
+}
+
+bool HScrollPageLeftAction::ShouldKeepSelection() {
+	return true;
 }

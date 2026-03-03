@@ -1,6 +1,5 @@
 #include <afxwin.h>
-#include "VScrollBarPageUpAction.h"
-#include "../resource.h"
+#include "VScrollPageUpAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../ScrollController.h"
@@ -10,17 +9,16 @@
 
 #pragma warning(disable:4996)
 
-VScrollBarPageUpAction::VScrollBarPageUpAction(CWnd* parent)
-	:ScrollBarAction(parent) {
+VScrollPageUpAction::VScrollPageUpAction(CWnd* parent)
+	:Action(parent) {
 
 }
 
-VScrollBarPageUpAction::~VScrollBarPageUpAction() {
+VScrollPageUpAction::~VScrollPageUpAction() {
 
 }
 
-void VScrollBarPageUpAction::Perform() {
-	//1. 스크롤을 한 줄 올린다.
+void VScrollPageUpAction::Perform() {
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll = scrollController->GetVScroll();
 	Long page = vScroll.GetPage();
@@ -31,7 +29,6 @@ void VScrollBarPageUpAction::Perform() {
 	}
 	pos = scrollController->MoveVScroll(pos);
 
-	//2. 현재 위치를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
@@ -45,10 +42,13 @@ void VScrollBarPageUpAction::Perform() {
 	Long rowHeight = sizeCalculator->GetRowHeight();
 	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
 
-	//3. 보이는 영역을 벗어났다면,
 	if (currentPos + rowHeight > pos + page)
 	{
 		CaretNavigator caretNavigator(this->parent);
 		caretNavigator.AdjustCaretDownToVScroll(rowWidth);
 	}
+}
+
+bool VScrollPageUpAction::NeedScrollBarUpdate() {
+	return false;
 }

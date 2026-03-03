@@ -54,6 +54,16 @@
 #include "RedoAction.h"
 #include "ToggleStatusBarAction.h"
 #include "AboutNotepadAction.h"
+#include "VScrollLineUpAction.h"
+#include "VScrollLineDownAction.h"
+#include "VScrollPageUpAction.h"
+#include "VScrollPageDownAction.h"
+#include "VScrollThumbTrackAction.h"
+#include "HScrollLineLeftAction.h"
+#include "HScrollLineRightAction.h"
+#include "HScrollPageLeftAction.h"
+#include "HScrollPageRightAction.h"
+#include "HScrollThumbTrackAction.h"
 
 #pragma warning(disable:4996)
 
@@ -232,6 +242,36 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_ABOUT_NOTEPAD:
 		action = new AboutNotepadAction(parent);
+		break;
+	case AppID::ID_ACTION_VSCROLL_LINE_UP:
+		action = new VScrollLineUpAction(parent);
+		break;
+	case AppID::ID_ACTION_VSCROLL_LINE_DOWN:
+		action = new VScrollLineDownAction(parent);
+		break;
+	case AppID::ID_ACTION_VSCROLL_PAGE_UP:
+		action = new VScrollPageUpAction(parent);
+		break;
+	case AppID::ID_ACTION_VSCROLL_PAGE_DOWN:
+		action = new VScrollPageDownAction(parent);
+		break;
+	case AppID::ID_ACTION_VSCROLL_THUMB_TRACK:
+		action = new VScrollThumbTrackAction(parent);
+		break;
+	case AppID::ID_ACTION_HSCROLL_LINE_LEFT:
+		action = new HScrollLineLeftAction(parent);
+		break;
+	case AppID::ID_ACTION_HSCROLL_LINE_RIGHT:
+		action = new HScrollLineRightAction(parent);
+		break;
+	case AppID::ID_ACTION_HSCROLL_PAGE_LEFT:
+		action = new HScrollPageLeftAction(parent);
+		break;
+	case AppID::ID_ACTION_HSCROLL_PAGE_RIGHT:
+		action = new HScrollPageRightAction(parent);
+		break;
+	case AppID::ID_ACTION_HSCROLL_THUMB_TRACK:
+		action = new HScrollThumbTrackAction(parent);
 		break;
 	default:
 		break;

@@ -30,6 +30,7 @@
 #include "KeyDownInterpreter.h"
 #include "MenuInterpreter.h"
 #include "FindReplaceInterpreter.h"
+#include "ScrollBarInterpreter.h"
 #include "FindReplaceOptionMaker.h"
 #include "FindReplaceRequestResolver.h"
 #include "MouseEventResolver.h"
@@ -37,7 +38,6 @@
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
 #include "actions/ActionFactory.h"
-#include "scrolls/ScrollBarActionFactory.h"
 #include "mouses/MouseActionFactory.h"
 
 #include "prints/PreviewForm.h"
@@ -45,7 +45,6 @@
 #include "glyphs/Glyph.h"
 #include "commands/Command.h"
 #include "actions/Action.h"
-#include "scrolls/ScrollBarAction.h"
 #include "mouses/MouseAction.h"
 
 #pragma warning(disable:4996)
@@ -425,32 +424,19 @@ void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 void NotepadForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
-	ScrollBarActionFactory scrollBarActionFactory;
-	ScrollBarAction* scrollBarAction = scrollBarActionFactory.Create(this, SB_VERT, nSBCode, nPos);
-	if (scrollBarAction != NULL)
+	AppID nID = ScrollBarInterpreter::DetermineID(SB_VERT, nSBCode);
+	if (nID != AppID::NONE)
 	{
-		scrollBarAction->Perform();
-		if (!scrollBarAction->ShouldKeepSelection())
-		{
-			this->note->Select(false);
-			this->pagingBuffer->UnmarkSelectionBegin();
-		}
-		delete scrollBarAction;
+		this->HandleAction(nID);
 	}
-
-	this->Invalidate();
 }
 
 void NotepadForm::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
-	ScrollBarActionFactory scrollBarActionFactory;
-	ScrollBarAction* scrollBarAction = scrollBarActionFactory.Create(this, SB_HORZ, nSBCode, nPos);
-	if (scrollBarAction != NULL)
+	AppID nID = ScrollBarInterpreter::DetermineID(SB_HORZ, nSBCode);
+	if (nID != AppID::NONE)
 	{
-		scrollBarAction->Perform();
-		delete scrollBarAction;
+		this->HandleAction(nID);
 	}
-
-	this->Invalidate();
 }
 
 BOOL NotepadForm::OnEraseBkgnd(CDC *pDC){

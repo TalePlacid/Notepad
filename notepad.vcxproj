@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -144,6 +144,16 @@
     <ClCompile Include="actions\PreviewAction.cpp" />
     <ClCompile Include="actions\PrintAction.cpp" />
     <ClCompile Include="actions\RedoAction.cpp" />
+    <ClCompile Include="actions\VScrollLineUpAction.cpp" />
+    <ClCompile Include="actions\VScrollLineDownAction.cpp" />
+    <ClCompile Include="actions\VScrollPageUpAction.cpp" />
+    <ClCompile Include="actions\VScrollPageDownAction.cpp" />
+    <ClCompile Include="actions\VScrollThumbTrackAction.cpp" />
+    <ClCompile Include="actions\HScrollLineLeftAction.cpp" />
+    <ClCompile Include="actions\HScrollLineRightAction.cpp" />
+    <ClCompile Include="actions\HScrollPageLeftAction.cpp" />
+    <ClCompile Include="actions\HScrollPageRightAction.cpp" />
+    <ClCompile Include="actions\HScrollThumbTrackAction.cpp" />
     <ClCompile Include="actions\ToggleStatusBarAction.cpp" />
     <ClCompile Include="actions\SelectAllAction.cpp" />
     <ClCompile Include="actions\MoveDocRearAction.cpp" />
@@ -208,6 +218,7 @@
     <ClCompile Include="FilePointerCalculator.cpp" />
     <ClCompile Include="FileStreamAdapter.cpp" />
     <ClCompile Include="FindReplaceInterpreter.cpp" />
+    <ClCompile Include="ScrollBarInterpreter.cpp" />
     <ClCompile Include="FindReplaceOption.cpp" />
     <ClCompile Include="FindReplaceOptionMaker.cpp" />
     <ClCompile Include="FindReplaceRequestResolver.cpp" />
@@ -306,6 +317,16 @@
     <ClInclude Include="actions\PreviewAction.h" />
     <ClInclude Include="actions\PrintAction.h" />
     <ClInclude Include="actions\RedoAction.h" />
+    <ClInclude Include="actions\VScrollLineUpAction.h" />
+    <ClInclude Include="actions\VScrollLineDownAction.h" />
+    <ClInclude Include="actions\VScrollPageUpAction.h" />
+    <ClInclude Include="actions\VScrollPageDownAction.h" />
+    <ClInclude Include="actions\VScrollThumbTrackAction.h" />
+    <ClInclude Include="actions\HScrollLineLeftAction.h" />
+    <ClInclude Include="actions\HScrollLineRightAction.h" />
+    <ClInclude Include="actions\HScrollPageLeftAction.h" />
+    <ClInclude Include="actions\HScrollPageRightAction.h" />
+    <ClInclude Include="actions\HScrollThumbTrackAction.h" />
     <ClInclude Include="actions\ToggleStatusBarAction.h" />
     <ClInclude Include="actions\SelectAllAction.h" />
     <ClInclude Include="actions\MoveDocRearAction.h" />
@@ -373,6 +394,7 @@
     <ClInclude Include="FilePointerCalculator.h" />
     <ClInclude Include="FileStreamAdapter.h" />
     <ClInclude Include="FindReplaceInterpreter.h" />
+    <ClInclude Include="ScrollBarInterpreter.h" />
     <ClInclude Include="FindReplaceOption.h" />
     <ClInclude Include="FindReplaceOptionMaker.h" />
     <ClInclude Include="FindReplaceRequestResolver.h" />
@@ -463,3 +485,6 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
+
+
+

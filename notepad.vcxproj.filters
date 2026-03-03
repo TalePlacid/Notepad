@@ -491,6 +491,9 @@
     <ClCompile Include="FindReplaceInterpreter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ScrollBarInterpreter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="actions\FindAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -528,6 +531,36 @@
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\RedoAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\VScrollLineUpAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\VScrollLineDownAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\VScrollPageUpAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\VScrollPageDownAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\VScrollThumbTrackAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\HScrollLineLeftAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\HScrollLineRightAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\HScrollPageLeftAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\HScrollPageRightAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\HScrollThumbTrackAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
     <ClCompile Include="actions\ToggleStatusBarAction.cpp">
@@ -991,6 +1024,9 @@
     <ClInclude Include="FindReplaceInterpreter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ScrollBarInterpreter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="actions\FindAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
@@ -1030,6 +1066,36 @@
     <ClInclude Include="actions\RedoAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
+    <ClInclude Include="actions\VScrollLineUpAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\VScrollLineDownAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\VScrollPageUpAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\VScrollPageDownAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\VScrollThumbTrackAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\HScrollLineLeftAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\HScrollLineRightAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\HScrollPageLeftAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\HScrollPageRightAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\HScrollThumbTrackAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
     <ClInclude Include="actions\ToggleStatusBarAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
@@ -1049,3 +1115,6 @@
     </None>
   </ItemGroup>
 </Project>
+
+
+
