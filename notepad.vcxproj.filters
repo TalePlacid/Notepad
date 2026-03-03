@@ -536,6 +536,12 @@
     <ClCompile Include="AboutNotepadForm.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="MouseEventResolver.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\MoveToPointAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -1029,6 +1035,12 @@
     </ClInclude>
     <ClInclude Include="AboutNotepadForm.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseEventResolver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\MoveToPointAction.h">
+      <Filter>헤더 파일\actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

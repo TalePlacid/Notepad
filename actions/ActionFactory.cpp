@@ -25,6 +25,7 @@
 #include "MovePageDownAction.h"
 #include "MovePageLeftAction.h"
 #include "MovePageRightAction.h"
+#include "MoveToPointAction.h"
 #include "SelectUpAction.h"
 #include "SelectDownAction.h"
 #include "SelectLeftAction.h"
@@ -50,7 +51,7 @@
 #include "ZoomOutAction.h"
 #include "ZoomResetAction.h"
 #include "UndoAction.h"
- #include "RedoAction.h"
+#include "RedoAction.h"
 #include "ToggleStatusBarAction.h"
 #include "AboutNotepadAction.h"
 
@@ -64,7 +65,8 @@ ActionFactory::~ActionFactory() {
 
 }
 
-Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findReplaceOption) {
+Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findReplaceOption,
+	CPoint* point, short zDelta) {
 	Action* action = NULL;
 
 	switch (nID)
@@ -140,6 +142,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_MOVE_PAGE_LEFT:
 		action = new MovePageLeftAction(parent);
+		break;
+	case AppID::ID_ACTION_MOVE_TO_POINT:
+		action = new MoveToPointAction(parent, *point);
 		break;
 	case AppID::ID_ACTION_MOVE_PAGE_RIGHT:
 		action = new MovePageRightAction(parent);

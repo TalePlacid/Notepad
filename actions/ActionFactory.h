@@ -11,7 +11,8 @@ public:
 	ActionFactory();
 	~ActionFactory();
 
-	static Action* Create(CWnd* parent, AppID nID, FindReplaceOption* findReplaceOption = NULL);
+	static Action* Create(CWnd* parent, AppID nID, FindReplaceOption* findReplaceOption = NULL,
+		CPoint* point = NULL, short zDelta = 0);
 };
 
 #endif // !_ACTIONFACTORY_H

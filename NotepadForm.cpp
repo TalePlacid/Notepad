@@ -32,6 +32,7 @@
 #include "FindReplaceInterpreter.h"
 #include "FindReplaceOptionMaker.h"
 #include "FindReplaceRequestResolver.h"
+#include "MouseEventResolver.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -472,27 +473,8 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
-void NotepadForm::ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption) {
-	//1. 옵션이 없으면, 보충한다.
-	FindReplaceRequestResolver resolver(this);
-	resolver.SupplementOption(findReplaceOption);
-
-	//1. 문맥에 맞는 앱 아이디를 판별한다.
-	AppID nID = resolver.ResolveAppID(appID, findReplaceOption);
-
-	//3. 앱 아이디에 따라 핸들러로 이관한다.
-	if (resolver.IsCommand(nID))
-	{
-		this->HandleCommand(nID, 0, 0, &findReplaceOption);
-	}
-	else
-	{
-		this->HandleAction(nID, &findReplaceOption);
-	}
-}
-
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
-	//this->HandleMouseEvent(WM_LBUTTONDOWN, nFlags, point);
+	this->ResolveMouseEvent(AppID::ID_MOUSE_LBUTTON_DOWN, nFlags, point);
 }
 
 void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
@@ -515,7 +497,7 @@ void NotepadForm::OnLButtonUp(UINT nFlags, CPoint point) {
 }
 
 BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
-	//this->HandleMouseEvent(WM_MOUSEWHEEL, nFlags, pt, zDelta);
+	this->ResolveMouseEvent(AppID::ID_MOUSE_WHEEL, nFlags, pt, zDelta);
 
 	return 0;
 }
@@ -532,7 +514,7 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 
 		//this->HandleMouseEvent(WM_MOUSEMOVE, MK_LBUTTON, cursorPos);
 	}
-		break;
+	break;
 	default:
 		break;
 	}
@@ -541,6 +523,33 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 void NotepadForm::OnRButtonDown(UINT nFlags, CPoint point) {
 	ClientToScreen(&point);
 	this->mouseHandler->PopUpContextMenu(point);
+}
+
+void NotepadForm::ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption) {
+	//1. 옵션이 없으면, 보충한다.
+	FindReplaceRequestResolver resolver(this);
+	resolver.SupplementOption(findReplaceOption);
+
+	//1. 문맥에 맞는 앱 아이디를 판별한다.
+	AppID nID = resolver.ResolveAppID(appID, findReplaceOption);
+
+	//3. 앱 아이디에 따라 핸들러로 이관한다.
+	if (resolver.IsCommand(nID))
+	{
+		this->HandleCommand(nID, 0, 0, &findReplaceOption);
+	}
+	else
+	{
+		this->HandleAction(nID, &findReplaceOption);
+	}
+}
+
+void NotepadForm::ResolveMouseEvent(AppID rawID, UINT nFlags, CPoint point, short zDelta) {
+	AppID appID = MouseEventResolver::Resolve(rawID, nFlags, point, zDelta);
+	CoordinateConverter coordinateConverter(this);
+	CPoint absolutePoint = coordinateConverter.DisplayToAbsolute(point);
+
+	this->HandleAction(appID, NULL, &absolutePoint);
 }
 
 void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar, 
@@ -576,8 +585,9 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 	this->Invalidate();
 }
 
-void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption) {
-	Action* action = ActionFactory::Create(this, nID, findReplaceOption);
+void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
+	CPoint* point, short zDelta) {
+	Action* action = ActionFactory::Create(this, nID, findReplaceOption, point, zDelta);
 	if (action != NULL)
 	{
 		action->Perform();
@@ -585,6 +595,11 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption) 
 		if (action->NeedScrollBarUpdate())
 		{
 			this->Notify("UpdateScrollBars");
+		}
+
+		if (action->NeedUpdateLatestPoint())
+		{
+			this->mouseHandler->UpdateLatestPoint(*point);
 		}
 
 		if (!action->ShouldKeepSelection())
@@ -601,45 +616,3 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption) 
 	this->Notify("ChangeCaret");
 	this->Invalidate();
 }
-#if 0
-
-void NotepadForm::HandleMouseEvent(UINT nID, UINT nFlags, CPoint point, short zDelta) {
-	CoordinateConverter coordinateConverter(this);
-	CPoint absolutePoint = coordinateConverter.DisplayToAbsolute(point);
-	
-	MouseActionFactory mouseActionFactory(this);
-	MouseAction* mouseAction = mouseActionFactory.Create(nID, nFlags, absolutePoint, zDelta);
-	if (mouseAction != NULL)
-	{
-		mouseAction->Perform();
-		if (mouseAction->NeedUpdateLatest())
-		{
-			this->mouseHandler->UpdateLatestPoint(absolutePoint);
-		}
-
-		if (!mouseAction->ShouldKeepSelection())
-		{
-			this->note->Select(false);
-			this->pagingBuffer->UnmarkSelectionBegin();
-		}
-		delete mouseAction;
-	}
-
-	this->Notify("UpdateScrollBars");
-	this->Notify("UpdateStatusBar");
-	this->parent->Invalidate();
-}
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-

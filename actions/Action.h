@@ -10,6 +10,7 @@ public:
 
 	virtual void Perform() = 0;
 	virtual bool NeedScrollBarUpdate();
+	virtual bool NeedUpdateLatestPoint();
 	virtual bool ShouldKeepSelection();
 protected:
 	CWnd* parent;
@@ -17,6 +18,10 @@ protected:
 
 inline bool Action::NeedScrollBarUpdate() {
 	return true;
+}
+
+inline bool Action::NeedUpdateLatestPoint() {
+	return false;
 }
 
 inline bool Action::ShouldKeepSelection() {

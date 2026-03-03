@@ -137,6 +137,7 @@
     <ClCompile Include="actions\FindAction.cpp" />
     <ClCompile Include="actions\FindNextAction.cpp" />
     <ClCompile Include="actions\FindPreviousAction.cpp" />
+    <ClCompile Include="actions\MoveToPointAction.cpp" />
     <ClCompile Include="actions\OpenFindDialogAction.cpp" />
     <ClCompile Include="actions\OpenReplaceDialogAction.cpp" />
     <ClCompile Include="actions\GoToAction.cpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="HistoryBook.cpp" />
     <ClCompile Include="KeyDownInterpreter.cpp" />
     <ClCompile Include="MenuInterpreter.cpp" />
+    <ClCompile Include="MouseEventResolver.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="mouses\DragDownAction.cpp" />
     <ClCompile Include="mouses\DragLeftAction.cpp" />
@@ -297,6 +299,7 @@
     <ClInclude Include="actions\FindAction.h" />
     <ClInclude Include="actions\FindNextAction.h" />
     <ClInclude Include="actions\FindPreviousAction.h" />
+    <ClInclude Include="actions\MoveToPointAction.h" />
     <ClInclude Include="actions\OpenFindDialogAction.h" />
     <ClInclude Include="actions\OpenReplaceDialogAction.h" />
     <ClInclude Include="actions\GoToAction.h" />
@@ -388,6 +391,7 @@
     <ClInclude Include="KeyDownInterpreter.h" />
     <ClInclude Include="MenuInterpreter.h" />
     <ClInclude Include="message.h" />
+    <ClInclude Include="MouseEventResolver.h" />
     <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="mouses\DragDownAction.h" />
     <ClInclude Include="mouses\DragLeftAction.h" />
@@ -459,5 +463,3 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
-
-

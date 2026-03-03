@@ -95,12 +95,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 private:
 	void ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption);
+	void ResolveMouseEvent(AppID rawId, UINT nFlags, CPoint point, short zDelta = 0);
 	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL onChar = TRUE,
 		FindReplaceOption* findReplaceOption = NULL);
-	void HandleAction(AppID nID, FindReplaceOption* findReplaceOption = NULL);
-#if 0
-	void HandleMouseEvent(AppID nID, UINT nFlags, CPoint point, short zDelta = 0);
-#endif
+	void HandleAction(AppID nID, FindReplaceOption* findReplaceOption = NULL,
+		CPoint* point = NULL, short zDelta = 0);
 private:
 	CFont* originalFont;
 	CFont* displayFont;
