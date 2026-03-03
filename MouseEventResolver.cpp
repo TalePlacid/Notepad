@@ -17,6 +17,16 @@ AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, short 
 	case AppID::ID_MOUSE_LBUTTON_DOWN:
 		appID = AppID::ID_ACTION_MOVE_TO_POINT;
 		break;
+	case AppID::ID_MOUSE_WHEEL:
+		if (nFlags == MK_CONTROL)
+		{
+			appID = AppID::ID_ACTION_ZOOM_IN;
+			if (zDelta < 0)
+			{
+				appID = AppID::ID_ACTION_ZOOM_OUT;
+			}
+		}
+		break;
 	default:
 		break;
 	}
