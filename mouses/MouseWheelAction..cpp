@@ -1,10 +1,11 @@
 #include "MouseWheelAction.h"
 #include "../NotepadForm.h"
 #include "../ScrollController.h"
+#if 0
 #include "../scrolls/ScrollBarAction.h"
 #include "../scrolls/VScrollBarUpClickAction.h"
 #include "../scrolls/VScrollBarDownClickAction.h"
-
+#endif
 #pragma warning(disable:4996)
 
 MouseWheelAction::MouseWheelAction(CWnd* parent, CPoint point, short zDelta)
@@ -32,7 +33,7 @@ void MouseWheelAction::Perform() {
 
 		//1.2. 반복 횟수를 정한다.
 		Long count = zDelta / DELTA_PER_TICK;
-
+#if 0
 		//1.3. 방향에 따라 반복한다.
 		ScrollBarAction* action = NULL;
 		if (isUp)
@@ -53,5 +54,6 @@ void MouseWheelAction::Perform() {
 		{
 			delete action;
 		}
+#endif
 	}
 }

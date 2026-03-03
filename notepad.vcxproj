@@ -268,18 +268,6 @@
     <ClCompile Include="Scroll.cpp" />
     <ClCompile Include="ScrollBarAnalyzer.cpp" />
     <ClCompile Include="ScrollController.cpp" />
-    <ClCompile Include="scrolls\HScrollBarDragAction.cpp" />
-    <ClCompile Include="scrolls\HScrollBarLeftClickAction.cpp" />
-    <ClCompile Include="scrolls\HScrollBarPageLeftAction.cpp" />
-    <ClCompile Include="scrolls\HScrollBarPageRightAction.cpp" />
-    <ClCompile Include="scrolls\HScrollBarRightClickAction.cpp" />
-    <ClCompile Include="scrolls\ScrollBarAction.cpp" />
-    <ClCompile Include="scrolls\ScrollBarActionFactory.cpp" />
-    <ClCompile Include="scrolls\VScrollBarDownClickAction.cpp" />
-    <ClCompile Include="scrolls\VScrollBarDragAction.cpp" />
-    <ClCompile Include="scrolls\VScrollBarPageDownAction.cpp" />
-    <ClCompile Include="scrolls\VScrollBarPageUpAction.cpp" />
-    <ClCompile Include="scrolls\VScrollBarUpClickAction.cpp" />
     <ClCompile Include="searches\BruteForce.cpp" />
     <ClCompile Include="searches\BruteForceWhole.cpp" />
     <ClCompile Include="searches\CaseInsensitiveComparer.cpp" />
@@ -447,18 +435,6 @@
     <ClInclude Include="Scroll.h" />
     <ClInclude Include="ScrollBarAnalyzer.h" />
     <ClInclude Include="ScrollController.h" />
-    <ClInclude Include="scrolls\HScrollBarDragAction.h" />
-    <ClInclude Include="scrolls\HScrollBarLeftClickAction.h" />
-    <ClInclude Include="scrolls\HScrollBarPageLeftAction.h" />
-    <ClInclude Include="scrolls\HScrollBarPageRightAction.h" />
-    <ClInclude Include="scrolls\HScrollBarRightClickAction.h" />
-    <ClInclude Include="scrolls\ScrollBarAction.h" />
-    <ClInclude Include="scrolls\ScrollBarActionFactory.h" />
-    <ClInclude Include="scrolls\VScrollBarDownClickAction.h" />
-    <ClInclude Include="scrolls\VScrollBarDragAction.h" />
-    <ClInclude Include="scrolls\VScrollBarPageDownAction.h" />
-    <ClInclude Include="scrolls\VScrollBarPageUpAction.h" />
-    <ClInclude Include="scrolls\VScrollBarUpClickAction.h" />
     <ClInclude Include="searches\BruteForce.h" />
     <ClInclude Include="searches\BruteForceWhole.h" />
     <ClInclude Include="searches\CaseInsensitiveComparer.h" />
@@ -485,6 +461,3 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
-
-
-

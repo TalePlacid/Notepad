@@ -25,12 +25,6 @@
     <Filter Include="소스 파일\commands">
       <UniqueIdentifier>{3dce653b-4814-4d05-8b97-a4b1b53d45b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\scrolls">
-      <UniqueIdentifier>{12d522c4-88b0-4596-8efe-e3f6c17761d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\scrolls">
-      <UniqueIdentifier>{ed796522-ae0d-4581-8eac-7b2bbb9f9d65}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\prints">
       <UniqueIdentifier>{5046ff38-c01f-476c-b33c-7879e7753d7f}</UniqueIdentifier>
     </Filter>
@@ -157,42 +151,6 @@
     </ClCompile>
     <ClCompile Include="Subject.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\HScrollBarDragAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\HScrollBarLeftClickAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\HScrollBarPageLeftAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\HScrollBarPageRightAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\HScrollBarRightClickAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\ScrollBarAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\ScrollBarActionFactory.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\VScrollBarDownClickAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\VScrollBarDragAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\VScrollBarPageDownAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\VScrollBarPageUpAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls\VScrollBarUpClickAction.cpp">
-      <Filter>소스 파일\scrolls</Filter>
     </ClCompile>
     <ClCompile Include="ClipboardController.cpp">
       <Filter>소스 파일</Filter>
@@ -679,42 +637,6 @@
     <ClInclude Include="Observer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="scrolls\HScrollBarDragAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\HScrollBarLeftClickAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\HScrollBarPageLeftAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\HScrollBarPageRightAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\HScrollBarRightClickAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\ScrollBarAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\ScrollBarActionFactory.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\VScrollBarDownClickAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\VScrollBarDragAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\VScrollBarPageDownAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\VScrollBarPageUpAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls\VScrollBarUpClickAction.h">
-      <Filter>헤더 파일\scrolls</Filter>
-    </ClInclude>
     <ClInclude Include="ClipboardController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -1115,6 +1037,3 @@
     </None>
   </ItemGroup>
 </Project>
-
-
-
