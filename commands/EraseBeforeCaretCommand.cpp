@@ -1,4 +1,4 @@
-#include "EraseCommand.h"
+#include "EraseBeforeCaretCommand.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
@@ -11,17 +11,17 @@
 
 #pragma warning(disable:4996)
 
-EraseCommand::EraseCommand(CWnd* parent, BOOL onChar)
+EraseBeforeCaretCommand::EraseBeforeCaretCommand(CWnd* parent, BOOL onChar)
 	:Command(parent) {
 	this->onChar = onChar;
 	this->offset = -1;
 }
 
-EraseCommand::~EraseCommand() {
+EraseBeforeCaretCommand::~EraseBeforeCaretCommand() {
 
 }
 
-EraseCommand::EraseCommand(const EraseCommand& source)
+EraseBeforeCaretCommand::EraseBeforeCaretCommand(const EraseBeforeCaretCommand& source)
 	:Command(source) {
 	this->character[0] = source.character[0];
 	this->character[1] = source.character[1];
@@ -29,7 +29,7 @@ EraseCommand::EraseCommand(const EraseCommand& source)
 	this->offset = source.offset;
 }
 
-EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
+EraseBeforeCaretCommand& EraseBeforeCaretCommand::operator=(const EraseBeforeCaretCommand& source) {
 	Command::operator=(source);
 
 	this->character[0] = source.character[0];
@@ -40,7 +40,7 @@ EraseCommand& EraseCommand::operator=(const EraseCommand& source) {
 	return *this;
 }
 
-void EraseCommand::Execute() {
+void EraseBeforeCaretCommand::Execute() {
 	//1. 파일의 시작 위치가 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (pagingBuffer->GetCurrentOffset() > 0
@@ -128,7 +128,7 @@ void EraseCommand::Execute() {
 	}
  }
 
-void EraseCommand::Undo() {
+void EraseBeforeCaretCommand::Undo() {
 	//1. 오프셋이 존재하면,
 	if (this->offset >= 0)
 	{
@@ -193,7 +193,7 @@ void EraseCommand::Undo() {
 	}
 }
 
-void EraseCommand::Redo() {
+void EraseBeforeCaretCommand::Redo() {
 	//1. 오프셋이 존재하면,
 	if (this->offset >= 0) 
 	{
@@ -270,7 +270,7 @@ void EraseCommand::Redo() {
 	}
 }
 
-Command* EraseCommand::Clone() {
-	return new EraseCommand(*this);
+Command* EraseBeforeCaretCommand::Clone() {
+	return new EraseBeforeCaretCommand(*this);
 }
 

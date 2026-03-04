@@ -420,24 +420,26 @@ void Editor::MoveDown() {
 }
 
 void Editor::DragUp(CPoint point) {
-	//1. ??? ?? ??? ????.
+	//1. 좌표를 노트 위치로 변환한다.
 	CoordinateConverter coordinateConverter(this->parent);
 	Long rowIndex;
 	Long columnIndex;
 	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
-	//2. ?? ?? ??? ???.
+	
+	//2. 현재 커서 정보를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = row->GetCurrent();
-	//3. ?? ??? ?? ?? ????.
+	
+	//3. 목표 줄까지 위로 선택 이동한다.
 	Glyph* previousRow;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Scroll vScroll;
 	Long difference;
 	while (currentRowIndex > rowIndex)
 	{
-		//3.1. ?? ?? ??? ????.
+		//3.1. 현재 줄의 앞쪽을 선택한다.
 		while (currentColumnIndex > 0)
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
@@ -446,7 +448,8 @@ void Editor::DragUp(CPoint point) {
 			pagingBuffer->Previous();
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
-		//3.2. ???? ?? ???? ????.
+		
+		//3.2. 필요하면 이전 페이지를 적재한다.
 		if (note->IsAboveTopLine(currentRowIndex) && vScroll.GetPos() > 0)
 		{
 			difference = currentRowIndex - rowIndex;
@@ -454,7 +457,8 @@ void Editor::DragUp(CPoint point) {
 			currentRowIndex = note->GetCurrent();
 			rowIndex = currentRowIndex - difference;
 		}
-		//3.3. ?? ?? ????.
+		
+		//3.3. 이전 줄로 이동한다.
 		previousRow = row;
 		currentRowIndex = note->Previous();
 		row = note->GetAt(currentRowIndex);
@@ -466,7 +470,8 @@ void Editor::DragUp(CPoint point) {
 			pagingBuffer->Last();
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
-		//3.4. ?? ??? ????.
+		
+		//3.4. 목표 칸까지 선택한다.
 		while (currentColumnIndex > columnIndex)
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
@@ -478,17 +483,19 @@ void Editor::DragUp(CPoint point) {
 	}
 }
 void Editor::DragDown(CPoint point) {
-	//1. ??? ?? ??? ????.
+	//1. 좌표를 노트 위치로 변환한다.
 	CoordinateConverter coordinateConverter(this->parent);
 	Long rowIndex;
 	Long columnIndex;
 	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
-	//2. ?? ?? ??? ???.
+	
+	//2. 현재 커서 정보를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = row->GetCurrent();
-	//3. ?? ??? ??? ?? ????.
+	
+	//3. 목표 줄까지 아래로 선택 이동한다.
 	Glyph* previousRow;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
@@ -497,7 +504,7 @@ void Editor::DragDown(CPoint point) {
 	Long difference;
 	while (currentRowIndex < rowIndex)
 	{
-		//3.1. ?? ?? ??? ????.
+		//3.1. 현재 줄의 뒤쪽을 선택한다.
 		while (currentColumnIndex < row->GetLength())
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
@@ -506,7 +513,8 @@ void Editor::DragDown(CPoint point) {
 			pagingBuffer->Next();
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
-		//3.2. ???? ?? ???? ????.
+		
+		//3.2. 필요하면 다음 페이지를 적재한다.
 		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetPos())
 		{
 			difference = rowIndex - currentRowIndex;
@@ -514,7 +522,8 @@ void Editor::DragDown(CPoint point) {
 			currentRowIndex = note->GetCurrent();
 			rowIndex = currentRowIndex + difference;
 		}
-		//3.3. ?? ?? ????.
+		
+		//3.3. 다음 줄로 이동한다.
 		previousRow = row;
 		currentRowIndex = note->Next();
 		row = note->GetAt(currentRowIndex);
@@ -525,7 +534,8 @@ void Editor::DragDown(CPoint point) {
 			pagingBuffer->NextRow();
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
-		//3.4. ?? ??? ????.
+		
+		//3.4. 목표 칸까지 선택한다.
 		while (currentColumnIndex < columnIndex && currentColumnIndex < row->GetLength())
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
@@ -537,17 +547,19 @@ void Editor::DragDown(CPoint point) {
 	}
 }
 void Editor::DragLeft(CPoint point) {
-	//1. ??? ?? ??? ????.
+	//1. 좌표를 노트 위치로 변환한다.
 	CoordinateConverter coordinateConverter(this->parent);
 	Long rowIndex;
 	Long columnIndex;
 	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
-	//2. ?? ?? ??? ???.
+	
+	//2. 현재 커서 정보를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = row->GetCurrent();
-	//3. ?? ??? ???? ?? ????.
+	
+	//3. 목표 칸까지 왼쪽으로 선택 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	while (currentColumnIndex > columnIndex)
 	{
@@ -559,17 +571,19 @@ void Editor::DragLeft(CPoint point) {
 	}
 }
 void Editor::DragRight(CPoint point) {
-	//1. ??? ?? ??? ????.
+	//1. 좌표를 노트 위치로 변환한다.
 	CoordinateConverter coordinateConverter(this->parent);
 	Long rowIndex;
 	Long columnIndex;
 	coordinateConverter.AbsoluteToNotePosition(point, rowIndex, columnIndex);
-	//2. ?? ?? ??? ???.
+	
+	//2. 현재 커서 정보를 읽는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = row->GetCurrent();
-	//3. ?? ??? ????? ?? ????.
+	
+	//3. 목표 칸까지 오른쪽으로 선택 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	while (currentColumnIndex < columnIndex)
 	{

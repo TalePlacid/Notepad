@@ -31,7 +31,7 @@ BOOL KeyDownInterpreter::IsCommand(AppID nID) {
 
 	switch (nID)
 	{
-	case AppID::ID_COMMAND_ERASE:
+	case AppID::ID_COMMAND_ERASE_BEFORE_CARET:
 	case AppID::ID_COMMAND_PASTE:
 	case AppID::ID_COMMAND_CUT:
 		isCommand = TRUE;
@@ -118,7 +118,7 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		}
 		break;
 	case VK_DELETE:
-		nID = AppID::ID_COMMAND_ERASE;
+		nID = AppID::ID_COMMAND_ERASE_BEFORE_CARET;
 		break;
 	case VK_HOME:
 		if (onCtrlKey && onShiftKey)
@@ -185,7 +185,7 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		}
 		break;
 	case VK_BACK:
-		nID = AppID::ID_COMMAND_ERASE;
+		nID = AppID::ID_COMMAND_ERASE_BEFORE_CARET;
 		break;
 	case VK_OEM_PLUS:
 	case VK_ADD:

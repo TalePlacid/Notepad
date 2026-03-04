@@ -1,5 +1,6 @@
 #include "BruteForce.h"
 #include "Comparer.h"
+#include "../ByteChecker.h"
 
 #pragma warning(disable:4996)
 

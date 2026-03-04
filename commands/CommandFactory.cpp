@@ -4,7 +4,7 @@
 #include "CommandFactory.h"
 #include "WriteAtEndCommand.h"
 #include "InsertAtCaretCommand.h"
-#include "EraseCommand.h"
+#include "EraseBeforeCaretCommand.h"
 #include "PasteCommand.h"
 #include "EraseRangeCommand.h"
 #include "CutCommand.h"
@@ -33,14 +33,14 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 	case AppID::ID_COMMAND_INSERT_AT_CARET:
 		command = new InsertAtCaretCommand(parent, character, onChar);
 		break;
-	case AppID::ID_COMMAND_ERASE:
+	case AppID::ID_COMMAND_ERASE_BEFORE_CARET:
 		if (isSelected)
 		{
 			command = new EraseRangeCommand(parent);
 		}
 		else
 		{
-			command = new EraseCommand(parent, onChar);
+			command = new EraseBeforeCaretCommand(parent, onChar);
 		}
 		break;
 	case AppID::ID_COMMAND_PASTE:

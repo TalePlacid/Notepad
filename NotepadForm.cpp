@@ -38,14 +38,12 @@
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
 #include "actions/ActionFactory.h"
-#include "mouses/MouseActionFactory.h"
 
 #include "prints/PreviewForm.h"
 #include "Caret.h"
 #include "glyphs/Glyph.h"
 #include "commands/Command.h"
 #include "actions/Action.h"
-#include "mouses/MouseAction.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -290,7 +288,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 		}
 		else if (length == 0)
 		{
-			this->HandleCommand(AppID::ID_COMMAND_ERASE, NULL, FALSE);
+			this->HandleCommand(AppID::ID_COMMAND_ERASE_BEFORE_CARET, NULL, FALSE);
 			this->isCompositing = FALSE;
 		}
 
