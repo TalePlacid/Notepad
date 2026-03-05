@@ -12,6 +12,10 @@ SelectionVisitor::SelectionVisitor(CWnd* parent, CDC* dc, COLORREF highlightBkCo
 	this->defaultTextColor = dc->GetTextColor();
 	this->highlightBkColor = highlightBkColor;
 	this->highlightTextColor = highlightTextColor;
+
+    //기본 투명 배경
+    this->dc->SetBkMode(TRANSPARENT);
+    this->dc->SetTextColor(this->defaultTextColor);
 }
 
 SelectionVisitor::~SelectionVisitor() {
@@ -19,16 +23,17 @@ SelectionVisitor::~SelectionVisitor() {
 }
 
 void SelectionVisitor::VisitCharacter(Glyph* character) {
-	if (character->IsSelected() && !this->isHighlighted)
-	{
-		this->dc->SetBkColor(this->highlightBkColor);
-		this->dc->SetTextColor(this->highlightTextColor);
-		this->isHighlighted = TRUE;
-	}
-	else if (!character->IsSelected() && this->isHighlighted)
-	{
-		this->dc->SetBkColor(this->defaultBkColor);
-		this->dc->SetTextColor(this->defaultTextColor);
-		this->isHighlighted = FALSE;
-	}
+    if (character->IsSelected() && !this->isHighlighted)
+    {
+        this->dc->SetBkMode(OPAQUE);
+        this->dc->SetBkColor(this->highlightBkColor);
+        this->dc->SetTextColor(this->highlightTextColor);
+        this->isHighlighted = TRUE;
+    }
+    else if (!character->IsSelected() && this->isHighlighted)
+    {
+        this->dc->SetBkMode(TRANSPARENT);
+        this->dc->SetTextColor(this->defaultTextColor);
+        this->isHighlighted = FALSE;
+    }
 }

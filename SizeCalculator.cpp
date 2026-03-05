@@ -17,6 +17,11 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	for (Long i = 0; i < 95; i++)
 	{
 		character = i + 32;
+#if 0
+		ABC abc;
+		cdc->GetCharABCWidthsA(character, character, &abc);
+		this->singleByteWidths[i] = abc.abcA + abc.abcB + abc.abcC;
+#endif
 		this->singleByteWidths[i] = cdc->GetTextExtent(CString(character)).cx;
 		if (this->singleByteWidths[i] > maxCharacterWidth)
 		{
