@@ -18,7 +18,7 @@ bool ByteChecker::IsLeadByte(char* character) {
 	return static_cast<unsigned char>(*character) & 0x80;
 }
 
-bool ByteChecker::IsTailByte(char* character) {
+bool ByteChecker::IsTrailByte(char* character) {
 	unsigned char character_ = static_cast<unsigned char>(*character);
 
 	return (character_ > 0x7F) && !(character_ & 0x80);

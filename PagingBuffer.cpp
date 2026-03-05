@@ -119,7 +119,7 @@ Glyph* PagingBuffer::LoadPrevious() {
 	{
 		fseek(this->file, j, SEEK_SET);
 		fread(&character, 1, 1, this->file);
-		if (byteChecker.IsTailByte(&character) || character == '\n')
+		if (byteChecker.IsTrailByte(&character) || character == '\n')
 		{
 			i--;
 			j++;
