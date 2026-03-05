@@ -47,7 +47,7 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 	{
 		//3.1. 문자를 읽는다.
 		character[0] = text.GetAt(i);
-		if (byteChecker.IsLeadByte(character) || character[0] == '\r')
+		if (!byteChecker.IsASCII(character) || character[0] == '\r')
 		{
 			character[1] = text.GetAt(++i);
 		}
@@ -130,7 +130,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 			//3.1.1. 구한다.
 			character = (char*)*row->GetAt(currentColumnIndex);
 			characterByte = 1;
-			if (byteChecker.IsLeadByte(character))
+			if (!byteChecker.IsASCII(character))
 			{
 				characterByte = 2;
 			}
@@ -243,7 +243,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		if (currentColumnIndex < row->GetLength())
 		{
 			character[0] = replacingText.GetAt(j);
-			if (byteChecker.IsLeadByte(character))
+			if (!byteChecker.IsASCII(character))
 			{
 				character[1] = replacingText.GetAt(++j);
 			}
@@ -271,7 +271,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		while (j < replacingText.GetLength())
 		{
 			character[0] = replacingText.GetAt(j);
-			if (byteChecker.IsLeadByte(character))
+			if (!byteChecker.IsASCII(character))
 			{
 				character[1] = replacingText.GetAt(++j);
 			}
@@ -648,7 +648,7 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 			{
 				characterLength = 1;
 				character = row->GetAt(columnIndex);
-				if (byteChecker.IsLeadByte((char*)*character))
+				if (!byteChecker.IsASCII((char*)*character))
 				{
 					characterLength = 2;
 				}
@@ -728,7 +728,7 @@ bool Editor::FindPrevious() {
 			{
 				characterLength = 1;
 				character = row->GetAt(columnIndex);
-				if (byteChecker.IsLeadByte((char*)*character))
+				if (!byteChecker.IsASCII((char*)*character))
 				{
 					characterLength = 2;
 				}
@@ -806,7 +806,7 @@ bool Editor::FindNext() {
 			{
 				characterLength = 1;
 				character = row->GetAt(columnIndex);
-				if (byteChecker.IsLeadByte((char*)*character))
+				if (!byteChecker.IsASCII((char*)*character))
 				{
 					characterLength = 2;
 				}

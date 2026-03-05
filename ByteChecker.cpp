@@ -1,3 +1,4 @@
+#include <afxwin.h>
 #include "ByteChecker.h"
 
 #pragma warning(disable:4996)
@@ -10,21 +11,34 @@ ByteChecker::~ByteChecker() {
 
 }
 
-bool ByteChecker::IsASCII(char* character) {
+bool ByteChecker::IsASCII(const char* character) {
 	return static_cast<unsigned char>(*character) <= 0x7F;
 }
 
-bool ByteChecker::IsLeadByte(char* character) {
-	return static_cast<unsigned char>(*character) & 0x80;
+bool ByteChecker::IsLeadByte(const char* firstByte, const char* secondByte) {
+	//1. 첫 바이트가 리드 바이트 후보인지 판별한다.
+	bool ret = false;
+	const unsigned char firstByte_ = static_cast<const unsigned char>(*firstByte);
+	const unsigned char secondByte_ = static_cast<const unsigned char>(*secondByte);
+
+	BOOL isLeadCandidate = IsDBCSLeadByteEx(CP_ACP, (BYTE)firstByte_);
+
+	//2. 리드 바이트 후보라면,
+	if (isLeadCandidate)
+	{
+		//2.1. 두번째 바이트가 트레일 바이트 범위에 있는지 확인한다.
+		if ((secondByte_ >= 0x41 && secondByte_ <= 0x5A)
+			|| (secondByte_ >= 0x61 && secondByte_ <= 0x7A)
+			|| (secondByte_ >= 0x81 && secondByte_ <= 0xFE))
+		{
+			ret = true;
+		}
+	}
+
+	return ret;
 }
 
-bool ByteChecker::IsTrailByte(char* character) {
-	unsigned char character_ = static_cast<unsigned char>(*character);
-
-	return (character_ > 0x7F) && !(character_ & 0x80);
-}
-
-bool ByteChecker::IsAlphabet(char* character) {
+bool ByteChecker::IsAlphabet(const char* character) {
 	bool ret = false;
 	unsigned char character_ = static_cast<unsigned char>(*character);
 
@@ -37,13 +51,13 @@ bool ByteChecker::IsAlphabet(char* character) {
 	return ret;
 }
 
-bool ByteChecker::IsCapital(char* character) {
+bool ByteChecker::IsCapital(const char* character) {
 	unsigned char character_ = static_cast<unsigned char>(*character);
 	
 	return character_ >= 65 && *character <= 90;
 }
 
-bool ByteChecker::IsWordCharacter(char* character) {
+bool ByteChecker::IsWordCharacter(const char* character) {
 	unsigned char character_ = static_cast<unsigned char>(*character);
 	bool ret = false;
 

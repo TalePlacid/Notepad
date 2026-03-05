@@ -1,6 +1,5 @@
 #ifndef _BYTECHECKER_H //guard
 #define _BYTECHECKER_H
-#include <afxwin.h>
 
 typedef signed long int Long;
 
@@ -9,12 +8,11 @@ public:
 	ByteChecker();
 	~ByteChecker();
 
-	bool IsASCII(char* character);
-	bool IsLeadByte(char* character);
-	bool IsTrailByte(char* character);
-	bool IsAlphabet(char* character);
-	bool IsCapital(char* character);
-	bool IsWordCharacter(char* character);
+	bool IsASCII(const char* character);
+	bool IsLeadByte(const char* firstByte, const char* secondByte);
+	bool IsAlphabet(const char* character);
+	bool IsCapital(const char* character);
+	bool IsWordCharacter(const char* character);
 	Long CheckUtf8FirstByte(const char* character);
 	bool IsUtf8ContinuationByte(const char* character);
 };

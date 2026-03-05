@@ -117,12 +117,19 @@ Glyph* PagingBuffer::LoadPrevious() {
 	ByteChecker byteChecker;
 	if (i >= this->pageSize)
 	{
-		fseek(this->file, j, SEEK_SET);
-		fread(&character, 1, 1, this->file);
-		if (byteChecker.IsTrailByte(&character) || character == '\n')
+		if (j > 0)
 		{
-			i--;
-			j++;
+			fseek(this->file, j, SEEK_SET);
+			fread(&character, 1, 1, this->file);
+
+			TCHAR previousCharacter;
+			fseek(this->file, j - 1, SEEK_SET);
+			fread(&previousCharacter, 1, 1, this->file);
+			if (byteChecker.IsLeadByte(&previousCharacter, &character) || previousCharacter == '\r')
+			{
+				i--;
+				j++;
+			}
 		}
 	}
 	else if (rowCount >= loadingRowCount) //3. 적재줄수를 모두 채웠다면, 개행문자를 제외한다.
@@ -175,7 +182,7 @@ Glyph* PagingBuffer::LoadNext() {
 
 	//2. 페이지 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.
 	ByteChecker byteChecker;
-	if (i >= this->pageSize && (byteChecker.IsLeadByte(contents + i - 1) || contents[i - 1] == '\r'))
+	if (i >= this->pageSize && (!byteChecker.IsASCII(contents + i - 1) || contents[i - 1] == '\r'))
 	{
 		i -= 2;
 	}
@@ -205,7 +212,7 @@ Long PagingBuffer::Add(char(*character)) {
 
 	Long characterLength = 1;
 	ByteChecker byteChecker;
-	if (byteChecker.IsLeadByte(character) || character[0] == '\r')
+	if (!byteChecker.IsASCII(character) || character[0] == '\r')
 	{
 		characterLength = 2;
 	}
@@ -295,9 +302,15 @@ Long PagingBuffer::Remove() {
 
 		Long characterLength = 1;
 		ByteChecker byteChecker;
-		if (!byteChecker.IsASCII(&character) || character == '\n')
+		if (currentOffset > 1)
 		{
-			characterLength = 2;
+			fseek(this->file, currentOffset - 2, SEEK_SET);
+			TCHAR letter;
+			fread(&letter, 1, 1, this->file);
+			if (character == '\n' || byteChecker.IsLeadByte(&letter, &character))
+			{
+				characterLength = 2;
+			}
 		}
 
 		fseek(this->file, 0, SEEK_END);

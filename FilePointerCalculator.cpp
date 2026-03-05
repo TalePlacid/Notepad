@@ -45,18 +45,18 @@ Long FilePointerCalculator::Previous(Long offset) {
 	Long previousOffset = offset;
 	if (offset > 0)
 	{
-		TCHAR character;
-		fseek(file, offset - 1, SEEK_SET);
-		fread(&character, 1, 1, file);
+		previousOffset = offset - 1;
+		if (offset > 1)
+		{
+			TCHAR previousBytes[2];
+			fseek(file, offset - 2, SEEK_SET);
+			fread(previousBytes, 1, 2, file);
 
-		ByteChecker byteChecker;
-		if (!byteChecker.IsASCII(&character))
-		{
-			previousOffset = offset - 2;
-		}
-		else if (character != '\n')
-		{
-			previousOffset = offset - 1;
+			ByteChecker byteChecker;
+			if (byteChecker.IsLeadByte(previousBytes, previousBytes +1) || previousBytes[0] == '\r')
+			{
+				previousOffset = offset - 2;
+			}
 		}
 	}
 
