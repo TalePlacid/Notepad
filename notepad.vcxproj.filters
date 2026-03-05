@@ -31,12 +31,6 @@
     <Filter Include="소스 파일\prints">
       <UniqueIdentifier>{1a2ab3e3-563c-4ec2-87d9-c3578efad857}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\mouses">
-      <UniqueIdentifier>{c2bc9a1a-ec2b-47f8-b8cc-8a1e79478d0d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\mouses">
-      <UniqueIdentifier>{e22403ee-f801-47f0-9983-7d788824755f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\searches">
       <UniqueIdentifier>{06c2e7c5-bfce-4e6f-b51f-e340378f4c25}</UniqueIdentifier>
     </Filter>
@@ -199,33 +193,6 @@
     </ClCompile>
     <ClCompile Include="prints\PrintRenderer.cpp">
       <Filter>소스 파일\prints</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\DragDownAction.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\DragLeftAction.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\DragRightAction.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\DragUpAction.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\MouseAction.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\MouseActionFactory.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\MouseCtrlWheelAction.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\MouseLeftDownAction.cpp">
-      <Filter>소스 파일\mouses</Filter>
-    </ClCompile>
-    <ClCompile Include="mouses\MouseWheelAction..cpp">
-      <Filter>소스 파일\mouses</Filter>
     </ClCompile>
     <ClCompile Include="CoordinateConverter.cpp">
       <Filter>소스 파일</Filter>
@@ -539,6 +506,9 @@
     <ClCompile Include="actions\EndDragAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="commands\EraseAfterCaretCommand.cpp">
+      <Filter>소스 파일\commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -699,33 +669,6 @@
     </ClInclude>
     <ClInclude Include="prints\PrintRenderer.h">
       <Filter>헤더 파일\prints</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\DragDownAction.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\DragLeftAction.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\DragRightAction.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\DragUpAction.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\MouseAction.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\MouseActionFactory.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\MouseCtrlWheelAction.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\MouseLeftDownAction.h">
-      <Filter>헤더 파일\mouses</Filter>
-    </ClInclude>
-    <ClInclude Include="mouses\MouseWheelAction.h">
-      <Filter>헤더 파일\mouses</Filter>
     </ClInclude>
     <ClInclude Include="CoordinateConverter.h">
       <Filter>헤더 파일</Filter>
@@ -1041,6 +984,9 @@
     </ClInclude>
     <ClInclude Include="actions\EndDragAction.h">
       <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\EraseAfterCaretCommand.h">
+      <Filter>헤더 파일\commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

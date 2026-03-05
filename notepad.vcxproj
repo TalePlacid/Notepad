@@ -205,6 +205,7 @@
     <ClCompile Include="commands\Command.cpp" />
     <ClCompile Include="commands\CommandFactory.cpp" />
     <ClCompile Include="commands\CutCommand.cpp" />
+    <ClCompile Include="commands\EraseAfterCaretCommand.cpp" />
     <ClCompile Include="commands\EraseBeforeCaretCommand.cpp" />
     <ClCompile Include="commands\EraseRangeCommand.cpp" />
     <ClCompile Include="commands\InsertAtCaretCommand.cpp" />
@@ -361,6 +362,7 @@
     <ClInclude Include="commands\Command.h" />
     <ClInclude Include="commands\CommandFactory.h" />
     <ClInclude Include="commands\CutCommand.h" />
+    <ClInclude Include="commands\EraseAfterCaretCommand.h" />
     <ClInclude Include="commands\EraseBeforeCaretCommand.h" />
     <ClInclude Include="commands\EraseRangeCommand.h" />
     <ClInclude Include="commands\InsertAtCaretCommand.h" />

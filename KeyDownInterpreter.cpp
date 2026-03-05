@@ -32,6 +32,7 @@ BOOL KeyDownInterpreter::IsCommand(AppID nID) {
 	switch (nID)
 	{
 	case AppID::ID_COMMAND_ERASE_BEFORE_CARET:
+	case AppID::ID_COMMAND_ERASE_AFTER_CARET:
 	case AppID::ID_COMMAND_PASTE:
 	case AppID::ID_COMMAND_CUT:
 		isCommand = TRUE;
@@ -118,7 +119,7 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		}
 		break;
 	case VK_DELETE:
-		nID = AppID::ID_COMMAND_ERASE_BEFORE_CARET;
+		nID = AppID::ID_COMMAND_ERASE_AFTER_CARET;
 		break;
 	case VK_HOME:
 		if (onCtrlKey && onShiftKey)

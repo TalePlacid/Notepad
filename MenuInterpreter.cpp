@@ -100,7 +100,7 @@ AppID MenuInterpreter::DetermineID(UINT nID){
 		appID = AppID::ID_COMMAND_PASTE;
 		break;
 	case ID_MENU_DELETE:
-		appID = AppID::ID_COMMAND_ERASE_BEFORE_CARET;
+		appID = AppID::ID_COMMAND_ERASE_AFTER_CARET;
 		break;
 	case ID_MENU_SELECTALL:
 		appID = AppID::ID_ACTION_SELECT_ALL;
