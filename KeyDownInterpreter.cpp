@@ -227,6 +227,12 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 			nID = AppID::ID_ACTION_OPEN_FIND_DIALOG;
 		}
 		break;
+	case 'G':
+		if (onCtrlKey)
+		{
+			nID = AppID::ID_ACTION_GO_TO;
+		}
+		break;
 	case 'H':
 		if (onCtrlKey)
 		{

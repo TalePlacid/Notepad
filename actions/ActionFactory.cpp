@@ -215,7 +215,7 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 	case AppID::ID_ACTION_OPEN_REPLACE_DIALOG:
 		action = new OpenReplaceDialogAction(parent);
 		break;
-	case AppID::ID_ACTION_GOTO:
+	case AppID::ID_ACTION_GO_TO:
 		action = new GoToAction(parent);
 		break;
 	case AppID::ID_ACTION_FIND:
