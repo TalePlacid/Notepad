@@ -2,6 +2,7 @@
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
 #include "ByteChecker.h"
+#include "TabStopCalculator.h"
 
 #pragma warning(disable:4996)
 
@@ -17,11 +18,6 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	for (Long i = 0; i < 95; i++)
 	{
 		character = i + 32;
-#if 0
-		ABC abc;
-		cdc->GetCharABCWidthsA(character, character, &abc);
-		this->singleByteWidths[i] = abc.abcA + abc.abcB + abc.abcC;
-#endif
 		this->singleByteWidths[i] = cdc->GetTextExtent(CString(character)).cx;
 		if (this->singleByteWidths[i] > maxCharacterWidth)
 		{
@@ -55,7 +51,7 @@ SizeCalculator::~SizeCalculator() {
 	}
 }
 
-Long SizeCalculator::GetCharacterWidth(char(*character)) {
+Long SizeCalculator::GetCharacterWidth(char(*character), Long logicalX) {
 	Long width;
 	
 	if (character[0] & 0x80)
@@ -68,7 +64,7 @@ Long SizeCalculator::GetCharacterWidth(char(*character)) {
 	}
 	else
 	{
-		width = this->singleByteWidths[0] * 8;
+		width = TabStopCalculator::CalculateMarginToNext(logicalX, this->averageCharacterWidth);
 	}
 
 	return width;
@@ -102,7 +98,7 @@ Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
 		}
 		else
 		{
-			width += this->singleByteWidths[0] * 8;
+			width += TabStopCalculator::CalculateMarginToNext(width, this->averageCharacterWidth);
 		}
 		i++;
 	}
@@ -130,7 +126,7 @@ Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
 		}
 		else
 		{
-			rowWidth += this->singleByteWidths[0] * 8;
+			rowWidth += TabStopCalculator::CalculateMarginToNext(rowWidth, this->averageCharacterWidth);
 		}
 		i++;
 	}
@@ -143,5 +139,3 @@ Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
 
 	return index;
 }
-
-

@@ -275,6 +275,7 @@
     <ClCompile Include="StatusBarController.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="SuspendAutoWrap.cpp" />
+    <ClCompile Include="TabStopCalculator.cpp" />
     <ClCompile Include="TextEncoder.cpp" />
     <ClCompile Include="TextFileIO.cpp" />
     <ClCompile Include="TextOutVisitor.cpp" />
@@ -436,6 +437,7 @@
     <ClInclude Include="StatusBarController.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="SuspendAutoWrap.h" />
+    <ClInclude Include="TabStopCalculator.h" />
     <ClInclude Include="TextEncoder.h" />
     <ClInclude Include="TextFileIO.h" />
     <ClInclude Include="TextOutVisitor.h" />

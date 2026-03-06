@@ -12,7 +12,7 @@ public:
 	SizeCalculator(CWnd* parent);
 	~SizeCalculator();
 
-	Long GetCharacterWidth(char(*character));
+	Long GetCharacterWidth(char(*character), Long logicalX);
 	Long GetRowWidth(CString contents);
 	Long GetRowWidth(Glyph* row, Long columnIndex);
 	Long GetNearestColumnIndex(Glyph* row, Long width);

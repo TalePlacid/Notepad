@@ -136,7 +136,8 @@ void PageLoader::LoadPrevious(CWnd* parent) {
 	i = 0;
 	while (i < note->GetLength())
 	{
-		rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());
+		row = note->GetAt(i);
+		rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
 		if (rowWidth > max)
 		{
 			max = rowWidth;
@@ -226,7 +227,8 @@ void PageLoader::LoadNext(CWnd* parent) {
 	i = 0;
 	while (i < note->GetLength())
 	{
-		rowWidth = sizeCalculator->GetRowWidth(note->GetAt(i)->MakeString().c_str());
+		row = note->GetAt(i);
+		rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
 		if (rowWidth > max)
 		{
 			max = rowWidth;

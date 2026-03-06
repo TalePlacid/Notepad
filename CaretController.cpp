@@ -43,7 +43,7 @@ Caret* CaretController::Create() {
 	while (i < columnIndex)
 	{
 		character = row->GetAt(i);
-		width += sizeCalculator->GetCharacterWidth((char*)(*character));
+		width += sizeCalculator->GetCharacterWidth((char*)(*character), width);
 		i++;
 	}
 

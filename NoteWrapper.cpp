@@ -43,7 +43,7 @@ Long NoteWrapper::Wrap() {
 		j = 0;
 		while (j < row->GetLength() && rowWidth < clientAreaWidth)
 		{
-			rowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(j)));
+			rowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(j)), rowWidth);
 			j++;
 		}
 
@@ -129,7 +129,7 @@ Long NoteWrapper::Rewrap() {
 		j = 0;
 		while (j < row->GetLength() && rowWidth < clientAreaWidth)
 		{
-			rowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(j)));
+			rowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(j)), rowWidth);
 			j++;
 		}
 

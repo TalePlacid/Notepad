@@ -509,6 +509,9 @@
     <ClCompile Include="commands\EraseAfterCaretCommand.cpp">
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
+    <ClCompile Include="TabStopCalculator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -987,6 +990,9 @@
     </ClInclude>
     <ClInclude Include="commands\EraseAfterCaretCommand.h">
       <Filter>헤더 파일\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="TabStopCalculator.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -48,13 +48,15 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 	CFont* oldFont = dc->SelectObject(notepadForm->GetDisplayFont());
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long characterWidth = sizeCalculator->GetCharacterWidth((char*)(*character));
+	char* character_ = (char*)(*character);
+	Long characterWidth = sizeCalculator->GetCharacterWidth(character_, this->logicalX);
 	Long rowHeight = sizeCalculator->GetRowHeight();
 
 	if (this->logicalX + characterWidth > this->drawingArea.left
 		&& this->logicalX < this->drawingArea.right
 		&& this->logicalY + rowHeight >= this->drawingArea.top
-		&& this->logicalY < this->drawingArea.bottom)
+		&& this->logicalY < this->drawingArea.bottom
+		&& character_[0] != '\t')
 	{
 		this->selectionVisitor->VisitCharacter(character);
 
@@ -64,7 +66,7 @@ void TextOutVisitor::VisitCharacter(Glyph* character) {
 		dc->TextOut(drawingX, drawingY, CString(character->MakeString().c_str()));
 	}
 
-	this->logicalX += notepadForm->sizeCalculator->GetCharacterWidth((char*)(*character));
+	this->logicalX += characterWidth;
 
 	dc->SelectObject(oldFont);
 }

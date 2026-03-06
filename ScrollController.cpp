@@ -160,14 +160,14 @@ void ScrollController::Update(Subject* subject, string interest) {
 			Long i = 0;
 			while (i < currentColumn && i < row->GetLength())
 			{
-				width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
+				width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)), width);
 				i++;
 			}
 
 			Long characterWidth = 0;
 			if (currentColumn < row->GetLength())
 			{
-				characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(currentColumn)));
+				characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(currentColumn)), width);
 			}
 
 			Long rangeStart = this->hScroll.GetPos();
@@ -243,14 +243,14 @@ bool ScrollController::IsOnHScrollRange() {
 		Long i = 0;
 		while (i < columnIndex)
 		{
-			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)));
+			width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)), width);
 			i++;
 		}
 
 		Long characterWidth = 0;
 		if (columnIndex < row->GetLength() - 1)
 		{
-			characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(columnIndex)));
+			characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(columnIndex)), width);
 		}
 
 		Long rangeStart = this->hScroll.GetPos();

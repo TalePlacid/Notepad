@@ -6,6 +6,7 @@
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
 #include "../glyphs/Glyph.h"
+#include "../TabStopCalculator.h"
 
 #pragma warning(disable:4996)
 
@@ -35,7 +36,6 @@ void PrintRenderer::Render(CDC* dc) {
     //3. 본문을 쓴다.
     PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
     Glyph* note = ((NotepadForm*)(this->parent))->note;
-    CString row;
     y = margin.up;
     Long rowHeight = this->printerResource->GetRowHeight();
     Long rowCountPerPage = this->paginator->GetRowCountPerPage();
@@ -43,9 +43,39 @@ void PrintRenderer::Render(CDC* dc) {
     Long pageStartIndex = (current - 1) * rowCountPerPage;
     Long i = pageStartIndex - pagingBuffer->GetRowStartIndex();
     Long nextPageIndex = i + rowCountPerPage;
+
+    TEXTMETRIC textMetric;
+    dc->GetTextMetrics(&textMetric);
+    Long averageCharacterWidth = textMetric.tmAveCharWidth;
+
+    Glyph* row;
+    Glyph* character;
+    char* character_;
+    CString text;
+    Long logicalX;
+    Long characterWidth;
+    Long j;
     while (i < nextPageIndex && i < note->GetLength()) {
-        row.Format("%s", note->GetAt(i)->MakeString().c_str());
-        dc->TextOut(x, y, (LPCSTR)row, row.GetLength());
+        row = note->GetAt(i);
+        logicalX = 0;
+
+        j = 0;
+        while (j < row->GetLength()) {
+            character = row->GetAt(j);
+            character_ = (char*)(*character);
+            if (character_[0] != '\t') {
+                text = CString(character->MakeString().c_str());
+                dc->TextOut(x + logicalX, y, (LPCSTR)text, text.GetLength());
+                characterWidth = dc->GetTextExtent(text).cx;
+            }
+            else {
+                characterWidth = TabStopCalculator::CalculateMarginToNext(logicalX, averageCharacterWidth);
+            }
+
+            logicalX += characterWidth;
+            j++;
+        }
+
         y += rowHeight;
         i++;
     }
@@ -54,4 +84,3 @@ void PrintRenderer::Render(CDC* dc) {
     y = (this->printerResource->GetPhysicalHeight() - margin.down / 2);
     dc->TextOut(x, y, pageSetting.footer, pageSetting.footer.GetLength());
 }
-

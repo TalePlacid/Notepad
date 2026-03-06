@@ -59,7 +59,7 @@ void ScrollBarAnalyzer::AnalyzeWithoutWrap() {
 	while (i < note->GetLength())
 	{
 		row = note->GetAt(i);
-		width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
+		width = sizeCalculator->GetRowWidth(row, row->GetLength());
 		if (width > this->contentsWidth)
 		{
 			this->contentsWidth = width;
