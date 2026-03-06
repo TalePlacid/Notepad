@@ -7,7 +7,7 @@
 
 DragAction::DragAction(CWnd* parent, CPoint point)
 	:Action(parent), point(point) {
-
+	this->isMoved = FALSE;
 }
 
 DragAction::~DragAction() {
@@ -18,9 +18,13 @@ void DragAction::Perform() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	MouseHandler* mouseHandler = notepadForm->mouseHandler;
 	Direction direction = mouseHandler->CheckDirection(this->point);
-	Editor editor(this->parent);
+	if (direction != DIRECTION_NONE)
+	{
+		this->isMoved = TRUE;
+	}
 
 	//1. 방향에 맞는 에디터 드래그 메서드를 실행한다.
+	Editor editor(this->parent);
 	switch (direction)
 	{
 	case DIRECTION_UP:

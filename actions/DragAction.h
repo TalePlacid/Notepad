@@ -15,10 +15,11 @@ public:
 	virtual bool ShouldKeepSelection();
 private:
 	CPoint point;
+	BOOL isMoved;
 };
 
 inline bool DragAction::NeedUpdateLatestPoint() {
-	return true;
+	return this->isMoved;
 }
 
 inline bool DragAction::ShouldKeepSelection() {
