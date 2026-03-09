@@ -15,13 +15,13 @@ bool CaseInsensitiveComparer::Compare(char& one, char& other) {
 	char one_ = one;
 	char other_ = other;
 	
-	ByteChecker byteChecker;
-	if (byteChecker.IsCapital(&one_))
+	
+	if (ByteChecker::IsCapital(&one_))
 	{
 		one_ += 32;
 	}
 
-	if (byteChecker.IsCapital(&other_))
+	if (ByteChecker::IsCapital(&other_))
 	{
 		other_ += 32;
 	}

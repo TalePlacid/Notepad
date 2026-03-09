@@ -28,14 +28,14 @@ Long RowCounter::CountRow(CString contents) {
 }
 
 Long RowCounter::CountCharacters(CString row) {
-	ByteChecker byteChecker;
+	
 	TCHAR character[2];
 	Long count = 0;
 	Long i = 0;
 	while (i < row.GetLength())
 	{
 		character[0] = row[i];
-		if (!byteChecker.IsASCII(character))
+		if (!ByteChecker::IsASCII(character))
 		{
 			character[1] = row[++i];
 		}

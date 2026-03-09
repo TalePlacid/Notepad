@@ -1,6 +1,7 @@
 #include "FilePointerCalculator.h"
 #include "PagingBuffer.h"
 #include "ByteChecker.h"
+#include "LeadByteChecker.h"
 
 #pragma warning(disable:4996)
 
@@ -52,8 +53,8 @@ Long FilePointerCalculator::Previous(Long offset) {
 			fseek(file, offset - 2, SEEK_SET);
 			fread(previousBytes, 1, 2, file);
 
-			ByteChecker byteChecker;
-			if (byteChecker.IsLeadByte(previousBytes, previousBytes +1) || previousBytes[0] == '\r')
+			
+			if (LeadByteChecker::IsLeadByte(file, offset - 2) || previousBytes[0] == '\r')
 			{
 				previousOffset = offset - 2;
 			}
@@ -69,13 +70,14 @@ Long FilePointerCalculator::Next(Long offset) {
 	FILE* file = this->pagingBuffer->GetFile();
 	Long currentOffset = ftell(file);
 
+	
 	TCHAR character[2];
 	Long nextOffset = offset;
 	fseek(file, offset, SEEK_SET);
 	size_t flag = fread(character, 1, 1, file);
 	if (flag > 0 && !feof(file))
 	{
-		if (character[0] & 0x80)
+		if (!ByteChecker::IsASCII(character))
 		{
 			flag = fread(character + 1, 1, 1, file);
 			nextOffset = offset + 2;

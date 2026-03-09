@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -198,6 +198,7 @@
     <ClCompile Include="AboutNotepadForm.cpp" />
     <ClCompile Include="AutoScroller.cpp" />
     <ClCompile Include="ByteChecker.cpp" />
+    <ClCompile Include="LeadByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
     <ClCompile Include="CaretController.cpp" />
     <ClCompile Include="CaretNavigator.cpp" />
@@ -356,6 +357,7 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="AutoScroller.h" />
     <ClInclude Include="ByteChecker.h" />
+    <ClInclude Include="LeadByteChecker.h" />
     <ClInclude Include="Caret.h" />
     <ClInclude Include="CaretController.h" />
     <ClInclude Include="CaretNavigator.h" />

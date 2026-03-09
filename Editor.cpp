@@ -37,7 +37,7 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 
 	//3. 복사할 내용의 끝까지 반복한다.
 	GlyphFactory glyphFactory;
-	ByteChecker byteChecker;
+	
 	NoteWrapper noteWrapper(this->parent);
 	Glyph* glyph;
 	TCHAR character[2];
@@ -47,7 +47,7 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 	{
 		//3.1. 문자를 읽는다.
 		character[0] = text.GetAt(i);
-		if (!byteChecker.IsASCII(character) || character[0] == '\r')
+		if (!ByteChecker::IsASCII(character) || character[0] == '\r')
 		{
 			character[1] = text.GetAt(++i);
 		}
@@ -112,7 +112,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 	columnIndex = currentColumnIndex;
 
 	//3. 선택 길이만큼 반복한다.
-	ByteChecker byteChecker;
+	
 	Long merged = 0;
 	Glyph* nextRow;
 	TCHAR* character;
@@ -130,7 +130,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 			//3.1.1. 구한다.
 			character = (char*)*row->GetAt(currentColumnIndex);
 			characterByte = 1;
-			if (!byteChecker.IsASCII(character))
+			if (!ByteChecker::IsASCII(character))
 			{
 				characterByte = 2;
 			}
@@ -232,7 +232,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		commonLength = replacedLength;
 	}
 
-	ByteChecker byteChecker;
+	
 	TCHAR character[2];
 	GlyphFactory glyphFactory;
 	Glyph* glyph;
@@ -243,7 +243,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		if (currentColumnIndex < row->GetLength())
 		{
 			character[0] = replacingText.GetAt(j);
-			if (!byteChecker.IsASCII(character))
+			if (!ByteChecker::IsASCII(character))
 			{
 				character[1] = replacingText.GetAt(++j);
 			}
@@ -271,7 +271,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		while (j < replacingText.GetLength())
 		{
 			character[0] = replacingText.GetAt(j);
-			if (!byteChecker.IsASCII(character))
+			if (!ByteChecker::IsASCII(character))
 			{
 				character[1] = replacingText.GetAt(++j);
 			}
@@ -639,7 +639,7 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 
 		Glyph* character;
 		Long characterLength;
-		ByteChecker byteChecker;
+		
 		Long i = 0;
 		while (i < option.findString.GetLength())
 		{
@@ -648,7 +648,7 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 			{
 				characterLength = 1;
 				character = row->GetAt(columnIndex);
-				if (!byteChecker.IsASCII((char*)*character))
+				if (!ByteChecker::IsASCII((char*)*character))
 				{
 					characterLength = 2;
 				}
@@ -719,7 +719,7 @@ bool Editor::FindPrevious() {
 
 		Glyph* character;
 		Long characterLength;
-		ByteChecker byteChecker;
+		
 		Long i = 0;
 		while (i < option.findString.GetLength())
 		{
@@ -728,7 +728,7 @@ bool Editor::FindPrevious() {
 			{
 				characterLength = 1;
 				character = row->GetAt(columnIndex);
-				if (!byteChecker.IsASCII((char*)*character))
+				if (!ByteChecker::IsASCII((char*)*character))
 				{
 					characterLength = 2;
 				}
@@ -797,7 +797,7 @@ bool Editor::FindNext() {
 
 		Glyph* character;
 		Long characterLength;
-		ByteChecker byteChecker;
+		
 		Long i = 0;
 		while (i < option.findString.GetLength())
 		{
@@ -806,7 +806,7 @@ bool Editor::FindNext() {
 			{
 				characterLength = 1;
 				character = row->GetAt(columnIndex);
-				if (!byteChecker.IsASCII((char*)*character))
+				if (!ByteChecker::IsASCII((char*)*character))
 				{
 					characterLength = 2;
 				}

@@ -124,6 +124,9 @@ void WriteAtEndCommand::Execute() {
 	else
 	{
 		note->Add(glyph);
+		rowIndex = note->GetCurrent();
+		row = note->GetAt(rowIndex);
+		this->columnIndex = row->First();
 		pagingBuffer->Add(this->character);
 		this->isUndoable = true;
 
@@ -250,6 +253,10 @@ void WriteAtEndCommand::Redo() {
 	else
 	{
 		note->Add(glyph);
+		rowIndex = note->GetCurrent();
+		row = note->GetAt(rowIndex);
+		this->columnIndex = row->First();
+
 		TCHAR contents[2];
 		contents[0] = '\r';
 		contents[1] = '\n';

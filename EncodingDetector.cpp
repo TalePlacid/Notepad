@@ -34,7 +34,7 @@ Encoding EncodingDetector::ClassifyEncoding(const char(*str), Long count) {
 		}
 		else
 		{
-			ByteChecker byteChecker;
+			
 			Long bytes;
 			Long j;
 			bool flag = true;
@@ -42,14 +42,14 @@ Encoding EncodingDetector::ClassifyEncoding(const char(*str), Long count) {
 			while (i < count && flag)
 			{
 				flag = false;
-				bytes = byteChecker.CheckUtf8FirstByte(str + i);
+				bytes = ByteChecker::CheckUtf8FirstByte(str + i);
 				if (bytes > 0)
 				{
 					flag = true;
 					j = 1;
 					while (j < bytes && flag)
 					{
-						if (!byteChecker.IsUtf8ContinuationByte(str + i + j))
+						if (!ByteChecker::IsUtf8ContinuationByte(str + i + j))
 						{
 							flag = false;
 						}

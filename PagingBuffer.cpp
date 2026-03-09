@@ -7,6 +7,7 @@
 #include "NoteConverter.h"
 #include "ByteChecker.h"
 #include "FilePointerCalculator.h"
+#include "LeadByteChecker.h"
 
 #pragma warning(disable:4996)
 
@@ -114,7 +115,7 @@ Glyph* PagingBuffer::LoadPrevious() {
 	j++;
 
 	//2. 적재 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.
-	ByteChecker byteChecker;
+	
 	if (i >= this->pageSize)
 	{
 		if (j > 0)
@@ -125,7 +126,7 @@ Glyph* PagingBuffer::LoadPrevious() {
 			TCHAR previousCharacter;
 			fseek(this->file, j - 1, SEEK_SET);
 			fread(&previousCharacter, 1, 1, this->file);
-			if (byteChecker.IsLeadByte(&previousCharacter, &character) || previousCharacter == '\r')
+			if (LeadByteChecker::IsLeadByte(this->file, j - 1) || previousCharacter == '\r')
 			{
 				i--;
 				j++;
@@ -181,8 +182,8 @@ Glyph* PagingBuffer::LoadNext() {
 	}
 
 	//2. 페이지 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.
-	ByteChecker byteChecker;
-	if (i >= this->pageSize && (!byteChecker.IsASCII(contents + i - 1) || contents[i - 1] == '\r'))
+	
+	if (i >= this->pageSize && (!ByteChecker::IsASCII(contents + i - 1) || contents[i - 1] == '\r'))
 	{
 		i -= 2;
 	}
@@ -211,8 +212,8 @@ Long PagingBuffer::Add(char(*character)) {
 	Long currentOffset = ftell(this->file);
 
 	Long characterLength = 1;
-	ByteChecker byteChecker;
-	if (!byteChecker.IsASCII(character) || character[0] == '\r')
+	
+	if (!ByteChecker::IsASCII(character) || character[0] == '\r')
 	{
 		characterLength = 2;
 	}
@@ -301,13 +302,13 @@ Long PagingBuffer::Remove() {
 		fread(&character, 1, 1, this->file);
 
 		Long characterLength = 1;
-		ByteChecker byteChecker;
+		
 		if (currentOffset > 1)
 		{
 			fseek(this->file, currentOffset - 2, SEEK_SET);
 			TCHAR letter;
 			fread(&letter, 1, 1, this->file);
-			if (character == '\n' || byteChecker.IsLeadByte(&letter, &character))
+			if (character == '\n' || LeadByteChecker::IsLeadByte(this->file, currentOffset - 2))
 			{
 				characterLength = 2;
 			}

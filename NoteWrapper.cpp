@@ -19,7 +19,7 @@ NoteWrapper::~NoteWrapper() {
 
 Long NoteWrapper::Wrap() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ByteChecker byteChecker;
+	
 
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
@@ -50,7 +50,7 @@ Long NoteWrapper::Wrap() {
 		if (rowWidth >= clientAreaWidth)
 		{
 			cuttingIndex = j - 2;
-			if (cuttingIndex < row->GetLength() && byteChecker.IsAlphabet((char*)(*row->GetAt(cuttingIndex))))
+			if (cuttingIndex < row->GetLength() && ByteChecker::IsAlphabet((char*)(*row->GetAt(cuttingIndex))))
 			{
 				previousWordStart = row->FindPreviousWordStart(cuttingIndex);
 				if (previousWordStart > 0)
@@ -108,7 +108,7 @@ Long NoteWrapper::Rewrap() {
 	}
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	ByteChecker byteChecker;
+	
 
 	CRect clientArea;
 	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
@@ -137,7 +137,7 @@ Long NoteWrapper::Rewrap() {
 		{
 			flag = TRUE;
 			cuttingIndex = j - 2;
-			if (cuttingIndex < row->GetLength() && byteChecker.IsAlphabet((char*)(*row->GetAt(cuttingIndex))))
+			if (cuttingIndex < row->GetLength() && ByteChecker::IsAlphabet((char*)(*row->GetAt(cuttingIndex))))
 			{
 				previousWordStart = row->FindPreviousWordStart(cuttingIndex);
 				if (previousWordStart > 0)

@@ -81,14 +81,14 @@ Long SizeCalculator::GetRowWidth(CString contents) {
 }
 
 Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
-	ByteChecker byteChecker;
+	
 	char(*character);
 	Long width = 0;
 	Long i = 0;
 	while (i < columnIndex && i < row->GetLength())
 	{
 		character = (char*)(*row->GetAt(i));
-		if (!byteChecker.IsASCII(character))
+		if (!ByteChecker::IsASCII(character))
 		{
 			width += this->multiByteWidth;
 		}
@@ -107,7 +107,7 @@ Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
 }
 
 Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
-	ByteChecker byteChecker;
+	
 	char(*character);
 	Long previousRowWidth = 0;
 	Long rowWidth = 0;
@@ -116,7 +116,7 @@ Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
 	{
 		previousRowWidth = rowWidth;
 		character = (char*)(*row->GetAt(i));
-		if (!byteChecker.IsASCII(character))
+		if (!ByteChecker::IsASCII(character))
 		{
 			rowWidth += this->multiByteWidth;
 		}
