@@ -5,17 +5,14 @@ typedef signed long int Long;
 
 class ByteChecker {
 public:
-	ByteChecker();
-	~ByteChecker();
-
-	bool IsASCII(const char* character);
-	bool IsLeadByte(const char* firstByte, const char* secondByte);
-	bool IsAlphabet(const char* character);
-	bool IsCapital(const char* character);
-	bool IsWordCharacter(const char* character);
-	Long CheckUtf8FirstByte(const char* character);
-	bool IsUtf8ContinuationByte(const char* character);
+	static bool IsASCII(const char* character);
+	static bool IsLeadByteCandidate(const char* character);
+	static bool IsTrailByteCandidate(const char* character);
+	static bool IsAlphabet(const char* character);
+	static bool IsCapital(const char* character);
+	static bool IsWordCharacter(const char* character);
+	static Long CheckUtf8FirstByte(const char* character);
+	static bool IsUtf8ContinuationByte(const char* character);
 };
 
 #endif // !_BYTECHECKER_H
-

@@ -3,36 +3,25 @@
 
 #pragma warning(disable:4996)
 
-ByteChecker::ByteChecker() {
-
-}
-
-ByteChecker::~ByteChecker() {
-
-}
-
 bool ByteChecker::IsASCII(const char* character) {
 	return static_cast<unsigned char>(*character) <= 0x7F;
 }
 
-bool ByteChecker::IsLeadByte(const char* firstByte, const char* secondByte) {
-	//1. 첫 바이트가 리드 바이트 후보인지 판별한다.
+bool ByteChecker::IsLeadByteCandidate(const char* character) {
+	const unsigned char checkingByte = static_cast<const unsigned char>(*character);
+
+	return IsDBCSLeadByteEx(CP_ACP, (BYTE)checkingByte) ? true : false;
+}
+
+bool ByteChecker::IsTrailByteCandidate(const char* character) {
 	bool ret = false;
-	const unsigned char firstByte_ = static_cast<const unsigned char>(*firstByte);
-	const unsigned char secondByte_ = static_cast<const unsigned char>(*secondByte);
+	const unsigned char checkingByte = static_cast<const unsigned char>(*character);
 
-	BOOL isLeadCandidate = IsDBCSLeadByteEx(CP_ACP, (BYTE)firstByte_);
-
-	//2. 리드 바이트 후보라면,
-	if (isLeadCandidate)
+	if ((checkingByte >= 0x41 && checkingByte <= 0x5A)
+		|| (checkingByte >= 0x61 && checkingByte <= 0x7A)
+		|| (checkingByte >= 0x81 && checkingByte <= 0xFE))
 	{
-		//2.1. 두번째 바이트가 트레일 바이트 범위에 있는지 확인한다.
-		if ((secondByte_ >= 0x41 && secondByte_ <= 0x5A)
-			|| (secondByte_ >= 0x61 && secondByte_ <= 0x7A)
-			|| (secondByte_ >= 0x81 && secondByte_ <= 0xFE))
-		{
-			ret = true;
-		}
+		ret = true;
 	}
 
 	return ret;
@@ -108,4 +97,3 @@ bool ByteChecker::IsUtf8ContinuationByte(const char* character) {
 
 	return ret;
 }
-
