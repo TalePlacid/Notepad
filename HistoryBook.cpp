@@ -11,6 +11,7 @@ HistoryBook::HistoryBook(Long capacity)
 	:histories(capacity) {
 	this->capacity = capacity;
 	this->length = 0;
+	this->isBindingStopped = false;
 }
 
 HistoryBook::~HistoryBook() {
@@ -32,6 +33,7 @@ HistoryBook::HistoryBook(const HistoryBook& source)
 
 	this->capacity = source.capacity;
 	this->length = source.length;
+	this->isBindingStopped = source.isBindingStopped;
 }
 
 HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
@@ -45,6 +47,7 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 
 	this->capacity = source.capacity;
 	this->length = source.length;
+	this->isBindingStopped = source.isBindingStopped;
 	this->latestPushTime = source.latestPushTime;
 
 	return *this;
@@ -52,39 +55,50 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 
 Command* HistoryBook::Bind(Command* command) {
 	Command* history = command;
-	DateTime now = DateTime::Now();
-	DateTime latest = this->latestPushTime.AddSeconds(1);
-	if ((this->latestPushTime == DateTime() || now <= latest)
-		&& this->histories.Peek() != 0)
+	if (this->isBindingStopped)
 	{
-		DropOldestStack<Command*>::Node top = this->histories.Pop();
-		(this->length)--;
-		Command* top_ = top.GetElement();
-		if (command->GetID() == top_->GetID())
+		this->isBindingStopped = false;
+	}
+	else
+	{
+		DateTime now = DateTime::Now();
+		DateTime latest = this->latestPushTime.AddSeconds(1);
+		if ((this->latestPushTime == DateTime() || now <= latest)
+			&& this->histories.Peek() != 0)
 		{
-			if (top_->IsMacroCommand())
+			DropOldestStack<Command*>::Node top = this->histories.Pop();
+			(this->length)--;
+			Command* top_ = top.GetElement();
+			if (command->GetID() == top_->GetID())
 			{
-				top_->Add(command);
-				history = top_;
+				if (top_->IsMacroCommand())
+				{
+					top_->Add(command);
+					history = top_;
+				}
+				else
+				{
+					history = new MacroCommand(top_->GetParent());
+					history->Add(top_);
+					history->Add(command);
+				}
 			}
 			else
 			{
-				history = new MacroCommand(top_->GetParent());
-				history->Add(top_);
-				history->Add(command);
-			}
-		}
-		else
-		{
-			this->histories.Push(top_);
-			if (this->length < this->capacity)
-			{
-				(this->length)++;
+				this->histories.Push(top_);
+				if (this->length < this->capacity)
+				{
+					(this->length)++;
+				}
 			}
 		}
 	}
 
 	return history;
+}
+
+void HistoryBook::StopBinding() {
+	this->isBindingStopped = true;
 }
 
 Command** HistoryBook::Push(Command* history) {
@@ -134,6 +148,7 @@ Command** HistoryBook::Clear() {
 	}
 
 	this->length = 0;
+	this->isBindingStopped = false;
 
 	return history;
 }

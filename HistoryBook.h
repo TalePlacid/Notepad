@@ -16,6 +16,7 @@ public:
 	HistoryBook& operator=(const HistoryBook& source);
 
 	Command* Bind(Command* command);
+	void StopBinding();
 	Command** Push(Command* history);
 	Command* Pop();
 	bool IsEmpty();
@@ -27,6 +28,7 @@ private:
 	DropOldestStack<Command*> histories;
 	Long capacity;
 	Long length;
+	bool isBindingStopped;
 	DateTime latestPushTime;
 };
 

@@ -591,6 +591,9 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 			this->note->Select(false);
 			this->pagingBuffer->UnmarkSelectionBegin();
 		}
+
+		this->undoHistoryBook->StopBinding();
+
 		delete action;
 	}
 
