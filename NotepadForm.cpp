@@ -562,6 +562,7 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 		{
 			delete command;
 		}
+		TRACE("%ld\n", this->pagingBuffer->GetCurrentOffset());
 	}
 
 	this->isDirty = TRUE;
@@ -595,6 +596,7 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 		this->undoHistoryBook->StopBinding();
 
 		delete action;
+		TRACE("%ld\n", this->pagingBuffer->GetCurrentOffset());
 	}
 
 	this->Notify("UpdateStatusBar");

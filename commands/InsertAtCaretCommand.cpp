@@ -104,17 +104,6 @@ void InsertAtCaretCommand::Execute() {
 		columnIndex = row->Add(columnIndex, glyph);
 		columnIndex = row->GetCurrent();
 
-		//3.2. 자동개행이 켜져 있다면,
-		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
-		{
-			//3.2.1. 재개행한다.
-			NoteWrapper noteWrapper(this->parent);
-			vScrollChanged = noteWrapper.Rewrap();
-			rowIndex = note->GetCurrent();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->GetCurrent();
-		}
-
 		//3.3. 조합 확정이면, 페이징버퍼에서 적는다. 
 		if (this->onChar)
 		{
@@ -137,7 +126,18 @@ void InsertAtCaretCommand::Execute() {
 		vScrollChanged = 1;
 	}
 
-	//5.수직 스크롤이 있다면, 반영한다.
+	//5. 자동개행이 켜져 있다면,
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+	{
+		//5.1. 재개행한다.
+		NoteWrapper noteWrapper(this->parent);
+		vScrollChanged = noteWrapper.Rewrap();
+		rowIndex = note->GetCurrent();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->GetCurrent();
+	}
+
+	//6.수직 스크롤이 있다면, 반영한다.
 	if (scrollController->HasVScroll())
 	{
 		Scroll vScroll = scrollController->GetVScroll();
@@ -269,17 +269,6 @@ void InsertAtCaretCommand::Redo() {
 		Glyph* glyph = glyphFactory.Create(this->character, true);
 		columnIndex = row->Add(columnIndex, glyph);
 		columnIndex = row->GetCurrent();
-
-		//3.2. 자동개행이 켜져 있다면,
-		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
-		{
-			//3.2.1. 재개행한다.
-			NoteWrapper noteWrapper(this->parent);
-			vScrollChanged = noteWrapper.Rewrap();
-			rowIndex = note->GetCurrent();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->GetCurrent();
-		}
 	}
 	else //4. 줄바꿈 문자라면,
 	{
@@ -292,10 +281,21 @@ void InsertAtCaretCommand::Redo() {
 		vScrollChanged = 1;
 	}
 
-	//5. 페이징버퍼에서 적는다.
+	//5. 자동개행이 켜져 있다면,
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+	{
+		//5.1. 재개행한다.
+		NoteWrapper noteWrapper(this->parent);
+		vScrollChanged = noteWrapper.Rewrap();
+		rowIndex = note->GetCurrent();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->GetCurrent();
+	}
+
+	//6. 페이징버퍼에서 적는다.
 	pagingBuffer->Add(this->character);
 
-	//6. 수직 스크롤이 있다면, 반영한다.
+	//7. 수직 스크롤이 있다면, 반영한다.
 	if (scrollController->HasVScroll())
 	{
 		Scroll vScroll = scrollController->GetVScroll();
