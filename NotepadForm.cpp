@@ -318,16 +318,19 @@ LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 	CWnd::OnSize(nType, cx, cy);
 
-	if (this->isAutoWrapped)
+	if (cx > 0 && cy > 0)
 	{
-		NoteWrapper noteWrapper(this);
-		noteWrapper.Unwrap();
-		noteWrapper.Wrap();
-	}
+		if (this->isAutoWrapped)
+		{
+			NoteWrapper noteWrapper(this);
+			noteWrapper.Unwrap();
+			noteWrapper.Wrap();
+		}
 
-	if (this->nextIsLastOnSize)
-	{
-		this->Notify("UpdateScrollBars");
+		if (this->nextIsLastOnSize)
+		{
+			this->Notify("UpdateScrollBars");
+		}
 	}
 }
 
