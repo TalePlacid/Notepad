@@ -7,6 +7,7 @@
 #include "../ScrollController.h"
 #include "../HistoryBook.h"
 #include "../NoteConverter.h"
+#include "../NoteWrapper.h"
 #include "../TextFileIO.h"
 
 #pragma warning(disable:4996)
@@ -52,16 +53,23 @@ void OpenAction::Perform() {
 		NoteConverter noteConverter;
 		notepadForm->note = noteConverter.Convert(string(str));
 
-		//2.4. 페이징 버퍼의 내용을 교체한다.
+		//2.4. 자동개행이 설정되어 있다면,
+		if (notepadForm->IsAutoWrapped())
+		{
+			NoteWrapper noteWrapper(this->parent);
+			noteWrapper.Wrap();
+		}
+
+		//2.5. 페이징 버퍼의 내용을 교체한다.
 		pagingBuffer->Add(CString(str));
 		pagingBuffer->FirstRow();
 
-		//2.5. 스크롤바와 히스토리북 설정을 초기화한다.
+		//2.6. 스크롤바와 히스토리북 설정을 초기화한다.
 		notepadForm->scrollController->Initialize();
 		notepadForm->undoHistoryBook->Clear();
 		notepadForm->redoHistoryBook->Clear();
 
-		//2.6. 캡션을 수정한다.
+		//2.7. 캡션을 수정한다.
 		CString caption = fileDialog.GetFileName();
 		Long extensionIndex = caption.ReverseFind('.');
 		if (extensionIndex > 0)
