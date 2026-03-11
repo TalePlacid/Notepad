@@ -126,15 +126,13 @@ Long SearchResultController::Replace(Long index, Long offset) {
 Long SearchResultController::FindNearestIndexAbove(Long offset) {
 	Long index = -1;
 
-	bool flag = false;
 	Long i = 0;
 	while (i < this->length && this->searchResults[i] < offset)
 	{
-		flag = true;
 		i++;
 	}
 
-	if (flag && this->searchResults[i] >= offset)
+	if (i > 0)
 	{
 		index = i - 1;
 	}

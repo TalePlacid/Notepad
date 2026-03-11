@@ -599,7 +599,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 		this->undoHistoryBook->StopBinding();
 
 		delete action;
-		TRACE("%ld\n", this->pagingBuffer->GetCurrentOffset());
 	}
 
 	this->Notify("UpdateStatusBar");

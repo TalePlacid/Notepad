@@ -115,6 +115,18 @@ void InsertAtCaretCommand::Execute() {
 	{
 		//4.1. 줄을 나눈다.
 		note->SplitRows(rowIndex, columnIndex);
+
+		//4.2. 자동개행이 켜져 있다면,
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+		{
+			//4.2.1. 재개행한다.
+			NoteWrapper noteWrapper(this->parent);
+			vScrollChanged = noteWrapper.Rewrap();
+			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->GetCurrent();
+		}
+
 		rowIndex = note->Next();
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
@@ -274,6 +286,18 @@ void InsertAtCaretCommand::Redo() {
 	{
 		//4.1. 줄을 나눈다.
 		note->SplitRows(rowIndex, columnIndex);
+		
+		//4.2. 자동개행이 켜져 있다면,
+		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+		{
+			//4.2.1. 재개행한다.
+			NoteWrapper noteWrapper(this->parent);
+			vScrollChanged = noteWrapper.Rewrap();
+			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->GetCurrent();
+		}
+
 		rowIndex = note->Next();
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();

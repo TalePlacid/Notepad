@@ -621,52 +621,56 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 			nearestIndex = searchResultController->FindNearestIndexAbove(currentOffset);
 		}
 
-		//4.2. 선택을 해제한다.
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		note->Select(false);
-		pagingBuffer->UnmarkSelectionBegin();
-
-		//4.3. 위치로 이동한다.
-		searchResultController->Move(nearestIndex);
-		CaretNavigator caretNavigator(this->parent);
-		caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
-		caretNavigator.NormalizeColumn(0);
-
-		//4.4. 선택한다.
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
-
-		Glyph* character;
-		Long characterLength;
-		
-		Long i = 0;
-		while (i < option.findString.GetLength())
+		//4.2. 위치를 찾았으면,
+		if (nearestIndex >= 0)
 		{
-			characterLength = 0;
-			if (columnIndex < row->GetLength())
+			//4.2.1. 선택을 해제한다.
+			Glyph* note = ((NotepadForm*)(this->parent))->note;
+			note->Select(false);
+			pagingBuffer->UnmarkSelectionBegin();
+
+			//4.2.2. 위치로 이동한다.
+			searchResultController->Move(nearestIndex);
+			CaretNavigator caretNavigator(this->parent);
+			caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
+			caretNavigator.NormalizeColumn(0);
+
+			//4.2.3. 선택한다.
+			Long rowIndex = note->GetCurrent();
+			Glyph* row = note->GetAt(rowIndex);
+			Long columnIndex = row->GetCurrent();
+
+			Glyph* character;
+			Long characterLength;
+
+			Long i = 0;
+			while (i < option.findString.GetLength())
 			{
-				characterLength = 1;
-				character = row->GetAt(columnIndex);
-				if (!ByteChecker::IsASCII((char*)*character))
+				characterLength = 0;
+				if (columnIndex < row->GetLength())
 				{
-					characterLength = 2;
+					characterLength = 1;
+					character = row->GetAt(columnIndex);
+					if (!ByteChecker::IsASCII((char*)*character))
+					{
+						characterLength = 2;
+					}
+
+					row->GetAt(columnIndex)->Select(true);
+					columnIndex = row->Next();
+
+					pagingBuffer->BeginSelectionIfNeeded();
+					pagingBuffer->Next();
+				}
+				else
+				{
+					rowIndex = note->Next();
+					row = note->GetAt(rowIndex);
+					columnIndex = row->First();
 				}
 
-				row->GetAt(columnIndex)->Select(true);
-				columnIndex = row->Next();
-
-				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->Next();
+				i += characterLength;
 			}
-			else
-			{
-				rowIndex = note->Next();
-				row = note->GetAt(rowIndex);
-				columnIndex = row->First();
-			}
-
-			i += characterLength;
 		}
 	}
 
