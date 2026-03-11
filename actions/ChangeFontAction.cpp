@@ -6,6 +6,7 @@
 #include "../ScrollBarAnalyzer.h"
 #include "../ScrollController.h"
 #include "../PagingBuffer.h"
+#include "../NoteWrapper.h"
 #include "../FontSelector.h"
 
 #pragma warning(disable:4996)
@@ -55,6 +56,13 @@ void ChangeFontAction::Perform() {
 		}
 		notepadForm->sizeCalculator = new SizeCalculator(this->parent);
 		SizeCalculator* sizeCalculator = notepadForm->sizeCalculator;
+
+		if (notepadForm->IsAutoWrapped())
+		{
+			NoteWrapper noteWrapper(this->parent);
+			noteWrapper.Unwrap();
+			noteWrapper.Wrap();
+		}
 
 		ScrollBarAnalyzer scrollBarAnalyzer(this->parent);
 		scrollBarAnalyzer.AnalyzeWithoutWrap();
