@@ -565,7 +565,6 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 		{
 			delete command;
 		}
-		TRACE("%ld\n", this->pagingBuffer->GetCurrentOffset());
 	}
 
 	this->isDirty = TRUE;

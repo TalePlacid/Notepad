@@ -34,7 +34,7 @@ AppID FindReplaceRequestResolver::ResolveAppID(AppID appID, const FindReplaceOpt
 	switch (appID)
 	{
 	case AppID::ID_FINDREPLACE_FIND_NEXT_BUTTON:
-		if (previousOption != findReplaceOption)
+		if (previousOption.IsSameFindCondition(findReplaceOption) == FALSE)
 		{
 			nID = AppID::ID_ACTION_FIND;
 		}
@@ -44,7 +44,7 @@ AppID FindReplaceRequestResolver::ResolveAppID(AppID appID, const FindReplaceOpt
 		}
 		break;
 	case AppID::ID_FINDREPLACE_REPLACE_CURRENT_BUTTON:
-		if (previousOption != findReplaceOption)
+		if (previousOption.IsSameFindCondition(findReplaceOption) == FALSE)
 		{
 			nID = AppID::ID_ACTION_FIND;
 		}
