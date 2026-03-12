@@ -324,6 +324,21 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		pagingBuffer->Replace(currentOffset, replacingText);
 		pagingBuffer->Remove(currentOffset + sourceText.GetLength());
 	}
+
+	//8. 필요에 따라 선택한다.
+	if (isSelected)
+	{
+		if (replacingText.GetLength() > 0)
+		{
+			pagingBuffer->MoveOffset(offset);
+			pagingBuffer->MarkSelectionBegin();
+			pagingBuffer->MoveOffset(offset + replacingText.GetLength());
+		}
+		else
+		{
+			pagingBuffer->UnmarkSelectionBegin();
+		}
+	}
 }
 
 void Editor::MoveUp() {
@@ -853,6 +868,7 @@ bool Editor::FindNext() {
 
 	return ret;
 }
+
 bool Editor::GetSelectedRange(Long& frontOffset, Long& rearOffset) {
 	bool ret = false;
 
