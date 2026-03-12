@@ -20,24 +20,17 @@ public:
 	FindReplaceOption& ChangeFindReplaceOption(FindReplaceOption findReplaceOption);
 	Long GetAt(Long index);
 
-	Long First();
-	Long Previous();
-	Long Next();
-	Long Move(Long index);
-
 	Long operator[](Long index);
 
 	FindReplaceOption& GetFindReplaceOption() const;
 	Long GetCapacity() const;
 	Long GetLength() const;
-	Long GetCurrent() const;
 private:
 	CWnd* parent;
 	FindReplaceOption findReplaceOption;
 	Long(*searchResults);
 	Long capacity;
 	Long length;
-	Long current;
 };
 
 inline FindReplaceOption& SearchResultController::GetFindReplaceOption() const {
@@ -50,10 +43,6 @@ inline Long SearchResultController::GetCapacity() const {
 
 inline Long SearchResultController::GetLength() const {
 	return this->length;
-}
-
-inline Long SearchResultController::GetCurrent() const {
-	return this->current;
 }
 
 #endif // !_SEARCHRESULTCONTROLLER_H

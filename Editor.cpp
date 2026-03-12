@@ -630,7 +630,6 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 			pagingBuffer->UnmarkSelectionBegin();
 
 			//4.2.2. 위치로 이동한다.
-			searchResultController->Move(nearestIndex);
 			CaretNavigator caretNavigator(this->parent);
 			caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
 			caretNavigator.NormalizeColumn(0);
@@ -686,29 +685,35 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 }
 
 bool Editor::FindPrevious() {
-	//1. 검색결과 컨트롤러에서 검색방향에 반대로 이동한다.
+	//1. 현재 오프셋 기준으로 이전 검색결과를 다시 찾는다.
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
 	FindReplaceOption option = searchResultController->GetFindReplaceOption();
-	Long current = searchResultController->GetCurrent();
-	Long previous = current;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+	Long targetOffset = currentOffset;
+	Long current = -1;
+	if (selectionBeginOffset >= 0 && selectionBeginOffset < currentOffset)
+	{
+		targetOffset = selectionBeginOffset;
+	}
 	if (option.isSearchDown)
 	{
-		current = searchResultController->Previous();
+		current = searchResultController->FindNearestIndexAbove(targetOffset);
 	}
 	else
 	{
-		current = searchResultController->Next();
+		current = searchResultController->FindNearestIndexBelow(currentOffset);
 	}
 
 	//2. 선택해제한다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	note->Select(false);
 	pagingBuffer->UnmarkSelectionBegin();
 
 	//3. 이동했으면,
 	bool ret = false;
-	if (current != previous)
+	if (current >= 0)
 	{
 		ret = true;
 		//2.1. 위치로 이동한다.
@@ -764,29 +769,37 @@ bool Editor::FindPrevious() {
 }
 
 bool Editor::FindNext() {
-	//1. 검색결과 컨트롤러에서 검색방향에 따라 이동한다.
+	//1. 현재 오프셋 기준으로 다음 검색결과를 다시 찾는다.
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+
 	FindReplaceOption option = searchResultController->GetFindReplaceOption();
-	Long current = searchResultController->GetCurrent();
-	Long previous = current;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+	Long targetOffset = currentOffset;
+	if (selectionBeginOffset >= 0 && selectionBeginOffset < currentOffset)
+	{
+		targetOffset = selectionBeginOffset;
+	}
+
+	Long current = -1;
 	if (option.isSearchDown)
 	{
-		current = searchResultController->Next();
+		current = searchResultController->FindNearestIndexBelow(currentOffset);
 	}
 	else
 	{
-		current = searchResultController->Previous();
+		current = searchResultController->FindNearestIndexAbove(targetOffset);
 	}
 
 	//2. 선택해제한다.
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	note->Select(false);
 	pagingBuffer->UnmarkSelectionBegin();
 
 	//3. 이동했으면,
 	bool ret = false;
-	if (current != previous)
+	if (current >= 0)
 	{
 		ret = true;
 		//2.1. 위치로 이동한다.
@@ -840,7 +853,6 @@ bool Editor::FindNext() {
 
 	return ret;
 }
-
 bool Editor::GetSelectedRange(Long& frontOffset, Long& rearOffset) {
 	bool ret = false;
 

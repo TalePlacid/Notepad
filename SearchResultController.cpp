@@ -14,7 +14,6 @@ SearchResultController::SearchResultController(CWnd *parent){
 	this->searchResults = NULL;
 	this->capacity = 0;
 	this->length = 0;
-	this->current = -1;
 }
 
 SearchResultController::~SearchResultController() {
@@ -42,7 +41,6 @@ SearchResultController::SearchResultController(const SearchResultController& sou
 	
 	this->capacity = source.capacity;
 	this->length = source.length;
-	this->current = source.current;
 }
 
 SearchResultController& SearchResultController::operator=(const SearchResultController& source) {
@@ -64,7 +62,6 @@ SearchResultController& SearchResultController::operator=(const SearchResultCont
 
 	this->capacity = source.capacity;
 	this->length = source.length;
-	this->current = source.current;
 
 	return *this;
 }
@@ -165,7 +162,6 @@ void SearchResultController::Clear() {
 	}
 	this->capacity = 0;
 	this->length = 0;
-	this->current = -1;
 }
 
 FindReplaceOption& SearchResultController::ChangeFindReplaceOption(FindReplaceOption findReplaceOption) {
@@ -176,38 +172,6 @@ FindReplaceOption& SearchResultController::ChangeFindReplaceOption(FindReplaceOp
 
 Long SearchResultController::GetAt(Long index) {
 	return this->searchResults[index];
-}
-
-Long SearchResultController::First() {
-	this->current = 0;
-
-	return this->current;
-}
-
-Long SearchResultController::Previous() {
-	(this->current)--;
-	if (this->current < 0)
-	{
-		this->current = 0;
-	}
-
-	return this->current;
-}
-
-Long SearchResultController::Next() {
-	(this->current)++;
-	if (this->current >= this->length)
-	{
-		this->current = this->length - 1;
-	}
-
-	return this->current;
-}
-
-Long SearchResultController::Move(Long index) {
-	this->current = index;
-
-	return this->current;
 }
 
 Long SearchResultController::operator[](Long index) {
