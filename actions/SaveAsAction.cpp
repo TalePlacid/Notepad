@@ -38,8 +38,12 @@ void SaveAsAction::Perform() {
 		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
 		CString ansi = pagingBuffer->GetFullText();
 
+		DWORD selectedEncodingIndex = ANSI;
+		fileDialog.GetSelectedControlItem(IDC_COMBO_ENCODING, selectedEncodingIndex);
+		Encoding encoding = (Encoding)selectedEncodingIndex;
+
 		TextFileIO textFileIO;
-		Encoding encoding = textFileIO.Save(fileDialog.GetPathName(), (LPCTSTR)ansi, ansi.GetLength());
+		encoding = textFileIO.Save(fileDialog.GetPathName(), (LPCTSTR)ansi, ansi.GetLength(), encoding);
 
 		notepadForm->AssignSourcePath(fileDialog.GetPathName());
 		notepadForm->ApplyEncoding(encoding);

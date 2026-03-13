@@ -39,7 +39,10 @@ void SaveAction::Perform() {
 		INT_PTR result = fileDialog.DoModal();
 		if (result == IDOK)
 		{
+			DWORD selectedEncodingIndex = ANSI;
+			fileDialog.GetSelectedControlItem(IDC_COMBO_ENCODING, selectedEncodingIndex);
 			notepadForm->AssignSourcePath(fileDialog.GetPathName());
+			notepadForm->ApplyEncoding((Encoding)selectedEncodingIndex);
 		}
 	}
 
@@ -51,7 +54,8 @@ void SaveAction::Perform() {
 		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
 		CString ansi = pagingBuffer->GetFullText();
 		TextFileIO textFileIO;
-		Encoding encoding = textFileIO.Save((LPCTSTR)sourcePath, (LPCTSTR)ansi, ansi.GetLength());
+		Encoding encoding = textFileIO.Save((LPCTSTR)sourcePath, (LPCTSTR)ansi, ansi.GetLength(),
+			notepadForm->GetEncoding());
 
 		//2.2. 윈도우의 값들을 수정한다.
 		Long index = sourcePath.ReverseFind('\\');

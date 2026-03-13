@@ -100,6 +100,7 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->isAutoWrapped = FALSE;
 	this->magnification = 1.0;
 	this->isDirty = FALSE;
+	this->encoding = ANSI;
 
 	this->sourcePath = sourcePath;
 }

@@ -56,9 +56,7 @@ Encoding TextFileIO::Load(const char(*path), char* (*bytes), Long& count) {
 	return encoding;
 }
 
-Encoding TextFileIO::Save(const char(*path), const char(*bytes), Long count) {
-	EncodingDetector encodingDetector;
-	Encoding encoding = encodingDetector.ClassifyEncoding(bytes, count);
+Encoding TextFileIO::Save(const char(*path), const char(*bytes), Long count, Encoding encoding) {
 
 	TCHAR(*encoded) = NULL;
 	Long encodedCount;

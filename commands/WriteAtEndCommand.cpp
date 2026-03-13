@@ -278,4 +278,3 @@ void WriteAtEndCommand::Redo() {
 Command* WriteAtEndCommand::Clone() {
 	return new WriteAtEndCommand(*this);
 }
-

@@ -10,7 +10,7 @@ public:
 	~TextFileIO();
 
 	Encoding Load(const char(*path), char* (*bytes), Long& count);
-	Encoding Save(const char(*path), const char(*bytes), Long count);
+	Encoding Save(const char(*path), const char(*bytes), Long count, Encoding encoding);
 };
 
 #endif // !_TEXTFILEIO_H
