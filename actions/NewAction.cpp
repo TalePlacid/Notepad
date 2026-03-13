@@ -36,6 +36,7 @@ void NewAction::Perform() {
 	pagingBuffer->CacheRowStartIndex(-rowStartIndex);
 
 	notepadForm->AssignSourcePath(CString(""));
+	notepadForm->ApplyEncoding(ANSI);
 
 	notepadForm->parent->SetWindowTextA("메모장 ~제목없음");
 

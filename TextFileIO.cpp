@@ -57,7 +57,6 @@ Encoding TextFileIO::Load(const char(*path), char* (*bytes), Long& count) {
 }
 
 Encoding TextFileIO::Save(const char(*path), const char(*bytes), Long count, Encoding encoding) {
-
 	TCHAR(*encoded) = NULL;
 	Long encodedCount;
 	TextEncoder textEncoder;
