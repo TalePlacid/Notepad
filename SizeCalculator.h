@@ -6,6 +6,7 @@
 typedef signed long int Long;
 
 class Glyph;
+class MultiByteWidthCache;
 
 class SizeCalculator{
 public:
@@ -22,6 +23,7 @@ public:
 private:
 	CWnd* parent;
 	Long(*singleByteWidths);
+	MultiByteWidthCache* multiByteWidthCache;
 	Long averageCharacterWidth;
 	Long rowHeight;
 };

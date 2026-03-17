@@ -222,6 +222,8 @@
     <ClCompile Include="FilePointerCalculator.cpp" />
     <ClCompile Include="FileStreamAdapter.cpp" />
     <ClCompile Include="FindReplaceInterpreter.cpp" />
+    <ClCompile Include="MultiByteWidth.cpp" />
+    <ClCompile Include="MultiByteWidthCache.cpp" />
     <ClCompile Include="PaintingVisitor.cpp" />
     <ClCompile Include="ScrollBarInterpreter.cpp" />
     <ClCompile Include="FindReplaceOption.cpp" />
@@ -243,7 +245,6 @@
     <ClCompile Include="MenuInterpreter.cpp" />
     <ClCompile Include="MouseEventResolver.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
-    <ClCompile Include="MultiByteWidth.cpp" />
     <ClCompile Include="NoteConverter.cpp" />
     <ClCompile Include="NotepadApp.cpp" />
     <ClCompile Include="NotepadForm.cpp" />
@@ -385,6 +386,8 @@
     <ClInclude Include="FilePointerCalculator.h" />
     <ClInclude Include="FileStreamAdapter.h" />
     <ClInclude Include="FindReplaceInterpreter.h" />
+    <ClInclude Include="MultiByteWidth.h" />
+    <ClInclude Include="MultiByteWidthCache.h" />
     <ClInclude Include="PaintingVisitor.h" />
     <ClInclude Include="ScrollBarInterpreter.h" />
     <ClInclude Include="FindReplaceOption.h" />
@@ -407,7 +410,6 @@
     <ClInclude Include="message.h" />
     <ClInclude Include="MouseEventResolver.h" />
     <ClInclude Include="MouseHandler.h" />
-    <ClInclude Include="MultiByteWidth.h" />
     <ClInclude Include="NoteConverter.h" />
     <ClInclude Include="NotepadApp.h" />
     <ClInclude Include="NotepadForm.h" />

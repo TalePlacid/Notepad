@@ -1,8 +1,8 @@
 #include "SizeCalculator.h"
 #include "NotepadForm.h"
+#include "MultiByteWidthCache.h"
 #include "glyphs/Glyph.h"
 #include "ByteChecker.h"
-#include "NonAsciiCharacterMeasurer.h"
 #include "TabStopCalculator.h"
 
 #pragma warning(disable:4996)
@@ -20,6 +20,8 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 		this->singleByteWidths[i] = cdc->GetTextExtent(CString(character)).cx;
 	}
 
+	this->multiByteWidthCache = new MultiByteWidthCache(parent);
+
 	TEXTMETRIC tm;
 	cdc->GetTextMetrics(&tm);
 
@@ -35,13 +37,18 @@ SizeCalculator::~SizeCalculator() {
 	{
 		delete[] this->singleByteWidths;
 	}
+
+	if (this->multiByteWidthCache != 0)
+	{
+		delete this->multiByteWidthCache;
+	}
 }
 
 Long SizeCalculator::GetCharacterWidth(char(*character), Long logicalX) {
 	Long width;
 	if (character[0] & 0x80)
 	{
-		width = NonAsciiCharacterMeasurer::MesureWidth(this->parent, character);
+		width = this->multiByteWidthCache->GetWidth(character);
 	}
 	else if (character[0] != '\t')
 	{
@@ -66,7 +73,6 @@ Long SizeCalculator::GetRowWidth(CString contents) {
 }
 
 Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
-	
 	char(*character);
 	Long width = 0;
 	Long i = 0;
@@ -75,8 +81,7 @@ Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
 		character = (char*)(*row->GetAt(i));
 		if (!ByteChecker::IsASCII(character))
 		{
-
-			width += NonAsciiCharacterMeasurer::MesureWidth(this->parent, character);
+			width += this->multiByteWidthCache->GetWidth(character);
 		}
 		else if (*character != '\t')
 		{
@@ -93,7 +98,6 @@ Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
 }
 
 Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
-	
 	char(*character);
 	Long previousRowWidth = 0;
 	Long rowWidth = 0;
@@ -104,7 +108,7 @@ Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
 		character = (char*)(*row->GetAt(i));
 		if (!ByteChecker::IsASCII(character))
 		{
-			rowWidth += NonAsciiCharacterMeasurer::MesureWidth(this->parent, character);
+			rowWidth += this->multiByteWidthCache->GetWidth(character);
 		}
 		else if (*character != '\t')
 		{

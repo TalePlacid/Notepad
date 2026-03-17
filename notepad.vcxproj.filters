@@ -209,9 +209,6 @@
     <ClCompile Include="MouseHandler.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MultiByteWidth.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="FilePointerCalculator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -521,6 +518,15 @@
     <ClCompile Include="TabStopCalculator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="PaintingVisitor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiByteWidth.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiByteWidthCache.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -698,6 +704,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="MultiByteWidth.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiByteWidthCache.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="FilePointerCalculator.h">
