@@ -18,32 +18,20 @@ public:
 	Long GetNearestColumnIndex(Glyph* row, Long width);
 
 	Long GetAverageCharacterWidth() const;
-	Long GetMultiByteWidth() const;
 	Long GetRowHeight() const;
-	Long GetMaxCharacterWidth() const;
 private:
 	CWnd* parent;
 	Long(*singleByteWidths);
-	Long multiByteWidth;
 	Long averageCharacterWidth;
 	Long rowHeight;
-	Long maxCharacterWidth;
 };
 
 inline Long SizeCalculator::GetAverageCharacterWidth() const {
 	return this->averageCharacterWidth;
 }
 
-inline Long SizeCalculator::GetMultiByteWidth() const {
-	return this->multiByteWidth;
-}
-
 inline Long SizeCalculator::GetRowHeight() const {
 	return this->rowHeight;
-}
-
-inline Long SizeCalculator::GetMaxCharacterWidth() const {
-	return this->maxCharacterWidth;
 }
 
 #endif // !_SIZECALCULATOR_H

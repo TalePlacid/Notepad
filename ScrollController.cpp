@@ -174,7 +174,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 			Long rangeEnd = rangeStart + this->hScroll.GetPage();
 			if (width < rangeStart)
 			{
-				width -= sizeCalculator->GetMultiByteWidth();
+				width -= sizeCalculator->GetAverageCharacterWidth();
 				if (width < 0)
 				{
 					width = 0;

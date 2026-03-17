@@ -2,36 +2,23 @@
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
 #include "ByteChecker.h"
+#include "NonAsciiCharacterMeasurer.h"
 #include "TabStopCalculator.h"
 
 #pragma warning(disable:4996)
 
 SizeCalculator::SizeCalculator(CWnd* parent) {
 	this->parent = parent;
-	
-	CDC *cdc = this->parent->GetDC();
-	CFont* oldFont = cdc->SelectObject(((NotepadForm*)parent)->GetDisplayFont());
+	CDC* cdc = this->parent->GetDC();
+	CFont* oldFont = cdc->SelectObject(((NotepadForm*)(this->parent))->GetDisplayFont());
+
 	char character;
 	this->singleByteWidths = new Long[95];
-	Long maxCharacterWidth = 0;
-
 	for (Long i = 0; i < 95; i++)
 	{
 		character = i + 32;
 		this->singleByteWidths[i] = cdc->GetTextExtent(CString(character)).cx;
-		if (this->singleByteWidths[i] > maxCharacterWidth)
-		{
-			maxCharacterWidth = this->singleByteWidths[i];
-		}
 	}
-
-	this->multiByteWidth = cdc->GetTextExtent(CString("°¡")).cx;
-	if (this->multiByteWidth > maxCharacterWidth)
-	{
-		maxCharacterWidth = this->multiByteWidth;
-	}
-
-	this->maxCharacterWidth = maxCharacterWidth;
 
 	TEXTMETRIC tm;
 	cdc->GetTextMetrics(&tm);
@@ -40,7 +27,6 @@ SizeCalculator::SizeCalculator(CWnd* parent) {
 	this->rowHeight = tm.tmHeight;
 
 	cdc->SelectObject(oldFont);
-
 	this->parent->ReleaseDC(cdc);
 }
 
@@ -53,10 +39,9 @@ SizeCalculator::~SizeCalculator() {
 
 Long SizeCalculator::GetCharacterWidth(char(*character), Long logicalX) {
 	Long width;
-	
 	if (character[0] & 0x80)
 	{
-		width = this->multiByteWidth;
+		width = NonAsciiCharacterMeasurer::MesureWidth(this->parent, character);
 	}
 	else if (character[0] != '\t')
 	{
@@ -90,7 +75,8 @@ Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
 		character = (char*)(*row->GetAt(i));
 		if (!ByteChecker::IsASCII(character))
 		{
-			width += this->multiByteWidth;
+
+			width += NonAsciiCharacterMeasurer::MesureWidth(this->parent, character);
 		}
 		else if (*character != '\t')
 		{
@@ -118,7 +104,7 @@ Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
 		character = (char*)(*row->GetAt(i));
 		if (!ByteChecker::IsASCII(character))
 		{
-			rowWidth += this->multiByteWidth;
+			rowWidth += NonAsciiCharacterMeasurer::MesureWidth(this->parent, character);
 		}
 		else if (*character != '\t')
 		{

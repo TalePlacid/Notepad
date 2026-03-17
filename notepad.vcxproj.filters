@@ -209,6 +209,9 @@
     <ClCompile Include="MouseHandler.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="MultiByteWidth.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="FilePointerCalculator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -249,6 +252,9 @@
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
     <ClCompile Include="SelectionVisitor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NonAsciiCharacterMeasurer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TextOutVisitor.cpp">
@@ -691,6 +697,9 @@
     <ClInclude Include="MouseHandler.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="MultiByteWidth.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="FilePointerCalculator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -728,6 +737,9 @@
       <Filter>헤더 파일\commands</Filter>
     </ClInclude>
     <ClInclude Include="SelectionVisitor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NonAsciiCharacterMeasurer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TextOutVisitor.h">
@@ -998,6 +1010,9 @@
       <Filter>헤더 파일\commands</Filter>
     </ClInclude>
     <ClInclude Include="TabStopCalculator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PaintingVisitor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

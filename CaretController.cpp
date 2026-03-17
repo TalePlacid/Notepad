@@ -57,7 +57,7 @@ Caret* CaretController::Create() {
 		character = row->GetAt(columnIndex);
 		if (character->IsMultiByteCharacter())
 		{
-			caretWidth = sizeCalculator->GetMultiByteWidth();
+			caretWidth = sizeCalculator->GetCharacterWidth((char*)(*character), width);
 		}
 	}
 

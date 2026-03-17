@@ -222,6 +222,7 @@
     <ClCompile Include="FilePointerCalculator.cpp" />
     <ClCompile Include="FileStreamAdapter.cpp" />
     <ClCompile Include="FindReplaceInterpreter.cpp" />
+    <ClCompile Include="PaintingVisitor.cpp" />
     <ClCompile Include="ScrollBarInterpreter.cpp" />
     <ClCompile Include="FindReplaceOption.cpp" />
     <ClCompile Include="FindReplaceOptionMaker.cpp" />
@@ -242,6 +243,7 @@
     <ClCompile Include="MenuInterpreter.cpp" />
     <ClCompile Include="MouseEventResolver.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
+    <ClCompile Include="MultiByteWidth.cpp" />
     <ClCompile Include="NoteConverter.cpp" />
     <ClCompile Include="NotepadApp.cpp" />
     <ClCompile Include="NotepadForm.cpp" />
@@ -272,6 +274,7 @@
     <ClCompile Include="searches\SearchingAlgorithmFactory.cpp" />
     <ClCompile Include="SearchResultController.cpp" />
     <ClCompile Include="SelectionVisitor.cpp" />
+    <ClCompile Include="NonAsciiCharacterMeasurer.cpp" />
     <ClCompile Include="SizeCalculator.cpp" />
     <ClCompile Include="StatusBarController.cpp" />
     <ClCompile Include="Subject.cpp" />
@@ -382,6 +385,7 @@
     <ClInclude Include="FilePointerCalculator.h" />
     <ClInclude Include="FileStreamAdapter.h" />
     <ClInclude Include="FindReplaceInterpreter.h" />
+    <ClInclude Include="PaintingVisitor.h" />
     <ClInclude Include="ScrollBarInterpreter.h" />
     <ClInclude Include="FindReplaceOption.h" />
     <ClInclude Include="FindReplaceOptionMaker.h" />
@@ -403,6 +407,7 @@
     <ClInclude Include="message.h" />
     <ClInclude Include="MouseEventResolver.h" />
     <ClInclude Include="MouseHandler.h" />
+    <ClInclude Include="MultiByteWidth.h" />
     <ClInclude Include="NoteConverter.h" />
     <ClInclude Include="NotepadApp.h" />
     <ClInclude Include="NotepadForm.h" />
@@ -435,6 +440,7 @@
     <ClInclude Include="searches\SearchingAlgorithmFactory.h" />
     <ClInclude Include="SearchResultController.h" />
     <ClInclude Include="SelectionVisitor.h" />
+    <ClInclude Include="NonAsciiCharacterMeasurer.h" />
     <ClInclude Include="SizeCalculator.h" />
     <ClInclude Include="StatusBarController.h" />
     <ClInclude Include="Subject.h" />

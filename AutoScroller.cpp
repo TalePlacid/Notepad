@@ -41,7 +41,7 @@ BOOL AutoScroller::ScrollIfNeeded(CPoint point) {
 
 	if (scrollController->HasHScroll())
 	{
-		Long multiByteWidth = sizeCalculator->GetMultiByteWidth();
+		Long multiByteWidth = sizeCalculator->GetAverageCharacterWidth();
 		Scroll hScroll = scrollController->GetHScroll();
 		Long pos = hScroll.GetPos();
 		Long rightBorder = hScroll.GetPage() - multiByteWidth;

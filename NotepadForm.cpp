@@ -21,7 +21,7 @@
 
 #include "NoteConverter.h"
 #include "NoteWrapper.h"
-#include "TextOutVisitor.h"
+#include "PaintingVisitor.h"
 #include "EncodingDetector.h"
 #include "TextEncoder.h"
 #include "CoordinateConverter.h"
@@ -356,8 +356,8 @@ void NotepadForm::OnPaint() {
 	CBitmap* oldBitMap = memDC.SelectObject(&bitMap);
 
 	memDC.FillSolidRect(&rect, RGB(255, 255, 255));
-	TextOutVisitor textOutVisitor(this, &memDC);
-	this->note->Accept(textOutVisitor);
+	PaintingVisitor paintingVisitor(this, &memDC);
+	this->note->Accept(paintingVisitor);
 
 	dc.BitBlt(0, 0, width, height, &memDC, 0, 0, SRCCOPY);
 
