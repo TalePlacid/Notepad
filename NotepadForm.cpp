@@ -485,8 +485,9 @@ void NotepadForm::OnLButtonUp(UINT nFlags, CPoint point) {
 }
 
 BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
-	this->ResolveMouseEvent(AppID::ID_MOUSE_WHEEL, nFlags, pt, zDelta);
-
+	CPoint clientPoint = pt;
+	this->ScreenToClient(&clientPoint);
+	this->ResolveMouseEvent(AppID::ID_MOUSE_WHEEL, nFlags, clientPoint, zDelta);
 	return 0;
 }
 
@@ -533,7 +534,7 @@ void NotepadForm::ResolveFindReplaceRequest(AppID appID, FindReplaceOption& find
 }
 
 void NotepadForm::ResolveMouseEvent(AppID rawID, UINT nFlags, CPoint point, short zDelta) {
-	AppID appID = MouseEventResolver::Resolve(rawID, nFlags, point, zDelta);
+	AppID appID = MouseEventResolver::Resolve(rawID, nFlags, point, this->mouseHandler->OnDrag(), zDelta);
 	CoordinateConverter coordinateConverter(this);
 	CPoint absolutePoint = coordinateConverter.DisplayToAbsolute(point);
 

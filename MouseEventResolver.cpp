@@ -10,7 +10,7 @@ MouseEventResolver::~MouseEventResolver() {
 
 }
 
-AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, short zDelta) {
+AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, BOOL isDragging, short zDelta) {
 	AppID appID = AppID::NONE;
 	switch (rawID)
 	{
@@ -33,6 +33,14 @@ AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, short 
 			if (zDelta < 0)
 			{
 				appID = AppID::ID_ACTION_ZOOM_OUT;
+			}
+		}
+		else if (isDragging)
+		{
+			appID = AppID::ID_ACTION_DRAG_WHEEL_UP;
+			if (zDelta < 0)
+			{
+				appID = AppID::ID_ACTION_DRAG_WHEEL_DOWN;
 			}
 		}
 		else

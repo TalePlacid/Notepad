@@ -389,6 +389,12 @@
     <ClCompile Include="actions\CopyAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\DragWheelDownAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\DragWheelUpAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
     <ClCompile Include="Editor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -893,6 +899,12 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\CopyAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\DragWheelDownAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\DragWheelUpAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\OpenFindDialogAction.h">
