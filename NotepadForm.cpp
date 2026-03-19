@@ -49,12 +49,15 @@
 #pragma comment(lib, "imm32.lib")
 
 static const UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
+static const UINT_PTR TIMER_ID_RESIZE_REFRESH = 1;
+static const UINT_PTR TIMER_ID_AUTO_SCROLL = 2;
+static const UINT RESIZE_REFRESH_INTERVAL = 75;
+static const UINT AUTO_SCROLL_INTERVAL = 30;
 
 BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_CREATE()
 	ON_WM_CHAR()
 	ON_WM_SIZE()
-	ON_WM_EXITSIZEMOVE()
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_IME_STARTCOMPOSITION, OnImeStartComposition)
 	ON_MESSAGE(WM_IME_COMPOSITION, OnImeComposition)
@@ -101,6 +104,8 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->magnification = 1.0;
 	this->isDirty = FALSE;
 	this->encoding = ANSI;
+	this->clientAreaSize.width = 0;
+	this->clientAreaSize.height = 0;
 
 	this->sourcePath = sourcePath;
 }
@@ -183,6 +188,10 @@ BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
 
 int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CWnd::OnCreate(lpCreateStruct);
+
+	CRect clientArea;
+	this->GetClientRect(&clientArea);
+	this->UpdateClientAreaSize(clientArea.Width(), clientArea.Height());
 	
 	FontSelector fontSelector;
 	LOGFONT logFont = fontSelector.SelectBaseLogFont(this);
@@ -233,8 +242,6 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	margin.up = 25;
 	margin.down = 25;
 	this->pageSetting = PageSetting(CString("A4"), TRUE, margin, CString(""), CString(""));
-
-	this->nextIsLastOnSize = FALSE;
 
 	if (this->sourcePath != "")
 	{
@@ -321,31 +328,24 @@ void NotepadForm::OnSize(UINT nType, int cx, int cy) {
 
 	if (cx > 0 && cy > 0)
 	{
-		if (this->isAutoWrapped)
-		{
-			NoteWrapper noteWrapper(this);
-			noteWrapper.Unwrap();
-			noteWrapper.Wrap();
-		}
-
-		if (this->nextIsLastOnSize)
-		{
-			this->Notify("UpdateScrollBars");
-		}
+		this->UpdateClientAreaSize(cx, cy);
+		KillTimer(TIMER_ID_RESIZE_REFRESH);
+		SetTimer(TIMER_ID_RESIZE_REFRESH, RESIZE_REFRESH_INTERVAL, NULL);
 	}
-}
-
-void NotepadForm::OnExitSizeMove() {
-	this->nextIsLastOnSize = TRUE;
 }
 
 void NotepadForm::OnPaint() {
 	CPaintDC dc(this);
 
+	ClientAreaSize clientAreaSize = this->GetClientAreaSize();
+	Long width = clientAreaSize.width;
+	Long height = clientAreaSize.height;
+	
 	RECT rect;
-	this->GetClientRect(&rect);
-	Long width = rect.right - rect.left;
-	Long height = rect.bottom - rect.top;
+	rect.left = 0;
+	rect.top = 0;
+	rect.right = width;
+	rect.bottom = height;
 
 	CDC memDC;
 	memDC.CreateCompatibleDC(&dc);
@@ -472,7 +472,7 @@ void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
 		BOOL isAutoScrolled = autoScroller.ScrollIfNeeded(point);
 		if (isAutoScrolled)
 		{
-			SetTimer(0, 30, NULL);
+			SetTimer(TIMER_ID_AUTO_SCROLL, AUTO_SCROLL_INTERVAL, NULL);
 		}
 
 		this->ResolveMouseEvent(AppID::ID_MOUSE_MOVE, nFlags, point);
@@ -481,7 +481,7 @@ void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {
 
 void NotepadForm::OnLButtonUp(UINT nFlags, CPoint point) {
 	this->ResolveMouseEvent(AppID::ID_MOUSE_LBUTTON_UP, nFlags, point);
-	KillTimer(0);
+	KillTimer(TIMER_ID_AUTO_SCROLL);
 }
 
 BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
@@ -494,7 +494,20 @@ BOOL NotepadForm::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
 void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 	switch (nIDEvent)
 	{
-	case 0:
+	case TIMER_ID_RESIZE_REFRESH:
+	{
+		KillTimer(TIMER_ID_RESIZE_REFRESH);
+		if (this->isAutoWrapped)
+		{
+			NoteWrapper noteWrapper(this);
+			noteWrapper.Unwrap();
+			noteWrapper.Wrap();
+		}
+		this->Notify("UpdateScrollBars");
+		this->Invalidate();
+	}
+	break;
+	case TIMER_ID_AUTO_SCROLL:
 	{
 		CPoint cursorPos;
 		GetCursorPos(&cursorPos);

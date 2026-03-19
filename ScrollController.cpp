@@ -13,10 +13,9 @@ ScrollController::ScrollController(CWnd* parent) {
 	this->hasVScroll = false;
 	this->hasHScroll = false;
 
-	RECT clientArea;
-	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
-	Long clientAreaWidth = clientArea.right - clientArea.left;
-	Long clientAreaHeight = clientArea.bottom - clientArea.top;
+	ClientAreaSize clientAreaSize = ((NotepadForm*)(this->parent))->GetClientAreaSize();
+	Long clientAreaWidth = clientAreaSize.width;
+	Long clientAreaHeight = clientAreaSize.height;
 
 	this->vScroll.ResizePage(clientAreaHeight);
 	this->vScroll.ResizeRange(clientAreaHeight);

@@ -7,6 +7,12 @@
 #include "Encoding.h"
 
 typedef unsigned long int ULong;
+typedef signed long int Long;
+
+struct ClientAreaSize {
+	Long width;
+	Long height;
+};
 
 class Glyph;
 class CaretController;
@@ -66,6 +72,8 @@ public:
 	void MarkClean();
 	PageSetting GetPageSetting() const;
 	void ApplyPageSetting(const PageSetting& pageSetting);
+	ClientAreaSize GetClientAreaSize() const;
+	void UpdateClientAreaSize(Long width, Long height);
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -75,7 +83,6 @@ protected:
 	LRESULT OnImeChar(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeEndComposition(WPARAM wParam, LPARAM lParam);
 	void OnSize(UINT nType, int cx, int cy);
-	void OnExitSizeMove();
 	void OnPaint();
 	void OnSetFocus(CWnd* pOldWnd);
 	void OnKillFocus(CWnd* pNewWnd);
@@ -109,7 +116,7 @@ private:
 	Encoding encoding;
 	BOOL isDirty;
 	BOOL isCompositing;
-	BOOL nextIsLastOnSize;
+	ClientAreaSize clientAreaSize;
 };
 
 inline BOOL NotepadForm::IsCompositing() const {
@@ -194,6 +201,15 @@ inline PageSetting NotepadForm::GetPageSetting() const {
 
 inline void NotepadForm::ApplyPageSetting(const PageSetting& pageSetting) {
 	this->pageSetting = pageSetting;
+}
+
+inline ClientAreaSize NotepadForm::GetClientAreaSize() const {
+	return this->clientAreaSize;
+}
+
+inline void NotepadForm::UpdateClientAreaSize(Long width, Long height) {
+	this->clientAreaSize.width = width;
+	this->clientAreaSize.height = height;
 }
 
 #endif // !_NOTEPADFORM_H

@@ -23,10 +23,9 @@ ScrollBarAnalyzer::~ScrollBarAnalyzer() {
 }
 
 void ScrollBarAnalyzer::AnalyzeWithoutWrap() {
-	RECT clientArea;
-	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
-	this->clientAreaWidth = clientArea.right - clientArea.left;
-	this->clientAreaHeight = clientArea.bottom - clientArea.top;
+	ClientAreaSize clientAreaSize = ((NotepadForm*)(this->parent))->GetClientAreaSize();
+	this->clientAreaWidth = clientAreaSize.width;
+	this->clientAreaHeight = clientAreaSize.height;
 
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	this->scrollBarThickness = GetSystemMetrics(SM_CXVSCROLL);
@@ -144,10 +143,9 @@ void ScrollBarAnalyzer::AnalyzeWithoutWrap() {
 }
 
 void ScrollBarAnalyzer::AnalyzeWithWrap() {
-	RECT clientArea;
-	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
-	this->clientAreaWidth = clientArea.right - clientArea.left;
-	this->clientAreaHeight = clientArea.bottom - clientArea.top;
+	ClientAreaSize clientAreaSize = ((NotepadForm*)(this->parent))->GetClientAreaSize();
+	this->clientAreaWidth = clientAreaSize.width;
+	this->clientAreaHeight = clientAreaSize.height;
 
 	this->hScrollNeeded = false;
 	this->contentsWidth = this->clientAreaWidth;

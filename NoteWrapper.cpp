@@ -25,9 +25,8 @@ Long NoteWrapper::Wrap() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	CRect clientArea;
-	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
-	Long clientAreaWidth = clientArea.Width();
+	ClientAreaSize clientAreaSize = ((NotepadForm*)(this->parent))->GetClientAreaSize();
+	Long clientAreaWidth = clientAreaSize.width;
 	Long count = 0;
 	Long previousWordStart;
 	Long rowWidth;
@@ -112,9 +111,8 @@ Long NoteWrapper::Rewrap() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	
 
-	CRect clientArea;
-	GetClientRect(this->parent->GetSafeHwnd(), &clientArea);
-	Long clientAreaWidth = clientArea.Width();
+	ClientAreaSize clientAreaSize = ((NotepadForm*)(this->parent))->GetClientAreaSize();
+	Long clientAreaWidth = clientAreaSize.width;
 
 	//4. 다시 개행한다.
 	BOOL flag = TRUE;
