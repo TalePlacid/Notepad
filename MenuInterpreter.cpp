@@ -34,7 +34,6 @@ BOOL MenuInterpreter::IsCommand(UINT nID) {
 	switch (nID)
 	{
 	case ID_MENU_CUT:
-	case ID_MENU_COPY:
 	case ID_MENU_PASTE:
 	case ID_MENU_DELETE:
 		isCommand = TRUE;
