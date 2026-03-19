@@ -511,10 +511,11 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 	{
 		CPoint cursorPos;
 		GetCursorPos(&cursorPos);
+		this->ScreenToClient(&cursorPos);
 		AutoScroller autoScroller(this);
 		autoScroller.ScrollIfNeeded(cursorPos);
 
-		//this->HandleMouseEvent(WM_MOUSEMOVE, MK_LBUTTON, cursorPos);
+		this->ResolveMouseEvent(AppID::ID_MOUSE_MOVE, MK_LBUTTON, cursorPos);
 	}
 	break;
 	default:
