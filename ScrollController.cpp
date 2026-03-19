@@ -117,10 +117,12 @@ void ScrollController::Update(Subject* subject, string interest) {
 		if (this->hasVScroll)
 		{
 			//6.1. 수직 스크롤 페이지를 갱신한다.
-			this->vScroll.ResizePage(scrollBarAnalyzer.GetClientAreaHeight());
-			scrollInfo.fMask = SIF_PAGE;
-			scrollInfo.nPage = this->vScroll.GetPage();
-			SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
+            this->vScroll.ResizePage(scrollBarAnalyzer.GetClientAreaHeight());
+            this->vScroll.Move(this->vScroll.GetPos());
+            scrollInfo.fMask = SIF_PAGE | SIF_POS;
+            scrollInfo.nPage = this->vScroll.GetPage();
+            scrollInfo.nPos = this->vScroll.GetPos();
+            SetScrollInfo(this->parent->GetSafeHwnd(), SB_VERT, &scrollInfo, TRUE);
 
 			//6.2. 수직 스크롤 범위를 벗어났으면, 수직 스크롤 위치를 조정한다.
 			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
