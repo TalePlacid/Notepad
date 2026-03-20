@@ -192,6 +192,7 @@ void ScrollController::Update(Subject* subject, string interest) {
 		}
 
 		this->parent->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+		TRACE("max : %ld\n", this->vScroll.GetMax());
 	}
 }
 

@@ -76,6 +76,7 @@ Long NoteWrapper::Wrap() {
 		i++;
 	}
 
+	TRACE("wrap : %ld\n", count);
 	return count;
 }
 
@@ -95,6 +96,7 @@ Long NoteWrapper::Rewrap() {
 		previousRow = note->GetAt(rowIndex - 1);
 		columnIndex += previousRow->GetLength();
 		note->MergeRows(rowIndex - 1);
+		count--;
 
 		rowIndex = note->Previous();
 		row = note->GetAt(rowIndex);
@@ -162,6 +164,7 @@ Long NoteWrapper::Rewrap() {
 		i++;
 	}
 
+	TRACE("rewrap : %ld\n", count);
 	return count;
 }
 
@@ -210,5 +213,6 @@ Long NoteWrapper::Unwrap() {
 		i++;
 	}
 
+	TRACE("unwrap : %ld\n", count);
 	return count;
 }

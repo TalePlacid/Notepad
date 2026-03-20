@@ -499,9 +499,17 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 		KillTimer(TIMER_ID_RESIZE_REFRESH);
 		if (this->isAutoWrapped)
 		{
+			SizeCalculator* sizeCalculator = this->sizeCalculator;
+			ScrollController* scrollController = this->scrollController;
+			Scroll vScroll = scrollController->GetVScroll();
+			Long max = vScroll.GetMax();
+			Long rowHeight = sizeCalculator->GetRowHeight();
+
 			NoteWrapper noteWrapper(this);
-			noteWrapper.Unwrap();
-			noteWrapper.Wrap();
+			Long unwrappedCount = noteWrapper.Unwrap();
+			Long wrappedCount = noteWrapper.Wrap();
+			max += (wrappedCount - unwrappedCount) * rowHeight;
+			scrollController->ResizeVRange(max);
 		}
 		this->Notify("UpdateScrollBars");
 		this->Invalidate();
