@@ -548,6 +548,7 @@ void NotepadForm::ResolveFindReplaceRequest(AppID appID, FindReplaceOption& find
 }
 
 void NotepadForm::ResolveMouseEvent(AppID rawID, UINT nFlags, CPoint point, short zDelta) {
+	point = MouseEventResolver::NormalizePoint(point, this->clientAreaSize);
 	AppID appID = MouseEventResolver::Resolve(rawID, nFlags, point, this->mouseHandler->OnDrag(), zDelta);
 	CoordinateConverter coordinateConverter(this);
 	CPoint absolutePoint = coordinateConverter.DisplayToAbsolute(point);

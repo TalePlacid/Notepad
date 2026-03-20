@@ -1,5 +1,7 @@
 #include "MouseEventResolver.h"
 
+#include "NotepadForm.h"
+
 #pragma warning(disable:4996)
 
 MouseEventResolver::MouseEventResolver() {
@@ -8,6 +10,31 @@ MouseEventResolver::MouseEventResolver() {
 
 MouseEventResolver::~MouseEventResolver() {
 
+}
+
+CPoint MouseEventResolver::NormalizePoint(CPoint point, const ClientAreaSize& clientAreaSize) {
+	Long maxX = clientAreaSize.width - 1;
+	Long maxY = clientAreaSize.height - 1;
+
+	if (point.x < 0)
+	{
+		point.x = 0;
+	}
+	else if (point.x > maxX)
+	{
+		point.x = maxX;
+	}
+
+	if (point.y < 0)
+	{
+		point.y = 0;
+	}
+	else if (point.y > maxY)
+	{
+		point.y = maxY;
+	}
+
+	return point;
 }
 
 AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, BOOL isDragging, short zDelta) {
