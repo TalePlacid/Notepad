@@ -43,7 +43,7 @@ BOOL PageSettingForm::OnInitDialog() {
 	PageSetting pageSetting = ((NotepadForm*)(this->parent))->GetPageSetting();
 
 	//2. 컨트롤들에서 기본 값을 설정한다.
-	CString sizes[] = { "A4", "A5", "A6", "B4", "B5", "레터", "리갈" };
+	CString sizes[] = { "A4", "A5", "A6", "B4", "B5", "레터", "리걸" };
 	for (Long i = 0; i < sizeof(sizes) / sizeof(sizes[0]); i++)
 	{
 		((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->AddString(sizes[i]);
