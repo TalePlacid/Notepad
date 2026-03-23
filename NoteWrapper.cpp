@@ -76,7 +76,6 @@ Long NoteWrapper::Wrap() {
 		i++;
 	}
 
-	TRACE("wrap : %ld\n", count);
 	return count;
 }
 
@@ -164,7 +163,6 @@ Long NoteWrapper::Rewrap() {
 		i++;
 	}
 
-	TRACE("rewrap : %ld\n", count);
 	return count;
 }
 
@@ -213,6 +211,5 @@ Long NoteWrapper::Unwrap() {
 		i++;
 	}
 
-	TRACE("unwrap : %ld\n", count);
 	return count;
 }

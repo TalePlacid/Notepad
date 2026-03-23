@@ -411,26 +411,30 @@ void Editor::MoveDown() {
 		rowIndex = note->GetCurrent();
 	}
 
-	//2. 다음 줄로 이동한다.
-	Glyph* originalRow = note->GetAt(rowIndex);
-	Long columnIndex = originalRow->GetCurrent();
-	Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
-
-	rowIndex = note->Next();
-	Glyph* nextRow = note->GetAt(rowIndex);
-	Long nearestIndex = sizeCalculator->GetNearestColumnIndex(nextRow, originalWidth);
-	nextRow->Move(nearestIndex);
-
-	//3. 페이징 버퍼에서 이동한다.
-	if (!nextRow->IsDummyRow())
+	//2. 마지막 줄이 아니면,
+	if (rowIndex < note->GetLength() - 1)
 	{
-		pagingBuffer->NextRow();
-		pagingBuffer->Move(nearestIndex);
-	}
-	else
-	{
-		Long characters = originalRow->GetLength() - columnIndex + nearestIndex;
-		pagingBuffer->Next(characters);
+		//2.1. 다음 줄로 이동한다.
+		Glyph* originalRow = note->GetAt(rowIndex);
+		Long columnIndex = originalRow->GetCurrent();
+		Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
+
+		rowIndex = note->Next();
+		Glyph* nextRow = note->GetAt(rowIndex);
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(nextRow, originalWidth);
+		nextRow->Move(nearestIndex);
+
+		//2.2. 페이징 버퍼에서 이동한다.
+		if (!nextRow->IsDummyRow())
+		{
+			pagingBuffer->NextRow();
+			pagingBuffer->Move(nearestIndex);
+		}
+		else
+		{
+			Long characters = originalRow->GetLength() - columnIndex + nearestIndex;
+			pagingBuffer->Next(characters);
+		}
 	}
 }
 
