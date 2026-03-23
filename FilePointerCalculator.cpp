@@ -53,8 +53,11 @@ Long FilePointerCalculator::Previous(Long offset) {
 			fseek(file, offset - 2, SEEK_SET);
 			fread(previousBytes, 1, 2, file);
 
-			
-			if (LeadByteChecker::IsLeadByte(file, offset - 2) || previousBytes[0] == '\r')
+			if (previousBytes[0] == '\r')
+			{
+				previousOffset = offset;
+			}
+			else if (LeadByteChecker::IsLeadByte(file, offset - 2))
 			{
 				previousOffset = offset - 2;
 			}
