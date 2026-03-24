@@ -17,6 +17,7 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
 LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
+#pragma code_page(949)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -128,7 +129,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "페이지 설정"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    COMBOBOX        IDC_COMBO_SIZE,37,23,153,86,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_SIZE,37,23,153,86,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_COMBO_SOURCE,37,38,153,69,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "세로",IDC_RADIO_VERTICAL,"Button",BS_AUTORADIOBUTTON | WS_GROUP,18,78,29,10
     CONTROL         "가로",IDC_RADIO_HORIZONTAL,"Button",BS_AUTORADIOBUTTON,18,95,29,10
@@ -163,8 +164,6 @@ BEGIN
     DEFPUSHBUTTON   "확인",IDOK,218,147,50,14
 END
 
-
-
 IDD_DIALOG_GOTO DIALOGEX 0, 0, 170, 60
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "줄 이동"
@@ -175,6 +174,7 @@ BEGIN
     DEFPUSHBUTTON   "확인",IDOK,77,38,40,14
     PUSHBUTTON      "취소",IDCANCEL,120,38,40,14
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -219,6 +219,4 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-
-
 

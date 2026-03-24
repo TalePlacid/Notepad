@@ -8,7 +8,6 @@
 BEGIN_MESSAGE_MAP(PageSettingForm, CDialog)
 	ON_WM_PAINT()
 	ON_CBN_SELCHANGE(IDC_COMBO_SIZE, OnOptionChanged)
-	ON_CBN_EDITCHANGE(IDC_COMBO_SIZE, OnOptionChanged)
 	ON_EN_CHANGE(IDC_EDIT_LEFT, OnOptionChanged)
 	ON_EN_CHANGE(IDC_EDIT_RIGHT, OnOptionChanged)
 	ON_EN_CHANGE(IDC_EDIT_UP, OnOptionChanged)
@@ -48,7 +47,7 @@ BOOL PageSettingForm::OnInitDialog() {
 	{
 		((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->AddString(sizes[i]);
 	}
-	((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->SetWindowText(pageSetting.paperName);
+	((CComboBox*)(this->GetDlgItem(IDC_COMBO_SIZE)))->SelectString(-1, pageSetting.paperName);
 
 	if (pageSetting.isVertical)
 	{
@@ -238,7 +237,7 @@ void PageSettingForm::OnOK() {
 	pageSetting.margin.down = atoi(down);
 	pageSetting.header = header;
 	pageSetting.footer = footer;
-	((NotepadForm*)(this->GetParent()))->ApplyPageSetting(pageSetting);
+	((NotepadForm*)(this->parent))->ApplyPageSetting(pageSetting);
 
 	CDialog::OnOK();
 }
