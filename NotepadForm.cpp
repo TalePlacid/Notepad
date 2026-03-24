@@ -101,6 +101,7 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->mouseHandler = NULL;
 	this->isCompositing = FALSE;
 	this->isAutoWrapped = FALSE;
+	this->autoWrapSuspendCount = 0;
 	this->magnification = 1.0;
 	this->isDirty = FALSE;
 	this->encoding = ANSI;

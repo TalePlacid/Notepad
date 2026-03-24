@@ -11,56 +11,70 @@
 
 SuspendAutoWrap::SuspendAutoWrap(CWnd* parent) {
 	this->parent = parent;
+	this->viewRowIndex = 0;
+	this->isSuspended = FALSE;
 
-	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
+	if (notepadForm->IsAutoWrapped())
 	{
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long rowHeight = sizeCalculator->GetRowHeight();
+		if (notepadForm->GetAutoWrapSuspendCount() == 0)
+		{
+			ScrollController* scrollController = notepadForm->scrollController;
+			SizeCalculator* sizeCalculator = notepadForm->sizeCalculator;
+			Long rowHeight = sizeCalculator->GetRowHeight();
 
-		Scroll vScroll = scrollController->GetVScroll();
-		Long pos = vScroll.GetPos();
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-		Long viewStartIndex = pos / rowHeight - rowStartIndex;
+			Scroll vScroll = scrollController->GetVScroll();
+			Long pos = vScroll.GetPos();
+			PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
+			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+			Long viewStartIndex = pos / rowHeight - rowStartIndex;
 
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
+			Glyph* note = notepadForm->note;
+			Long rowIndex = note->GetCurrent();
 
-		this->viewRowIndex = rowIndex - viewStartIndex;
+			this->viewRowIndex = rowIndex - viewStartIndex;
 
-		NoteWrapper noteWrapper(this->parent);
-		Long unwrapedDummyCount = noteWrapper.Unwrap();
-		Long max = scrollController->GetVScroll().GetMax() - unwrapedDummyCount * rowHeight;
-		scrollController->ResizeVRange(max);
+			NoteWrapper noteWrapper(this->parent);
+			Long unwrapedDummyCount = noteWrapper.Unwrap();
+			Long max = scrollController->GetVScroll().GetMax() - unwrapedDummyCount * rowHeight;
+			scrollController->ResizeVRange(max);
+			this->isSuspended = TRUE;
+		}
+
+		notepadForm->IncreaseAutoWrapSuspendCount();
 	}
 }
 
 SuspendAutoWrap::~SuspendAutoWrap() {
-	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
+	if (notepadForm->IsAutoWrapped())
 	{
-		NoteWrapper noteWrapper(this->parent);
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		notepadForm->DecreaseAutoWrapSuspendCount();
 
-		Long rowHeight = sizeCalculator->GetRowHeight();
-		Long wrapedDummyCount = noteWrapper.Wrap();
-		Long max = scrollController->GetVScroll().GetMax() + wrapedDummyCount * rowHeight;
-		scrollController->ResizeVRange(max);
-	
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-		Long pos = (rowStartIndex + rowIndex - this->viewRowIndex) * rowHeight;
-		
-		Scroll vScroll = scrollController->GetVScroll();
-		Long posLimit = vScroll.GetMax() - vScroll.GetPage();
-		if (pos > posLimit)
+		if (this->isSuspended && notepadForm->GetAutoWrapSuspendCount() == 0)
 		{
-			pos = posLimit;
+			NoteWrapper noteWrapper(this->parent);
+			ScrollController* scrollController = notepadForm->scrollController;
+			SizeCalculator* sizeCalculator = notepadForm->sizeCalculator;
+
+			Long rowHeight = sizeCalculator->GetRowHeight();
+			Long wrapedDummyCount = noteWrapper.Wrap();
+			Long max = scrollController->GetVScroll().GetMax() + wrapedDummyCount * rowHeight;
+			scrollController->ResizeVRange(max);
+			
+			PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
+			Glyph* note = notepadForm->note;
+			Long rowIndex = note->GetCurrent();
+			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+			Long pos = (rowStartIndex + rowIndex - this->viewRowIndex) * rowHeight;
+			
+			Scroll vScroll = scrollController->GetVScroll();
+			Long posLimit = vScroll.GetMax() - vScroll.GetPage();
+			if (pos > posLimit)
+			{
+				pos = posLimit;
+			}
+			scrollController->MoveVScroll(pos);
 		}
-		scrollController->MoveVScroll(pos);
 	}
 }
-

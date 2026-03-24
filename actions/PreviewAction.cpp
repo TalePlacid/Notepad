@@ -17,8 +17,6 @@ PreviewAction::~PreviewAction() {
 }
 
 void PreviewAction::Perform() {
-	SuspendAutoWrap suspendAutoWrap(this->parent);
-
 	PageLoader::LoadFirst(this->parent);
 
 	RECT rect;

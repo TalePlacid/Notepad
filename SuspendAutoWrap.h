@@ -1,10 +1,7 @@
 #ifndef _SUSPENDAUTOWRAP_H //guard
 #define _SUSPENDAUTOWRAP_H
-
 typedef signed long int Long;
-
 class CWnd;
-
 class SuspendAutoWrap {
 public:
 	SuspendAutoWrap(CWnd* parent);
@@ -12,7 +9,6 @@ public:
 private:
 	CWnd* parent;
 	Long viewRowIndex;
+	BOOL isSuspended;
 };
-
 #endif // !_SUSPENDAUTOWRAP_H
-

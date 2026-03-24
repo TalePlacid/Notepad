@@ -24,7 +24,8 @@ BEGIN_MESSAGE_MAP(PreviewForm, CFrameWnd)
 	END_MESSAGE_MAP()
 
 
-PreviewForm::PreviewForm(CWnd *parent) {
+PreviewForm::PreviewForm(CWnd *parent)
+	: suspendAutoWrap(parent) {
 	this->parent = parent;
 	this->previewLayout = NULL;
 	this->previewPaginator = NULL;

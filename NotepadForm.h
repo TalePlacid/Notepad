@@ -61,6 +61,9 @@ public:
 	void EnableAutoWrap();
 	void DisableAutoWrap();
 	void ToggleAutoWrap();
+	Long GetAutoWrapSuspendCount() const;
+	void IncreaseAutoWrapSuspendCount();
+	void DecreaseAutoWrapSuspendCount();
 	double GetMagnification() const;
 	void ChangeMagnification(double magnification);
 	CString GetSourcePath() const;
@@ -111,6 +114,7 @@ private:
 	CFont* originalFont;
 	CFont* displayFont;
 	BOOL isAutoWrapped;
+	Long autoWrapSuspendCount;
 	double magnification;
 	CString sourcePath;
 	Encoding encoding;
@@ -157,6 +161,21 @@ inline void NotepadForm::DisableAutoWrap() {
 
 inline void NotepadForm::ToggleAutoWrap() {
 	this->isAutoWrapped = !this->isAutoWrapped;
+}
+
+inline Long NotepadForm::GetAutoWrapSuspendCount() const {
+	return this->autoWrapSuspendCount;
+}
+
+inline void NotepadForm::IncreaseAutoWrapSuspendCount() {
+	(this->autoWrapSuspendCount)++;
+}
+
+inline void NotepadForm::DecreaseAutoWrapSuspendCount() {
+	if (this->autoWrapSuspendCount > 0)
+	{
+		(this->autoWrapSuspendCount)--;
+	}
 }
 
 inline double NotepadForm::GetMagnification() const {

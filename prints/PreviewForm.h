@@ -1,6 +1,7 @@
 #ifndef _PREVIEWFORM_H //guard
 #define _PREVIEWFORM_H
 #include <afxwin.h>
+#include "../SuspendAutoWrap.h"
 
 typedef signed long int Long;
 
@@ -33,6 +34,8 @@ protected:
 	void OnLastButtonClicked();
 	void OnClose();
 	DECLARE_MESSAGE_MAP()
+private:
+	SuspendAutoWrap suspendAutoWrap;
 };
 
 #endif // !_PREVIEWFORM_H
