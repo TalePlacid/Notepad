@@ -68,6 +68,9 @@ BOOL PageSettingForm::OnInitDialog() {
 	text.Format("%ld", pageSetting.margin.down);
 	this->GetDlgItem(IDC_EDIT_DOWN)->SetWindowText(text);
 
+	this->GetDlgItem(IDC_EDIT_HEADER)->SetWindowText(pageSetting.header);
+	this->GetDlgItem(IDC_EDIT_FOOTER)->SetWindowText(pageSetting.footer);
+
 	//3. 미리보기의 위치를 조정한다.
 	this->pageSettingLayout = new PageSettingLayout(this);
 	this->pageSettingLayout->Locate();
