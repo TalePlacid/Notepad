@@ -11,50 +11,6 @@
 
 #pragma warning(disable:4996)
 
-class DebugWindow : public CFrameWnd {
-public:
-     CBitmap * m_pBitmap; // 확인할 비트맵
-     int m_nWidth;
-     int m_nHeight;
-
-     DebugWindow(CBitmap * pBitmap, int w, int h) {
-         m_pBitmap = pBitmap;
-         m_nWidth = w;
-         m_nHeight = h;
-         // 윈도우 생성 (제목: MEMDC DEBUG, 크기는 화면 절반 정도)
-         Create(NULL, "MEMDC DEBUG", WS_OVERLAPPEDWINDOW, CRect(100, 100,
-				800, 800));
-	}
-
-     afx_msg void OnPaint() {
-         CPaintDC dc(this);
-         if (!m_pBitmap) return;
-
-         // 전달받은 비트맵을 그린다.
-         CDC memDC;
-         memDC.CreateCompatibleDC(&dc);
-         CBitmap * pOld = memDC.SelectObject(m_pBitmap);
-
-         // 1:1로 그리면 너무 커서 안 보일 수 있으니,
-         // 스크롤 기능 대신 StretchBlt로 윈도우 크기에 맞춰 축소해서 보여줌
-         CRect clientRect;
-         GetClientRect(&clientRect);
-
-         dc.SetStretchBltMode(HALFTONE);
-         dc.StretchBlt(0, 0, clientRect.Width(), clientRect.Height(),
-			 & memDC, 0, 0, m_nWidth, m_nHeight, SRCCOPY);
-
-        memDC.SelectObject(pOld);
-
-	}
-    DECLARE_MESSAGE_MAP()
-};
-
- BEGIN_MESSAGE_MAP(DebugWindow, CFrameWnd)
-     ON_WM_PAINT()
- END_MESSAGE_MAP()
-
-
 
 BEGIN_MESSAGE_MAP(PreviewForm, CFrameWnd)
 	ON_WM_CREATE()
@@ -114,7 +70,7 @@ int PreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	LOGFONT logFont;
 	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&logFont);
 	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
-	logFont.lfHeight = -pageNumberHeight;
+	logFont.lfHeight = -(pageNumberHeight * 7 / 10);
 	this->pageNumberFont = new CFont;
 	this->pageNumberFont->CreateFontIndirect(&logFont);
 	this->pageNumber.SetFont(this->pageNumberFont);
@@ -134,14 +90,16 @@ void PreviewForm::OnSize(UINT nType, int cx, int cy) {
 	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&logFont);
 	RECT pageNumberArea = this->previewLayout->GetPageNumberArea();
 	Long pageNumberHeight = pageNumberArea.bottom - pageNumberArea.top;
-	logFont.lfHeight = -pageNumberHeight;
+	logFont.lfHeight = -(pageNumberHeight * 7 / 10);
+	CFont* pageNumberFont = new CFont;
+	pageNumberFont->CreateFontIndirect(&logFont);
+	this->pageNumber.SetFont(pageNumberFont);
+
 	if (this->pageNumberFont != NULL)
 	{
 		delete this->pageNumberFont;
 	}
-	this->pageNumberFont = new CFont;
-	this->pageNumberFont->CreateFontIndirect(&logFont);
-	this->pageNumber.SetFont(this->pageNumberFont);
+	this->pageNumberFont = pageNumberFont;
 }
 
 void PreviewForm::OnPaint() {
