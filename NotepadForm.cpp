@@ -18,8 +18,8 @@
 #include "ClipboardController.h"
 #include "TextFileIO.h"
 #include "FontSelector.h"
+#include "PageLoader.h"
 
-#include "NoteConverter.h"
 #include "NoteWrapper.h"
 #include "PaintingVisitor.h"
 #include "EncodingDetector.h"
@@ -217,7 +217,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		delete[] sourceContents;
 	}
 
-	this->note = this->pagingBuffer->LoadNext();
+	PageLoader::LoadFirst(this);
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
@@ -632,3 +632,5 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	this->Notify("ChangeCaret");
 	this->Invalidate();
 }
+
+

@@ -2,6 +2,8 @@
 #define _CLIPBOARDCONTROLLER_H
 #include <afxwin.h>
 
+typedef signed long int Long;
+
 class ClipboardController {
 public:
 	ClipboardController(CWnd* parent);
@@ -10,6 +12,7 @@ public:
 	BOOL Copy();
 	BOOL Paste();
 
+	Long GetLength();
 	CString& GetContent() const;
 private:
 	CWnd* parent;

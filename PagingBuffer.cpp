@@ -4,7 +4,6 @@
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
 #include "SizeCalculator.h"
-#include "NoteConverter.h"
 #include "ByteChecker.h"
 #include "FilePointerCalculator.h"
 #include "LeadByteChecker.h"
@@ -88,7 +87,7 @@ PagingBuffer::~PagingBuffer() {
 	}
 }
 
-Glyph* PagingBuffer::LoadPrevious() {
+void PagingBuffer::LoadPrevious(TCHAR*& contents, Long& byteCount) {
 	//1. 적재 크기만큼 위로 이동한다.
 	TCHAR character;
 	Long currentOffset = ftell(this->file);
@@ -114,8 +113,7 @@ Glyph* PagingBuffer::LoadPrevious() {
 	i--;
 	j++;
 
-	//2. 적재 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.
-	
+	//2. 적재 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.	
 	if (i >= this->pageSize)
 	{
 		if (j > 0)
@@ -140,27 +138,17 @@ Glyph* PagingBuffer::LoadPrevious() {
 	}
 
 	//4. 적재 범위만큼 읽는다.
-	TCHAR(*contents) = new TCHAR[this->pageSize];
+	contents = new TCHAR[this->pageSize + 1];
 	fseek(this->file, j, SEEK_SET);
 	fread(contents, 1, i, this->file);
 	contents[i] = '\0';
+	byteCount = i;
 
-	//5. 노트로 변환한다.
-	NoteConverter noteConverter;
-	Glyph* note = noteConverter.Convert(contents);
-
-	if (contents != NULL)
-	{
-		delete[] contents;
-	}
-
-	//6. 원래 위치로 돌아간다.
+	//5. 원래 위치로 돌아간다.
 	fseek(this->file, currentOffset, SEEK_SET);
-
-	return note;
 }
 
-Glyph* PagingBuffer::LoadNext() {
+void PagingBuffer::LoadNext(TCHAR*& contents, Long& byteCount) {
 	//1. 바이트수가 페이지 크기보다 작고, 줄수가 적재 줄수보다 작으면 반복한다.
 	Long currentOffset = ftell(this->file);
 
@@ -168,7 +156,7 @@ Glyph* PagingBuffer::LoadNext() {
 	Long fileEndOffset = filePointerCaculator.FileEnd();
 	Long loadingRowCount = PAGE_ROWCOUNT * PAGE_MULTIPLE;
 	Long rowCount = 0;
-	TCHAR(*contents) = new TCHAR[this->pageSize + 1];
+	contents = new TCHAR[this->pageSize + 1];
 	Long i = 0;
 	while (ftell(this->file) < fileEndOffset && i < this->pageSize && rowCount < loadingRowCount)
 	{
@@ -182,7 +170,6 @@ Glyph* PagingBuffer::LoadNext() {
 	}
 
 	//2. 페이지 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.
-	
 	if (i >= this->pageSize && (!ByteChecker::IsASCII(contents + i - 1) || contents[i - 1] == '\r'))
 	{
 		i -= 2;
@@ -192,20 +179,10 @@ Glyph* PagingBuffer::LoadNext() {
 		i -= 1;
 	}
 	contents[i] = '\0';
+	byteCount = i;
 
 	//4. 기존 위치로 이동한다.
 	fseek(this->file, currentOffset, SEEK_SET);
-
-	//4. 노트로 전환한다.
-	NoteConverter noteConverter;
-	Glyph* note = noteConverter.Convert(contents);
-
-	if (contents != NULL)
-	{
-		delete[] contents;
-	}
-
-	return note;
 }
 
 Long PagingBuffer::Add(char(*character)) {
@@ -653,6 +630,9 @@ Long PagingBuffer::GetFileEndOffset() const {
 	FilePointerCalculator filePointerCalculator(const_cast<PagingBuffer*>(this));
 	return filePointerCalculator.FileEnd();
 }          
+
+
+
 
 
 

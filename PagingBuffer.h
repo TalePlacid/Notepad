@@ -14,8 +14,8 @@ public:
 	PagingBuffer(CWnd* parent, TCHAR(*sourceContents), Long sourceCount, Long pageSize = 2097152);
 	~PagingBuffer();
 
-	Glyph* LoadPrevious();
-	Glyph* LoadNext();
+	void LoadPrevious(TCHAR*& contents, Long& byteCount);
+	void LoadNext(TCHAR*& contents, Long& byteCount);
 	Long Add(char(*character));
 	Long Add(CString str);
 	Long Remove();
@@ -79,4 +79,7 @@ inline Long PagingBuffer::GetSelectionBeginOffset() const {
 }
 
 #endif // !_PAGINGBUFFER_H
+
+
+
 

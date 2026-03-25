@@ -65,3 +65,15 @@ BOOL ClipboardController::Paste() {
 
 	return isOpened;
 }
+
+Long ClipboardController::GetLength() {
+	Long length = 0;
+	BOOL isOpened = OpenClipboard(NULL);
+	if (isOpened)
+	{
+		HANDLE hMem = GetClipboardData(CF_TEXT);
+		length = GlobalSize(hMem);
+	}
+
+	return length;
+}
