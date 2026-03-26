@@ -1,8 +1,9 @@
 #include <afxwin.h>
-#include "PageLoader.h"
+#include "PageManager.h"
 #include "NotepadForm.h"
 #include "PagingBuffer.h"
 #include "glyphs/Glyph.h"
+#include "glyphs/Note.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "NoteWrapper.h"
@@ -12,15 +13,15 @@
 
 #pragma warning(disable:4996)
 
-PageLoader::PageLoader() {
+PageManager::PageManager() {
 
 }
 
-PageLoader::~PageLoader() {
+PageManager::~PageManager() {
 
 }
 
-void PageLoader::LoadFirst(CWnd* parent) {
+void PageManager::LoadFirst(CWnd* parent) {
 	SuspendAutoWrap suspendAutoWrap(parent);
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
@@ -77,7 +78,7 @@ void PageLoader::LoadFirst(CWnd* parent) {
 	pagingBuffer->FirstRow();
 }
 
-void PageLoader::LoadPrevious(CWnd* parent) {
+void PageManager::LoadPrevious(CWnd* parent) {
 	//자동개행시 임시 개행 풀기
 	SuspendAutoWrap suspendAutoWrap(parent);
 
@@ -110,7 +111,6 @@ void PageLoader::LoadPrevious(CWnd* parent) {
 	row = note->GetAt(rowIndex);
 	Long columnIndex = row->First();
 	pagingBuffer->First();
-
 	//3. 앞 부분을 로드한다.
 	TCHAR* loadedContents = NULL;
 	Long loadedByteCount = 0;
@@ -126,17 +126,20 @@ void PageLoader::LoadPrevious(CWnd* parent) {
 	Long count = 0;
 	if (loadedByteCount > 0 && loadedNote != NULL)
 	{
-		Long removedRowCount = 0;
 		if (noteLength > 1)
 		{
 			note->Remove(0);
-			removedRowCount = 1;
 		}
 
 		count = note->AppendFromFront(loadedNote);
-		pagingBuffer->CacheRowStartIndex(removedRowCount - count);
+		Long rowStartDifference = -count;
+		if (noteLength > 1)
+		{
+			rowStartDifference++;
+		}
+		pagingBuffer->CacheRowStartIndex(rowStartDifference);
 
-		//5. 선택여부를 반영한다.
+		//4.1. 선택여부를 반영한다.
 		Long previousRowIndex = -1;
 		rowIndex = count;
 		row = note->GetAt(rowIndex);
@@ -153,11 +156,19 @@ void PageLoader::LoadPrevious(CWnd* parent) {
 			}
 
 			previousRowIndex = rowIndex;
-			rowIndex = note->Previous();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->Last();
-			i = pagingBuffer->PreviousRow();
-			i = pagingBuffer->Last();
+			Long nextRowIndex = note->Previous();
+			if (nextRowIndex < previousRowIndex)
+			{
+				rowIndex = nextRowIndex;
+				row = note->GetAt(rowIndex);
+				columnIndex = row->Last();
+				i = pagingBuffer->PreviousRow();
+				i = pagingBuffer->Last();
+			}
+			else
+			{
+				rowIndex = nextRowIndex;
+			}
 		}
 	}
 
@@ -165,12 +176,13 @@ void PageLoader::LoadPrevious(CWnd* parent) {
 	{
 		delete loadedNote;
 	}
+
 	if (loadedContents != NULL)
 	{
 		delete[] loadedContents;
 	}
 
-	//6. 현재 위치로 돌아온다.
+	//5. 현재 위치로 돌아온다.
 	CaretNavigator caretNavigator(parent);
 	caretNavigator.MoveTo(currentOffset);
 	note = ((NotepadForm*)parent)->note;
@@ -178,11 +190,12 @@ void PageLoader::LoadPrevious(CWnd* parent) {
 	row = note->GetAt(currentRowIndex);
 	currentColumnIndex = row->GetCurrent();
 
-	//7. 노트에서 아랫 부분을 지운다.
+
+	//6. 노트에서 아랫 부분을 지운다.
 	Long belowIndex = currentRowIndex + PAGE_ROWCOUNT;
 	note->TruncateAfter(belowIndex);
 
-	//8. 수평 스크롤바 최대값을 갱신한다.
+	//7. 수평 스크롤바 최대값을 갱신한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
 	ScrollController* scrollController = ((NotepadForm*)parent)->scrollController;
 	Long rowWidth = 0;
@@ -201,7 +214,7 @@ void PageLoader::LoadPrevious(CWnd* parent) {
 	scrollController->ResizeHRange(max);
 }
 
-void PageLoader::LoadNext(CWnd* parent) {
+void PageManager::LoadNext(CWnd* parent) {
 	//자동개행시 임시 개행 풀기
 	SuspendAutoWrap suspendAutoWrap(parent);
 
@@ -241,6 +254,7 @@ void PageLoader::LoadNext(CWnd* parent) {
 		pagingBuffer->NextRow();
 		pagingBuffer->First();
 	}
+
 	TCHAR* loadedContents = NULL;
 	Long loadedByteCount = 0;
 	pagingBuffer->LoadNext(loadedContents, loadedByteCount);
@@ -262,7 +276,7 @@ void PageLoader::LoadNext(CWnd* parent) {
 
 		count = note->AppendFromRear(loadedNote);
 
-		//5. 로드된 뒷 부분의 선택여부를 반영한다.
+		//4.1. 로드된 뒷 부분의 선택여부를 반영한다.
 		Long previousRowIndex = -1;
 		Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 		rowIndex = note->GetLength() - count;
@@ -283,10 +297,18 @@ void PageLoader::LoadNext(CWnd* parent) {
 			}
 
 			previousRowIndex = rowIndex;
-			rowIndex = note->Next();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->First();
-			i = pagingBuffer->NextRow();
+			Long nextRowIndex = note->Next();
+			if (nextRowIndex > previousRowIndex)
+			{
+				rowIndex = nextRowIndex;
+				row = note->GetAt(rowIndex);
+				columnIndex = row->First();
+				i = pagingBuffer->NextRow();
+			}
+			else
+			{
+				rowIndex = nextRowIndex;
+			}
 		}
 	}
 
@@ -299,7 +321,7 @@ void PageLoader::LoadNext(CWnd* parent) {
 		delete[] loadedContents;
 	}
 
-	//6. 현재 위치로 돌아온다.
+	//5. 현재 위치로 돌아온다.
 	CaretNavigator caretNavigator(parent);
 	caretNavigator.MoveTo(currentOffset);
 	note = ((NotepadForm*)parent)->note;
@@ -307,7 +329,7 @@ void PageLoader::LoadNext(CWnd* parent) {
 	row = note->GetAt(currentRowIndex);
 	currentColumnIndex = row->GetCurrent();
 
-	//7. 노트에서 윗 부분을 지운다.
+	//6. 노트에서 윗 부분을 지운다.
 	Long upperIndex = currentRowIndex - PAGE_ROWCOUNT;
 	if (upperIndex < 0)
 	{
@@ -316,7 +338,7 @@ void PageLoader::LoadNext(CWnd* parent) {
 	note->TruncateBefore(upperIndex);
 	pagingBuffer->CacheRowStartIndex(upperIndex);
 
-	//8. 수평 스크롤바 최대값을 갱신한다.
+	//7. 수평 스크롤바 최대값을 갱신한다.
 	Long rowWidth = 0;
 	ScrollController* scrollController = ((NotepadForm*)parent)->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
@@ -335,7 +357,7 @@ void PageLoader::LoadNext(CWnd* parent) {
 	scrollController->ResizeHRange(max);
 }
 
-void PageLoader::LoadLast(CWnd* parent) {
+void PageManager::LoadLast(CWnd* parent) {
 	//자동개행 일시 정지
 	SuspendAutoWrap suspendAutoWrap(parent);
 
@@ -418,4 +440,44 @@ void PageLoader::LoadLast(CWnd* parent) {
 	columnIndex = row->Last();
 	pagingBuffer->MoveOffset(pagingBuffer->GetFileEndOffset());
 }
+
+void PageManager::TrimIfNeeded(CWnd* parent) {
+	Glyph* note = ((NotepadForm*)parent)->note;
+	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
+	Long noteLength = note->GetLength();
+	Long maxRowCount = PAGE_ROWCOUNT * 5;
+	if (noteLength > maxRowCount)
+	{
+		Long currentRowIndex = note->GetCurrent();
+		Long aboveRowIndex = currentRowIndex - PAGE_ROWCOUNT * 2;
+		Long aboveRest = 0;
+		if (aboveRowIndex < 0)
+		{
+			aboveRest = -aboveRowIndex;
+			aboveRowIndex = 0;
+		}
+
+		Long belowRowIndex = currentRowIndex + PAGE_ROWCOUNT * 2;
+		Long belowRest = 0;
+		if (belowRowIndex > noteLength - 1)
+		{
+			belowRest = belowRowIndex - (noteLength - 1);
+			belowRowIndex = noteLength - 1;
+		}
+
+		belowRowIndex += aboveRest;
+		aboveRowIndex -= belowRest;
+
+		note->TruncateAfter(belowRowIndex);
+		note->TruncateBefore(aboveRowIndex);
+		pagingBuffer->CacheRowStartIndex(aboveRowIndex);
+
+	}
+}
+
+
+
+
+
+
 

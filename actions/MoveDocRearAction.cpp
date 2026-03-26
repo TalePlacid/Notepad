@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include "MoveDocRearAction.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -14,5 +14,5 @@ MoveDocRearAction::~MoveDocRearAction() {
 }
 
 void MoveDocRearAction::Perform() {
-	PageLoader::LoadLast(this->parent);
+	PageManager::LoadLast(this->parent);
 }

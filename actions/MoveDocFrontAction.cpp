@@ -1,6 +1,6 @@
 #include <afxwin.h>
 #include "MoveDocFrontAction.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -14,5 +14,5 @@ MoveDocFrontAction::~MoveDocFrontAction() {
 }
 
 void MoveDocFrontAction::Perform() {
-	PageLoader::LoadFirst(this->parent);
+	PageManager::LoadFirst(this->parent);
 }

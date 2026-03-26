@@ -249,7 +249,7 @@
     <ClCompile Include="NotepadFrame.cpp" />
     <ClCompile Include="NoteWrapper.cpp" />
     <ClCompile Include="Observer.cpp" />
-    <ClCompile Include="PageLoader.cpp" />
+    <ClCompile Include="PageManager.cpp" />
     <ClCompile Include="PagingBuffer.cpp" />
     <ClCompile Include="prints\PageSetting.cpp" />
     <ClCompile Include="prints\PageSettingForm.cpp" />
@@ -417,7 +417,7 @@
     <ClInclude Include="NoteWrapper.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OpenAction.h" />
-    <ClInclude Include="PageLoader.h" />
+    <ClInclude Include="PageManager.h" />
     <ClInclude Include="PagingBuffer.h" />
     <ClInclude Include="prints\PageSetting.h" />
     <ClInclude Include="prints\PageSettingForm.h" />

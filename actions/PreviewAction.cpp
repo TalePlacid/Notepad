@@ -3,7 +3,7 @@
 #include "../NotepadForm.h"
 #include "../prints/PreviewForm.h"
 #include "../SuspendAutoWrap.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -17,7 +17,7 @@ PreviewAction::~PreviewAction() {
 }
 
 void PreviewAction::Perform() {
-	PageLoader::LoadFirst(this->parent);
+	PageManager::LoadFirst(this->parent);
 
 	RECT rect;
 	rect.left = 0;

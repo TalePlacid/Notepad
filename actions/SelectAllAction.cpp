@@ -2,7 +2,7 @@
 #include "SelectAllAction.h"
 #include "../PagingBuffer.h"
 #include "../NotepadForm.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -22,5 +22,5 @@ void SelectAllAction::Perform() {
 	pagingBuffer->MarkSelectionBegin();
 
 	//2. 마지막 페이지를 적재한다.
-	PageLoader::LoadLast(this->parent);
+	PageManager::LoadLast(this->parent);
 }

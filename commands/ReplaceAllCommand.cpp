@@ -5,7 +5,7 @@
 #include "../PagingBuffer.h"
 #include "../SearchResultController.h"
 #include "../Editor.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -67,7 +67,7 @@ ReplaceAllCommand& ReplaceAllCommand::operator=(const ReplaceAllCommand& source)
 
 void ReplaceAllCommand::Execute() {
 	//1. 전체 문서의 첫 위치로 이동한다.
-	PageLoader::LoadFirst(this->parent);
+	PageManager::LoadFirst(this->parent);
 
 	//2. 찾는다.
 	Editor editor(this->parent);

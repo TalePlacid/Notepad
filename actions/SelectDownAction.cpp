@@ -5,7 +5,7 @@
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
 #include "../PagingBuffer.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -32,7 +32,7 @@ void SelectDownAction::Perform() {
 	Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * sizeCalculator->GetRowHeight();
 	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 	{
-		PageLoader::LoadNext(this->parent);
+		PageManager::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();
 	}
 

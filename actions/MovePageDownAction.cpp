@@ -5,7 +5,7 @@
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -56,7 +56,7 @@ void MovePageDownAction::Perform() {
 			Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
 			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
 			{
-				PageLoader::LoadNext(this->parent);
+				PageManager::LoadNext(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 

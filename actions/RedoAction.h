@@ -10,8 +10,13 @@ public:
 	~RedoAction();
 
 	virtual void Perform();
+	virtual bool NeedsNoteTruncation();
 	virtual bool ShouldKeepSelection();
 };
+
+inline bool RedoAction::NeedsNoteTruncation() {
+	return true;
+}
 
 inline bool RedoAction::ShouldKeepSelection() {
 	return true;

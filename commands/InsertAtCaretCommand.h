@@ -17,6 +17,7 @@ public:
 	virtual void Redo();
 	virtual Command* Clone();
 	virtual AppID GetID();
+	virtual bool NeedsNoteTruncation();
 private:
 	char character[2];
 	UINT onChar;
@@ -31,6 +32,10 @@ private:
 
 inline AppID InsertAtCaretCommand::GetID() {
 	return AppID::ID_COMMAND_INSERT_AT_CARET;
+}
+
+inline bool InsertAtCaretCommand::NeedsNoteTruncation() {
+	return true;
 }
 
 #endif // !_INSERTATCARETCOMMAND_H

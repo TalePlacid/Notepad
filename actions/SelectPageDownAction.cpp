@@ -5,7 +5,7 @@
 #include "../glyphs/Glyph.h"
 #include "../SizeCalculator.h"
 #include "../PagingBuffer.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -52,7 +52,7 @@ void SelectPageDownAction::Perform() {
 			pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
 			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 			{
-				PageLoader::LoadNext(this->parent);
+				PageManager::LoadNext(this->parent);
 				rowIndex = note->GetCurrent();
 				row = note->GetAt(rowIndex);
 			}

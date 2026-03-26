@@ -8,7 +8,7 @@
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
 #include "../NoteWrapper.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -22,7 +22,7 @@ AutoWrapAction::~AutoWrapAction() {
 }
 
 void AutoWrapAction::Perform() {
-	PageLoader::LoadFirst(this->parent);
+	PageManager::LoadFirst(this->parent);
 
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	notepadForm->ToggleAutoWrap();

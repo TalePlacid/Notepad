@@ -5,7 +5,7 @@
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -44,7 +44,7 @@ void MoveWordRightAction::Perform() {
 		Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * sizeCalculator->GetRowHeight();
 		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 		{
-			PageLoader::LoadNext(this->parent);
+			PageManager::LoadNext(this->parent);
 			rowIndex = note->GetCurrent();
 		}
 

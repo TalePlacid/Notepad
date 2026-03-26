@@ -6,7 +6,7 @@
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "NoteWrapper.h"
-#include "PageLoader.h"
+#include "PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -43,7 +43,7 @@ Long CaretNavigator::MoveTo(Long offset) {
 			//2.1.1. 이전 줄이 적재범위에서 벗어나면 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
-				PageLoader::LoadPrevious(this->parent);
+				PageManager::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
@@ -76,7 +76,7 @@ Long CaretNavigator::MoveTo(Long offset) {
 			Long pageMax = vScroll.GetPos() + vScroll.GetPage();
 			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 			{
-				PageLoader::LoadNext(this->parent);
+				PageManager::LoadNext(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
@@ -139,7 +139,6 @@ Long CaretNavigator::MoveTo(Long offset) {
 			}
 		}
 	}
-
 	return pagingBuffer->GetCurrentOffset();
 }
 
@@ -195,7 +194,7 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 	Long pageMax = (rowStartIndex + note->GetLength()) * rowHeight;
 	if (note->IsBelowBottomLine(rowIndexToMove) && pageMax < vScroll.GetMax())
 	{
-		PageLoader::LoadNext(this->parent);
+		PageManager::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();
 		row = note->GetAt(rowIndex);
 		rowStartIndex = pagingBuffer->GetRowStartIndex();
@@ -268,7 +267,7 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 	//3. 적재범위를 넘어섰으면, 재적재한다.
 	if (note->IsAboveTopLine(rowIndexToMove) && rowStartIndex > 0)
 	{
-		PageLoader::LoadPrevious(this->parent);
+		PageManager::LoadPrevious(this->parent);
 		rowIndex = note->GetCurrent();
 		row = note->GetAt(rowIndex);
 		rowStartIndex = pagingBuffer->GetRowStartIndex();

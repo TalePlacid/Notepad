@@ -10,8 +10,13 @@ public:
 	virtual ~UndoAction();
 
 	virtual void Perform();
+	virtual bool NeedsNoteTruncation();
 	virtual bool ShouldKeepSelection();
 };
+
+inline bool UndoAction::NeedsNoteTruncation() {
+	return true;
+}
 
 inline bool UndoAction::ShouldKeepSelection() {
 	return true;

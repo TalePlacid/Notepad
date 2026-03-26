@@ -5,7 +5,7 @@
 #include "../PagingBuffer.h"
 #include "../SizeCalculator.h"
 #include "../ScrollController.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -54,7 +54,7 @@ void MovePageUpAction::Perform() {
 			//1.3.1. 적재범위를 벗어나면, 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
-				PageLoader::LoadPrevious(this->parent);
+				PageManager::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 

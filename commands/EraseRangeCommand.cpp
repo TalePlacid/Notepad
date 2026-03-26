@@ -11,7 +11,7 @@
 #include "../CaretNavigator.h"
 #include "../RowCounter.h"
 #include "../NoteWrapper.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 

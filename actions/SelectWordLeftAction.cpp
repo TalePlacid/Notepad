@@ -3,7 +3,7 @@
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -50,7 +50,7 @@ void SelectWordLeftAction::Perform() {
 		//3.1. 적재범위를 벗어났으면, 재적재한다.
 		if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 		{
-			PageLoader::LoadPrevious(this->parent);
+			PageManager::LoadPrevious(this->parent);
 			rowIndex = note->GetCurrent();
 		}
 

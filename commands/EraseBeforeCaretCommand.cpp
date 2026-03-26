@@ -7,7 +7,7 @@
 #include "../glyphs/GlyphFactory.h"
 #include "../CaretNavigator.h"
 #include "../NoteWrapper.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -85,7 +85,7 @@ void EraseBeforeCaretCommand::Execute() {
 			//1.3.1. 적재범위를 넘어서면 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
-				PageLoader::LoadPrevious(this->parent);
+				PageManager::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
@@ -232,7 +232,7 @@ void EraseBeforeCaretCommand::Redo() {
 			//1.4.1. 적재 범위를 넘어섰으면, 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
-				PageLoader::LoadPrevious(this->parent);
+				PageManager::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 

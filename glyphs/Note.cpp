@@ -180,7 +180,6 @@ Long Note::AppendFromFront(const Glyph* other) {
 	{
 		i--;
 	}
-
 	Long count = 0;
 	while (i >= 0)
 	{

@@ -24,6 +24,7 @@ public:
 	virtual bool IsUndoable() const;
 	virtual bool IsMacroCommand();
 	virtual bool NeedScrollBarUpdate();
+	virtual bool NeedsNoteTruncation();
 
 	virtual AppID GetID();
 	virtual Long GetOffset();
@@ -51,6 +52,10 @@ inline Long Command::GetLength() const {
 
 inline bool Command::NeedScrollBarUpdate() {
 	return true;
+}
+
+inline bool Command::NeedsNoteTruncation() {
+	return false;
 }
 
 inline FindReplaceOption* Command::GetFindReplaceOption() {

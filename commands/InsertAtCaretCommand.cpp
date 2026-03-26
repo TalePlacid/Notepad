@@ -7,7 +7,7 @@
 #include "../glyphs/GlyphFactory.h"
 #include "../caretNavigator.h"
 #include "../NoteWrapper.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 #include "../Editor.h"
 
 #pragma warning(disable:4996)
@@ -195,7 +195,7 @@ void InsertAtCaretCommand::Undo() {
 			//2.3.1. 적재범위에서 벗어났다면, 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
-				PageLoader::LoadPrevious(this->parent);
+				PageManager::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 

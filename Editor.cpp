@@ -8,7 +8,7 @@
 #include "CaretNavigator.h"
 #include "CoordinateConverter.h"
 #include "NoteWrapper.h"
-#include "PageLoader.h"
+#include "PageManager.h"
 #include "ByteChecker.h"
 #include "RowCounter.h"
 #include "glyphs/GlyphFactory.h"
@@ -112,7 +112,6 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 	columnIndex = currentColumnIndex;
 
 	//3. 선택 길이만큼 반복한다.
-	
 	Long merged = 0;
 	Glyph* nextRow;
 	TCHAR* character;
@@ -195,7 +194,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 			pagingBuffer->Add(CString("\r\n"));
 			pagingBuffer->PreviousRow();
 		}
-		PageLoader::LoadNext(this->parent);
+		PageManager::LoadNext(this->parent);
 		if (!row->IsDummyRow() && columnIndex == 0)
 		{
 			note->MergeRows(currentRowIndex);
@@ -348,7 +347,7 @@ void Editor::MoveUp() {
 	Long rowIndex = note->GetCurrent();
 	if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 	{
-		PageLoader::LoadPrevious(this->parent);
+		PageManager::LoadPrevious(this->parent);
 		rowIndex = note->GetCurrent();
 	}
 
@@ -407,7 +406,7 @@ void Editor::MoveDown() {
 	Long lastPos = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
 	if (note->IsBelowBottomLine(rowIndex + 1) && lastPos < vScroll.GetMax())
 	{
-		PageLoader::LoadNext(this->parent);
+		PageManager::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();
 	}
 
@@ -472,7 +471,7 @@ void Editor::DragUp(CPoint point) {
 		if (note->IsAboveTopLine(currentRowIndex) && vScroll.GetPos() > 0)
 		{
 			difference = currentRowIndex - rowIndex;
-			PageLoader::LoadPrevious(this->parent);
+			PageManager::LoadPrevious(this->parent);
 			currentRowIndex = note->GetCurrent();
 			rowIndex = currentRowIndex - difference;
 		}
@@ -537,7 +536,7 @@ void Editor::DragDown(CPoint point) {
 		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetPos())
 		{
 			difference = rowIndex - currentRowIndex;
-			PageLoader::LoadNext(this->parent);
+			PageManager::LoadNext(this->parent);
 			currentRowIndex = note->GetCurrent();
 			rowIndex = currentRowIndex + difference;
 		}

@@ -5,7 +5,7 @@
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
 #include "../glyphs/Glyph.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -53,7 +53,7 @@ Long PreviewPaginator::First() {
 	{
 		//2.1. 마지막 페이지를 적재한다.
 		NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-		PageLoader::LoadFirst(this->parent);
+		PageManager::LoadFirst(this->parent);
 
 		//2.2. 노트 기준 페이지 시작 줄을 찾는다.
 		pageStartIndex = (this->current - 1) * this->rowCountPerPage;
@@ -65,7 +65,7 @@ Long PreviewPaginator::First() {
 		//2.3. 시작줄이 적재범위보다 아래이면, 재적재한다.
 		if (note->IsBelowBottomLine(rowIndex))
 		{
-			PageLoader::LoadNext(this->parent);
+			PageManager::LoadNext(this->parent);
 			rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
 		}
 
@@ -105,7 +105,7 @@ Long PreviewPaginator::Previous() {
 		//2.2. 시작줄이 적재범위보다 위이면, 재적재한다.
 		if (note->IsAboveTopLine(rowIndex))
 		{
-			PageLoader::LoadPrevious(this->parent);
+			PageManager::LoadPrevious(this->parent);
 			rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
 		}
 
@@ -124,7 +124,7 @@ Long PreviewPaginator::Previous() {
 		//2.5. 페이지 끝 줄 위치가 적재범위에 없다면, 재적재한다.
 		if (note->IsBelowBottomLine(notePageEndIndex))
 		{
-			PageLoader::LoadNext(this->parent);
+			PageManager::LoadNext(this->parent);
 		}
 	}
 
@@ -155,7 +155,7 @@ Long PreviewPaginator::Next() {
 		//2.2. 시작줄이 적재범위보다 아래이면, 재적재한다.
 		if (note->IsBelowBottomLine(rowIndex))
 		{
-			PageLoader::LoadNext(this->parent);
+			PageManager::LoadNext(this->parent);
 			rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
 		}
 
@@ -174,7 +174,7 @@ Long PreviewPaginator::Next() {
 		//2.5. 페이지 끝 줄 위치가 적재범위에 없다면, 재적재한다.
 		if (note->IsBelowBottomLine(notePageEndIndex))
 		{
-			PageLoader::LoadNext(this->parent);
+			PageManager::LoadNext(this->parent);
 		}
 	}
 
@@ -192,7 +192,7 @@ Long PreviewPaginator::Last() {
 	{
 		//2.1. 마지막 페이지를 적재한다.
 		NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-		PageLoader::LoadLast(this->parent);
+		PageManager::LoadLast(this->parent);
 
 		//2.2. 노트 기준 페이지 시작 줄을 찾는다.
 		pageStartIndex = (this->current - 1) * this->rowCountPerPage;
@@ -204,7 +204,7 @@ Long PreviewPaginator::Last() {
 		//2.3. 시작줄이 적재범위보다 위이면, 재적재한다.
 		if (note->IsAboveTopLine(rowIndex))
 		{
-			PageLoader::LoadPrevious(this->parent);
+			PageManager::LoadPrevious(this->parent);
 			rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
 		}
 

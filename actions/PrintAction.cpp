@@ -9,7 +9,7 @@
 #include "../prints/PreviewPaginator.h"
 #include "../prints/PrintRenderer.h"
 #include "../SuspendAutoWrap.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -23,7 +23,7 @@ PrintAction::~PrintAction() {
 void PrintAction::Perform() {
 	//1. 자동개행을 멈추고, 처음으로 이동한다.
 	SuspendAutoWrap suspendAutoWrap(this->parent);
-	PageLoader::LoadFirst(this->parent);
+	PageManager::LoadFirst(this->parent);
 
 	//2. 페이징 한다.
 	PreviewPaginator previewPaginator(this->parent);

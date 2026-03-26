@@ -99,6 +99,7 @@ void PagingBuffer::LoadPrevious(TCHAR*& contents, Long& byteCount) {
 	{
 		j -= 2;
 	}
+
 	while (j >= 0 && i < this->pageSize && rowCount < loadingRowCount)
 	{
 		fseek(this->file, j, SEEK_SET);
@@ -110,12 +111,27 @@ void PagingBuffer::LoadPrevious(TCHAR*& contents, Long& byteCount) {
 		i++;
 		j--;
 	}
-	i--;
-	j++;
 
-	//2. 적재 크기를 넘어섰다면, 최대한의 문자까지를 범위로 한다.	
-	if (i >= this->pageSize)
+	if (j < 0)
 	{
+		Long endOffset = currentOffset;
+		if (endOffset >= 2)
+		{
+			endOffset -= 2;
+		}
+		else
+		{
+			endOffset = 0;
+		}
+
+		j = 0;
+		i = endOffset;
+	}
+	else if (i >= this->pageSize)
+	{
+		i--;
+		j++;
+
 		if (j > 0)
 		{
 			fseek(this->file, j, SEEK_SET);
@@ -131,20 +147,20 @@ void PagingBuffer::LoadPrevious(TCHAR*& contents, Long& byteCount) {
 			}
 		}
 	}
-	else if (rowCount >= loadingRowCount) //3. 적재줄수를 모두 채웠다면, 개행문자를 제외한다.
+	else if (rowCount >= loadingRowCount)
 	{
-		i--;
-		j++;
+		i -= 2;
+		j += 2;
 	}
 
-	//4. 적재 범위만큼 읽는다.
+	//2. 적재 범위만큼 읽는다.
 	contents = new TCHAR[this->pageSize + 1];
 	fseek(this->file, j, SEEK_SET);
 	fread(contents, 1, i, this->file);
 	contents[i] = '\0';
 	byteCount = i;
 
-	//5. 원래 위치로 돌아간다.
+	//3. 원래 위치로 돌아간다.
 	fseek(this->file, currentOffset, SEEK_SET);
 }
 
@@ -630,8 +646,6 @@ Long PagingBuffer::GetFileEndOffset() const {
 	FilePointerCalculator filePointerCalculator(const_cast<PagingBuffer*>(this));
 	return filePointerCalculator.FileEnd();
 }          
-
-
 
 
 

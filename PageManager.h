@@ -1,18 +1,19 @@
-#ifndef _PAGELOADER_H //guard
-#define _PAGELOADER_H
+#ifndef _PAGEMANAGER_H //guard
+#define _PAGEMANAGER_H
 
 class CWnd;
 
-class PageLoader {
+class PageManager {
 public:
-	PageLoader();
-	~PageLoader();
+	PageManager();
+	~PageManager();
 
 	static void LoadFirst(CWnd* parent);
 	static void LoadPrevious(CWnd* parent);
 	static void LoadNext(CWnd* parent);
 	static void LoadLast(CWnd* parent);
+	static void TrimIfNeeded(CWnd* parent);
 };
 
-#endif // !_PAGELOADER_H
+#endif // !_PAGEMANAGER_H
 

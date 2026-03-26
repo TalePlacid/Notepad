@@ -7,7 +7,7 @@
 #include "../glyphs/GlyphFactory.h"
 #include "../CaretNavigator.h"
 #include "../NoteWrapper.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 #include "../Editor.h"
 
 #pragma warning(disable:4996)
@@ -174,7 +174,7 @@ void WriteAtEndCommand::Undo() {
 		{
 			if (note->IsAboveTopLine(rowIndex - 1))
 			{
-				PageLoader::LoadPrevious(this->parent);
+				PageManager::LoadPrevious(this->parent);
 			}
 			note->Remove();
 			rowIndex = note->GetCurrent();

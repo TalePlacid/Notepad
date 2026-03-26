@@ -2,7 +2,7 @@
 #include "SelectDocFrontAction.h"
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4966)
 
@@ -24,5 +24,5 @@ void SelectDocFrontAction::Perform() {
 		pagingBuffer->MarkSelectionBegin();
 	}
 
-	PageLoader::LoadFirst(this->parent);
+	PageManager::LoadFirst(this->parent);
 }

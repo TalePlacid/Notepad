@@ -18,7 +18,7 @@
 #include "ClipboardController.h"
 #include "TextFileIO.h"
 #include "FontSelector.h"
-#include "PageLoader.h"
+#include "PageManager.h"
 
 #include "NoteWrapper.h"
 #include "PaintingVisitor.h"
@@ -217,7 +217,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		delete[] sourceContents;
 	}
 
-	PageLoader::LoadFirst(this);
+	PageManager::LoadFirst(this);
 
 	this->caretController = new CaretController(this);
 	this->Register(this->caretController);
@@ -575,6 +575,11 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 	{
 		command->Execute();
 
+		if (command->NeedsNoteTruncation())
+		{
+			PageManager::TrimIfNeeded(this);
+		}
+
 		if (command->NeedScrollBarUpdate())
 		{
 			this->Notify("UpdateScrollBars");
@@ -604,6 +609,11 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	if (action != NULL)
 	{
 		action->Perform();
+
+		if (action->NeedsNoteTruncation())
+		{
+			PageManager::TrimIfNeeded(this);
+		}
 
 		if (action->NeedScrollBarUpdate())
 		{

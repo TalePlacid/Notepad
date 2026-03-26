@@ -374,7 +374,7 @@
     <ClCompile Include="MenuInterpreter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="PageLoader.cpp">
+    <ClCompile Include="PageManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="actions\SaveAsAction.cpp">
@@ -886,7 +886,7 @@
     <ClInclude Include="MenuInterpreter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="PageLoader.h">
+    <ClInclude Include="PageManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="actions\SaveAsAction.h">

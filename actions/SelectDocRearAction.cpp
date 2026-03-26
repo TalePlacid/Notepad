@@ -2,7 +2,7 @@
 #include "SelectDocRearAction.h"
 #include "../NotepadForm.h"
 #include "../PagingBuffer.h"
-#include "../PageLoader.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -27,5 +27,5 @@ void SelectDocRearAction::Perform() {
 	}
 
 	//3. 마지막 페이지를 적재한다.
-	PageLoader::LoadLast(this->parent);
+	PageManager::LoadLast(this->parent);
 }
