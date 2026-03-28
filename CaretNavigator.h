@@ -12,6 +12,8 @@ public:
 
 	Long MoveTo(Long offset); 
 	void NormalizeColumn(Long columnIndex);
+	void MoveCaretUpToAbsoluteRow(Long absoluteRowIndex, Long rowWidth);
+	void MoveCaretDownToAbsoluteRow(Long absoluteRowIndex, Long rowWidth);
 	void AdjustCaretUpToVScroll(Long rowWidth = 0);
 	void AdjustCaretDownToVScroll(Long rowWidth = 0);
 private:

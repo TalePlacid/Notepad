@@ -32,6 +32,9 @@ AppID ScrollBarInterpreter::DetermineID(int nBar, UINT nSBCode) {
 		case SB_THUMBTRACK:
 			nID = AppID::ID_ACTION_VSCROLL_THUMB_TRACK;
 			break;
+		case SB_THUMBPOSITION:
+			nID = AppID::ID_ACTION_VSCROLL_THUMB_POSITION;
+			break;
 		default:
 			break;
 		}
@@ -53,6 +56,9 @@ AppID ScrollBarInterpreter::DetermineID(int nBar, UINT nSBCode) {
 			nID = AppID::ID_ACTION_HSCROLL_PAGE_RIGHT;
 			break;
 		case SB_THUMBTRACK:
+			nID = AppID::ID_ACTION_HSCROLL_THUMB_TRACK;
+			break;
+		case SB_THUMBPOSITION:
 			nID = AppID::ID_ACTION_HSCROLL_THUMB_TRACK;
 			break;
 		default:

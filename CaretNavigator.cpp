@@ -166,6 +166,107 @@ void CaretNavigator::NormalizeColumn(Long columnIndex) {
 	}
 }
 
+void CaretNavigator::MoveCaretUpToAbsoluteRow(Long absoluteRowIndex, Long rowWidth) {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+	Long previousRowStartIndex = -1;
+	while (absoluteRowIndex < rowStartIndex && rowStartIndex > 0 && previousRowStartIndex != rowStartIndex)
+	{
+		previousRowStartIndex = rowStartIndex;
+		PageManager::LoadPrevious(this->parent);
+		note = ((NotepadForm*)(this->parent))->note;
+		pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		rowStartIndex = pagingBuffer->GetRowStartIndex();
+	}
+
+	Long targetRowIndex = absoluteRowIndex - rowStartIndex;
+	if (targetRowIndex < 0)
+	{
+		targetRowIndex = 0;
+	}
+	else if (targetRowIndex >= note->GetLength())
+	{
+		targetRowIndex = note->GetLength() - 1;
+	}
+
+	Glyph* previousRow;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* currentRow = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = currentRow->GetCurrent();
+	currentRow->First();
+	pagingBuffer->Previous(currentColumnIndex);
+	while (currentRowIndex > targetRowIndex)
+	{
+		previousRow = currentRow;
+		currentRowIndex = note->Previous();
+		currentRow = note->GetAt(currentRowIndex);
+		currentColumnIndex = currentRow->Last();
+		if (!previousRow->IsDummyRow())
+		{
+			pagingBuffer->PreviousRow();
+			pagingBuffer->Last();
+		}
+		currentRow->First();
+		pagingBuffer->Previous(currentRow->GetLength());
+	}
+
+	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRow, rowWidth);
+	currentRow->Move(nearestIndex);
+	pagingBuffer->Next(nearestIndex);
+}
+
+void CaretNavigator::MoveCaretDownToAbsoluteRow(Long absoluteRowIndex, Long rowWidth) {
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+	Long previousRowStartIndex = -1;
+	while (absoluteRowIndex >= rowStartIndex + note->GetLength() && previousRowStartIndex != rowStartIndex)
+	{
+		previousRowStartIndex = rowStartIndex;
+		PageManager::LoadNext(this->parent);
+		note = ((NotepadForm*)(this->parent))->note;
+		pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		rowStartIndex = pagingBuffer->GetRowStartIndex();
+	}
+
+	Long targetRowIndex = absoluteRowIndex - rowStartIndex;
+	if (targetRowIndex < 0)
+	{
+		targetRowIndex = 0;
+	}
+	else if (targetRowIndex >= note->GetLength())
+	{
+		targetRowIndex = note->GetLength() - 1;
+	}
+
+	Glyph* previousRow;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* currentRow = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = currentRow->GetCurrent();
+	currentRow->First();
+	pagingBuffer->Previous(currentColumnIndex);
+	while (currentRowIndex < targetRowIndex)
+	{
+		previousRow = currentRow;
+		currentRowIndex = note->Next();
+		currentRow = note->GetAt(currentRowIndex);
+		currentRow->First();
+		if (currentRow->IsDummyRow())
+		{
+			pagingBuffer->Next(previousRow->GetLength());
+		}
+		else
+		{
+			pagingBuffer->NextRow();
+		}
+	}
+
+	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRow, rowWidth);
+	currentRow->Move(nearestIndex);
+	pagingBuffer->Next(nearestIndex);
+}
+
 void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 	//1. 스크롤에 해당하는 줄 위치를 구한다.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;

@@ -485,6 +485,9 @@
     <ClCompile Include="actions\VScrollThumbTrackAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
+    <ClCompile Include="actions\VScrollThumbPositionAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
     <ClCompile Include="actions\HScrollLineLeftAction.cpp">
       <Filter>소스 파일\actions</Filter>
     </ClCompile>
@@ -602,6 +605,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SuspendAutoWrap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerConstants.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Caret.h">
@@ -992,6 +998,9 @@
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\VScrollThumbTrackAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\VScrollThumbPositionAction.h">
       <Filter>헤더 파일\actions</Filter>
     </ClInclude>
     <ClInclude Include="actions\HScrollLineLeftAction.h">

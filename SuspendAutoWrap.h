@@ -8,7 +8,8 @@ public:
 	~SuspendAutoWrap();
 private:
 	CWnd* parent;
-	Long viewRowIndex;
+	Long currentRowScreenDelta;
+	Long currentColumnIndex;
 	BOOL isSuspended;
 };
 #endif // !_SUSPENDAUTOWRAP_H

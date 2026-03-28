@@ -2,6 +2,7 @@
 #include <imm.h>
 
 #include "NotepadForm.h"
+#include "TimerConstants.h"
 #include "resource.h"
 #include "message.h"
 #include "Observer.h"
@@ -49,10 +50,6 @@
 #pragma comment(lib, "imm32.lib")
 
 static const UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
-static const UINT_PTR TIMER_ID_RESIZE_REFRESH = 1;
-static const UINT_PTR TIMER_ID_AUTO_SCROLL = 2;
-static const UINT RESIZE_REFRESH_INTERVAL = 75;
-static const UINT AUTO_SCROLL_INTERVAL = 30;
 
 BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_CREATE()
@@ -527,6 +524,15 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 		this->ResolveMouseEvent(AppID::ID_MOUSE_MOVE, MK_LBUTTON, cursorPos);
 	}
 	break;
+	case TIMER_ID_LAZY_TRIM:
+	{
+		KillTimer(TIMER_ID_LAZY_TRIM);
+		PageManager::TrimIfNeeded(this);
+		this->Notify("UpdateScrollBars");
+		this->Notify("ChangeCaret");
+		this->Invalidate();
+	}
+	break;
 	default:
 		break;
 	}
@@ -577,7 +583,8 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 
 		if (command->NeedsNoteTruncation())
 		{
-			PageManager::TrimIfNeeded(this);
+			KillTimer(TIMER_ID_LAZY_TRIM);
+			SetTimer(TIMER_ID_LAZY_TRIM, LAZY_TRIM_INTERVAL, NULL);
 		}
 
 		if (command->NeedScrollBarUpdate())
@@ -612,7 +619,8 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 
 		if (action->NeedsNoteTruncation())
 		{
-			PageManager::TrimIfNeeded(this);
+			KillTimer(TIMER_ID_LAZY_TRIM);
+			SetTimer(TIMER_ID_LAZY_TRIM, LAZY_TRIM_INTERVAL, NULL);
 		}
 
 		if (action->NeedScrollBarUpdate())
@@ -638,7 +646,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 
 	this->Notify("UpdateStatusBar");
 	this->Notify("CreateScrollBars");
-	this->Notify("AdjustScrollBars");
 	this->Notify("ChangeCaret");
 	this->Invalidate();
 }

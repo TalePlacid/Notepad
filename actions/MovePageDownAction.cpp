@@ -53,13 +53,9 @@ void MovePageDownAction::Perform() {
 		while (i < rowCount && rowIndex < note->GetLength() - 1)
 		{
 			//1.4.1. 적재범위에서 벗어났으면, 재적재한다.
-			Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
-			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
-			{
-				PageManager::LoadNext(this->parent);
-				rowIndex = note->GetCurrent();
-			}
-
+			vScroll = scrollController->GetVScroll();
+			Long pageMax = vScroll.GetPos() + vScroll.GetPage();
+			
 			//1.4.2. 노트에서 이동한다.
 			previousRow = note->GetAt(rowIndex);
 			rowIndex = note->Next();
@@ -83,5 +79,15 @@ void MovePageDownAction::Perform() {
 		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
 		movedIndex = row->Move(nearestIndex);
 		pagingBuffer->Next(movedIndex);
+
+		//TRACE
+		Glyph* traceNote = ((NotepadForm*)(this->parent))->note;
+		PagingBuffer* tracePagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+		ScrollController* traceScrollController = ((NotepadForm*)(this->parent))->scrollController;
+		Scroll traceVScroll = traceScrollController->GetVScroll();
+		TRACE("PageDownEnd: %ld(%ld), %ld ~ %ld, %ld\n", traceNote->GetCurrent(),
+			traceNote->GetCurrent() + tracePagingBuffer->GetRowStartIndex(),
+			traceVScroll.GetPos(), traceVScroll.GetPos() + traceVScroll.GetPage(),
+			traceVScroll.GetMax());
 	}
 }

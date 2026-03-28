@@ -8,7 +8,6 @@
 #include "SizeCalculator.h"
 #include "NoteWrapper.h"
 #include "SuspendAutoWrap.h"
-#include "CaretNavigator.h"
 #include "NoteConverter.h"
 
 #pragma warning(disable:4996)
@@ -88,7 +87,6 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	Glyph* row = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = row->GetCurrent();
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
-	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	Long noteLength = note->GetLength();
 
 	//2. 노트의 2번째 줄 기준으로 적재 위치를 맞춘다.
@@ -111,6 +109,8 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	row = note->GetAt(rowIndex);
 	Long columnIndex = row->First();
 	pagingBuffer->First();
+	Long baseOffset = pagingBuffer->GetCurrentOffset();
+
 	//3. 앞 부분을 로드한다.
 	TCHAR* loadedContents = NULL;
 	Long loadedByteCount = 0;
@@ -182,13 +182,78 @@ void PageManager::LoadPrevious(CWnd* parent) {
 		delete[] loadedContents;
 	}
 
-	//5. 현재 위치로 돌아온다.
-	CaretNavigator caretNavigator(parent);
-	caretNavigator.MoveTo(currentOffset);
-	note = ((NotepadForm*)parent)->note;
+	//5. 로드 결과에 맞춰 현재 줄 위치를 보정한다.
+	if (loadedByteCount > 0 && loadedNote != NULL)
+	{
+		rowIndex = count;
+		currentRowIndex += count;
+		if (noteLength > 1)
+		{
+			currentRowIndex--;
+		}
+	}
+
+	if (currentRowIndex < 0)
+	{
+		currentRowIndex = 0;
+	}
+	else if (currentRowIndex >= note->GetLength())
+	{
+		currentRowIndex = note->GetLength() - 1;
+	}
+
+	rowIndex = note->Move(rowIndex);
+	row = note->GetAt(rowIndex);
+	row->First();
+	pagingBuffer->MoveOffset(baseOffset);
+
+	Glyph* previousRow = NULL;
+	while (rowIndex > currentRowIndex)
+	{
+		previousRow = row;
+		rowIndex = note->Previous();
+		row = note->GetAt(rowIndex);
+		row->Last();
+
+		if (!previousRow->IsDummyRow())
+		{
+			pagingBuffer->PreviousRow();
+			pagingBuffer->Last();
+		}
+
+		row->First();
+		pagingBuffer->Previous(row->GetLength());
+	}
+
+	while (rowIndex < currentRowIndex)
+	{
+		previousRow = row;
+		rowIndex = note->Next();
+		row = note->GetAt(rowIndex);
+		row->First();
+
+		if (row->IsDummyRow())
+		{
+			pagingBuffer->Next(previousRow->GetLength());
+		}
+		else
+		{
+			pagingBuffer->NextRow();
+		}
+	}
+
+	if (currentColumnIndex < 0)
+	{
+		currentColumnIndex = 0;
+	}
+	else if (currentColumnIndex > row->GetLength())
+	{
+		currentColumnIndex = row->GetLength();
+	}
+
+	row->Move(currentColumnIndex);
+	pagingBuffer->Next(currentColumnIndex);
 	currentRowIndex = note->GetCurrent();
-	row = note->GetAt(currentRowIndex);
-	currentColumnIndex = row->GetCurrent();
 
 
 	//6. 노트에서 아랫 부분을 지운다.
@@ -223,18 +288,14 @@ void PageManager::LoadNext(CWnd* parent) {
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = row->GetCurrent();
+
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
 	Long currentOffset = pagingBuffer->GetCurrentOffset();
-	Long noteLength = note->GetLength();
 
 	//2. 마지막보다 1줄 이전 줄 기준으로 적재 위치를 맞춘다.
-	Long rowIndex = note->GetLength() - 1;
-	if (noteLength > 1)
-	{
-		rowIndex--;
-	}
+	Long rowIndex = note->Last();
+	rowIndex = note->Previous();
 
-	rowIndex = note->Move(rowIndex);
 	if (currentRowIndex > rowIndex)
 	{
 		pagingBuffer->PreviousRow(currentRowIndex - rowIndex);
@@ -252,7 +313,6 @@ void PageManager::LoadNext(CWnd* parent) {
 	if (lastOffset > 0 && lastOffset < pagingBuffer->GetFileEndOffset())
 	{
 		pagingBuffer->NextRow();
-		pagingBuffer->First();
 	}
 
 	TCHAR* loadedContents = NULL;
@@ -265,50 +325,80 @@ void PageManager::LoadNext(CWnd* parent) {
 		loadedNote = noteConverter.Convert(loadedContents);
 	}
 
-	//4. 실제 적재 바이트가 있을 때만 기존 마지막 줄을 교체한다.
-	Long count = 0;
+	//4. 실제 적재 바이트가 있을 때,
 	if (loadedByteCount > 0 && loadedNote != NULL)
 	{
-		if (noteLength > 0)
+		//4.1. 적재된 노트가 1줄 이상일 때(의미가 있는 노트일 때)
+		if (loadedNote->GetLength() > 1)
 		{
+			//4.1.1. 중첩되는 1줄을 지운다.
 			note->Remove(note->GetLength() - 1);
-		}
 
-		count = note->AppendFromRear(loadedNote);
+			//4.1.2. 적재된 노트를 붙인다.
+			note->AppendFromRear(loadedNote);
 
-		//4.1. 로드된 뒷 부분의 선택여부를 반영한다.
-		Long previousRowIndex = -1;
-		Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-		rowIndex = note->GetLength() - count;
-		if (rowIndex < 0)
-		{
-			rowIndex = 0;
-		}
-		row = note->GetAt(rowIndex);
-		columnIndex = row->First();
-		Long i = pagingBuffer->GetCurrentOffset();
-		while (rowIndex < note->GetLength() && previousRowIndex != rowIndex && i < selectionBeginOffset)
-		{
-			while (columnIndex < row->GetLength() && i < selectionBeginOffset)
+			//4.1.3. 로드된 뒷 부분의 선택여부를 반영한다.
+			Long previousRowIndex = -1;
+			Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
+			rowIndex = note->GetLength() - loadedNote->GetLength();
+			if (rowIndex < 0)
 			{
-				row->GetAt(columnIndex)->Select(true);
-				columnIndex = row->Next();
-				i = pagingBuffer->Next();
+				rowIndex = 0;
+			}
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
+			Long i = pagingBuffer->GetCurrentOffset();
+			while (rowIndex < note->GetLength() && previousRowIndex != rowIndex && i < selectionBeginOffset)
+			{
+				while (columnIndex < row->GetLength() && i < selectionBeginOffset)
+				{
+					row->GetAt(columnIndex)->Select(true);
+					columnIndex = row->Next();
+					i = pagingBuffer->Next();
+				}
+
+				previousRowIndex = rowIndex;
+				Long nextRowIndex = note->Next();
+				if (nextRowIndex > previousRowIndex)
+				{
+					rowIndex = nextRowIndex;
+					row = note->GetAt(rowIndex);
+					columnIndex = row->First();
+					i = pagingBuffer->NextRow();
+				}
+				else
+				{
+					rowIndex = nextRowIndex;
+				}
 			}
 
-			previousRowIndex = rowIndex;
-			Long nextRowIndex = note->Next();
-			if (nextRowIndex > previousRowIndex)
+			//4.1.4. 노트에서 윗 부분을 지운다.
+			Long upperIndex = currentRowIndex - PAGE_ROWCOUNT;
+			if (upperIndex < 0)
 			{
-				rowIndex = nextRowIndex;
-				row = note->GetAt(rowIndex);
-				columnIndex = row->First();
-				i = pagingBuffer->NextRow();
+				upperIndex = 0;
 			}
-			else
+			note->TruncateBefore(upperIndex);
+			pagingBuffer->CacheRowStartIndex(upperIndex);
+			currentRowIndex -= upperIndex;
+
+			//4.1.5. 수평 스크롤바 최대값을 갱신한다.
+			Long rowWidth = 0;
+			ScrollController* scrollController = ((NotepadForm*)parent)->scrollController;
+			SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
+			Long max = scrollController->GetHScroll().GetMax();
+			i = 0;
+			while (i < note->GetLength())
 			{
-				rowIndex = nextRowIndex;
+				row = note->GetAt(i);
+				rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
+				if (rowWidth > max)
+				{
+					max = rowWidth;
+				}
+				i++;
 			}
+			scrollController->ResizeHRange(max);
 		}
 	}
 
@@ -316,45 +406,17 @@ void PageManager::LoadNext(CWnd* parent) {
 	{
 		delete loadedNote;
 	}
+
 	if (loadedContents != NULL)
 	{
 		delete[] loadedContents;
 	}
 
-	//5. 현재 위치로 돌아온다.
-	CaretNavigator caretNavigator(parent);
-	caretNavigator.MoveTo(currentOffset);
-	note = ((NotepadForm*)parent)->note;
-	currentRowIndex = note->GetCurrent();
-	row = note->GetAt(currentRowIndex);
-	currentColumnIndex = row->GetCurrent();
-
-	//6. 노트에서 윗 부분을 지운다.
-	Long upperIndex = currentRowIndex - PAGE_ROWCOUNT;
-	if (upperIndex < 0)
-	{
-		upperIndex = 0;
-	}
-	note->TruncateBefore(upperIndex);
-	pagingBuffer->CacheRowStartIndex(upperIndex);
-
-	//7. 수평 스크롤바 최대값을 갱신한다.
-	Long rowWidth = 0;
-	ScrollController* scrollController = ((NotepadForm*)parent)->scrollController;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
-	Long max = scrollController->GetHScroll().GetMax();
-	Long i = 0;
-	while (i < note->GetLength())
-	{
-		row = note->GetAt(i);
-		rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
-		if (rowWidth > max)
-		{
-			max = rowWidth;
-		}
-		i++;
-	}
-	scrollController->ResizeHRange(max);
+	//5. 현재 위치를 직접 복원한다.
+	rowIndex = note->Move(currentRowIndex);
+	row = note->GetAt(rowIndex);
+	currentColumnIndex = row->Move(currentColumnIndex);
+	pagingBuffer->MoveOffset(currentOffset);
 }
 
 void PageManager::LoadLast(CWnd* parent) {

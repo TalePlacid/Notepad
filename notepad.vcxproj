@@ -149,6 +149,7 @@
     <ClCompile Include="actions\VScrollPageUpAction.cpp" />
     <ClCompile Include="actions\VScrollPageDownAction.cpp" />
     <ClCompile Include="actions\VScrollThumbTrackAction.cpp" />
+    <ClCompile Include="actions\VScrollThumbPositionAction.cpp" />
     <ClCompile Include="actions\HScrollLineLeftAction.cpp" />
     <ClCompile Include="actions\HScrollLineRightAction.cpp" />
     <ClCompile Include="actions\HScrollPageLeftAction.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="actions\VScrollPageUpAction.h" />
     <ClInclude Include="actions\VScrollPageDownAction.h" />
     <ClInclude Include="actions\VScrollThumbTrackAction.h" />
+    <ClInclude Include="actions\VScrollThumbPositionAction.h" />
     <ClInclude Include="actions\HScrollLineLeftAction.h" />
     <ClInclude Include="actions\HScrollLineRightAction.h" />
     <ClInclude Include="actions\HScrollPageLeftAction.h" />
@@ -448,6 +450,7 @@
     <ClInclude Include="Subject.h" />
     <ClInclude Include="SuspendAutoWrap.h" />
     <ClInclude Include="TabStopCalculator.h" />
+    <ClInclude Include="TimerConstants.h" />
     <ClInclude Include="TextEncoder.h" />
     <ClInclude Include="TextFileIO.h" />
     <ClInclude Include="TextOutVisitor.h" />

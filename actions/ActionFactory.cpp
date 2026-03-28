@@ -63,6 +63,7 @@
 #include "VScrollPageUpAction.h"
 #include "VScrollPageDownAction.h"
 #include "VScrollThumbTrackAction.h"
+#include "VScrollThumbPositionAction.h"
 #include "HScrollLineLeftAction.h"
 #include "HScrollLineRightAction.h"
 #include "HScrollPageLeftAction.h"
@@ -273,6 +274,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_VSCROLL_THUMB_TRACK:
 		action = new VScrollThumbTrackAction(parent);
+		break;
+	case AppID::ID_ACTION_VSCROLL_THUMB_POSITION:
+		action = new VScrollThumbPositionAction(parent);
 		break;
 	case AppID::ID_ACTION_HSCROLL_LINE_LEFT:
 		action = new HScrollLineLeftAction(parent);
