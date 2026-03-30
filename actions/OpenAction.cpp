@@ -9,6 +9,7 @@
 #include "../NoteConverter.h"
 #include "../NoteWrapper.h"
 #include "../TextFileIO.h"
+#include "../PageManager.h"
 
 #pragma warning(disable:4996)
 
@@ -31,45 +32,29 @@ void OpenAction::Perform() {
 	//2. 선택했다면,
 	if (result == IDOK)
 	{
-		//2.1. 기존 내용을 지운다.
+		//2.1. 문자열을 적재한다.
 		NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-		if (notepadForm->note != NULL)
-		{
-			delete notepadForm->note;
-			notepadForm->note = NULL;
-		}
-
-		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
-		pagingBuffer->Clear();
-
-		//2.2. 문자열을 적재한다.
 		notepadForm->AssignSourcePath(fileDialog.GetPathName());
 		TextFileIO textFileIO;
 		TCHAR(*str) = NULL;
 		Long count;
 		Encoding encoding = textFileIO.Load((LPCTSTR)(notepadForm->GetSourcePath()), &str, count);
 
-		//2.3. 노트를 생성한다.
-		NoteConverter noteConverter;
-		notepadForm->note = noteConverter.Convert(string(str));
-
-		//2.4. 자동개행이 설정되어 있다면,
-		if (notepadForm->IsAutoWrapped())
-		{
-			NoteWrapper noteWrapper(this->parent);
-			noteWrapper.Wrap();
-		}
-
-		//2.5. 페이징 버퍼의 내용을 교체한다.
+		//2.2. 페이징 버퍼의 내용을 교체한다.
+		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
+		pagingBuffer->Clear();
 		pagingBuffer->Add(CString(str));
 		pagingBuffer->FirstRow();
 
-		//2.6. 스크롤바와 히스토리북 설정을 초기화한다.
+		//2.3. 첫 페이지를 적재한다.
+		PageManager::LoadFirst(this->parent);
+
+		//2.4. 스크롤바와 히스토리북 설정을 초기화한다.
 		notepadForm->scrollController->Initialize();
 		notepadForm->undoHistoryBook->Clear();
 		notepadForm->redoHistoryBook->Clear();
 
-		//2.7. 캡션을 수정한다.
+		//2.5. 캡션을 수정한다.
 		CString caption = fileDialog.GetFileName();
 		Long extensionIndex = caption.ReverseFind('.');
 		if (extensionIndex > 0)

@@ -395,6 +395,8 @@ Long PagingBuffer::Remove(Long toOffset) {
 void PagingBuffer::Clear() {
 	fclose(this->file);
 	this->file = fopen(this->tempPath, "wb+");
+	this->rowStartIndex = 0;
+	this->selectionBeginOffset = -1;
 }
 
 Long PagingBuffer::Replace(Long offset, CString str) {
