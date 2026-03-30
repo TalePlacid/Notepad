@@ -75,6 +75,8 @@ void PageManager::LoadFirst(CWnd* parent) {
 	row = note->GetAt(rowIndex);
 	columnIndex = row->First();
 	pagingBuffer->FirstRow();
+
+	TRACE("LoadFirst\n");
 }
 
 void PageManager::LoadPrevious(CWnd* parent) {
@@ -277,6 +279,8 @@ void PageManager::LoadPrevious(CWnd* parent) {
 		i++;
 	}
 	scrollController->ResizeHRange(max);
+	
+	TRACE("LoadPrevious\n");
 }
 
 void PageManager::LoadNext(CWnd* parent) {
@@ -417,6 +421,8 @@ void PageManager::LoadNext(CWnd* parent) {
 	row = note->GetAt(rowIndex);
 	currentColumnIndex = row->Move(currentColumnIndex);
 	pagingBuffer->MoveOffset(currentOffset);
+
+	TRACE("LoadNext\n");
 }
 
 void PageManager::LoadLast(CWnd* parent) {
@@ -501,6 +507,8 @@ void PageManager::LoadLast(CWnd* parent) {
 	row = note->GetAt(rowIndex);
 	columnIndex = row->Last();
 	pagingBuffer->MoveOffset(pagingBuffer->GetFileEndOffset());
+
+	TRACE("LoadLast\n");
 }
 
 void PageManager::TrimIfNeeded(CWnd* parent) {
@@ -534,6 +542,8 @@ void PageManager::TrimIfNeeded(CWnd* parent) {
 		note->TruncateBefore(aboveRowIndex);
 		pagingBuffer->CacheRowStartIndex(aboveRowIndex);
 
+		TRACE("TRIM: %ld(%ld), %ld(%ld)\n", note->GetCurrent(), note->GetCurrent() + pagingBuffer->GetRowStartIndex(),
+			note->GetLength(), note->GetLength() + pagingBuffer->GetRowStartIndex());
 	}
 }
 
