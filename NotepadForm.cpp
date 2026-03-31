@@ -606,6 +606,7 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 	}
 
 	this->isDirty = TRUE;
+	this->Notify("UpdateStatusBar");
 	this->Invalidate();
 }
 
@@ -644,6 +645,7 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	}
 
 	this->Notify("ChangeCaret");
+	this->Notify("UpdateStatusBar");
 	this->Invalidate();
 }
 
