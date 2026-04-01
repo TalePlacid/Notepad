@@ -63,14 +63,47 @@ void StatusBarController::Update(Subject* subject, string interest) {
 	if (interest == "UpdateStatusBar")
 	{
 		NotepadForm* notepadForm = (NotepadForm*)(subject);
-		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
+		
 		Glyph* note = notepadForm->note;
 		Long rowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
-		Long absoluteRow = rowIndex + pagingBuffer->GetRowStartIndex();
+
+		Long dummyRowCount = 0;
+		Long previousWrappedColumnCount = 0;
+		if (notepadForm->IsAutoWrapped())
+		{
+			Long i = 0;
+			while (i <= rowIndex)
+			{
+				if (note->GetAt(i)->IsDummyRow())
+				{
+					dummyRowCount++;
+				}
+				i++;
+			}
+
+			if (row->IsDummyRow())
+			{
+				i = rowIndex - 1;
+				BOOL flag = TRUE;
+				while (i >= 0 && flag)
+				{
+					previousWrappedColumnCount += note->GetAt(i)->GetLength();
+					if (!note->GetAt(i)->IsDummyRow())
+					{
+						flag = FALSE;
+					}
+					i--;
+				}
+			}
+		}
+
+		PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
+		Long absoluteRow = rowIndex + pagingBuffer->GetRowStartIndex() - dummyRowCount;
+		Long absoluteColumn = columnIndex + previousWrappedColumnCount;
 		CString current;
-		current.Format("ln %ld, col %ld", absoluteRow + 1, columnIndex + 1);
+		current.Format("ln %ld, col %ld", absoluteRow + 1, absoluteColumn + 1);
 		this->statusBar->SetPaneText(1, (LPCTSTR)current);
 
 		CString magnification;
