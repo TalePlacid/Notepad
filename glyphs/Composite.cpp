@@ -165,7 +165,7 @@ Long Composite::TruncateBefore(Long index) {
 
 	if (this->current < index)
 	{
-		this->capacity = 0;
+		this->current = 0;
 	}
 	else
 	{

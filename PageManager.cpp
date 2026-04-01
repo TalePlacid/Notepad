@@ -511,6 +511,92 @@ void PageManager::LoadLast(CWnd* parent) {
 	TRACE("LoadLast\n");
 }
 
+void PageManager::ReloadAfterErase(CWnd* parent) {
+	//1. 자동개행을 일시정지한다.
+	SuspendAutoWrap suspendAutoWrap(parent);
+
+	//2. 현재 노트와 위치를 읽는다.
+	Glyph* note = ((NotepadForm*)parent)->note;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* currentRow = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = currentRow->GetCurrent();
+
+	//3. 현재 줄 아래의 기존 적재분은 버린다.
+	note->TruncateAfter(currentRowIndex);
+
+	//4. 현재 offset의 뒷부분을 다시 읽는다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
+	TCHAR* loadedContents = NULL;
+	Long loadedByteCount = 0;
+	pagingBuffer->LoadNext(loadedContents, loadedByteCount);
+
+	Glyph* loadedNote = NULL;
+	if (loadedByteCount > 0)
+	{
+		NoteConverter noteConverter;
+		loadedNote = noteConverter.Convert(loadedContents);
+	}
+
+	//5. 다시 읽은 첫 줄은 현재 줄 뒤에 붙인다.
+	if (loadedNote != NULL)
+	{
+		if (loadedNote->GetLength() > 0)
+		{
+			Glyph* firstLoadedRow = loadedNote->GetAt(0);
+			Long i = 0;
+			while (i < firstLoadedRow->GetLength())
+			{
+				currentRow->Add(firstLoadedRow->GetAt(i)->Clone());
+				i++;
+			}
+		}
+
+		//5.1. 첫 줄을 제외한 나머지 줄들은 노트 뒤에 붙인다.
+		if (loadedNote->GetLength() > 0)
+		{
+			loadedNote->Remove(0);
+		}
+
+		if (loadedNote->GetLength() > 0)
+		{
+			note->AppendFromRear(loadedNote);
+		}
+	}
+
+	if (loadedNote != NULL)
+	{
+		delete loadedNote;
+	}
+
+	if (loadedContents != NULL)
+	{
+		delete[] loadedContents;
+	}
+
+	//6. 현재 위치를 복원한다.
+	currentRow->Move(currentColumnIndex);
+
+	//7. 수평 스크롤 최대값을 다시 계산한다.
+	ScrollController* scrollController = ((NotepadForm*)parent)->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
+	Long max = scrollController->GetHScroll().GetMax();
+	Long rowWidth = 0;
+	Long j = 0;
+	while (j < note->GetLength())
+	{
+		Glyph* row = note->GetAt(j);
+		rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
+		if (rowWidth > max)
+		{
+			max = rowWidth;
+		}
+		j++;
+	}
+	scrollController->ResizeHRange(max);
+
+	TRACE("ReloadAfterErase\n");
+}
+
 void PageManager::TrimIfNeeded(CWnd* parent) {
 	Glyph* note = ((NotepadForm*)parent)->note;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;

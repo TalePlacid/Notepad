@@ -12,6 +12,7 @@ public:
 	static void LoadPrevious(CWnd* parent);
 	static void LoadNext(CWnd* parent);
 	static void LoadLast(CWnd* parent);
+	static void ReloadAfterErase(CWnd* parent);
 	static void TrimIfNeeded(CWnd* parent);
 };
 

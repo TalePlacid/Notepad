@@ -647,6 +647,7 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	this->Notify("ChangeCaret");
 	this->Notify("UpdateStatusBar");
 	this->Invalidate();
+	TRACE("offset: %ld\n", this->pagingBuffer->GetCurrentOffset());
 }
 
 

@@ -187,20 +187,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
 	if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetMax())
 	{
-		row = note->GetAt(currentRowIndex);
-		currentColumnIndex = row->GetCurrent();
-		if (!row->IsDummyRow() && currentColumnIndex == 0)
-		{
-			pagingBuffer->Add(CString("\r\n"));
-			pagingBuffer->PreviousRow();
-		}
-		PageManager::LoadNext(this->parent);
-		if (!row->IsDummyRow() && columnIndex == 0)
-		{
-			note->MergeRows(currentRowIndex);
-			pagingBuffer->NextRow();
-			pagingBuffer->Remove();
-		}
+		PageManager::ReloadAfterErase(this->parent);
 	}
 }
 
@@ -517,8 +504,8 @@ void Editor::DragDown(CPoint point) {
 	Glyph* previousRow;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	Scroll vScroll = scrollController->GetVScroll();
-	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
+	Scroll vScroll;
+	Long pageMax;
 	Long difference;
 	while (currentRowIndex < rowIndex)
 	{
@@ -533,6 +520,8 @@ void Editor::DragDown(CPoint point) {
 		}
 		
 		//3.2. 필요하면 다음 페이지를 적재한다.
+		vScroll = scrollController->GetVScroll();
+		pageMax = vScroll.GetPos() + vScroll.GetPage();
 		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetPos())
 		{
 			difference = rowIndex - currentRowIndex;

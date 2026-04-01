@@ -29,15 +29,19 @@ void DragAction::Perform() {
 	{
 	case DIRECTION_UP:
 		editor.DragUp(this->point);
+		TRACE("up\n");
 		break;
 	case DIRECTION_DOWN:
 		editor.DragDown(this->point);
+		TRACE("down\n");
 		break;
 	case DIRECTION_LEFT:
 		editor.DragLeft(this->point);
+		TRACE("left\n");
 		break;
 	case DIRECTION_RIGHT:
 		editor.DragRight(this->point);
+		TRACE("right\n");
 		break;
 	default:
 		break;
