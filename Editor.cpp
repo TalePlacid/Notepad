@@ -522,7 +522,7 @@ void Editor::DragDown(CPoint point) {
 		//3.2. 필요하면 다음 페이지를 적재한다.
 		vScroll = scrollController->GetVScroll();
 		pageMax = vScroll.GetPos() + vScroll.GetPage();
-		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetPos())
+		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetMax())
 		{
 			difference = rowIndex - currentRowIndex;
 			PageManager::LoadNext(this->parent);
