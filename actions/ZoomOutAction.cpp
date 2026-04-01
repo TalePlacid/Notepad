@@ -4,6 +4,7 @@
 #include "../SizeCalculator.h"
 #include "../ScrollController.h"
 #include "../FontSelector.h"
+#include "../SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
@@ -17,6 +18,8 @@ ZoomOutAction::~ZoomOutAction() {
 }
 
 void ZoomOutAction::Perform() {
+	SuspendAutoWrap suspendAutoWrap(this->parent);
+
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	Long oldRowHeight = 0;
 	Long oldVScrollMax = 0;

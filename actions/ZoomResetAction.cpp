@@ -3,6 +3,7 @@
 #include "../NotepadForm.h"
 #include "../SizeCalculator.h"
 #include "../ScrollController.h"
+#include "../SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
@@ -16,6 +17,8 @@ ZoomResetAction::~ZoomResetAction() {
 }
 
 void ZoomResetAction::Perform() {
+	SuspendAutoWrap suspendAutoWrap(this->parent);
+
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	Long oldRowHeight = 0;
 	Long oldVScrollMax = 0;

@@ -4,6 +4,7 @@
 #include "../SizeCalculator.h"
 #include "../ScrollController.h"
 #include "../FontSelector.h"
+#include "../SuspendAutoWrap.h"
 
 #pragma warning(disable:4996)
 
@@ -17,6 +18,8 @@ ZoomInAction::~ZoomInAction() {
 }
 
 void ZoomInAction::Perform() {
+	SuspendAutoWrap suspendAutoWrap(this->parent);
+
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	Long oldRowHeight = 0;
 	Long oldVScrollMax = 0;
@@ -55,7 +58,7 @@ void ZoomInAction::Perform() {
 	}
 	notepadForm->sizeCalculator = new SizeCalculator(this->parent);
 
-	if (notepadForm->scrollController != NULL && notepadForm->scrollController->HasVScroll())
+	if (notepadForm->scrollController->HasVScroll())
 	{
 		Long newRowHeight = notepadForm->sizeCalculator->GetRowHeight();
 		if (oldRowHeight > 0 && newRowHeight > 0)
