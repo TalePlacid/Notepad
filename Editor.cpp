@@ -440,6 +440,7 @@ void Editor::DragUp(CPoint point) {
 	//3. 목표 줄까지 위로 선택 이동한다.
 	Glyph* previousRow;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll;
 	Long difference;
 	while (currentRowIndex > rowIndex)
@@ -455,6 +456,7 @@ void Editor::DragUp(CPoint point) {
 		}
 		
 		//3.2. 필요하면 이전 페이지를 적재한다.
+		vScroll = scrollController->GetVScroll();
 		if (note->IsAboveTopLine(currentRowIndex) && vScroll.GetPos() > 0)
 		{
 			difference = currentRowIndex - rowIndex;
