@@ -338,45 +338,49 @@ void Editor::MoveUp() {
 		rowIndex = note->GetCurrent();
 	}
 
-	//2. 이전 줄로 이동한다.
-	Glyph* originalRow = note->GetAt(rowIndex);
-	Long columnIndex = originalRow->GetCurrent();
-
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
-
-	Long previousRowIndex = note->Previous();
-	Glyph* previousRow = note->GetAt(previousRowIndex);
-
-	Long nearestIndex = sizeCalculator->GetNearestColumnIndex(previousRow, originalWidth);
-	previousRow->Move(nearestIndex);
-
-	//3. 페이징 버퍼에서 이동한다.
-	Long characters;
-	if (!originalRow->IsDummyRow())
+	//2. 첫번째 줄이 아니면,
+	if (rowIndex > 0)
 	{
-		pagingBuffer->PreviousRow();
+		//2.1. 이전 줄로 이동한다.
+		Glyph* originalRow = note->GetAt(rowIndex);
+		Long columnIndex = originalRow->GetCurrent();
 
-		Long i = rowIndex - 1;
-		while (i >= 0 && note->GetAt(i)->IsDummyRow())
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+		Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
+
+		Long previousRowIndex = note->Previous();
+		Glyph* previousRow = note->GetAt(previousRowIndex);
+
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(previousRow, originalWidth);
+		previousRow->Move(nearestIndex);
+
+		//2.2. 페이징 버퍼에서 이동한다.
+		Long characters;
+		if (!originalRow->IsDummyRow())
 		{
-			i--;
-		}
+			pagingBuffer->PreviousRow();
 
-		characters = 0;
-		while (i < rowIndex - 1)
+			Long i = rowIndex - 1;
+			while (i >= 0 && note->GetAt(i)->IsDummyRow())
+			{
+				i--;
+			}
+
+			characters = 0;
+			while (i < rowIndex - 1)
+			{
+				characters += note->GetAt(i)->GetLength();
+				i++;
+			}
+			characters += nearestIndex;
+
+			pagingBuffer->Next(characters);
+		}
+		else
 		{
-			characters += note->GetAt(i)->GetLength();
-			i++;
+			characters = columnIndex + previousRow->GetLength() - nearestIndex;
+			pagingBuffer->Previous(characters);
 		}
-		characters += nearestIndex;
-
-		pagingBuffer->Next(characters);
-	}
-	else
-	{
-		characters = columnIndex + previousRow->GetLength() - nearestIndex;
-		pagingBuffer->Previous(characters);
 	}
 }
 
@@ -384,14 +388,12 @@ void Editor::MoveDown() {
 	//1. 다음 줄이 재적재범위에 들어가면, 재적재한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 
-	Long rowHeight = sizeCalculator->GetRowHeight();
 	Scroll vScroll = scrollController->GetVScroll();
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
-	Long lastPos = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
-	if (note->IsBelowBottomLine(rowIndex + 1) && lastPos < vScroll.GetMax())
+	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
+	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
 	{
 		PageManager::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();
@@ -403,6 +405,7 @@ void Editor::MoveDown() {
 		//2.1. 다음 줄로 이동한다.
 		Glyph* originalRow = note->GetAt(rowIndex);
 		Long columnIndex = originalRow->GetCurrent();
+		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
 
 		rowIndex = note->Next();

@@ -52,10 +52,10 @@ SuspendAutoWrap::SuspendAutoWrap(CWnd* parent) {
 
 			//3. 노트의 자동개행을 푼다.
 			NoteWrapper noteWrapper(this->parent);
-			Long unwrapedDummyCount = noteWrapper.Unwrap();
+			Long unwrappedDummyCount = noteWrapper.Unwrap();
 
 			//4. 스크롤 최대값을 갱신한다.
-			Long max = scrollController->GetVScroll().GetMax() - unwrapedDummyCount * rowHeight;
+			Long max = scrollController->GetVScroll().GetMax() - unwrappedDummyCount * rowHeight;
 			scrollController->ResizeVRange(max);
 
 			this->isSuspended = TRUE;
@@ -92,13 +92,13 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 			Long wrappedColumnIndex = row->GetCurrent();
 			Long lastColumnIndex = row->GetLength();
 
-			if (this->currentColumnIndex == 0 && wrappedColumnIndex == lastColumnIndex && rowIndex + 1 < note->GetLength())
+			if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0)
 			{
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
 				row->First();
 			}
-			else if (this->currentColumnIndex == lastColumnIndex && wrappedColumnIndex == 0 && rowIndex > 0)
+			else if (this->currentColumnIndex > 0 && wrappedColumnIndex == 0)
 			{
 				rowIndex = note->Previous();
 				row = note->GetAt(rowIndex);
