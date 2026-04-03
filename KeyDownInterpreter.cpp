@@ -44,7 +44,7 @@ BOOL KeyDownInterpreter::IsCommand(AppID nID) {
 	return isCommand;
 }
 
-AppID KeyDownInterpreter::DetermineID(UINT nChar) {
+AppID KeyDownInterpreter::DetermineID(UINT nChar, BOOL hasSelectionRange) {
 	AppID nID = AppID::NONE;
 
 	int onCtrlKey = GetKeyState(VK_CONTROL) & 0x8000;
@@ -95,6 +95,10 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		{
 			nID = AppID::ID_ACTION_SELECT_LEFT;
 		}
+		else if (hasSelectionRange)
+		{
+			nID = AppID::ID_ACTION_MOVE_SELECTION_FRONT;
+		}
 		else
 		{
 			nID = AppID::ID_ACTION_MOVE_LEFT;
@@ -112,6 +116,10 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar) {
 		else if (onShiftKey)
 		{
 			nID = AppID::ID_ACTION_SELECT_RIGHT;
+		}
+		else if (hasSelectionRange)
+		{
+			nID = AppID::ID_ACTION_MOVE_SELECTION_REAR;
 		}
 		else
 		{

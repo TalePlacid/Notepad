@@ -10,7 +10,7 @@ public:
 
 	static BOOL IsFindReplace(AppID nID);
 	static BOOL IsCommand(AppID nID);
-	static AppID DetermineID(UINT nChar);
+	static AppID DetermineID(UINT nChar, BOOL hasSelectionRange = FALSE);
 };
 
 #endif // !_KEYDOWNINTERPRETER_H

@@ -21,6 +21,8 @@
 #include "MoveWordLeftAction.h"
 #include "MoveDocFrontAction.h"
 #include "MoveDocRearAction.h"
+#include "MoveSelectionFrontAction.h"
+#include "MoveSelectionRearAction.h"
 #include "MovePageUpAction.h"
 #include "MovePageDownAction.h"
 #include "MovePageLeftAction.h"
@@ -148,6 +150,12 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_MOVE_DOC_REAR:
 		action = new MoveDocRearAction(parent);
+		break;
+	case AppID::ID_ACTION_MOVE_SELECTION_FRONT:
+		action = new MoveSelectionFrontAction(parent);
+		break;
+	case AppID::ID_ACTION_MOVE_SELECTION_REAR:
+		action = new MoveSelectionRearAction(parent);
 		break;
 	case AppID::ID_ACTION_MOVE_PAGE_UP:
 		action = new MovePageUpAction(parent);

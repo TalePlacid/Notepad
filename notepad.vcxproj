@@ -139,6 +139,8 @@
     <ClCompile Include="actions\FindAction.cpp" />
     <ClCompile Include="actions\FindNextAction.cpp" />
     <ClCompile Include="actions\FindPreviousAction.cpp" />
+    <ClCompile Include="actions\MoveSelectionFrontAction.cpp" />
+    <ClCompile Include="actions\MoveSelectionRearAction.cpp" />
     <ClCompile Include="actions\MoveToPointAction.cpp" />
     <ClCompile Include="actions\OpenFindDialogAction.cpp" />
     <ClCompile Include="actions\OpenReplaceDialogAction.cpp" />
@@ -303,6 +305,8 @@
     <ClInclude Include="actions\FindAction.h" />
     <ClInclude Include="actions\FindNextAction.h" />
     <ClInclude Include="actions\FindPreviousAction.h" />
+    <ClInclude Include="actions\MoveSelectionFrontAction.h" />
+    <ClInclude Include="actions\MoveSelectionRearAction.h" />
     <ClInclude Include="actions\MoveToPointAction.h" />
     <ClInclude Include="actions\OpenFindDialogAction.h" />
     <ClInclude Include="actions\OpenReplaceDialogAction.h" />

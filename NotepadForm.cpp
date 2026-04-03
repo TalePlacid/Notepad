@@ -404,7 +404,9 @@ void NotepadForm::OnMenuClicked(UINT nID) {
 }
 
 void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	AppID nID = KeyDownInterpreter::DetermineID(nChar);
+	BOOL hasSelectionRange = this->pagingBuffer->GetSelectionBeginOffset() >= 0;
+	AppID nID = KeyDownInterpreter::DetermineID(nChar, hasSelectionRange);
+	
 	if (nID != AppID::NONE)
 	{
 		if (KeyDownInterpreter::IsFindReplace(nID))
