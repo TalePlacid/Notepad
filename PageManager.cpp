@@ -91,8 +91,6 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
 	Long noteLength = note->GetLength();
 
-	Long beforeAbsolute = pagingBuffer->GetRowStartIndex() + currentRowIndex;
-
 	//2. 노트의 2번째 줄 기준으로 적재 위치를 맞춘다.
 	Long rowIndex = 0;
 	if (noteLength > 1)

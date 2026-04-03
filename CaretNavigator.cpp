@@ -291,6 +291,8 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	Long rowCount = rowIndexToMove - rowIndex;
+
 	//3. 적재범위를 벗어나면, 재적재한다.
 	Long pageMax = (rowStartIndex + note->GetLength()) * rowHeight;
 	if (note->IsBelowBottomLine(rowIndexToMove) && pageMax < vScroll.GetMax())
@@ -308,7 +310,6 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 
 	//4. 줄 수 만큼 반복한다.
 	Long nearestIndex;
-	Long rowCount = rowIndexToMove - rowIndex;
 	Long i = 0;
 	while (i < rowCount && rowIndex + 1 < note->GetLength())
 	{
@@ -365,6 +366,8 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	Long rowCount = rowIndex - rowIndexToMove;
+
 	//3. 적재범위를 넘어섰으면, 재적재한다.
 	if (note->IsAboveTopLine(rowIndexToMove) && rowStartIndex > 0)
 	{
@@ -382,7 +385,6 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 	//4. 줄 수 만큼 반복한다.
 	Long nearestIndex;
 	Glyph* previousRow;
-	Long rowCount = rowIndex - rowIndexToMove;
 	Long i = 0;
 	while (i < rowCount && rowIndex > 0)
 	{
