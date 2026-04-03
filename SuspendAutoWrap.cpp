@@ -80,19 +80,23 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 			//2. 스크롤 최대값을 갱신한다.
 			ScrollController* scrollController = notepadForm->scrollController;
 			SizeCalculator* sizeCalculator = notepadForm->sizeCalculator;
+			Scroll vScroll = scrollController->GetVScroll();
 			Long rowHeight = sizeCalculator->GetRowHeight();
-			Long max = scrollController->GetVScroll().GetMax() + wrappedDummyCount * rowHeight;
+			Long max = vScroll.GetMax() + wrappedDummyCount * rowHeight;
 			scrollController->ResizeVRange(max);
 
 			//3. 현재줄을 기존의 화면상 줄 위치로 스크롤 이동시킨다.
 			PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
+			Long currentOffset = pagingBuffer->GetCurrentOffset();
+			Long fileEndOffset = pagingBuffer->GetFileEndOffset();
+
 			Glyph* note = notepadForm->note;
 			Long rowIndex = note->GetCurrent();
 			Glyph* row = note->GetAt(rowIndex);
 			Long wrappedColumnIndex = row->GetCurrent();
 			Long lastColumnIndex = row->GetLength();
 
-			if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0)
+			if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0 && currentOffset < fileEndOffset)
 			{
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
@@ -108,7 +112,6 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 			Long pos = (rowStartIndex + rowIndex - this->currentRowScreenDelta) * rowHeight;
 			
-			Scroll vScroll = scrollController->GetVScroll();
 			Long posLimit = vScroll.GetMax() - vScroll.GetPage();
 			if (pos > posLimit)
 			{
