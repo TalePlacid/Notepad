@@ -597,6 +597,8 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 }
 
 void PageManager::TrimIfNeeded(CWnd* parent) {
+	SuspendAutoWrap suspendAutoWrap(parent);
+
 	Glyph* note = ((NotepadForm*)parent)->note;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
 	Long noteLength = note->GetLength();
