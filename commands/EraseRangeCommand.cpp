@@ -54,18 +54,18 @@ void EraseRangeCommand::Execute() {
 	{
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		this->contents = pagingBuffer->MakeSelectedString();
-		editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
+		editor.EraseRange(this->frontOffset, this->rearOffset, this->contents, this->columnIndex);
 	}
 }
 
 void EraseRangeCommand::Undo() {
-	Editor editor(this->parent);
+	Editor editor(this->parent); 
 	editor.InsertTextAt(this->frontOffset, this->columnIndex, this->contents, true);
 }   
 
 void EraseRangeCommand::Redo() {
 	Editor editor(this->parent);
-	editor.EraseRange(this->frontOffset, this->rearOffset, this->columnIndex);
+	editor.EraseRange(this->frontOffset, this->rearOffset, this->contents, this->columnIndex);
 }
 
 Command* EraseRangeCommand::Clone() {

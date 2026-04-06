@@ -69,7 +69,7 @@ void InsertAtCaretCommand::Execute() {
 		this->isUndoable = true;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		this->erasedContents = pagingBuffer->MakeSelectedString();
-		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedContents, this->erasedColumnIndex);
 	}
 
 	//2. 현재 위치를 읽는다.
@@ -255,7 +255,7 @@ void InsertAtCaretCommand::Redo() {
 	if (this->isErased)
 	{
 		Editor editor(this->parent);
-		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedContents, this->erasedColumnIndex);
 	}
 
 	//2. 확정문자였었으면, 다시 적는다.

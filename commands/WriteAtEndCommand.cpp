@@ -70,7 +70,7 @@ void WriteAtEndCommand::Execute() {
 		this->isUndoable = true;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		this->erasedContents = pagingBuffer->MakeSelectedString();
-		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedContents, this->erasedColumnIndex);
 	}
 
 	//2. 끝 위치에 문자를 반영한다.
@@ -208,7 +208,7 @@ void WriteAtEndCommand::Redo() {
 	if (this->isErased)
 	{
 		Editor editor(this->parent);
-		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedColumnIndex);
+		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedContents, this->erasedColumnIndex);
 	}
 
 	//2. 확정문자였었으면, 다시 쓴다.

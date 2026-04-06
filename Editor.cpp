@@ -97,7 +97,96 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 	}
 }
 
-void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
+void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& columnIndex) {
+	//1. 앞 위치로 이동한다.
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(frontOffset);
+
+	//2. 현재 위치를 읽는다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long currentRowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(currentRowIndex);
+	Long currentColumnIndex = row->GetCurrent();
+	columnIndex = currentColumnIndex;
+
+	//3. 노트에서 제거한다.
+	Long dummyRowErased = 0;
+	Glyph* nextRow;
+	TCHAR* character;
+	Long characterByte;
+	Long selectionLength = rearOffset - frontOffset;
+	Long i = 0;
+	BOOL flag = TRUE;
+	while (i < selectionLength && flag)
+	{
+		flag = FALSE;
+		//3.1. 줄의 끝이 아니라면,
+		if (currentColumnIndex < row->GetLength())
+		{
+			flag = TRUE;
+			//3.1.1. 구한다.
+			character = (char*)*row->GetAt(currentColumnIndex);
+			characterByte = 1;
+			if (!ByteChecker::IsASCII(character))
+			{
+				characterByte = 2;
+			}
+
+			//3.1.2. 노트에서 지운다.
+			row->Remove(currentColumnIndex);
+			row->Move(currentColumnIndex);
+		}
+		else if (currentRowIndex + 1 < note->GetLength()) //3.2. 줄의 끝이고 다음 줄이 있다면,
+		{
+			flag = TRUE;
+			//3.2.1. 바이트수를 구한다.
+			nextRow = note->GetAt(currentRowIndex + 1);
+			if (!nextRow->IsDummyRow())
+			{
+				characterByte = 2;
+			}
+			else
+			{
+				characterByte = 0;
+				dummyRowErased++;
+			}
+
+			//3.2.2. 줄을 합친다.
+			note->MergeRows(currentRowIndex);
+		}
+
+		i += characterByte;
+	}
+
+	//4. 자동개행중이면, 재개행한다.
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+	{
+		NoteWrapper noteWrapper(this->parent);
+		dummyRowErased += noteWrapper.Rewrap();
+	}
+
+	//5. 스크롤에 반영한다.
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Long rowHeight = sizeCalculator->GetRowHeight();
+	Scroll vScroll = scrollController->GetVScroll();
+	Long realRowErased = RowCounter::CountRow(text);
+	Long max = vScroll.GetMax() - (realRowErased + dummyRowErased) * rowHeight;
+	scrollController->ResizeVRange(max);
+
+	//6. 페이징 버퍼에서 지운다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->Remove(rearOffset);
+	pagingBuffer->UnmarkSelectionBegin();
+
+	//7. 적재량이 부족하면, 재적재한다.
+	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
+	if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetMax())
+	{
+		PageManager::ReloadAfterErase(this->parent);
+	}
+
+#if 0
 	//1. 앞 위치로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 
@@ -189,6 +278,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, Long& columnIndex) {
 	{
 		PageManager::ReloadAfterErase(this->parent);
 	}
+#endif
 }
 
 void Editor::Replace(Long offset, CString sourceText, CString replacingText, 
