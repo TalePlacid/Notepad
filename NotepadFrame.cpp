@@ -20,6 +20,8 @@ NotepadFrame::NotepadFrame(LPCTSTR m_lpCmdLine){
 	if (m_lpCmdLine[0] != '\0')
 	{
 		this->startedPath = CString(m_lpCmdLine);
+		this->startedPath.Trim();
+		this->startedPath.Trim('"');
 	}
 	this->notepadForm = NULL;
 	this->statusBarController = NULL;
@@ -31,6 +33,10 @@ NotepadFrame::~NotepadFrame() {
 
 int NotepadFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CFrameWnd::OnCreate(lpCreateStruct);
+	//아이콘
+	HICON appIcon = AfxGetApp()->LoadIcon(IDI_ICON_APP);
+	this->SetIcon(appIcon, TRUE);
+	this->SetIcon(appIcon, FALSE);
 
 	//메뉴
 	this->menu.LoadMenu(MAKEINTRESOURCE(IDR_MENU_MAIN));

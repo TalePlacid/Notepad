@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36109.1 d17.14
+VisualStudioVersion = 17.14.36109.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "notepad", "notepad.vcxproj", "{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupNotepad", "..\SetupNotepad\SetupNotepad.vdproj", "{3EDEF9C1-39B6-E2F9-7B80-B6C754A20365}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,13 +16,17 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Debug|x64.ActiveCfg = Debug|x64
-		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Debug|x64.Build.0 = Debug|x64
 		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Debug|x86.ActiveCfg = Debug|Win32
 		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Debug|x86.Build.0 = Debug|Win32
-		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x64.ActiveCfg = Release|x64
-		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x64.Build.0 = Release|x64
-		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x86.ActiveCfg = Release|Win32
-		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x86.Build.0 = Release|Win32
+		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x64.ActiveCfg = Release|Win32
+		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x64.Build.0 = Release|Win32
+		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x86.ActiveCfg = Debug|Win32
+		{61C0E1A1-3B36-4D1E-A4AB-FDAEEE0D2BAF}.Release|x86.Build.0 = Debug|Win32
+		{3EDEF9C1-39B6-E2F9-7B80-B6C754A20365}.Debug|x64.ActiveCfg = Release
+		{3EDEF9C1-39B6-E2F9-7B80-B6C754A20365}.Debug|x64.Build.0 = Release
+		{3EDEF9C1-39B6-E2F9-7B80-B6C754A20365}.Debug|x86.ActiveCfg = Debug
+		{3EDEF9C1-39B6-E2F9-7B80-B6C754A20365}.Release|x64.ActiveCfg = Release
+		{3EDEF9C1-39B6-E2F9-7B80-B6C754A20365}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

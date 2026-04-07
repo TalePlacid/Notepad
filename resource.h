@@ -2,11 +2,13 @@
 // Microsoft Visual C++에서 생성한 포함 파일입니다.
 // notepad250410.rc에서 사용되고 있습니다.
 //
+#define IDI_ICON_APP                    5
 #define IDR_MENU_MAIN                   101
 #define IDD_DIALOG_PAGESETTING          102
 #define IDD_DIALOG_ABOUT_NOTEPAD        103
 #define IDR_MENU_CONTEXT                104
 #define IDD_DIALOG_GOTO                 105
+#define IDI_ICON1                       108
 #define IDC_GROUP_PAPER                 1001
 #define IDC_STATIC_SIZE                 1002
 #define IDC_STATIC_SOURCE               1003
@@ -80,11 +82,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        107
+#define _APS_NEXT_RESOURCE_VALUE        109
 #define _APS_NEXT_COMMAND_VALUE         40124
 #define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif
-
-
