@@ -46,6 +46,8 @@
 #include "commands/Command.h"
 #include "actions/Action.h"
 
+#include "Logger.h"
+
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
 
@@ -254,6 +256,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	}
 
 	this->Notify("UpdateScrollBars");
+
+	Logger::Clear();
 
 	return 0;
 }
@@ -649,6 +653,11 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	this->Notify("ChangeCaret");
 	this->Notify("UpdateStatusBar");
 	this->Invalidate();
+
+	CString log;
+	log.Format("AfterAction: %ld(%ld, %ld)\n", this->pagingBuffer->GetCurrentOffset(),
+		this->note->GetCurrent(), this->note->GetAt(this->note->GetCurrent())->GetCurrent());
+	Logger::Log(log);
 }
 
 

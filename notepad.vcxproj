@@ -227,6 +227,7 @@
     <ClCompile Include="FilePointerCalculator.cpp" />
     <ClCompile Include="FileStreamAdapter.cpp" />
     <ClCompile Include="FindReplaceInterpreter.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MultiByteWidth.cpp" />
     <ClCompile Include="MultiByteWidthCache.cpp" />
     <ClCompile Include="PaintingVisitor.cpp" />
@@ -396,6 +397,7 @@
     <ClInclude Include="FilePointerCalculator.h" />
     <ClInclude Include="FileStreamAdapter.h" />
     <ClInclude Include="FindReplaceInterpreter.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="MultiByteWidth.h" />
     <ClInclude Include="MultiByteWidthCache.h" />
     <ClInclude Include="PaintingVisitor.h" />

@@ -521,6 +521,7 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 	Long currentColumnIndex = currentRow->GetCurrent();
 
 	//3. 현재 줄 아래의 기존 적재분은 버린다.
+	currentRow->TruncateAfter(currentColumnIndex);
 	note->TruncateAfter(currentRowIndex);
 
 	//4. 현재 offset의 뒷부분을 다시 읽는다.
@@ -578,7 +579,7 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 	//7. 수평 스크롤 최대값을 다시 계산한다.
 	ScrollController* scrollController = ((NotepadForm*)parent)->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
-	Long max = scrollController->GetHScroll().GetMax();
+	Long max = 0;
 	Long rowWidth = 0;
 	Long j = 0;
 	while (j < note->GetLength())

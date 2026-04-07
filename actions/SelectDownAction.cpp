@@ -7,6 +7,8 @@
 #include "../PagingBuffer.h"
 #include "../PageManager.h"
 
+#include "../Logger.h"
+
 #pragma warning(disable:4996)
 
 SelectDownAction::SelectDownAction(CWnd* parent)
@@ -24,6 +26,12 @@ void SelectDownAction::Perform() {
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
+
+	PagingBuffer* logPagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	CString log;
+	log.Format("SelectDown/current: %ld(%ld, %ld)\n", logPagingBuffer->GetCurrentOffset(),
+		rowIndex, columnIndex);
+	Logger::Log(log);
 
 	//2. 적재 범위에서 벗어나면 적재한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -79,4 +87,9 @@ void SelectDownAction::Perform() {
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}
+
+	log.Format("SelectDown/after: %ld(%ld, %ld)\n", logPagingBuffer->GetCurrentOffset(),
+		rowIndex, columnIndex);
+	Logger::Log(log);
+	log.Format("SelectDown/selectionBegin: %ld\n", logPagingBuffer->GetSelectionBeginOffset());
 }
