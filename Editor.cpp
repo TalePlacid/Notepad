@@ -13,8 +13,6 @@
 #include "RowCounter.h"
 #include "glyphs/GlyphFactory.h"
 
-#include "Logger.h"
-
 #pragma warning(disable:4996)
 
 Editor::Editor(CWnd* parent) {
@@ -99,10 +97,6 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 }
 
 void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& columnIndex) {
-	CString log;
-	log.Format("Editor/offset: %ld\n", frontOffset);
-	Logger::Log(log);
-
 	//1. 앞 위치로 이동한다.
 	CaretNavigator caretNavigator(this->parent);
 	caretNavigator.MoveTo(frontOffset);
@@ -114,11 +108,6 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& c
 	Long currentColumnIndex = row->GetCurrent();
 	columnIndex = currentColumnIndex;
 
-	PagingBuffer* logPagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	log.Format("Editor/afterMove: %ld(%ld, %ld)\n", logPagingBuffer->GetCurrentOffset(),
-		currentRowIndex, currentColumnIndex);
-	Logger::Log(log);
-
 	//3. 노트에서 제거한다.
 	Long dummyRowErased = 0;
 	Glyph* nextRow;
@@ -129,9 +118,6 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& c
 	BOOL flag = TRUE;
 	while (i < selectionLength && flag)
 	{
-		log.Format("Editor/i: %ld, selectionLength: %ld, flag: %ld\n", i, selectionLength, flag);
-		Logger::Log(log);
-
 		flag = FALSE;
 		//3.1. 줄의 끝이 아니라면,
 		if (currentColumnIndex < row->GetLength())
@@ -196,7 +182,6 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& c
 	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
 	if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetMax())
 	{
-		Logger::Log("ReloadAfterErase\n");
 		PageManager::ReloadAfterErase(this->parent);
 	}
 

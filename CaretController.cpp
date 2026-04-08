@@ -32,8 +32,9 @@ Caret* CaretController::Create() {
 	Long startRowHeight = pagingBuffer->GetRowStartIndex() * sizeCalculator->GetRowHeight();
 
 	//2. 노트에서의 높이를 구한다.
-	Long nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
-	Long height = nPos - startRowHeight;
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Scroll vScroll = scrollController->GetVScroll();
+	Long height = vScroll.GetPos() - startRowHeight;
 	Long y = rowIndex * sizeCalculator->GetRowHeight() - height;
 
 	//3. 현재 위치까지의 너비를 구한다.
@@ -47,8 +48,8 @@ Caret* CaretController::Create() {
 		i++;
 	}
 
-	nPos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
-	Long x = width - nPos;
+	Scroll hScroll = scrollController->GetHScroll();
+	Long x = width - hScroll.GetPos();
 
 	//4. 캐럿 너비를 구한다.
 	Long caretWidth = 1;

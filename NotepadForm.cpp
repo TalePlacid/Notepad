@@ -653,11 +653,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	this->Notify("ChangeCaret");
 	this->Notify("UpdateStatusBar");
 	this->Invalidate();
-
-	CString log;
-	log.Format("AfterAction: %ld(%ld, %ld)\n", this->pagingBuffer->GetCurrentOffset(),
-		this->note->GetCurrent(), this->note->GetAt(this->note->GetCurrent())->GetCurrent());
-	Logger::Log(log);
 }
 
 
