@@ -4,6 +4,7 @@
 #include "../glyphs/GlyphFactory.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
+#include "../HistoryBook.h"
 
 #pragma warning(disable:4996)
 
@@ -34,6 +35,9 @@ void NewAction::Perform() {
 	pagingBuffer->Clear();
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	pagingBuffer->CacheRowStartIndex(-rowStartIndex);
+
+	notepadForm->undoHistoryBook->Clear();
+	notepadForm->redoHistoryBook->Clear();
 
 	notepadForm->AssignSourcePath(CString(""));
 	notepadForm->ApplyEncoding(ANSI);

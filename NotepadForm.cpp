@@ -208,7 +208,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	TextFileIO textFileIO;
 	TCHAR(*sourceContents) = 0;
 	Long sourceCount;
-	textFileIO.Load((LPCTSTR)(this->sourcePath), &sourceContents, sourceCount);
+	this->encoding = textFileIO.Load((LPCTSTR)(this->sourcePath), &sourceContents, sourceCount);
 
 	this->pagingBuffer = new PagingBuffer(this, sourceContents, sourceCount);
 	if (sourceContents != NULL)
@@ -256,6 +256,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	}
 
 	this->Notify("UpdateScrollBars");
+	this->Notify("UpdateStatusBar");
 
 	Logger::Clear();
 

@@ -1,6 +1,7 @@
 #include "NotepadFrame.h"
 #include "NotepadForm.h"
 #include "StatusBarController.h"
+#include "EncodingDetector.h"
 #include "resource.h"
 
 #pragma warning(disable:4996)
