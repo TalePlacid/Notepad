@@ -96,13 +96,15 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 			Long wrappedColumnIndex = row->GetCurrent();
 			Long lastColumnIndex = row->GetLength();
 
-			if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0 && currentOffset < fileEndOffset)
+			if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0 
+				&& currentOffset < fileEndOffset)
 			{
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
 				row->First();
 			}
-			else if (this->currentColumnIndex > 0 && wrappedColumnIndex == 0)
+			else if (this->currentColumnIndex > 0 && wrappedColumnIndex == 0
+				&& currentOffset > 0)
 			{
 				rowIndex = note->Previous();
 				row = note->GetAt(rowIndex);
