@@ -90,37 +90,38 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 			Long currentOffset = pagingBuffer->GetCurrentOffset();
 			Long fileEndOffset = pagingBuffer->GetFileEndOffset();
 
-			Glyph* note = notepadForm->note;
-			Long rowIndex = note->GetCurrent();
-			Glyph* row = note->GetAt(rowIndex);
-			Long wrappedColumnIndex = row->GetCurrent();
-			Long lastColumnIndex = row->GetLength();
+			if (currentOffset > 0 && currentOffset < fileEndOffset)
+			{
+				Glyph* note = notepadForm->note;
+				Long rowIndex = note->GetCurrent();
+				Glyph* row = note->GetAt(rowIndex);
+				Long wrappedColumnIndex = row->GetCurrent();
+				Long lastColumnIndex = row->GetLength();
 
-			if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0 
-				&& currentOffset < fileEndOffset)
-			{
-				rowIndex = note->Next();
-				row = note->GetAt(rowIndex);
-				row->First();
-			}
-			else if (this->currentColumnIndex > 0 && wrappedColumnIndex == 0
-				&& currentOffset > 0)
-			{
-				rowIndex = note->Previous();
-				row = note->GetAt(rowIndex);
-				row->Last();
-			}
+				if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0)
+				{
+					rowIndex = note->Next();
+					row = note->GetAt(rowIndex);
+					row->First();
+				}
+				else if (this->currentColumnIndex > 0 && wrappedColumnIndex == 0)
+				{
+					rowIndex = note->Previous();
+					row = note->GetAt(rowIndex);
+					row->Last();
+				}
 
-			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-			Long pos = (rowStartIndex + rowIndex - this->currentRowScreenDelta) * rowHeight;
-			
-			vScroll = scrollController->GetVScroll();
-			Long posLimit = vScroll.GetMax() - vScroll.GetPage();
-			if (pos > posLimit)
-			{
-				pos = posLimit;
+				Long rowStartIndex = pagingBuffer->GetRowStartIndex();
+				Long pos = (rowStartIndex + rowIndex - this->currentRowScreenDelta) * rowHeight;
+
+				vScroll = scrollController->GetVScroll();
+				Long posLimit = vScroll.GetMax() - vScroll.GetPage();
+				if (pos > posLimit)
+				{
+					pos = posLimit;
+				}
+				scrollController->MoveVScroll(pos);
 			}
-			scrollController->MoveVScroll(pos);
 		}
 	}
 }
