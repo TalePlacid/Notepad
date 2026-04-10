@@ -306,7 +306,6 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 	{
 		commonLength = replacedLength;
 	}
-
 	
 	TCHAR character[2];
 	GlyphFactory glyphFactory;

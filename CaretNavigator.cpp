@@ -149,15 +149,14 @@ void CaretNavigator::NormalizeColumn(Long columnIndex) {
 		Long currentRowIndex = note->GetCurrent();
 		Glyph* row = note->GetAt(currentRowIndex);
 		Long currentColumnIndex = row->GetCurrent();
-		Long lastColumnIndex = row->GetLength();
 
-		if (columnIndex == 0 && currentColumnIndex == lastColumnIndex)
+		if (columnIndex == 0 && currentColumnIndex > 0)
 		{
 			currentRowIndex = note->Next();
 			row = note->GetAt(currentRowIndex);
 			currentColumnIndex = row->First();
 		}
-		else if (columnIndex == lastColumnIndex && currentColumnIndex == 0)
+		else if (columnIndex > 0 && currentColumnIndex == 0)
 		{
 			currentRowIndex = note->Previous();
 			row = note->GetAt(currentRowIndex);
