@@ -112,6 +112,7 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 			Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 			Long pos = (rowStartIndex + rowIndex - this->currentRowScreenDelta) * rowHeight;
 			
+			vScroll = scrollController->GetVScroll();
 			Long posLimit = vScroll.GetMax() - vScroll.GetPage();
 			if (pos > posLimit)
 			{
