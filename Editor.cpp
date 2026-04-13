@@ -732,12 +732,20 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 			//4.2.2. 위치로 이동한다.
 			CaretNavigator caretNavigator(this->parent);
 			caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
+			
+			Long traceRowIndex = note->GetCurrent();
+			Glyph* traceRow = note->GetAt(traceRowIndex);
+			Long traceColumnIndex = traceRow->GetCurrent();
+			TRACE("MoveTo// row: %ld, col: %ld\n", traceRowIndex, traceColumnIndex);
+
 			caretNavigator.NormalizeColumn(0);
 
 			//4.2.3. 선택한다.
 			Long rowIndex = note->GetCurrent();
 			Glyph* row = note->GetAt(rowIndex);
 			Long columnIndex = row->GetCurrent();
+
+			TRACE("Normal//row: %ld, col: %ld\n", rowIndex, columnIndex);
 
 			Glyph* character;
 			Long characterLength;

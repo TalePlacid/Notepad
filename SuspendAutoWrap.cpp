@@ -98,17 +98,20 @@ SuspendAutoWrap::~SuspendAutoWrap() {
 				Long wrappedColumnIndex = row->GetCurrent();
 				Long lastColumnIndex = row->GetLength();
 
-				if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0)
+				if (lastColumnIndex > 0)
 				{
-					rowIndex = note->Next();
-					row = note->GetAt(rowIndex);
-					row->First();
-				}
-				else if (this->currentColumnIndex > 0 && wrappedColumnIndex == 0)
-				{
-					rowIndex = note->Previous();
-					row = note->GetAt(rowIndex);
-					row->Last();
+					if (this->currentColumnIndex == 0 && wrappedColumnIndex > 0)
+					{
+						rowIndex = note->Next();
+						row = note->GetAt(rowIndex);
+						row->First();
+					}
+					else if (this->currentColumnIndex > 0 && wrappedColumnIndex == 0)
+					{
+						rowIndex = note->Previous();
+						row = note->GetAt(rowIndex);
+						row->Last();
+					}
 				}
 
 				Long rowStartIndex = pagingBuffer->GetRowStartIndex();
