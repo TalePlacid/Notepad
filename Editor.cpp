@@ -179,8 +179,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& c
 	pagingBuffer->UnmarkSelectionBegin();
 
 	//7. 적재량이 부족하면, 재적재한다.
-	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
-	if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetMax())
+	if (note->IsBelowBottomLine(currentRowIndex + 1))
 	{
 		PageManager::ReloadAfterErase(this->parent);
 	}
