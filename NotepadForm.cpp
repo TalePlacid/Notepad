@@ -35,6 +35,7 @@
 #include "FindReplaceOptionMaker.h"
 #include "FindReplaceRequestResolver.h"
 #include "MouseEventResolver.h"
+#include "ChangeInProgressCaption.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -45,8 +46,6 @@
 #include "glyphs/Glyph.h"
 #include "commands/Command.h"
 #include "actions/Action.h"
-
-#include "Logger.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
@@ -257,8 +256,6 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	this->Notify("UpdateScrollBars");
 	this->Notify("UpdateStatusBar");
-
-	Logger::Clear();
 
 	return 0;
 }
@@ -586,6 +583,8 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 		isSelected, findReplaceOption);
 	if (command != NULL)
 	{
+		ChangeInProgressCaption changeInProgressCaption(this->parent);
+
 		command->Execute();
 
 		if (command->NeedsNoteTruncation())
@@ -622,6 +621,8 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	Action* action = ActionFactory::Create(this, nID, findReplaceOption, point, zDelta);
 	if (action != NULL)
 	{
+		ChangeInProgressCaption changeInProgressCaption(this->parent);
+
 		action->Perform();
 
 		if (action->NeedsNoteTruncation())
