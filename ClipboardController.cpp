@@ -5,7 +5,8 @@
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
 #include "PagingBuffer.h"
- 
+#include "LineBreakNormalizer.h" 
+
 #pragma warning(disable:4996)
 
 ClipboardController::ClipboardController(CWnd* parent)
@@ -58,7 +59,19 @@ BOOL ClipboardController::Paste() {
 	{
 		HANDLE hMem = GetClipboardData(CF_TEXT);
 		LPVOID lpMem = GlobalLock((HGLOBAL)hMem);
-		this->content = CString((LPCTSTR)lpMem);
+		Long sourceLength = strlen((const char*)lpMem);
+
+		TCHAR(*contents);
+		Long length;
+		LineBreakNormalizer::NormalizeLineBreak((LPCTSTR)lpMem, sourceLength, &contents, length);
+
+		this->content = CString(contents);
+
+		if (contents != NULL)
+		{
+			delete[] contents;
+		}
+
 		GlobalUnlock((HGLOBAL)hMem);
 		CloseClipboard();
 	}
