@@ -14,7 +14,6 @@ BruteForceWhole::~BruteForceWhole() {
 }
 
 void BruteForceWhole::DoAlgorithm(Long* (*offsets), Long* count) {
-	
 	(*offsets) = new Long[this->contents.length()];
 	(*count) = 0;
 

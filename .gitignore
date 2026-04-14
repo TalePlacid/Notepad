@@ -10,3 +10,4 @@ Release/
 *.tmp
 .gemini/
 *.md
+refer/
