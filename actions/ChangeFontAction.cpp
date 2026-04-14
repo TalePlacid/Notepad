@@ -25,7 +25,9 @@ void ChangeFontAction::Perform() {
 	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
 	LOGFONT logFont = { 0, };
 	notepadForm->GetOriginalFont()->GetLogFont(&logFont);
-	CFontDialog cFontDialog(&logFont);
+	
+	DWORD flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+	CFontDialog cFontDialog(&logFont, flags);
 	INT_PTR result = cFontDialog.DoModal();
 	if (result == IDOK)
 	{
