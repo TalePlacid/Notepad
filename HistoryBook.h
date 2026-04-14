@@ -23,17 +23,17 @@ public:
 	Command** Clear();
 	Command** Peek();
 
-	DateTime& GetLatestPushTime() const;
+	DateTime& GetBindingStartTime() const;
 private:
 	DropOldestStack<Command*> histories;
 	Long capacity;
 	Long length;
 	bool isBindingStopped;
-	DateTime latestPushTime;
+	DateTime bindingStartTime;
 };
 
-inline DateTime& HistoryBook::GetLatestPushTime() const {
-	return const_cast<DateTime&>(this->latestPushTime);
+inline DateTime& HistoryBook::GetBindingStartTime() const {
+	return const_cast<DateTime&>(this->bindingStartTime);
 }
 
 #endif // !_HISTORYBOOK_H

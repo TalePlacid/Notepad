@@ -23,7 +23,7 @@ HistoryBook::~HistoryBook() {
 }
 
 HistoryBook::HistoryBook(const HistoryBook& source)
-	:histories(source.capacity), latestPushTime(source.latestPushTime) {
+	:histories(source.capacity), bindingStartTime(source.bindingStartTime) {
 	DropOldestStack<Command*>::Node* it = source.histories.GetBottom();
 	while (it != 0)
 	{
@@ -48,7 +48,7 @@ HistoryBook& HistoryBook::operator=(const HistoryBook& source) {
 	this->capacity = source.capacity;
 	this->length = source.length;
 	this->isBindingStopped = source.isBindingStopped;
-	this->latestPushTime = source.latestPushTime;
+	this->bindingStartTime = source.bindingStartTime;
 
 	return *this;
 }
@@ -62,8 +62,8 @@ Command* HistoryBook::Bind(Command* command) {
 	else
 	{
 		DateTime now = DateTime::Now();
-		DateTime latest = this->latestPushTime.AddSeconds(1);
-		if ((this->latestPushTime == DateTime() || now <= latest)
+		DateTime bindingEndTime = this->bindingStartTime.AddSeconds(1);
+		if ((this->bindingStartTime == DateTime() || now <= bindingEndTime)
 			&& this->histories.Peek() != 0)
 		{
 			DropOldestStack<Command*>::Node top = this->histories.Pop();
@@ -117,7 +117,11 @@ Command** HistoryBook::Push(Command* history) {
 	{
 		(this->length)++;
 	}
-	this->latestPushTime = DateTime::Now();
+
+	if (!history->IsMacroCommand())
+	{
+		this->bindingStartTime = DateTime::Now();
+	}
 
 	return &node->GetElement();
 }
