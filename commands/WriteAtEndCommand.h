@@ -18,7 +18,7 @@ public:
 	virtual void Redo();
 	virtual Command* Clone();
 	virtual AppID GetID();
-	virtual bool NeedsNoteTruncation();
+	virtual bool NeedNoteTruncation();
 private:
 	char character[2];
 	BOOL onChar;
@@ -35,7 +35,7 @@ inline AppID WriteAtEndCommand::GetID() {
 	return AppID::ID_COMMAND_WRITE_AT_END;
 }
 
-inline bool WriteAtEndCommand::NeedsNoteTruncation() {
+inline bool WriteAtEndCommand::NeedNoteTruncation() {
 	return true;
 }
 

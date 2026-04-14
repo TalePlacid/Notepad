@@ -24,7 +24,8 @@ public:
 	virtual bool IsUndoable() const;
 	virtual bool IsMacroCommand();
 	virtual bool NeedScrollBarUpdate();
-	virtual bool NeedsNoteTruncation();
+	virtual bool NeedNoteTruncation();
+	virtual bool NeedInProgressCaption();
 
 	virtual AppID GetID();
 	virtual Long GetOffset();
@@ -54,7 +55,11 @@ inline bool Command::NeedScrollBarUpdate() {
 	return true;
 }
 
-inline bool Command::NeedsNoteTruncation() {
+inline bool Command::NeedNoteTruncation() {
+	return false;
+}
+
+inline bool Command::NeedInProgressCaption() {
 	return false;
 }
 

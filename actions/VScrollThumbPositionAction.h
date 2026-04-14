@@ -13,6 +13,11 @@ public:
 
 	virtual void Perform();
 	virtual bool NeedScrollBarUpdate();
+	virtual bool NeedInProgressCaption();
 };
+
+inline bool VScrollThumbPositionAction::NeedInProgressCaption() {
+	return true;
+}
 
 #endif // !_VSCROLLTHUMBPOSITIONACTION_H

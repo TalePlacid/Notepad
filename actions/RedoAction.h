@@ -10,11 +10,16 @@ public:
 	~RedoAction();
 
 	virtual void Perform();
-	virtual bool NeedsNoteTruncation();
+	virtual bool NeedNoteTruncation();
+	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 };
 
-inline bool RedoAction::NeedsNoteTruncation() {
+inline bool RedoAction::NeedNoteTruncation() {
+	return true;
+}
+
+inline bool RedoAction::NeedInProgressCaption() {
 	return true;
 }
 

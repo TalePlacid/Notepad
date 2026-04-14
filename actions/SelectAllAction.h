@@ -10,8 +10,13 @@ public:
 	virtual ~SelectAllAction();
 
 	virtual void Perform();
+	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 };
+
+inline bool SelectAllAction::NeedInProgressCaption() {
+	return true;
+}
 
 inline bool SelectAllAction::ShouldKeepSelection() {
 	return true;

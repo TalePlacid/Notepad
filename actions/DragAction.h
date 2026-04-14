@@ -12,6 +12,7 @@ public:
 
 	virtual void Perform();
 	virtual bool NeedUpdateLatestPoint();
+	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 private:
 	CPoint point;
@@ -20,6 +21,10 @@ private:
 
 inline bool DragAction::NeedUpdateLatestPoint() {
 	return this->isMoved;
+}
+
+inline bool DragAction::NeedInProgressCaption() {
+	return true;
 }
 
 inline bool DragAction::ShouldKeepSelection() {

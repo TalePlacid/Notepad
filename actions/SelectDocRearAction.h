@@ -12,8 +12,13 @@ public:
 	virtual ~SelectDocRearAction();
 
 	virtual void Perform();
+	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 };
+
+inline bool SelectDocRearAction::NeedInProgressCaption() {
+	return true;
+}
 
 inline bool SelectDocRearAction::ShouldKeepSelection() {
 	return true;

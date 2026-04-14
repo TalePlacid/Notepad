@@ -12,8 +12,13 @@ public:
 	virtual ~SelectDocFrontAction();
 
 	virtual void Perform();
+	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 };
+
+inline bool SelectDocFrontAction::NeedInProgressCaption() {
+	return true;
+}
 
 inline bool SelectDocFrontAction::ShouldKeepSelection() {
 	return true;

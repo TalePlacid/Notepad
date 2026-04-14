@@ -7,10 +7,11 @@ class CWnd;
 
 class ChangeInProgressCaption {
 public:
-	ChangeInProgressCaption(CWnd* parent);
+	ChangeInProgressCaption();
 	~ChangeInProgressCaption();
-private:
-	CWnd* parent;
+
+	static void AddInProgressCaption(CWnd* parent);
+	static void RemoveInProgressCaption(CWnd* parent);
 };
 
 #endif // !_CHANGEINPROGRESSCAPTION_H

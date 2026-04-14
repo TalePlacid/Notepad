@@ -17,6 +17,7 @@ public:
 	virtual void Redo();
 	virtual Command* Clone();
 	virtual AppID GetID();
+	virtual bool NeedInProgressCaption();
 private:
 	Long frontOffset;
 	Long rearOffset;
@@ -26,6 +27,10 @@ private:
 
 inline AppID EraseRangeCommand::GetID() {
 	return AppID::ID_COMMAND_ERASE_RANGE;
+}
+
+inline bool EraseRangeCommand::NeedInProgressCaption() {
+	return true;
 }
 
 #endif // !_ERASERANGECOMMAND_H

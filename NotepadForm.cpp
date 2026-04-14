@@ -583,11 +583,19 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 		isSelected, findReplaceOption);
 	if (command != NULL)
 	{
-		ChangeInProgressCaption changeInProgressCaption(this->parent);
+		if (command->NeedInProgressCaption())
+		{
+			ChangeInProgressCaption::AddInProgressCaption(this->parent);
+		}
 
 		command->Execute();
 
-		if (command->NeedsNoteTruncation())
+		if (command->NeedInProgressCaption())
+		{
+			ChangeInProgressCaption::RemoveInProgressCaption(this->parent);
+		}
+
+		if (command->NeedNoteTruncation())
 		{
 			KillTimer(TIMER_ID_LAZY_TRIM);
 			SetTimer(TIMER_ID_LAZY_TRIM, LAZY_TRIM_INTERVAL, NULL);
@@ -621,14 +629,22 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	Action* action = ActionFactory::Create(this, nID, findReplaceOption, point, zDelta);
 	if (action != NULL)
 	{
-		ChangeInProgressCaption changeInProgressCaption(this->parent);
+		if (action->NeedInProgressCaption())
+		{
+			ChangeInProgressCaption::AddInProgressCaption(this->parent);
+		}
 
 		action->Perform();
 
-		if (action->NeedsNoteTruncation())
+		if (action->NeedNoteTruncation())
 		{
 			KillTimer(TIMER_ID_LAZY_TRIM);
 			SetTimer(TIMER_ID_LAZY_TRIM, LAZY_TRIM_INTERVAL, NULL);
+		}
+
+		if (action->NeedInProgressCaption())
+		{
+			ChangeInProgressCaption::RemoveInProgressCaption(this->parent);
 		}
 
 		if (action->NeedScrollBarUpdate())
