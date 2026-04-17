@@ -420,7 +420,7 @@ void PageManager::LoadNext(CWnd* parent) {
 	row = note->GetAt(rowIndex);
 	currentColumnIndex = row->Move(currentColumnIndex);
 	pagingBuffer->MoveOffset(currentOffset);
-
+	
 	TRACE("LoadNext\n");
 }
 

@@ -23,10 +23,10 @@ public:
 	bool ShowVScroll(bool visible = true);
 	bool ShowHScroll(bool visible = true);
 
-	void ResizeVRange(Long max, Long min = 0);
-	Long ResizeVPage(Long page);
-	void ResizeHRange(Long max, Long min = 0);
-	Long ResizeHPage(Long page);
+	void ResizeVRange(Long max, Long min = 0, bool draw = true);
+	Long ResizeVPage(Long page, bool draw = true);
+	void ResizeHRange(Long max, Long min = 0, bool draw = true);
+	Long ResizeHPage(Long page, bool draw = true);
 
 	Long Up();
 	Long Down();
@@ -34,8 +34,8 @@ public:
 	Long Right(Long distance);
 	Long PageUp();
 	Long PageDown();
-	Long MoveVScroll(Long pos);
-	Long MoveHScroll(Long pos);
+	Long MoveVScroll(Long pos, bool draw = true);
+	Long MoveHScroll(Long pos, bool draw = true);
 
 	Scroll& GetVScroll() const;
 	Scroll& GetHScroll() const;

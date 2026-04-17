@@ -48,7 +48,7 @@ SuspendAutoWrap::SuspendAutoWrap(CWnd* parent) {
 				i++;
 			}
 			Long unwrappedPos = scrollController->GetVScroll().GetPos() - dummyRowCount * rowHeight;
-			scrollController->MoveVScroll(unwrappedPos);
+			scrollController->MoveVScroll(unwrappedPos, false);
 
 			//3. 노트의 자동개행을 푼다.
 			NoteWrapper noteWrapper(this->parent);
@@ -56,7 +56,7 @@ SuspendAutoWrap::SuspendAutoWrap(CWnd* parent) {
 
 			//4. 스크롤 최대값을 갱신한다.
 			Long max = scrollController->GetVScroll().GetMax() - unwrappedDummyCount * rowHeight;
-			scrollController->ResizeVRange(max);
+			scrollController->ResizeVRange(max, 0, false);
 
 			this->isSuspended = TRUE;
 		}

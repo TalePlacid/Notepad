@@ -297,10 +297,10 @@ bool ScrollController::ShowHScroll(bool visible) {
 	return ret;
 }
 
-void ScrollController::ResizeVRange(Long max, Long min) {
+void ScrollController::ResizeVRange(Long max, Long min, bool draw) {
 	this->vScroll.ResizeRange(max, min);
 
-	if (this->hasVScroll)
+	if (this->hasVScroll && draw)
 	{
 		SCROLLINFO scrollInfo = { 0, };
 		scrollInfo.cbSize = sizeof(SCROLLINFO);
@@ -311,10 +311,10 @@ void ScrollController::ResizeVRange(Long max, Long min) {
 	}
 }
 
-Long ScrollController::ResizeVPage(Long page) {
+Long ScrollController::ResizeVPage(Long page, bool draw) {
 	Long resized = this->vScroll.ResizePage(page);
 
-	if (this->hasVScroll)
+	if (this->hasVScroll && draw)
 	{
 		SCROLLINFO scrollInfo = { 0, };
 		scrollInfo.cbSize = sizeof(SCROLLINFO);
@@ -329,10 +329,10 @@ Long ScrollController::ResizeVPage(Long page) {
 	return resized;
 }
 
-void ScrollController::ResizeHRange(Long max, Long min) {
+void ScrollController::ResizeHRange(Long max, Long min, bool draw) {
 	this->hScroll.ResizeRange(max, min);
 
-	if (this->hasHScroll)
+	if (this->hasHScroll && draw)
 	{
 		SCROLLINFO scrollInfo = { 0, };
 		scrollInfo.cbSize = sizeof(SCROLLINFO);
@@ -343,10 +343,10 @@ void ScrollController::ResizeHRange(Long max, Long min) {
 	}
 }
 
-Long ScrollController::ResizeHPage(Long page) {
+Long ScrollController::ResizeHPage(Long page, bool draw) {
 	Long resized = this->hScroll.ResizePage(page);
 
-	if (this->hasHScroll)
+	if (this->hasHScroll && draw)
 	{
 		SCROLLINFO scrollInfo = { 0, };
 		scrollInfo.cbSize = sizeof(SCROLLINFO);
@@ -411,10 +411,10 @@ Long ScrollController::Right(Long distance) {
 	return pos;
 }
 
-Long ScrollController::MoveVScroll(Long pos) {
+Long ScrollController::MoveVScroll(Long pos, bool draw) {
 	pos = this->vScroll.Move(pos);
 
-	if (this->hasVScroll)
+	if (this->hasVScroll && draw)
 	{
 		SetScrollPos(this->parent->GetSafeHwnd(), SB_VERT, pos, TRUE);
 		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_VERT);
@@ -423,10 +423,10 @@ Long ScrollController::MoveVScroll(Long pos) {
 	return pos;
 }
 
-Long ScrollController::MoveHScroll(Long pos) {
+Long ScrollController::MoveHScroll(Long pos, bool draw) {
 	pos = this->hScroll.Move(pos);
 
-	if (this->hasHScroll)
+	if (this->hasHScroll && draw)
 	{
 		SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, pos, TRUE);
 		pos = GetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ);
