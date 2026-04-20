@@ -10,7 +10,12 @@ public:
 	virtual ~OpenAction();
 
 	virtual void Perform();
+	virtual bool NeedUpdateCaption();
 };
+
+inline bool OpenAction::NeedUpdateCaption() {
+	return true;
+}
 
 #endif // !_OPENACTION_H
 

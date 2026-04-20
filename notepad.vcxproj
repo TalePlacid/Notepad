@@ -203,6 +203,7 @@
     <ClCompile Include="AboutNotepadForm.cpp" />
     <ClCompile Include="AutoScroller.cpp" />
     <ClCompile Include="ByteChecker.cpp" />
+    <ClCompile Include="CaptionController.cpp" />
     <ClCompile Include="ChangeInProgressCaption.cpp" />
     <ClCompile Include="LeadByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
@@ -374,6 +375,7 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="AutoScroller.h" />
     <ClInclude Include="ByteChecker.h" />
+    <ClInclude Include="CaptionController.h" />
     <ClInclude Include="ChangeInProgressCaption.h" />
     <ClInclude Include="LeadByteChecker.h" />
     <ClInclude Include="Caret.h" />

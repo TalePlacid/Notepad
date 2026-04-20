@@ -17,6 +17,7 @@
 #include "StatusBarController.h"
 #include "MouseHandler.h"
 #include "ClipboardController.h"
+#include "CaptionController.h"
 #include "TextFileIO.h"
 #include "FontSelector.h"
 #include "PageManager.h"
@@ -35,7 +36,6 @@
 #include "FindReplaceOptionMaker.h"
 #include "FindReplaceRequestResolver.h"
 #include "MouseEventResolver.h"
-#include "ChangeInProgressCaption.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -93,6 +93,7 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->searchResultController = NULL;
 	this->undoHistoryBook = NULL;
 	this->redoHistoryBook = NULL;
+	this->captionController = NULL;
 	this->findReplaceDialog = NULL;
 	this->previewForm = NULL;
 	this->statusBarController = statusBarController;
@@ -176,6 +177,11 @@ NotepadForm::~NotepadForm() {
 	{
 		delete this->mouseHandler;
 	}
+
+	if (this->captionController != NULL)
+	{
+		delete this->captionController;
+	}
 }
 
 BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
@@ -254,7 +260,11 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		this->parent->SetWindowTextA((LPCTSTR)fileName);
 	}
 
+	this->captionController = new CaptionController(this);
+	this->Register(this->captionController);
+
 	this->Notify("UpdateScrollBars");
+	this->Notify("UpdateCaptionUnsaved");
 	this->Notify("UpdateStatusBar");
 
 	return 0;
@@ -585,14 +595,14 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 	{
 		if (command->NeedInProgressCaption())
 		{
-			ChangeInProgressCaption::AddInProgressCaption(this->parent);
+			this->captionController->AddInProgressCaption();
 		}
 
 		command->Execute();
 
 		if (command->NeedInProgressCaption())
 		{
-			ChangeInProgressCaption::RemoveInProgressCaption(this->parent);
+			this->captionController->RemoveInProgressCaption();
 		}
 
 		if (command->NeedNoteTruncation())
@@ -621,6 +631,7 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 
 	this->isDirty = TRUE;
 	this->Notify("UpdateStatusBar");
+	this->Notify("UpdateCaptionUnsaved");
 	this->Invalidate();
 }
 
@@ -631,7 +642,7 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	{
 		if (action->NeedInProgressCaption())
 		{
-			ChangeInProgressCaption::AddInProgressCaption(this->parent);
+			this->captionController->AddInProgressCaption();
 		}
 
 		action->Perform();
@@ -644,7 +655,12 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 
 		if (action->NeedInProgressCaption())
 		{
-			ChangeInProgressCaption::RemoveInProgressCaption(this->parent);
+			this->captionController->RemoveInProgressCaption();
+		}
+
+		if (action->NeedUpdateCaption())
+		{
+			this->captionController->UpdateCaption();
 		}
 
 		if (action->NeedScrollBarUpdate())
@@ -670,6 +686,7 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 
 	this->Notify("ChangeCaret");
 	this->Notify("UpdateStatusBar");
+	this->Notify("UpdateCaptionUnsaved");
 	this->Invalidate();
 }
 

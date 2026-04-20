@@ -10,7 +10,12 @@ public:
 	virtual ~SaveAsAction();
 
 	virtual void Perform();
+	virtual bool NeedUpdateCaption();
 };
+
+inline bool SaveAsAction::NeedUpdateCaption() {
+	return true;
+}
 
 #endif // !_SAVEASACTION_H
 

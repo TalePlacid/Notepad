@@ -29,6 +29,7 @@ class StatusBarController;
 class MouseHandler;
 class FindReplaceOption;
 class CFindReplaceDialog;
+class CaptionController;
 
 class NotepadForm : public CWnd, public Subject {
 public:
@@ -50,6 +51,7 @@ public:
 	PreviewForm* previewForm;
 	MouseHandler* mouseHandler;
 	CFindReplaceDialog* findReplaceDialog;
+	CaptionController* captionController;
 public:
 	BOOL IsCompositing() const;
 	CWnd* GetParent();

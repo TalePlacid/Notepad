@@ -556,6 +556,9 @@
     <ClCompile Include="LineBreakNormalizer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CaptionController.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -1078,6 +1081,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="LineBreakNormalizer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CaptionController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

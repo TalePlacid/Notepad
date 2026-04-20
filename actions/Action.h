@@ -10,6 +10,7 @@ public:
 
 	virtual void Perform() = 0;
 	virtual bool NeedScrollBarUpdate();
+	virtual bool NeedUpdateCaption();
 	virtual bool NeedUpdateLatestPoint();
 	virtual bool NeedNoteTruncation();
 	virtual bool NeedInProgressCaption();
@@ -20,6 +21,10 @@ protected:
 
 inline bool Action::NeedScrollBarUpdate() {
 	return true;
+}
+
+inline bool Action::NeedUpdateCaption() {
+	return false;
 }
 
 inline bool Action::NeedUpdateLatestPoint() {
