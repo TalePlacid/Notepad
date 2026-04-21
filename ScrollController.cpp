@@ -157,37 +157,30 @@ void ScrollController::Update(Subject* subject, string interest) {
 			SetScrollInfo(this->parent->GetSafeHwnd(), SB_HORZ, &scrollInfo, TRUE);
 
 			//7.2. 수평 스크롤 범위를 벗어났으면, 수평 스크롤 위치를 조정한다.
-			Long width = 0;
-			Long i = 0;
-			while (i < currentColumn && i < row->GetLength())
-			{
-				width += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(i)), width);
-				i++;
-			}
-
-			Long characterWidth = 0;
+			Long characterStart = sizeCalculator->GetRowWidth(currentRow, currentColumn);
+			Long characterEnd = characterStart;
 			if (currentColumn < row->GetLength())
 			{
-				characterWidth = sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(currentColumn)), width);
+				characterEnd = sizeCalculator->GetRowWidth(currentRow, currentColumn + 1);
 			}
 
 			Long rangeStart = this->hScroll.GetPos();
 			Long rangeEnd = rangeStart + this->hScroll.GetPage();
-			if (width < rangeStart)
+			if (characterStart < rangeStart)
 			{
-				width -= sizeCalculator->GetAverageCharacterWidth();
-				if (width < 0)
+				characterStart -= sizeCalculator->GetAverageCharacterWidth();
+				if (characterStart < 0)
 				{
-					width = 0;
+					characterStart = 0;
 				}
-				this->hScroll.Move(width);
-				SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, width, TRUE);
+				this->hScroll.Move(characterStart);
+				SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, characterStart, TRUE);
 			}
 
-			if (width + characterWidth > rangeEnd)
+			if (characterEnd > rangeEnd)
 			{
-				this->hScroll.Move(width + characterWidth - hScroll.GetPage());
-				SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, width + characterWidth - hScroll.GetPage(), TRUE);
+				this->hScroll.Move(characterEnd - hScroll.GetPage());
+				SetScrollPos(this->parent->GetSafeHwnd(), SB_HORZ, characterEnd - hScroll.GetPage(), TRUE);
 			}
 		}
 

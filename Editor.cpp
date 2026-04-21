@@ -5,6 +5,7 @@
 #include "SearchResultController.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
+#include "glyphs/NoteWidthCache.h"
 #include "CaretNavigator.h"
 #include "CoordinateConverter.h"
 #include "NoteWrapper.h"
@@ -36,7 +37,8 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 	Long currentColumnIndex = row->GetCurrent();
 
 	//3. 복사할 내용의 끝까지 반복한다.
-	GlyphFactory glyphFactory;	
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
+	GlyphFactory glyphFactory;
 	NoteWrapper noteWrapper(this->parent);
 	Glyph* glyph;
 	TCHAR character[2];
@@ -57,13 +59,18 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 			glyph = glyphFactory.Create(character, isSelected);
 			row->Add(currentColumnIndex, glyph);
 			currentColumnIndex = row->GetCurrent();
+			noteWidthCache->MarkDirty(currentRowIndex);
 		}
 		else //3.3. 줄바꿈 문자라면, 줄을 나눈다.
 		{
 			note->SplitRows(currentRowIndex, currentColumnIndex);
+			noteWidthCache->Add(currentRowIndex + 1);
+			noteWidthCache->MarkDirty(currentRowIndex);
+
 			currentRowIndex = note->Next();
 			row = note->GetAt(currentRowIndex);
 			currentColumnIndex = row->First();
+			noteWidthCache->MarkDirty(currentRowIndex);
 		}
 
 		//3.4. 자동개행중이면, 재개행한다.
@@ -109,6 +116,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& c
 	columnIndex = currentColumnIndex;
 
 	//3. 노트에서 제거한다.
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	Long dummyRowErased = 0;
 	Glyph* nextRow;
 	TCHAR* character;
@@ -134,6 +142,7 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& c
 			//3.1.2. 노트에서 지운다.
 			row->Remove(currentColumnIndex);
 			row->Move(currentColumnIndex);
+			noteWidthCache->MarkDirty(currentRowIndex);
 		}
 		else if (currentRowIndex + 1 < note->GetLength()) //3.2. 줄의 끝이고 다음 줄이 있다면,
 		{
@@ -152,6 +161,8 @@ void Editor::EraseRange(Long frontOffset, Long rearOffset, CString text, Long& c
 
 			//3.2.2. 줄을 합친다.
 			note->MergeRows(currentRowIndex);
+			noteWidthCache->Remove(currentRowIndex + 1);
+			noteWidthCache->MarkDirty(currentRowIndex);
 		}
 
 		i += characterByte;
@@ -306,6 +317,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		commonLength = replacedLength;
 	}
 	
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	TCHAR character[2];
 	GlyphFactory glyphFactory;
 	Glyph* glyph;
@@ -324,6 +336,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 			glyph = glyphFactory.Create(character, true);
 			row->Replace(currentColumnIndex, glyph);
 			currentColumnIndex = row->Next();
+			noteWidthCache->MarkDirty(currentRowIndex);
 
 			j++;
 		}
@@ -352,6 +365,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 			glyph = glyphFactory.Create(character, true);
 			row->Add(currentColumnIndex, glyph);
 			currentColumnIndex = row->GetCurrent();
+			noteWidthCache->MarkDirty(currentRowIndex);
 
 			j++;
 		}
@@ -366,11 +380,14 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 			{
 				row->Remove(currentColumnIndex);
 				currentColumnIndex = row->Move(currentColumnIndex);
+				noteWidthCache->MarkDirty(currentRowIndex);
 			}
 
 			if (currentColumnIndex >= row->GetLength())
 			{
 				note->MergeRows(currentRowIndex);
+				noteWidthCache->Remove(currentRowIndex + 1);
+				noteWidthCache->MarkDirty(currentRowIndex);
 			}
 
 			i++;
@@ -433,12 +450,12 @@ void Editor::MoveUp() {
 		Long columnIndex = originalRow->GetCurrent();
 
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
+		Long originalWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		Long previousRowIndex = note->Previous();
 		Glyph* previousRow = note->GetAt(previousRowIndex);
 
-		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(previousRow, originalWidth);
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(previousRowIndex, originalWidth);
 		previousRow->Move(nearestIndex);
 
 		//2.2. 페이징 버퍼에서 이동한다.
@@ -493,11 +510,11 @@ void Editor::MoveDown() {
 		Glyph* originalRow = note->GetAt(rowIndex);
 		Long columnIndex = originalRow->GetCurrent();
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long originalWidth = sizeCalculator->GetRowWidth(originalRow, columnIndex);
+		Long originalWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		rowIndex = note->Next();
 		Glyph* nextRow = note->GetAt(rowIndex);
-		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(nextRow, originalWidth);
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalWidth);
 		nextRow->Move(nearestIndex);
 
 		//2.2. 페이징 버퍼에서 이동한다.

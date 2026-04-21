@@ -1,6 +1,7 @@
 #include "EraseAfterCaretCommand.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
+#include "../glyphs/NoteWidthCache.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
@@ -55,6 +56,7 @@ void EraseAfterCaretCommand::Execute() {
 	this->columnIndex = -1;
 
 	//2. 삭제할 대상이 있으면, 지운다.
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	BOOL hasTarget = FALSE;
 	Long vScrollChanged = 0;
@@ -75,6 +77,7 @@ void EraseAfterCaretCommand::Execute() {
 
 		row->Remove(columnIndex);
 		columnIndex = row->Move(columnIndex);
+		noteWidthCache->MarkDirty(rowIndex);
 	}
 	else if (rowIndex + 1 < note->GetLength())
 	{
@@ -84,15 +87,17 @@ void EraseAfterCaretCommand::Execute() {
 			hasTarget = TRUE;
 			this->character[0] = '\r';
 			this->character[1] = '\n';
+
+			noteWidthCache->Remove(rowIndex + 1);
 			note->MergeRows(rowIndex);
 			row = note->GetAt(rowIndex);
 			columnIndex = row->Move(columnIndex);
+			noteWidthCache->MarkDirty(rowIndex);
 			vScrollChanged = -1;
 		}
-		else if (nextRow->GetLength() > 0)
+		else
 		{
 			hasTarget = TRUE;
-
 			Glyph* letter = nextRow->GetAt(0);
 			this->character[0] = ((char*)*letter)[0];
 			if (letter->IsMultiByteCharacter())
@@ -105,6 +110,7 @@ void EraseAfterCaretCommand::Execute() {
 			}
 
 			nextRow->Remove(0);
+			noteWidthCache->MarkDirty(rowIndex + 1);
 			columnIndex = row->Move(columnIndex);
 		}
 	}
@@ -169,6 +175,7 @@ void EraseAfterCaretCommand::Undo() {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		Long vScrollChanged = 0;
 		if (this->character[0] != '\r')
 		{
@@ -176,13 +183,20 @@ void EraseAfterCaretCommand::Undo() {
 			Glyph* glyph = glyphFactory.Create(this->character);
 			row->Add(columnIndex, glyph);
 			columnIndex = row->Move(columnIndex);
+			noteWidthCache->MarkDirty(rowIndex);
 		}
 		else
 		{
 			note->SplitRows(rowIndex, columnIndex);
+			noteWidthCache->Add(rowIndex + 1);
+
 			rowIndex = note->Move(rowIndex);
 			row = note->GetAt(rowIndex);
 			columnIndex = row->Move(columnIndex);
+	
+			noteWidthCache->MarkDirty(rowIndex);
+			noteWidthCache->MarkDirty(rowIndex + 1);
+
 			vScrollChanged = 1;
 		}
 
@@ -228,6 +242,7 @@ void EraseAfterCaretCommand::Redo() {
 		Long columnIndex = row->GetCurrent();
 
 		//1.3. 지울 대상을 다시 지운다.
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		Long vScrollChanged = 0;
 		if (this->character[0] != '\r')
 		{
@@ -235,6 +250,7 @@ void EraseAfterCaretCommand::Redo() {
 			{
 				row->Remove(columnIndex);
 				columnIndex = row->Move(columnIndex);
+				noteWidthCache->MarkDirty(rowIndex);
 			}
 			else if (rowIndex + 1 < note->GetLength())
 			{
@@ -243,14 +259,19 @@ void EraseAfterCaretCommand::Redo() {
 				{
 					nextRow->Remove(0);
 					columnIndex = row->Move(columnIndex);
+					noteWidthCache->MarkDirty(rowIndex + 1);
 				}
 			}
 		}
 		else if (rowIndex + 1 < note->GetLength())
 		{
 			note->MergeRows(rowIndex);
+			noteWidthCache->Remove(rowIndex + 1);
+
 			row = note->GetAt(rowIndex);
 			columnIndex = row->Move(columnIndex);
+			noteWidthCache->MarkDirty(rowIndex);
+
 			vScrollChanged = -1;
 		}
 

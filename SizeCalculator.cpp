@@ -1,5 +1,7 @@
 #include "SizeCalculator.h"
 #include "NotepadForm.h"
+#include "glyphs/NoteWidthCache.h"
+#include "glyphs/RowWidthCache.h"
 #include "MultiByteWidthCache.h"
 #include "glyphs/Glyph.h"
 #include "ByteChecker.h"
@@ -72,59 +74,93 @@ Long SizeCalculator::GetRowWidth(CString contents) {
 	return rowWidth;
 }
 
-Long SizeCalculator::GetRowWidth(Glyph* row, Long columnIndex) {
-	char(*character);
-	Long width = 0;
-	Long i = 0;
-	while (i < columnIndex && i < row->GetLength())
+Long SizeCalculator::GetRowWidth(Long rowIndex, Long columnIndex) {
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
+	RowWidthCache* rowWidthCache = noteWidthCache->GetAt(rowIndex);
+	Long rowWidth = -1;
+	if (!rowWidthCache->IsDirty())
 	{
-		character = (char*)(*row->GetAt(i));
-		if (!ByteChecker::IsASCII(character))
-		{
-			width += this->multiByteWidthCache->GetWidth(character);
-		}
-		else if (*character != '\t')
-		{
-			width += this->singleByteWidths[*character - 32];
-		}
-		else
-		{
-			width += TabStopCalculator::CalculateMarginToNext(width, this->averageCharacterWidth);
-		}
-		i++;
+		rowWidth = rowWidthCache->GetAt(columnIndex);
 	}
-
-	return width;
+ 
+	return rowWidth;
 }
 
-Long SizeCalculator::GetNearestColumnIndex(Glyph* row, Long width) {
-	char(*character);
-	Long previousRowWidth = 0;
-	Long rowWidth = 0;
-	Long i = 0;
-	while (i < row->GetLength() && rowWidth < width)
+Long SizeCalculator::GetNearestColumnIndex(Long rowIndex, Long width) {
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
+	RowWidthCache* rowWidthCache = noteWidthCache->GetAt(rowIndex);
+	Long index = -1;
+	if (!rowWidthCache->IsDirty())
 	{
-		previousRowWidth = rowWidth;
-		character = (char*)(*row->GetAt(i));
-		if (!ByteChecker::IsASCII(character))
+		Long length = rowWidthCache->GetLength();
+		if (length > 0)
 		{
-			rowWidth += this->multiByteWidthCache->GetWidth(character);
+			Long low = 0;
+			Long high = length - 1;
+
+			if (width <= rowWidthCache->GetAt(low))
+			{
+				index = low;
+			}
+			else if (width >= rowWidthCache->GetAt(high))
+			{
+				index = high;
+			}
+			else
+			{
+				while (low < high)
+				{
+					Long mid = low + (high - low) / 2;
+					Long midWidth = rowWidthCache->GetAt(mid);
+
+					if (midWidth < width)
+					{
+						low = mid + 1;
+					}
+					else
+					{
+						high = mid;
+					}
+				}
+
+				Long upperIndex = low;
+				Long lowerIndex = upperIndex - 1;
+				Long upperWidth = rowWidthCache->GetAt(upperIndex);
+				Long lowerWidth = rowWidthCache->GetAt(lowerIndex);
+				Long upperDistance = upperWidth - width;
+				Long lowerDistance = width - lowerWidth;
+
+				if (upperDistance <= lowerDistance)
+				{
+					index = upperIndex;
+				}
+				else
+				{
+					index = lowerIndex;
+				}
+			}
 		}
-		else if (*character != '\t')
+#if 0
+		Long i = 0;
+		Long previous = 0;
+		Long current = rowWidthCache->GetAt(0);
+		i++;
+		while (i < rowWidthCache->GetLength() && current < width)
 		{
-			rowWidth += this->singleByteWidths[*character - 32];
+			previous = current;
+			current = rowWidthCache->GetAt(i);
+			i++;
+		}
+
+		if (abs(current - width) <= abs(width - previous))
+		{
+			index = i - 1;
 		}
 		else
 		{
-			rowWidth += TabStopCalculator::CalculateMarginToNext(rowWidth, this->averageCharacterWidth);
+			index = i - 2;
 		}
-		i++;
-	}
-
-	Long index = i;
-	if (width - previousRowWidth < rowWidth - width)
-	{
-		index = i - 1;
+#endif
 	}
 
 	return index;

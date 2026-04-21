@@ -39,7 +39,7 @@ void MovePageUpAction::Perform() {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
-		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+		Long originalRowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		//1.3. 줄의 처음으로 이동한다.
 		Long movedIndex = row->First();
@@ -87,7 +87,7 @@ void MovePageUpAction::Perform() {
 		}
 
 		//1.4. 줄 너비와 가장 가까운 위치로 이동한다.
-		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalRowWidth);
 		movedIndex = row->Move(nearestIndex);
 		pagingBuffer->Next(movedIndex);
 	}

@@ -214,7 +214,7 @@ void CaretNavigator::MoveCaretUpToAbsoluteRow(Long absoluteRowIndex, Long rowWid
 		pagingBuffer->Previous(currentRow->GetLength());
 	}
 
-	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRow, rowWidth);
+	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRowIndex, rowWidth);
 	currentRow->Move(nearestIndex);
 	pagingBuffer->Next(nearestIndex);
 }
@@ -265,7 +265,7 @@ void CaretNavigator::MoveCaretDownToAbsoluteRow(Long absoluteRowIndex, Long rowW
 		}
 	}
 
-	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRow, rowWidth);
+	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRowIndex, rowWidth);
 	currentRow->Move(nearestIndex);
 	pagingBuffer->Next(nearestIndex);
 }
@@ -334,7 +334,7 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 		}
 
 		//4.3. 가까운 위치까지 반복한다.
-		nearestIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
+		nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, rowWidth);
 		while (columnIndex < nearestIndex)
 		{
 			columnIndex = row->Next();
@@ -412,7 +412,7 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 		}
 
 		//4.3. 가까운 위치까지 반복한다.
-		nearestIndex = sizeCalculator->GetNearestColumnIndex(row, rowWidth);
+		nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, rowWidth);
 		while (columnIndex > nearestIndex)
 		{
 			columnIndex = row->Previous();

@@ -38,7 +38,7 @@ void VScrollThumbTrackAction::Perform() {
 	Long rowHeight = sizeCalculator->GetRowHeight();
 
 	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
-	Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+	Long rowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 	CaretNavigator caretNavigator(this->parent);
 	if (currentPos < pos)

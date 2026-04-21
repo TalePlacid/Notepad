@@ -35,7 +35,7 @@ void VScrollPageDownAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long rowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+	Long rowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();

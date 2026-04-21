@@ -48,5 +48,5 @@ void CoordinateConverter::AbsoluteToNotePosition(CPoint point, Long& rowIndex, L
 
 	//3. 노트상의 칸위치를 구한다.
 	Glyph* row = note->GetAt(rowIndex);
-	columnIndex = sizeCalculator->GetNearestColumnIndex(row, point.x);
+	columnIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, point.x);
 }

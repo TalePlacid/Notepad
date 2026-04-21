@@ -204,7 +204,8 @@
     <ClCompile Include="AutoScroller.cpp" />
     <ClCompile Include="ByteChecker.cpp" />
     <ClCompile Include="CaptionController.cpp" />
-    <ClCompile Include="ChangeInProgressCaption.cpp" />
+    <ClCompile Include="glyphs\NoteWidthCache.cpp" />
+    <ClCompile Include="glyphs\RowWidthCache.cpp" />
     <ClCompile Include="LeadByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
     <ClCompile Include="CaretController.cpp" />
@@ -376,7 +377,8 @@
     <ClInclude Include="AutoScroller.h" />
     <ClInclude Include="ByteChecker.h" />
     <ClInclude Include="CaptionController.h" />
-    <ClInclude Include="ChangeInProgressCaption.h" />
+    <ClInclude Include="glyphs\NoteWidthCache.h" />
+    <ClInclude Include="glyphs\RowWidthCache.h" />
     <ClInclude Include="LeadByteChecker.h" />
     <ClInclude Include="Caret.h" />
     <ClInclude Include="CaretController.h" />

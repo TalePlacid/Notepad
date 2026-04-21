@@ -36,7 +36,7 @@ void VScrollThumbPositionAction::Perform() {
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* currentRow = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = currentRow->GetCurrent();
-	Long rowWidth = sizeCalculator->GetRowWidth(currentRow, currentColumnIndex);
+	Long rowWidth = sizeCalculator->GetRowWidth(currentRowIndex, currentColumnIndex);
 
 	Long currentAbsoluteRowIndex = pagingBuffer->GetRowStartIndex() + currentRowIndex;
 	CaretNavigator caretNavigator(this->parent);

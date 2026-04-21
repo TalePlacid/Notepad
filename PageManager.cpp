@@ -4,6 +4,8 @@
 #include "PagingBuffer.h"
 #include "glyphs/Glyph.h"
 #include "glyphs/Note.h"
+#include "glyphs/NoteWidthCache.h"
+#include "glyphs/RowWidthCache.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "NoteWrapper.h"
@@ -46,6 +48,14 @@ void PageManager::LoadFirst(CWnd* parent) {
 		delete ((NotepadForm*)parent)->note;
 	}
 	((NotepadForm*)parent)->note = loadedNote;
+
+	if (((NotepadForm*)parent)->noteWidthCache != NULL)
+	{
+		((NotepadForm*)parent)->Unregister(((NotepadForm*)parent)->noteWidthCache);
+		delete ((NotepadForm*)parent)->noteWidthCache;
+	}
+	((NotepadForm*)parent)->noteWidthCache = new NoteWidthCache(parent, ((NotepadForm*)parent)->note);
+	((NotepadForm*)parent)->Register(((NotepadForm*)parent)->noteWidthCache);
 
 	Glyph* note = ((NotepadForm*)parent)->note;
 	Long rowIndex = note->First();
@@ -118,22 +128,27 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	Long loadedByteCount = 0;
 	pagingBuffer->LoadPrevious(loadedContents, loadedByteCount);
 	Glyph* loadedNote = NULL;
+	NoteWidthCache* loadedCache = NULL;
 	if (loadedByteCount > 0)
 	{
 		NoteConverter noteConverter;
 		loadedNote = noteConverter.Convert(loadedContents);
+		loadedCache = new NoteWidthCache(parent, loadedNote);
 	}
 
 	//4. 실제 적재 바이트가 있을 때만 기존 첫 줄을 교체한다.
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)parent)->noteWidthCache;
 	Long count = 0;
 	if (loadedByteCount > 0 && loadedNote != NULL)
 	{
 		if (noteLength > 1)
 		{
 			note->Remove(0);
+			noteWidthCache->Remove(0);
 		}
 
 		count = note->AppendFromFront(loadedNote);
+		noteWidthCache->AppendFromFront(*loadedCache);
 		Long rowStartDifference = -count;
 		if (noteLength > 1)
 		{
@@ -172,6 +187,11 @@ void PageManager::LoadPrevious(CWnd* parent) {
 				rowIndex = nextRowIndex;
 			}
 		}
+	}
+
+	if (loadedCache != NULL)
+	{
+		delete loadedCache;
 	}
 
 	if (loadedNote != NULL)
@@ -260,6 +280,7 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	//6. 노트에서 아랫 부분을 지운다.
 	Long belowIndex = currentRowIndex + PAGE_ROWCOUNT;
 	note->TruncateAfter(belowIndex);
+	noteWidthCache->TruncateAfter(belowIndex);
 
 	//7. 수평 스크롤바 최대값을 갱신한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
@@ -270,7 +291,7 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	while (i < note->GetLength())
 	{
 		row = note->GetAt(i);
-		rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
+		rowWidth = sizeCalculator->GetRowWidth(i, row->GetLength());
 		if (rowWidth > max)
 		{
 			max = rowWidth;
@@ -322,23 +343,28 @@ void PageManager::LoadNext(CWnd* parent) {
 	Long loadedByteCount = 0;
 	pagingBuffer->LoadNext(loadedContents, loadedByteCount);
 	Glyph* loadedNote = NULL;
+	NoteWidthCache* loadedCache = NULL;
 	if (loadedByteCount > 0)
 	{
 		NoteConverter noteConverter;
 		loadedNote = noteConverter.Convert(loadedContents);
+		loadedCache = new NoteWidthCache(parent, loadedNote);
 	}
 
 	//4. 실제 적재 바이트가 있을 때,
 	if (loadedByteCount > 0 && loadedNote != NULL)
 	{
 		//4.1. 적재된 노트가 1줄 이상일 때(의미가 있는 노트일 때)
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)parent)->noteWidthCache;
 		if (loadedNote->GetLength() > 1)
 		{
 			//4.1.1. 중첩되는 1줄을 지운다.
 			note->Remove(note->GetLength() - 1);
+			noteWidthCache->Remove(noteWidthCache->GetLength() - 1);
 
 			//4.1.2. 적재된 노트를 붙인다.
 			note->AppendFromRear(loadedNote);
+			noteWidthCache->AppendFromRear(*loadedCache);
 
 			//4.1.3. 로드된 뒷 부분의 선택여부를 반영한다.
 			Long previousRowIndex = -1;
@@ -382,6 +408,7 @@ void PageManager::LoadNext(CWnd* parent) {
 				upperIndex = 0;
 			}
 			note->TruncateBefore(upperIndex);
+			noteWidthCache->TruncateBefore(upperIndex);
 			pagingBuffer->CacheRowStartIndex(upperIndex);
 			currentRowIndex -= upperIndex;
 
@@ -394,7 +421,7 @@ void PageManager::LoadNext(CWnd* parent) {
 			while (i < note->GetLength())
 			{
 				row = note->GetAt(i);
-				rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
+				rowWidth = sizeCalculator->GetRowWidth(i, row->GetLength());
 				if (rowWidth > max)
 				{
 					max = rowWidth;
@@ -403,6 +430,11 @@ void PageManager::LoadNext(CWnd* parent) {
 			}
 			scrollController->ResizeHRange(max);
 		}
+	}
+
+	if (loadedCache != NULL)
+	{
+		delete loadedCache;
 	}
 
 	if (loadedNote != NULL)
@@ -469,6 +501,14 @@ void PageManager::LoadLast(CWnd* parent) {
 	}
 	((NotepadForm*)parent)->note = loadedNote;
 
+	if (((NotepadForm*)parent)->noteWidthCache != NULL)
+	{
+		((NotepadForm*)parent)->Unregister(((NotepadForm*)parent)->noteWidthCache);
+		delete ((NotepadForm*)parent)->noteWidthCache;
+	}
+	((NotepadForm*)parent)->noteWidthCache = new NoteWidthCache(parent, ((NotepadForm*)parent)->note);
+	((NotepadForm*)parent)->Register(((NotepadForm*)parent)->noteWidthCache);
+
 	//7. 노트에서 마지막으로 이동한다.
 	Glyph* note = ((NotepadForm*)parent)->note;
 	Long rowIndex = note->Last();
@@ -521,8 +561,11 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 	Long currentColumnIndex = currentRow->GetCurrent();
 
 	//3. 현재 줄 아래의 기존 적재분은 버린다.
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)parent)->noteWidthCache;
 	currentRow->TruncateAfter(currentColumnIndex);
+	noteWidthCache->GetAt(currentRowIndex)->Recalculate(currentRow);
 	note->TruncateAfter(currentRowIndex);
+	noteWidthCache->TruncateAfter(currentRowIndex);
 
 	//4. 현재 offset의 뒷부분을 다시 읽는다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
@@ -531,10 +574,12 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 	pagingBuffer->LoadNext(loadedContents, loadedByteCount);
 
 	Glyph* loadedNote = NULL;
+	NoteWidthCache* loadedCache = NULL;
 	if (loadedByteCount > 0)
 	{
 		NoteConverter noteConverter;
 		loadedNote = noteConverter.Convert(loadedContents);
+		loadedCache = new NoteWidthCache(parent, loadedNote);
 	}
 
 	//5. 다시 읽은 첫 줄은 현재 줄 뒤에 붙인다.
@@ -547,6 +592,7 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 			while (i < firstLoadedRow->GetLength())
 			{
 				currentRow->Add(firstLoadedRow->GetAt(i)->Clone());
+				noteWidthCache->GetAt(currentRowIndex)->Recalculate(currentRow);
 				i++;
 			}
 		}
@@ -555,12 +601,19 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 		if (loadedNote->GetLength() > 0)
 		{
 			loadedNote->Remove(0);
+			loadedCache->Remove(0);
 		}
 
 		if (loadedNote->GetLength() > 0)
 		{
 			note->AppendFromRear(loadedNote);
+			noteWidthCache->AppendFromRear(*loadedCache);
 		}
+	}
+
+	if (loadedCache != NULL)
+	{
+		delete loadedCache;
 	}
 
 	if (loadedNote != NULL)
@@ -585,7 +638,7 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 	while (j < note->GetLength())
 	{
 		Glyph* row = note->GetAt(j);
-		rowWidth = sizeCalculator->GetRowWidth(row, row->GetLength());
+		rowWidth = sizeCalculator->GetRowWidth(j, row->GetLength());
 		if (rowWidth > max)
 		{
 			max = rowWidth;
@@ -626,8 +679,11 @@ void PageManager::TrimIfNeeded(CWnd* parent) {
 		belowRowIndex += aboveRest;
 		aboveRowIndex -= belowRest;
 
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)parent)->noteWidthCache;
 		note->TruncateAfter(belowRowIndex);
+		noteWidthCache->TruncateAfter(belowRowIndex);
 		note->TruncateBefore(aboveRowIndex);
+		noteWidthCache->TruncateBefore(aboveRowIndex);
 		pagingBuffer->CacheRowStartIndex(aboveRowIndex);
 
 		TRACE("TRIM: %ld(%ld), %ld(%ld)\n", note->GetCurrent(), note->GetCurrent() + pagingBuffer->GetRowStartIndex(),

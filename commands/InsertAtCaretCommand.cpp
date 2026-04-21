@@ -1,6 +1,7 @@
 #include "InsertAtCaretCommand.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
+#include "../glyphs/NoteWidthCache.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
@@ -79,11 +80,13 @@ void InsertAtCaretCommand::Execute() {
 	Long columnIndex = row->GetCurrent();
 
 	//3. 조합중이면, 조합중이던 글자를 지운다.
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
 		columnIndex = row->GetCurrent();
+		noteWidthCache->MarkDirty(rowIndex);
 	}
 
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
@@ -96,6 +99,7 @@ void InsertAtCaretCommand::Execute() {
 		Glyph* glyph = glyphFactory.Create(this->character);
 		columnIndex = row->Add(columnIndex, glyph);
 		columnIndex = row->GetCurrent();
+		noteWidthCache->MarkDirty(rowIndex);
 
 		//4.2. 조합 확정이면, 페이징버퍼에서 적는다. 
 		if (this->onChar)
@@ -108,6 +112,8 @@ void InsertAtCaretCommand::Execute() {
 	{
 		//5.1. 줄을 나눈다.
 		note->SplitRows(rowIndex, columnIndex);
+		noteWidthCache->Add(rowIndex + 1);
+		noteWidthCache->MarkDirty(rowIndex);
 
 		//5.2. 자동개행이 켜져 있다면,
 		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
@@ -123,6 +129,7 @@ void InsertAtCaretCommand::Execute() {
 		rowIndex = note->Next();
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
+		noteWidthCache->MarkDirty(rowIndex);
 	
 		//5.3. 페이징버퍼에서 적는다.
 		pagingBuffer->Add(this->character);
@@ -169,6 +176,7 @@ void InsertAtCaretCommand::Undo() {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -179,6 +187,7 @@ void InsertAtCaretCommand::Undo() {
 			//2.2.1. 노트에서 지운다.
 			row->Remove(columnIndex - 1);
 			columnIndex = row->GetCurrent();
+			noteWidthCache->MarkDirty(rowIndex);
 
 			//2.2.2. 자동개행중이라면,
 			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
@@ -207,9 +216,12 @@ void InsertAtCaretCommand::Undo() {
 				columnIndex = previousRow->Last();
 
 				rowIndex = note->MergeRows(rowIndex - 1);
+				noteWidthCache->Remove(rowIndex + 1);
+
 				rowIndex = note->Move(rowIndex);
 				row = note->GetAt(rowIndex);
 				columnIndex = row->Move(columnIndex);
+				noteWidthCache->MarkDirty(rowIndex);
 
 				//2.3.2.2. 자동개행중이라면, 재개행한다.
 				if (((NotepadForm*)(this->parent))->IsAutoWrapped())
@@ -272,6 +284,7 @@ void InsertAtCaretCommand::Redo() {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
@@ -283,12 +296,15 @@ void InsertAtCaretCommand::Redo() {
 			Glyph* glyph = glyphFactory.Create(this->character, true);
 			columnIndex = row->Add(columnIndex, glyph);
 			columnIndex = row->GetCurrent();
+			noteWidthCache->MarkDirty(rowIndex);
 		}
 		else //2.4. 줄바꿈 문자라면,
 		{
 			//2.4.1. 줄을 나눈다.
 			note->SplitRows(rowIndex, columnIndex);
-			
+			noteWidthCache->Add(rowIndex + 1);
+			noteWidthCache->MarkDirty(rowIndex);
+
 			//2.4.2. 자동개행이 켜져 있다면,
 			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 			{
@@ -303,6 +319,7 @@ void InsertAtCaretCommand::Redo() {
 			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
+			noteWidthCache->MarkDirty(rowIndex);
 
 			vScrollChanged += 1;
 		}

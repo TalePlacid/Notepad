@@ -32,6 +32,8 @@ Long Subject::Register(Observer* observer) {
 Long Subject::Unregister(Observer* observer) {
 	Long index = this->observers.LinearSearchUnique(observer, CompareObservers);
 	index = this->observers.Delete(index);
+	this->capacity--;
+	this->length--;
 
 	return index;
 }
@@ -46,7 +48,9 @@ void Subject::Notify(string interest) {
 }
 
 int CompareObservers(void* one, void* other) {
-	return one == other;
+	Observer* one_ = *static_cast<Observer**>(one);
+
+	return one_ == other;
 }
 
 

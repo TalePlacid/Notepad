@@ -1,6 +1,7 @@
 #include "WriteAtEndCommand.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
+#include "../glyphs/NoteWidthCache.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../SizeCalculator.h"
@@ -82,9 +83,11 @@ void WriteAtEndCommand::Execute() {
 	Glyph* row = note->GetAt(rowIndex);
 	this->columnIndex = row->GetCurrent();
 	
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove();
+		noteWidthCache->MarkDirty(rowIndex);
 	}
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -93,6 +96,7 @@ void WriteAtEndCommand::Execute() {
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
+		noteWidthCache->MarkDirty(rowIndex);
 		if (this->onChar)
 		{
 			pagingBuffer->Add((char*)(*glyph));
@@ -118,9 +122,12 @@ void WriteAtEndCommand::Execute() {
 	else
 	{
 		note->Add(glyph);
+		noteWidthCache->Add();
+
 		rowIndex = note->GetCurrent();
 		row = note->GetAt(rowIndex);
 		this->columnIndex = row->First();
+
 		pagingBuffer->Add(this->character);
 		this->isUndoable = true;
 
@@ -148,11 +155,13 @@ void WriteAtEndCommand::Undo() {
 		Glyph* row = note->GetAt(rowIndex);
 		this->columnIndex = row->GetCurrent();
 
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		if (this->columnIndex > 0)
 		{
 			row->Remove();
+			noteWidthCache->MarkDirty(rowIndex);
 
 			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 			{
@@ -176,7 +185,10 @@ void WriteAtEndCommand::Undo() {
 			{
 				PageManager::LoadPrevious(this->parent);
 			}
+
 			note->Remove();
+			noteWidthCache->Remove();
+
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
 			this->columnIndex = row->Last();
@@ -228,12 +240,14 @@ void WriteAtEndCommand::Redo() {
 		Glyph* row = note->GetAt(rowIndex);
 		this->columnIndex = row->GetCurrent();
 
+		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		if (this->character[0] != '\r')
 		{
 			row->Add(glyph);
+			noteWidthCache->MarkDirty(rowIndex);
 			pagingBuffer->Add((char*)(*glyph));
 		
 			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
@@ -255,6 +269,8 @@ void WriteAtEndCommand::Redo() {
 		else
 		{
 			note->Add(glyph);
+			noteWidthCache->Add();
+
 			rowIndex = note->GetCurrent();
 			row = note->GetAt(rowIndex);
 			this->columnIndex = row->First();

@@ -36,6 +36,7 @@
 #include "FindReplaceOptionMaker.h"
 #include "FindReplaceRequestResolver.h"
 #include "MouseEventResolver.h"
+#include "glyphs/NoteWidthCache.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -82,6 +83,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* statusBarController) {
 	this->parent = parent;
 	this->note = NULL;
+	this->noteWidthCache = NULL;
 	this->isCompositing = FALSE;
 	this->originalFont = NULL;
 	this->displayFont = NULL;
@@ -115,6 +117,12 @@ NotepadForm::~NotepadForm() {
 	{
 		delete this->note;
 		this->note = NULL;
+	}
+
+	if (this->noteWidthCache != NULL)
+	{
+		delete this->noteWidthCache;
+		this->noteWidthCache = NULL;
 	}
 
 	if (this->caretController != NULL)
@@ -611,6 +619,8 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 			SetTimer(TIMER_ID_LAZY_TRIM, LAZY_TRIM_INTERVAL, NULL);
 		}
 
+		this->Notify("RecalculateLayout");
+
 		if (command->NeedScrollBarUpdate())
 		{
 			this->Notify("UpdateScrollBars");
@@ -662,6 +672,8 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 		{
 			this->captionController->UpdateCaption();
 		}
+
+		this->Notify("RecalculateLayout");
 
 		if (action->NeedScrollBarUpdate())
 		{

@@ -40,7 +40,7 @@ void SelectUpAction::Perform() {
 		columnIndex = row->GetCurrent();
 
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+		Long originalRowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		//3.2. 줄의 처음까지 반복한다.
 		while (columnIndex > 0)
@@ -67,7 +67,7 @@ void SelectUpAction::Perform() {
 		}
 
 		//3.4. 가장 가까운 위치까지 반복한다.
-		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(movedRow, originalRowWidth);
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalRowWidth);
 		while (columnIndex > nearestIndex && columnIndex > 0)
 		{
 			columnIndex = movedRow->Previous();

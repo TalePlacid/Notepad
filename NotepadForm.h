@@ -30,6 +30,7 @@ class MouseHandler;
 class FindReplaceOption;
 class CFindReplaceDialog;
 class CaptionController;
+class NoteWidthCache;
 
 class NotepadForm : public CWnd, public Subject {
 public:
@@ -38,6 +39,7 @@ public:
 public:
 	CWnd* parent;
 	Glyph* note;
+	NoteWidthCache* noteWidthCache;
 	CaretController* caretController;
 	SizeCalculator* sizeCalculator;
 	ScrollController* scrollController;

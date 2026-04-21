@@ -38,16 +38,7 @@ Caret* CaretController::Create() {
 	Long y = rowIndex * sizeCalculator->GetRowHeight() - height;
 
 	//3. 현재 위치까지의 너비를 구한다.
-	Glyph* character = NULL;
-	Long width = 0;
-	Long i = 0;
-	while (i < columnIndex)
-	{
-		character = row->GetAt(i);
-		width += sizeCalculator->GetCharacterWidth((char*)(*character), width);
-		i++;
-	}
-
+	Long width = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 	Scroll hScroll = scrollController->GetHScroll();
 	Long x = width - hScroll.GetPos();
 
@@ -55,7 +46,7 @@ Caret* CaretController::Create() {
 	Long caretWidth = 1;
 	if (columnIndex < row->GetLength() && pagingBuffer->GetSelectionBeginOffset() < 0)
 	{
-		character = row->GetAt(columnIndex);
+		Glyph* character = row->GetAt(columnIndex);
 		if (character->IsMultiByteCharacter())
 		{
 			caretWidth = sizeCalculator->GetCharacterWidth((char*)(*character), width);

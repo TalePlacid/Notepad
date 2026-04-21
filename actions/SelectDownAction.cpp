@@ -42,7 +42,7 @@ void SelectDownAction::Perform() {
 		//3.1. 현재 위치까지의 너비를 구한다.
 		row = note->GetAt(rowIndex);
 		columnIndex = row->GetCurrent();
-		Long originalWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+		Long originalWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		//3.2. 줄의 끝까지 반복한다.
 		while (columnIndex < row->GetLength())
@@ -68,7 +68,7 @@ void SelectDownAction::Perform() {
 		}
 
 		//3.4. 가장 비슷한 위치까지 반복한다.
-		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(row, originalWidth);
+		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalWidth);
 		while (columnIndex < nearestIndex)
 		{
 			row->GetAt(columnIndex)->ToggleSelection();

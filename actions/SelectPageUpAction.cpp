@@ -39,7 +39,7 @@ void SelectPageUpAction::Perform() {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
-		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+		Long originalRowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		//1.3. 첫번째 줄이 아니고, 올라갈 줄 수가 남았으면,
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -79,7 +79,7 @@ void SelectPageUpAction::Perform() {
 			}
 
 			//3.4. 가장 가까운 위치까지 반복한다.
-			Long nearestIndex = sizeCalculator->GetNearestColumnIndex(movedRow, originalRowWidth);
+			Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalRowWidth);
 			while (columnIndex > nearestIndex && columnIndex > 0)
 			{
 				columnIndex = movedRow->Previous();

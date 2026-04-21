@@ -40,7 +40,7 @@ void SelectPageDownAction::Perform() {
 		Glyph* row = note->GetAt(rowIndex);
 		Long columnIndex = row->GetCurrent();
 
-		Long originalRowWidth = sizeCalculator->GetRowWidth(row, columnIndex);
+		Long originalRowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		//1.3. 마지막줄이 아니고, 내려가야할 줄 수가 남았으면,
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
@@ -81,7 +81,7 @@ void SelectPageDownAction::Perform() {
 			}
 
 			//3.4. 가장 비슷한 위치까지 반복한다.
-			Long nearestIndex = sizeCalculator->GetNearestColumnIndex(row, originalRowWidth);
+			Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalRowWidth);
 			while (columnIndex < nearestIndex)
 			{
 				row->GetAt(columnIndex)->ToggleSelection();

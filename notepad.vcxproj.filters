@@ -550,14 +550,17 @@
     <ClCompile Include="Logger.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ChangeInProgressCaption.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="LineBreakNormalizer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CaptionController.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="glyphs\RowWidthCache.cpp">
+      <Filter>소스 파일\glyphs</Filter>
+    </ClCompile>
+    <ClCompile Include="glyphs\NoteWidthCache.cpp">
+      <Filter>소스 파일\glyphs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1077,14 +1080,17 @@
     <ClInclude Include="Logger.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ChangeInProgressCaption.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="LineBreakNormalizer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CaptionController.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="glyphs\RowWidthCache.h">
+      <Filter>헤더 파일\glyphs</Filter>
+    </ClInclude>
+    <ClInclude Include="glyphs\NoteWidthCache.h">
+      <Filter>헤더 파일\glyphs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

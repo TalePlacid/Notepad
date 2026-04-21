@@ -15,8 +15,8 @@ public:
 
 	Long GetCharacterWidth(char(*character), Long logicalX);
 	Long GetRowWidth(CString contents);
-	Long GetRowWidth(Glyph* row, Long columnIndex);
-	Long GetNearestColumnIndex(Glyph* row, Long width);
+	Long GetRowWidth(Long rowIndex, Long columnIndex);
+	Long GetNearestColumnIndex(Long rowIndex, Long width);
 
 	Long GetAverageCharacterWidth() const;
 	Long GetRowHeight() const;
