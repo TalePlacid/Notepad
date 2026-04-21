@@ -110,6 +110,15 @@ Long NoteWidthCache::MarkDirty(Long index) {
 	return index;
 }
 
+void NoteWidthCache::MarkAllDirty() {
+	Long i = 0;
+	while (i < this->length)
+	{
+		this->rowWidthCaches[i]->MarkDirty();
+		i++;
+	}
+}
+
 Long NoteWidthCache::CleanDirty(Long index) {
 	this->rowWidthCaches[index]->CleanDirty();
 

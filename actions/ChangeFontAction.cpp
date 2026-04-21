@@ -3,6 +3,7 @@
 #include "ChangeFontAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
+#include "../glyphs/NoteWidthCache.h"
 #include "../SizeCalculator.h"
 #include "../ScrollBarAnalyzer.h"
 #include "../ScrollController.h"
@@ -78,6 +79,8 @@ void ChangeFontAction::Perform() {
 			notepadForm->sizeCalculator = NULL;
 		}
 		notepadForm->sizeCalculator = new SizeCalculator(this->parent);
+		notepadForm->noteWidthCache->MarkAllDirty();
+		
 		SizeCalculator* sizeCalculator = notepadForm->sizeCalculator;
 		rowHeight = sizeCalculator->GetRowHeight();
 

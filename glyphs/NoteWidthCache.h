@@ -19,6 +19,7 @@ public:
 	Long Remove(Long index);
 	RowWidthCache* GetAt(Long index);
 	Long MarkDirty(Long index);
+	void MarkAllDirty();
 	Long CleanDirty(Long index);
 
 	virtual void Update(Subject* subject, string interest);

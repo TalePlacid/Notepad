@@ -1,6 +1,7 @@
 #include <afxwin.h>
 #include "ZoomOutAction.h"
 #include "../NotepadForm.h"
+#include "../glyphs/NoteWidthCache.h"
 #include "../SizeCalculator.h"
 #include "../ScrollController.h"
 #include "../FontSelector.h"
@@ -57,6 +58,7 @@ void ZoomOutAction::Perform() {
 		notepadForm->sizeCalculator = NULL;
 	}
 	notepadForm->sizeCalculator = new SizeCalculator(this->parent);
+	notepadForm->noteWidthCache->MarkAllDirty();
 
 	if (notepadForm->scrollController != NULL && notepadForm->scrollController->HasVScroll())
 	{
