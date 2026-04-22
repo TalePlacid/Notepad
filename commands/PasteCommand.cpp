@@ -53,9 +53,14 @@ void PasteCommand::Execute() {
 	BOOL isPasted = clipboardController->Paste();
 	if (isPasted)
 	{
-		//2. 선택범위가 있으면, 지운다.
+		//1.1. 선택범위가 있으면, 지운다.
 		this->isUndoable = true;
-
+		
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		Long rowIndex = note->GetCurrent();
+		Glyph* row = note->GetAt(rowIndex);
+		this->columnIndex = row->GetCurrent(); 
+		
 		Editor editor(this->parent);
 		BOOL isSelected = editor.GetSelectedRange(frontOffset, rearOffset);
 		if (isSelected)

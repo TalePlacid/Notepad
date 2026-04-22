@@ -619,8 +619,6 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 			SetTimer(TIMER_ID_LAZY_TRIM, LAZY_TRIM_INTERVAL, NULL);
 		}
 
-		this->Notify("RecalculateLayout");
-
 		if (command->NeedScrollBarUpdate())
 		{
 			this->Notify("UpdateScrollBars");
@@ -672,8 +670,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 		{
 			this->captionController->UpdateCaption();
 		}
-
-		this->Notify("RecalculateLayout");
 
 		if (action->NeedScrollBarUpdate())
 		{

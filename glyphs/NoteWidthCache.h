@@ -1,13 +1,12 @@
 #ifndef _NOTEWIDTHCACHE_H //guard
 #define _NOTEWIDTHCACHE_H
-#include "../Observer.h"
 #include "../Array.h"
 
 class RowWidthCache;
 class Glyph;
 class CWnd;
 
-class NoteWidthCache : public Observer{
+class NoteWidthCache{
 public:
 	NoteWidthCache(CWnd* parent, Long capacity = 256);
 	NoteWidthCache(CWnd* parent, Glyph* note);
@@ -21,8 +20,6 @@ public:
 	Long MarkDirty(Long index);
 	void MarkAllDirty();
 	Long CleanDirty(Long index);
-
-	virtual void Update(Subject* subject, string interest);
 
 	Long AppendFromFront(const NoteWidthCache& other);
 	Long AppendFromRear(const NoteWidthCache& other);

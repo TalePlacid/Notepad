@@ -17,6 +17,7 @@ public:
 	Long GetRowWidth(CString contents);
 	Long GetRowWidth(Long rowIndex, Long columnIndex);
 	Long GetNearestColumnIndex(Long rowIndex, Long width);
+	Long GetWrapCuttingIndex(Long rowIndex);
 
 	Long GetAverageCharacterWidth() const;
 	Long GetRowHeight() const;

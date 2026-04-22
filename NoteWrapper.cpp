@@ -2,6 +2,7 @@
 #include "NoteWrapper.h"
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
+#include "glyphs/NoteWidthCache.h"
 #include "SizeCalculator.h"
 #include "ScrollController.h"
 #include "glyphs/GlyphFactory.h"
@@ -25,6 +26,7 @@ Long NoteWrapper::Wrap() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	ClientAreaSize clientAreaSize = ((NotepadForm*)(this->parent))->GetClientAreaSize();
 	Long clientAreaWidth = clientAreaSize.width;
 	Long count = 0;
@@ -35,22 +37,10 @@ Long NoteWrapper::Wrap() {
 	Long i = 0;
 	while (i < note->GetLength())
 	{
-		row = note->GetAt(i);
-		rowWidth = 0;
-		j = 0;
-		while (j < row->GetLength() && rowWidth < clientAreaWidth)
+		cuttingIndex = sizeCalculator->GetWrapCuttingIndex(i);
+		if (cuttingIndex > 0)
 		{
-			rowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(j)), rowWidth);
-			j++;
-		}
-
-		if (rowWidth >= clientAreaWidth)
-		{
-			cuttingIndex = j - 1;
-			if (cuttingIndex <= 0)
-			{
-				cuttingIndex = 1;
-			}
+			row = note->GetAt(i);
 			if (cuttingIndex < row->GetLength() && ByteChecker::IsAlphabet((char*)(*row->GetAt(cuttingIndex))))
 			{
 				previousWordStart = row->FindPreviousWordStart(cuttingIndex);
@@ -61,7 +51,11 @@ Long NoteWrapper::Wrap() {
 			}
 
 			note->SplitRows(i, cuttingIndex, true);
+			noteWidthCache->Add(i + 1);
+			noteWidthCache->MarkDirty(i);
+			noteWidthCache->MarkDirty(i + 1);
 			count++;
+	
 			if (i < rowIndex) // 현재 줄 위치 이전
 			{
 				rowIndex = note->Next();
@@ -89,12 +83,15 @@ Long NoteWrapper::Rewrap() {
 	Long columnIndex = row->GetCurrent();
 
     //2. 더미 줄들을 위로 합친다.
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	Glyph* previousRow;
 	while (row->IsDummyRow() && rowIndex > 0)
 	{
 		previousRow = note->GetAt(rowIndex - 1);
 		columnIndex += previousRow->GetLength();
 		note->MergeRows(rowIndex - 1);
+		noteWidthCache->MarkDirty(rowIndex - 1);
+		noteWidthCache->Remove(rowIndex);
 		count--;
 
 		rowIndex = note->Previous();
@@ -106,12 +103,12 @@ Long NoteWrapper::Rewrap() {
 	while (note->GetLength() > rowIndex + 1 && note->GetAt(rowIndex+1)->IsDummyRow())
 	{
 		note->MergeRows(rowIndex);
+		noteWidthCache->MarkDirty(rowIndex);
+		noteWidthCache->Remove(rowIndex + 1);
 		count--;
 	}
 
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	
-
 	ClientAreaSize clientAreaSize = ((NotepadForm*)(this->parent))->GetClientAreaSize();
 	Long clientAreaWidth = clientAreaSize.width;
 
@@ -125,23 +122,11 @@ Long NoteWrapper::Rewrap() {
 	while (i < note->GetLength() && flag)
 	{
 		flag = FALSE;
-		row = note->GetAt(i);
-		rowWidth = 0;
-		j = 0;
-		while (j < row->GetLength() && rowWidth < clientAreaWidth)
-		{
-			rowWidth += sizeCalculator->GetCharacterWidth((char*)(*row->GetAt(j)), rowWidth);
-			j++;
-		}
-
-		if (rowWidth >= clientAreaWidth)
+		cuttingIndex = sizeCalculator->GetWrapCuttingIndex(i);
+		if (cuttingIndex > 0)
 		{
 			flag = TRUE;
-			cuttingIndex = j - 1;
-			if (cuttingIndex <= 0)
-			{
-				cuttingIndex = 1;
-			}
+			row = note->GetAt(i);
 			if (cuttingIndex < row->GetLength() && ByteChecker::IsAlphabet((char*)(*row->GetAt(cuttingIndex))))
 			{
 				previousWordStart = row->FindPreviousWordStart(cuttingIndex);
@@ -152,8 +137,16 @@ Long NoteWrapper::Rewrap() {
 			}
 
 			note->SplitRows(i, cuttingIndex, true);
+			noteWidthCache->Add(i + 1);
+			noteWidthCache->MarkDirty(i);
+			noteWidthCache->MarkDirty(i + 1);
 			count++;
-			if (i == rowIndex && columnIndex > cuttingIndex)
+
+			if (i < rowIndex) // 현재 줄 위치 이전
+			{
+				rowIndex = note->Next();
+			}
+			else if (i == rowIndex && columnIndex > cuttingIndex) // 현재 줄 위치     
 			{
 				rowIndex = note->Next();
 				row = note->GetAt(rowIndex);
@@ -172,6 +165,7 @@ Long NoteWrapper::Unwrap() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	Long count = 0;
 	Long i = 1;              
 	while (i < rowIndex && i < note->GetLength())
@@ -180,6 +174,8 @@ Long NoteWrapper::Unwrap() {
 		if (row->IsDummyRow())
 		{
 			note->MergeRows(--i);
+			noteWidthCache->MarkDirty(i);
+			noteWidthCache->Remove(i + 1);
 			rowIndex = note->Previous();
 			count++;
 		}
@@ -193,6 +189,9 @@ Long NoteWrapper::Unwrap() {
 		{
 			Long previousLength = note->GetAt(i - 1)->GetLength();
 			note->MergeRows(--i);
+			noteWidthCache->MarkDirty(i);
+			noteWidthCache->Remove(i + 1);
+
 			rowIndex = note->Previous();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->Move(previousLength + columnIndex);
@@ -206,6 +205,8 @@ Long NoteWrapper::Unwrap() {
 		if (row->IsDummyRow())
 		{
 			note->MergeRows(--i);
+			noteWidthCache->MarkDirty(i);
+			noteWidthCache->Remove(i + 1);
 			count++;
 		}
 		i++;

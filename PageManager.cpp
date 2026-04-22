@@ -51,11 +51,9 @@ void PageManager::LoadFirst(CWnd* parent) {
 
 	if (((NotepadForm*)parent)->noteWidthCache != NULL)
 	{
-		((NotepadForm*)parent)->Unregister(((NotepadForm*)parent)->noteWidthCache);
 		delete ((NotepadForm*)parent)->noteWidthCache;
 	}
 	((NotepadForm*)parent)->noteWidthCache = new NoteWidthCache(parent, ((NotepadForm*)parent)->note);
-	((NotepadForm*)parent)->Register(((NotepadForm*)parent)->noteWidthCache);
 
 	Glyph* note = ((NotepadForm*)parent)->note;
 	Long rowIndex = note->First();
@@ -503,11 +501,9 @@ void PageManager::LoadLast(CWnd* parent) {
 
 	if (((NotepadForm*)parent)->noteWidthCache != NULL)
 	{
-		((NotepadForm*)parent)->Unregister(((NotepadForm*)parent)->noteWidthCache);
 		delete ((NotepadForm*)parent)->noteWidthCache;
 	}
 	((NotepadForm*)parent)->noteWidthCache = new NoteWidthCache(parent, ((NotepadForm*)parent)->note);
-	((NotepadForm*)parent)->Register(((NotepadForm*)parent)->noteWidthCache);
 
 	//7. 노트에서 마지막으로 이동한다.
 	Glyph* note = ((NotepadForm*)parent)->note;
@@ -564,6 +560,7 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)parent)->noteWidthCache;
 	currentRow->TruncateAfter(currentColumnIndex);
 	noteWidthCache->GetAt(currentRowIndex)->Recalculate(currentRow);
+	noteWidthCache->GetAt(currentRowIndex)->CleanDirty();
 	note->TruncateAfter(currentRowIndex);
 	noteWidthCache->TruncateAfter(currentRowIndex);
 
@@ -593,6 +590,7 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 			{
 				currentRow->Add(firstLoadedRow->GetAt(i)->Clone());
 				noteWidthCache->GetAt(currentRowIndex)->Recalculate(currentRow);
+				noteWidthCache->GetAt(currentRowIndex)->CleanDirty();
 				i++;
 			}
 		}

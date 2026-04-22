@@ -125,23 +125,6 @@ Long NoteWidthCache::CleanDirty(Long index) {
 	return index;
 }
 
-void NoteWidthCache::Update(Subject *subject, string interest) {
-	if (interest == "RecalculateLayout")
-	{
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long i = 0;
-		while (i < this->length)
-		{
-			if (this->rowWidthCaches[i]->IsDirty())
-			{
-				this->rowWidthCaches[i]->Recalculate(note->GetAt(i));
-				this->rowWidthCaches[i]->CleanDirty();
-			}
-			i++;
-		}
-	}
-}
-
 Long NoteWidthCache::AppendFromFront(const NoteWidthCache& other) {
 	NoteWidthCache& other_ = const_cast<NoteWidthCache&>(other);
 	Long count = 0;

@@ -77,12 +77,15 @@ Long SizeCalculator::GetRowWidth(CString contents) {
 Long SizeCalculator::GetRowWidth(Long rowIndex, Long columnIndex) {
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	RowWidthCache* rowWidthCache = noteWidthCache->GetAt(rowIndex);
-	Long rowWidth = -1;
-	if (!rowWidthCache->IsDirty())
+	if (rowWidthCache->IsDirty())
 	{
-		rowWidth = rowWidthCache->GetAt(columnIndex);
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		rowWidthCache->Recalculate(note->GetAt(rowIndex));
+		rowWidthCache->CleanDirty();
 	}
- 
+	
+	Long rowWidth = rowWidthCache->GetAt(columnIndex);
+	
 	return rowWidth;
 }
 
@@ -90,77 +93,98 @@ Long SizeCalculator::GetNearestColumnIndex(Long rowIndex, Long width) {
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	RowWidthCache* rowWidthCache = noteWidthCache->GetAt(rowIndex);
 	Long index = -1;
-	if (!rowWidthCache->IsDirty())
+
+	if (rowWidthCache->IsDirty())
 	{
-		Long length = rowWidthCache->GetLength();
-		if (length > 0)
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		rowWidthCache->Recalculate(note->GetAt(rowIndex));
+		rowWidthCache->CleanDirty();
+	}
+
+	Long length = rowWidthCache->GetLength();
+	if (length > 0)
+	{
+		Long low = 0;
+		Long high = length - 1;
+
+		if (width <= rowWidthCache->GetAt(low))
 		{
-			Long low = 0;
-			Long high = length - 1;
-
-			if (width <= rowWidthCache->GetAt(low))
-			{
-				index = low;
-			}
-			else if (width >= rowWidthCache->GetAt(high))
-			{
-				index = high;
-			}
-			else
-			{
-				while (low < high)
-				{
-					Long mid = low + (high - low) / 2;
-					Long midWidth = rowWidthCache->GetAt(mid);
-
-					if (midWidth < width)
-					{
-						low = mid + 1;
-					}
-					else
-					{
-						high = mid;
-					}
-				}
-
-				Long upperIndex = low;
-				Long lowerIndex = upperIndex - 1;
-				Long upperWidth = rowWidthCache->GetAt(upperIndex);
-				Long lowerWidth = rowWidthCache->GetAt(lowerIndex);
-				Long upperDistance = upperWidth - width;
-				Long lowerDistance = width - lowerWidth;
-
-				if (upperDistance <= lowerDistance)
-				{
-					index = upperIndex;
-				}
-				else
-				{
-					index = lowerIndex;
-				}
-			}
+			index = low;
 		}
-#if 0
-		Long i = 0;
-		Long previous = 0;
-		Long current = rowWidthCache->GetAt(0);
-		i++;
-		while (i < rowWidthCache->GetLength() && current < width)
+		else if (width >= rowWidthCache->GetAt(high))
 		{
-			previous = current;
-			current = rowWidthCache->GetAt(i);
-			i++;
-		}
-
-		if (abs(current - width) <= abs(width - previous))
-		{
-			index = i - 1;
+			index = high;
 		}
 		else
 		{
-			index = i - 2;
+			while (low < high)
+			{
+				Long mid = low + (high - low) / 2;
+				Long midWidth = rowWidthCache->GetAt(mid);
+
+				if (midWidth < width)
+				{
+					low = mid + 1;
+				}
+				else
+				{
+					high = mid;
+				}
+			}
+
+			Long upperIndex = low;
+			Long lowerIndex = upperIndex - 1;
+			Long upperWidth = rowWidthCache->GetAt(upperIndex);
+			Long lowerWidth = rowWidthCache->GetAt(lowerIndex);
+			Long upperDistance = upperWidth - width;
+			Long lowerDistance = width - lowerWidth;
+
+			if (upperDistance <= lowerDistance)
+			{
+				index = upperIndex;
+			}
+			else
+			{
+				index = lowerIndex;
+			}
 		}
-#endif
+	}
+
+	return index;
+}
+
+Long SizeCalculator::GetWrapCuttingIndex(Long rowIndex) {
+	Long index = -1;
+	
+	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
+	RowWidthCache* rowWidthCache = noteWidthCache->GetAt(rowIndex);
+
+	if (rowWidthCache->IsDirty())
+	{
+		Glyph* note = ((NotepadForm*)(this->parent))->note;
+		rowWidthCache->Recalculate(note->GetAt(rowIndex));
+		rowWidthCache->CleanDirty();
+	}
+
+	Long width = ((NotepadForm*)(this->parent))->GetClientAreaSize().width;
+	BOOL isLessThanWidth = TRUE;
+	Long i = 0;
+	while (i < rowWidthCache->GetLength() && isLessThanWidth)
+	{
+		if (rowWidthCache->GetAt(i) >= width)
+		{
+			isLessThanWidth = FALSE;
+		}
+		i++;
+	}
+
+	if (!isLessThanWidth)
+	{
+		index = i - 2;
+		if (index <= 0)
+		{
+			index = 1;
+		}
 	}
 
 	return index;
