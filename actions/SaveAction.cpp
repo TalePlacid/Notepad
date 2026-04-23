@@ -3,6 +3,7 @@
 #include "SaveAction.h"
 #include "../resource.h"
 #include "../NotepadForm.h"
+#include "../CaptionController.h"
 #include "../TextFileIO.h"
 #include "../PagingBuffer.h"
 
@@ -66,6 +67,7 @@ void SaveAction::Perform() {
 			fileName = fileName.Left(extensionIndex);
 		}
 		notepadForm->parent->SetWindowTextA((LPCTSTR)fileName);
+		notepadForm->captionController->UpdateCaption();
 		notepadForm->ApplyEncoding(encoding);
 		notepadForm->MarkClean();
 	}

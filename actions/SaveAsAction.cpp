@@ -3,6 +3,7 @@
 #include "SaveAsAction.h"
 #include "../resource.h"
 #include "../NotepadForm.h"
+#include "../CaptionController.h"
 #include "../PagingBuffer.h"
 #include "../TextFileIO.h"
 
@@ -55,6 +56,7 @@ void SaveAsAction::Perform() {
 			caption = caption.Left(extensionIndex);
 		}
 		notepadForm->parent->SetWindowText((LPCTSTR)caption);
+		notepadForm->captionController->UpdateCaption();
 	}
 }
 

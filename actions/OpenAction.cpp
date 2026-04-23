@@ -2,6 +2,7 @@
 #include <afxdlgs.h>
 #include "OpenAction.h"
 #include "../NotepadForm.h"
+#include "../CaptionController.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
@@ -62,6 +63,7 @@ void OpenAction::Perform() {
 			caption = caption.Left(extensionIndex);
 		}
 		notepadForm->parent->SetWindowTextA((LPCTSTR)caption);
+		notepadForm->captionController->UpdateCaption();
 		notepadForm->ApplyEncoding(encoding);
 		notepadForm->MarkClean();
 
