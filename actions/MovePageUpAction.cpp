@@ -44,10 +44,15 @@ void MovePageUpAction::Perform() {
 		//1.3. 줄의 처음으로 이동한다.
 		Long movedIndex = row->First();
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		pagingBuffer->Previous(columnIndex - movedIndex);
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
+		Long bytes = row->GetPreviousBytes(columnIndex);
+		currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 
 		//1.3. 줄 수 만큼, 첫번째 줄이 아니면 반복한다.
 		Glyph* previousRow;
+		Long previousColumnIndex;
+		Long rowBytes;
+		Long previousRowBytes;
 		Long i = 0;
 		while (i < rowCount && rowIndex > 0)
 		{
@@ -60,28 +65,20 @@ void MovePageUpAction::Perform() {
 
 			//1.3.2. 노트에서 이동한다.
 			previousRow = note->GetAt(rowIndex);
+			previousColumnIndex = previousRow->GetCurrent();
 			rowIndex = note->Previous();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 
-			//1.3.3. 이전 줄이 진짜 줄이면,
+			//1.3.3. 페이징 버퍼에서 이동한다.
+			previousRowBytes = previousRow->GetPreviousBytes(previousColumnIndex);
+			rowBytes = row->GetBytes();
+			bytes = previousRowBytes + rowBytes;
 			if (!previousRow->IsDummyRow())
 			{
-				//1.3.3.1. 페이징 버퍼에서 이전 줄로 이동한다.
-				pagingBuffer->PreviousRow();
-
-				//1.3.3.2. 현재 줄이 더미 줄이면, 추가적으로 이동한다.
-				if (row->IsDummyRow())
-				{
-					pagingBuffer->Last();
-					pagingBuffer->Previous(row->GetLength());
-				}
+				bytes += 2;
 			}
-			else //1.3.4. 이전 줄이 더미 줄이면,
-			{
-				//1.3.4.1. 페이징 버퍼에서 이전으로 이동한다.
-				pagingBuffer->Previous(row->GetLength());
-			}
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 
 			i++;
 		}
@@ -89,6 +86,7 @@ void MovePageUpAction::Perform() {
 		//1.4. 줄 너비와 가장 가까운 위치로 이동한다.
 		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalRowWidth);
 		movedIndex = row->Move(nearestIndex);
-		pagingBuffer->Next(movedIndex);
+		bytes = row->GetPreviousBytes(movedIndex);
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 	}
 }

@@ -25,22 +25,31 @@ void MoveWordLeftAction::Perform() {
 
 	//2. 줄의 처음이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (columnIndex > 0)
 	{
 		//2.1. 노트에서 이전 단어 시작으로 이동한다.
 		Long wordStart = row->FindPreviousWordStart(columnIndex);
 		Long movedIndex = row->Move(wordStart);
-		
+
 		//2.2. 페이징 버퍼에서 이동한다.
-		pagingBuffer->Previous(columnIndex - movedIndex);
+		Long bytes = 0;
+		Long i = columnIndex - 1;
+		while (i >= wordStart)
+		{
+			bytes += row->GetAt(i)->GetBytes();
+			i--;
+		}
+		currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 	}
 	else //3. 줄의 처음이면,
 	{
 		//3.1. 적재 범위를 벗어나면, 재적재한다.
-		if (note->IsBelowBottomLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
+		if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 		{
 			PageManager::LoadPrevious(this->parent);
 			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
 		}
 
 		//3.2. 첫번째 줄이 아니라면,
@@ -54,8 +63,7 @@ void MoveWordLeftAction::Perform() {
 			//3.2.2. 원래 줄이 진짜 줄이면, 페이징 버퍼에서 이동한다.
 			if (!row->IsDummyRow())
 			{
-				pagingBuffer->PreviousRow();
-				pagingBuffer->Last();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 			}
 		}
 	}

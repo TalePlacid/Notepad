@@ -27,14 +27,23 @@ void MoveWordRightAction::Perform() {
 
 	//2. 줄의 마지막이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (columnIndex < row->GetLength())
 	{
 		//2.1. 노트에서 다음 단어 시작으로 이동한다.
 		Long wordStart = row->FindNextWordStart(columnIndex);
-		Long movedIndex = row->Move(wordStart);
+		row->Move(wordStart);
 
 		//2.2. 페이징 버퍼에서 이동한다.
-		pagingBuffer->Next(movedIndex - columnIndex);
+		Long bytes = 0;
+		Long i = columnIndex;
+		while (i < wordStart)
+		{
+			bytes += row->GetAt(i)->GetBytes();
+			i++;
+		}
+
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 	}
 	else //3. 줄의 마지막이면,
 	{
@@ -59,7 +68,7 @@ void MoveWordRightAction::Perform() {
 			//3.2.2. 이동한 줄이 진짜 줄이면, 페이징버퍼에서 이동한다.
 			if (!nextRow->IsDummyRow())
 			{
-				pagingBuffer->NextRow();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + 2);
 			}
 		}
 	}

@@ -99,6 +99,7 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	Glyph* row = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = row->GetCurrent();
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	Long noteLength = note->GetLength();
 
 	//2. 노트의 2번째 줄 기준으로 적재 위치를 맞춘다.
@@ -108,20 +109,43 @@ void PageManager::LoadPrevious(CWnd* parent) {
 		rowIndex = 1;
 	}
 
-	rowIndex = note->Move(rowIndex);
+	Long bytes = -row->GetPreviousBytes(currentColumnIndex);
+	Long i;
 	if (currentRowIndex > rowIndex)
 	{
-		pagingBuffer->PreviousRow(currentRowIndex - rowIndex);
+		i = currentRowIndex;
+		while (i > rowIndex)
+		{
+			Glyph* currentRow = note->GetAt(i);
+			Glyph* previousRow = note->GetAt(i - 1);
+			bytes -= previousRow->GetBytes();
+			if (!currentRow->IsDummyRow())
+			{
+				bytes -= 2;
+			}
+			i--;
+		}
 	}
 	else if (currentRowIndex < rowIndex)
 	{
-		pagingBuffer->NextRow(rowIndex - currentRowIndex);
+		i = currentRowIndex;
+		while (i < rowIndex)
+		{
+			Glyph* currentRow = note->GetAt(i);
+			Glyph* nextRow = note->GetAt(i + 1);
+			bytes += currentRow->GetBytes();
+			if (!nextRow->IsDummyRow())
+			{
+				bytes += 2;
+			}
+			i++;
+		}
 	}
 
+	Long offset = pagingBuffer->MoveOffset(currentOffset + bytes);
+	rowIndex = note->Move(rowIndex);
 	row = note->GetAt(rowIndex);
 	Long columnIndex = row->First();
-	pagingBuffer->First();
-	Long offset = pagingBuffer->GetCurrentOffset();
 
 	//3. 앞 부분을 로드한다.
 	TCHAR* loadedContents = NULL;
@@ -162,25 +186,29 @@ void PageManager::LoadPrevious(CWnd* parent) {
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
 		Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-		Long i = pagingBuffer->GetCurrentOffset();
+		i = pagingBuffer->GetCurrentOffset();
 		while (rowIndex >= 0 && previousRowIndex != rowIndex && selectionBeginOffset >= 0 && i > selectionBeginOffset)
 		{
 			while (columnIndex > 0 && i > selectionBeginOffset)
 			{
 				row->GetAt(columnIndex - 1)->Select(true);
 				columnIndex = row->Previous();
-				i = pagingBuffer->Previous();
+				i -= row->GetAt(columnIndex)->GetBytes();
+				i = pagingBuffer->MoveOffset(i);
 			}
 
 			previousRowIndex = rowIndex;
 			Long nextRowIndex = note->Previous();
 			if (nextRowIndex < previousRowIndex)
 			{
+				if (!row->IsDummyRow())
+				{
+					i -= 2;
+				}
 				rowIndex = nextRowIndex;
 				row = note->GetAt(rowIndex);
 				columnIndex = row->Last();
-				i = pagingBuffer->PreviousRow();
-				i = pagingBuffer->Last();
+				i = pagingBuffer->MoveOffset(i);
 			}
 			else
 			{
@@ -224,46 +252,34 @@ void PageManager::LoadPrevious(CWnd* parent) {
 		currentRowIndex = note->GetLength() - 1;
 	}
 
-	rowIndex = note->Move(rowIndex);
-	row = note->GetAt(rowIndex);
-	row->First();
-	pagingBuffer->MoveOffset(offset);
-
-	Glyph* previousRow = NULL;
-	while (rowIndex > currentRowIndex)
+	Long targetOffset = offset;
+	i = rowIndex;
+	while (i > currentRowIndex)
 	{
-		previousRow = row;
-		rowIndex = note->Previous();
-		row = note->GetAt(rowIndex);
-		row->Last();
-
-		if (!previousRow->IsDummyRow())
+		Glyph* currentRow = note->GetAt(i);
+		Glyph* previousRow = note->GetAt(i - 1);
+		targetOffset -= previousRow->GetBytes();
+		if (!currentRow->IsDummyRow())
 		{
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			targetOffset -= 2;
 		}
-
-		row->First();
-		pagingBuffer->Previous(row->GetLength());
+		i--;
 	}
 
-	while (rowIndex < currentRowIndex)
+	while (i < currentRowIndex)
 	{
-		previousRow = row;
-		rowIndex = note->Next();
-		row = note->GetAt(rowIndex);
-		row->First();
-
-		if (row->IsDummyRow())
+		Glyph* currentRow = note->GetAt(i);
+		Glyph* nextRow = note->GetAt(i + 1);
+		targetOffset += currentRow->GetBytes();
+		if (!nextRow->IsDummyRow())
 		{
-			pagingBuffer->Next(previousRow->GetLength());
+			targetOffset += 2;
 		}
-		else
-		{
-			pagingBuffer->NextRow();
-		}
+		i++;
 	}
 
+	currentRowIndex = note->Move(currentRowIndex);
+	row = note->GetAt(currentRowIndex);
 	if (currentColumnIndex < 0)
 	{
 		currentColumnIndex = 0;
@@ -273,9 +289,9 @@ void PageManager::LoadPrevious(CWnd* parent) {
 		currentColumnIndex = row->GetLength();
 	}
 
-	row->Move(currentColumnIndex);
-	pagingBuffer->Next(currentColumnIndex);
-	currentRowIndex = note->GetCurrent();
+	currentColumnIndex = row->Move(currentColumnIndex);
+	targetOffset += row->GetPreviousBytes(currentColumnIndex);
+	pagingBuffer->MoveOffset(targetOffset);
 
 	//6. 노트에서 아랫 부분을 지운다.
 	Long belowIndex = currentRowIndex + PAGE_ROWCOUNT;
@@ -287,7 +303,7 @@ void PageManager::LoadPrevious(CWnd* parent) {
 	ScrollController* scrollController = ((NotepadForm*)parent)->scrollController;
 	Long rowWidth = 0;
 	Long max = scrollController->GetHScroll().GetMax();
-	Long i = 0;
+	i = 0;
 	while (i < note->GetLength())
 	{
 		row = note->GetAt(i);

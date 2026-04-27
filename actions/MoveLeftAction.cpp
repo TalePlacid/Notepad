@@ -27,10 +27,12 @@ void MoveLeftAction::Perform() {
 
 	//2. 줄의 처음이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (columnIndex > 0)
 	{
 		columnIndex = row->Previous();
-		pagingBuffer->Previous();
+		currentOffset -= row->GetAt(columnIndex)->GetBytes();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset);
 	}
 	else //3. 줄의 처음이면,
 	{
@@ -39,6 +41,7 @@ void MoveLeftAction::Perform() {
 		{
 			PageManager::LoadPrevious(this->parent);
 			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
 		}
 
 		//3.2. 첫번째 줄이 아니면,
@@ -52,8 +55,7 @@ void MoveLeftAction::Perform() {
 			//3.2.2. 원래 줄이 더미 줄이 아니면,
 			if (!row->IsDummyRow())
 			{
-				pagingBuffer->PreviousRow();
-				pagingBuffer->Last();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 			}
 		}
 	}

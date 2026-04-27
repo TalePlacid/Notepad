@@ -23,9 +23,11 @@ void MoveLineRearAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. 노트에서 이동한다.
-	Long lastColumnIndex = row->Last();
+	row->Last();
 
 	//3. 페이징 버퍼에서 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->Next(lastColumnIndex - columnIndex);
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long bytes = row->GetNextBytes(columnIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 }

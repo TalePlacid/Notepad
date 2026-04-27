@@ -34,19 +34,22 @@ void GoToAction::Perform() {
 				PagingBuffer* pagingBuffer = notepadForm->pagingBuffer;
 				Glyph* note = notepadForm->note;
 
-				//2.1. 줄의 첫 칸 위치(columnIndex == 0)로 이동한다.
+				//2.1. 줄의 첫 칸 위치로 이동한다.
 				Long rowIndex = note->GetCurrent();
 				Glyph* row = note->GetAt(rowIndex);
 				Long columnIndex = row->GetCurrent();
+				Long bytes = row->GetPreviousBytes(columnIndex);
 				Long firstColumnIndex = row->First();
-				pagingBuffer->Previous(columnIndex - firstColumnIndex);
+				
+				Long currentOffset = pagingBuffer->GetCurrentOffset();
+				pagingBuffer->MoveOffset(currentOffset - bytes);
 
-				//2.2. 줄 시작번호 + 현재 줄위치 - 이동할 줄번호를 구한다.
+				//2.2. 차이를 구한다.
 				Long difference = pagingBuffer->GetRowStartIndex() + note->GetCurrent() - lineNumber;
-				Editor editor(this->parent);
 
-				Long i = 0;
 				//2.3. 음수이면 MoveDown()을 횟수만큼 반복한다.
+				Editor editor(this->parent);
+				Long i = 0;
 				if (difference < 0)
 				{
 					difference *= -1;

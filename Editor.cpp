@@ -365,32 +365,16 @@ void Editor::MoveUp() {
 		previousRow->Move(nearestIndex);
 
 		//2.2. 페이징 버퍼에서 이동한다.
-		Long characters;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
+		Long originalRowBytes = originalRow->GetPreviousBytes(columnIndex);
+		Long previousRowBytes = previousRow->GetNextBytes(nearestIndex);
+		Long targetOffset = currentOffset - originalRowBytes - previousRowBytes;
 		if (!originalRow->IsDummyRow())
 		{
-			pagingBuffer->PreviousRow();
-
-			Long i = rowIndex - 1;
-			while (i >= 0 && note->GetAt(i)->IsDummyRow())
-			{
-				i--;
-			}
-
-			characters = 0;
-			while (i < rowIndex - 1)
-			{
-				characters += note->GetAt(i)->GetLength();
-				i++;
-			}
-			characters += nearestIndex;
-
-			pagingBuffer->Next(characters);
+			targetOffset -= 2;
 		}
-		else
-		{
-			characters = columnIndex + previousRow->GetLength() - nearestIndex;
-			pagingBuffer->Previous(characters);
-		}
+
+		pagingBuffer->MoveOffset(targetOffset);
 	}
 }
 
@@ -424,16 +408,16 @@ void Editor::MoveDown() {
 		nextRow->Move(nearestIndex);
 
 		//2.2. 페이징 버퍼에서 이동한다.
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
+		Long originalRowBytes = originalRow->GetNextBytes(columnIndex);
+		Long nextRowBytes = nextRow->GetPreviousBytes(nearestIndex);
+		Long targetOffset = currentOffset + originalRowBytes + nextRowBytes;
 		if (!nextRow->IsDummyRow())
 		{
-			pagingBuffer->NextRow();
-			pagingBuffer->Move(nearestIndex);
+			targetOffset += 2;
 		}
-		else
-		{
-			Long characters = originalRow->GetLength() - columnIndex + nearestIndex;
-			pagingBuffer->Next(characters);
-		}
+
+		pagingBuffer->MoveOffset(targetOffset);
 	}
 }
 

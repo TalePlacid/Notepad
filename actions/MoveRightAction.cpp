@@ -26,10 +26,13 @@ void MoveRightAction::Perform() {
 
 	//1. 줄의 끝이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long bytes;
 	if (columnIndex < row->GetLength())
 	{
+		bytes = row->GetAt(columnIndex)->GetBytes();
 		columnIndex = row->Next();
-		pagingBuffer->Next();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 	}
 	else
 	{
@@ -51,7 +54,7 @@ void MoveRightAction::Perform() {
 
 			if (!nextRow->IsDummyRow())
 			{
-				pagingBuffer->NextRow();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + 2);
 			}
 		}
 	}

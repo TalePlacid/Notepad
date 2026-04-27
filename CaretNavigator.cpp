@@ -19,6 +19,77 @@ CaretNavigator::~CaretNavigator() {
 }
 
 Long CaretNavigator::MoveTo(Long offset) {
+	//1. 현재 줄의 첫 위치로 이동한다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+	Long bytes = row->GetPreviousBytes(columnIndex);
+	columnIndex = row->First();
+
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
+
+	//2. 현재 오프셋이 지정 offset보다 이전이면 반복한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	Scroll vScroll;
+	Long pageMax;
+	while (currentOffset < offset && rowIndex < note->GetLength() - 1)
+	{
+		vScroll = scrollController->GetVScroll();
+		pageMax = vScroll.GetPos() + vScroll.GetPage();
+		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
+		{
+			PageManager::LoadNext(this->parent);
+			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
+		}
+
+		bytes = row->GetBytes();
+		rowIndex = note->Next();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->First();
+		if (!row->IsDummyRow())
+		{
+			bytes += 2;
+		}
+
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
+	}
+
+	//3. 현재 offset이 지정 offset보다 이후이면 반복한다.
+	while (currentOffset > offset)
+	{
+		if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
+		{
+			PageManager::LoadPrevious(this->parent);
+			rowIndex = note->GetCurrent();
+			row = note->GetAt(rowIndex);
+		}
+
+		bytes = 2;
+		if (row->IsDummyRow())
+		{
+			bytes = 0;
+		}
+		rowIndex = note->Previous();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->First();
+
+		bytes += row->GetBytes();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
+	}
+
+	//4. 지정 offset과 같아질때까지 반복한다.
+	while (currentOffset < offset)
+	{
+		bytes = row->GetAt(columnIndex)->GetBytes();
+		columnIndex = row->Next();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
+	}
+
+#if 0
 	//1. 줄의 처음으로 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Long currentOffset = pagingBuffer->First();
@@ -139,6 +210,8 @@ Long CaretNavigator::MoveTo(Long offset) {
 			}
 		}
 	}
+
+#endif
 	return pagingBuffer->GetCurrentOffset();
 }
 

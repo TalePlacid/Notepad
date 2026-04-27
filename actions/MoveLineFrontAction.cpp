@@ -23,9 +23,11 @@ void MoveLineFrontAction::Perform() {
 	Long columnIndex = row->GetCurrent();
 
 	//2. 노트에서 이동한다.
-	Long firstColumnIndex = row->First();
+	row->First();
 
 	//3. 페이징 버퍼에서 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	pagingBuffer->Previous(columnIndex - firstColumnIndex);
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long bytes = row->GetPreviousBytes(columnIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 }
