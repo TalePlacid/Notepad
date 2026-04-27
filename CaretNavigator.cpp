@@ -148,7 +148,10 @@ void CaretNavigator::MoveCaretUpToAbsoluteRow(Long absoluteRowIndex, Long rowWid
 	Glyph* currentRow = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = currentRow->GetCurrent();
 	currentRow->First();
-	pagingBuffer->Previous(currentColumnIndex);
+
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long bytes = currentRow->GetPreviousBytes(currentColumnIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 	while (currentRowIndex > targetRowIndex)
 	{
 		previousRow = currentRow;
@@ -157,16 +160,18 @@ void CaretNavigator::MoveCaretUpToAbsoluteRow(Long absoluteRowIndex, Long rowWid
 		currentColumnIndex = currentRow->Last();
 		if (!previousRow->IsDummyRow())
 		{
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 		}
+
 		currentRow->First();
-		pagingBuffer->Previous(currentRow->GetLength());
+		bytes = currentRow->GetBytes();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 	}
 
 	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRowIndex, rowWidth);
 	currentRow->Move(nearestIndex);
-	pagingBuffer->Next(nearestIndex);
+	bytes = currentRow->GetPreviousBytes(nearestIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 }
 
 void CaretNavigator::MoveCaretDownToAbsoluteRow(Long absoluteRowIndex, Long rowWidth) {
@@ -198,26 +203,28 @@ void CaretNavigator::MoveCaretDownToAbsoluteRow(Long absoluteRowIndex, Long rowW
 	Glyph* currentRow = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = currentRow->GetCurrent();
 	currentRow->First();
-	pagingBuffer->Previous(currentColumnIndex);
+
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long bytes = currentRow->GetPreviousBytes(currentColumnIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 	while (currentRowIndex < targetRowIndex)
 	{
 		previousRow = currentRow;
 		currentRowIndex = note->Next();
 		currentRow = note->GetAt(currentRowIndex);
 		currentRow->First();
-		if (currentRow->IsDummyRow())
+		bytes = previousRow->GetBytes();
+		if (!currentRow->IsDummyRow())
 		{
-			pagingBuffer->Next(previousRow->GetLength());
+			bytes += 2;
 		}
-		else
-		{
-			pagingBuffer->NextRow();
-		}
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 	}
 
 	Long nearestIndex = ((NotepadForm*)(this->parent))->sizeCalculator->GetNearestColumnIndex(currentRowIndex, rowWidth);
 	currentRow->Move(nearestIndex);
-	pagingBuffer->Next(nearestIndex);
+	bytes = currentRow->GetPreviousBytes(nearestIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 }
 
 void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
@@ -263,14 +270,17 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 
 	//4. 줄 수 만큼 반복한다.
 	Long nearestIndex;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	Long i = 0;
 	while (i < rowCount && rowIndex + 1 < note->GetLength())
 	{
 		//4.1. 줄의 끝까지 반복한다.
 		while (columnIndex < row->GetLength())
 		{
+			bytes = row->GetAt(columnIndex)->GetBytes();
 			columnIndex = row->Next();
-			pagingBuffer->Next();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 		}
 
 		//4.2. 다음줄로 이동한다.
@@ -280,15 +290,16 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 
 		if (!row->IsDummyRow())
 		{
-			pagingBuffer->NextRow();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + 2);
 		}
 
 		//4.3. 가까운 위치까지 반복한다.
 		nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, rowWidth);
 		while (columnIndex < nearestIndex)
 		{
+			bytes = row->GetAt(columnIndex)->GetBytes();
 			columnIndex = row->Next();
-			pagingBuffer->Next();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 		}
 		i++;
 	}
@@ -338,6 +349,8 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 	//4. 줄 수 만큼 반복한다.
 	Long nearestIndex;
 	Glyph* previousRow;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	Long i = 0;
 	while (i < rowCount && rowIndex > 0)
 	{
@@ -346,7 +359,8 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 		while (columnIndex > 0)
 		{
 			columnIndex = row->Previous();
-			pagingBuffer->Previous();
+			bytes = row->GetAt(columnIndex)->GetBytes();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 		}
 
 		//4.2. 윗 줄로 이동한다.
@@ -357,8 +371,7 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 
 		if (!previousRow->IsDummyRow())
 		{
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 		}
 
 		//4.3. 가까운 위치까지 반복한다.
@@ -366,7 +379,8 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 		while (columnIndex > nearestIndex)
 		{
 			columnIndex = row->Previous();
-			pagingBuffer->Previous();
+			bytes = row->GetAt(columnIndex)->GetBytes();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 		}
 
 		i++;
