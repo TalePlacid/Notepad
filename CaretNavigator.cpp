@@ -178,14 +178,16 @@ void CaretNavigator::MoveCaretDownToAbsoluteRow(Long absoluteRowIndex, Long rowW
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-	Long previousRowStartIndex = -1;
-	while (absoluteRowIndex >= rowStartIndex + note->GetLength() && previousRowStartIndex != rowStartIndex)
+	Long rowEndIndex = rowStartIndex + note->GetLength();
+	Long previousRowEndIndex = -1;
+	while (absoluteRowIndex >= rowEndIndex && previousRowEndIndex != rowEndIndex)
 	{
-		previousRowStartIndex = rowStartIndex;
+		previousRowEndIndex = rowStartIndex + note->GetLength();
 		PageManager::LoadNext(this->parent);
 		note = ((NotepadForm*)(this->parent))->note;
 		pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		rowStartIndex = pagingBuffer->GetRowStartIndex();
+		rowEndIndex = rowStartIndex + note->GetLength();
 	}
 
 	Long targetRowIndex = absoluteRowIndex - rowStartIndex;
@@ -266,6 +268,7 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 		{
 			rowIndexToMove++;
 		}
+		rowCount = rowIndexToMove - rowIndex;
 	}
 
 	//4. 줄 수 만큼 반복한다.
@@ -344,6 +347,7 @@ void CaretNavigator::AdjustCaretDownToVScroll(Long rowWidth) {
 		{
 			rowIndexToMove = 0;
 		}
+		rowCount = rowIndex - rowIndexToMove;
 	}
 
 	//4. 줄 수 만큼 반복한다.
