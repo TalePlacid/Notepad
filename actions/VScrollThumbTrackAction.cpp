@@ -36,21 +36,19 @@ void VScrollThumbTrackAction::Perform() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	Long rowHeight = sizeCalculator->GetRowHeight();
+	Long absoluteRowIndex = pos / rowHeight;
 
-	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
 	Long rowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
+	Long currentAbsoluteRowIndex = rowStartIndex + rowIndex;
 
 	CaretNavigator caretNavigator(this->parent);
-	if (currentPos < pos)
+	if (absoluteRowIndex < currentAbsoluteRowIndex)
 	{
-		caretNavigator.AdjustCaretUpToVScroll(rowWidth);
+		caretNavigator.MoveCaretUpToAbsoluteRow(absoluteRowIndex, rowWidth);
 	}
-
-	Scroll vScroll = scrollController->GetVScroll();
-	Long page = vScroll.GetPage();
-	if (currentPos + rowHeight > pos + page)
+	else if (absoluteRowIndex > currentAbsoluteRowIndex)
 	{
-		caretNavigator.AdjustCaretDownToVScroll(rowWidth);
+		caretNavigator.MoveCaretDownToAbsoluteRow(absoluteRowIndex, rowWidth);
 	}
 }
 

@@ -26,12 +26,12 @@ void VScrollThumbPositionAction::Perform() {
 
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Long pos = scrollController->MoveVScroll(scrollInfo.nPos);
-
+	
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long rowHeight = sizeCalculator->GetRowHeight();
 	Long absoluteRowIndex = pos / rowHeight;
-
+	
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long currentRowIndex = note->GetCurrent();
 	Glyph* currentRow = note->GetAt(currentRowIndex);
