@@ -59,12 +59,14 @@ void EraseAfterCaretCommand::Execute() {
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	BOOL hasTarget = FALSE;
+	Long bytes = 0;
 	Long vScrollChanged = 0;
 	if (columnIndex < row->GetLength())
 	{
 		hasTarget = TRUE;
 
 		Glyph* letter = row->GetAt(columnIndex);
+		bytes = letter->GetBytes();
 		this->character[0] = ((char*)*letter)[0];
 		if (letter->IsMultiByteCharacter())
 		{
@@ -87,6 +89,7 @@ void EraseAfterCaretCommand::Execute() {
 			hasTarget = TRUE;
 			this->character[0] = '\r';
 			this->character[1] = '\n';
+			bytes = 2;
 
 			noteWidthCache->Remove(rowIndex + 1);
 			note->MergeRows(rowIndex);
@@ -99,6 +102,7 @@ void EraseAfterCaretCommand::Execute() {
 		{
 			hasTarget = TRUE;
 			Glyph* letter = nextRow->GetAt(0);
+			bytes = letter->GetBytes();
 			this->character[0] = ((char*)*letter)[0];
 			if (letter->IsMultiByteCharacter())
 			{
@@ -128,18 +132,9 @@ void EraseAfterCaretCommand::Execute() {
 	//4. 페이징버퍼에서 지운다.
 	if (hasTarget && this->onChar)
 	{
-		Long originalOffset = pagingBuffer->GetCurrentOffset();
-		if (this->character[0] == '\r')
-		{
-			pagingBuffer->NextRow();
-			pagingBuffer->Remove();
-		}
-		else
-		{
-			pagingBuffer->Next();
-			pagingBuffer->Remove();
-		}
-		pagingBuffer->MoveOffset(originalOffset);
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
+		pagingBuffer->MoveOffset(currentOffset + bytes);
+		pagingBuffer->Remove();
 		this->isUndoable = TRUE;
 	}
 
@@ -243,11 +238,13 @@ void EraseAfterCaretCommand::Redo() {
 
 		//1.3. 지울 대상을 다시 지운다.
 		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
+		Long bytes = 0;
 		Long vScrollChanged = 0;
 		if (this->character[0] != '\r')
 		{
 			if (columnIndex < row->GetLength())
 			{
+				bytes = row->GetAt(columnIndex)->GetBytes();
 				row->Remove(columnIndex);
 				columnIndex = row->Move(columnIndex);
 				noteWidthCache->MarkDirty(rowIndex);
@@ -257,6 +254,7 @@ void EraseAfterCaretCommand::Redo() {
 				Glyph* nextRow = note->GetAt(rowIndex + 1);
 				if (nextRow->GetLength() > 0)
 				{
+					bytes = nextRow->GetAt(0)->GetBytes();
 					nextRow->Remove(0);
 					columnIndex = row->Move(columnIndex);
 					noteWidthCache->MarkDirty(rowIndex + 1);
@@ -265,6 +263,7 @@ void EraseAfterCaretCommand::Redo() {
 		}
 		else if (rowIndex + 1 < note->GetLength())
 		{
+			bytes = 2;
 			note->MergeRows(rowIndex);
 			noteWidthCache->Remove(rowIndex + 1);
 
@@ -285,17 +284,8 @@ void EraseAfterCaretCommand::Redo() {
 		}
 
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		if (this->character[0] == '\r')
-		{
-			pagingBuffer->NextRow();
-			pagingBuffer->Remove();
-		}
-		else
-		{
-			pagingBuffer->Next();
-			pagingBuffer->Remove();
-		}
-		pagingBuffer->MoveOffset(this->offset);
+		pagingBuffer->MoveOffset(this->offset + bytes);
+		pagingBuffer->Remove();
 
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
