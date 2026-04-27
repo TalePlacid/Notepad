@@ -43,13 +43,15 @@ void SelectUpAction::Perform() {
 		Long originalRowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		//3.2. 줄의 처음까지 반복한다.
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
 		while (columnIndex > 0)
 		{
 			columnIndex = row->Previous();
 			row->GetAt(columnIndex)->ToggleSelection();
 
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->Previous();
+			currentOffset -= row->GetAt(columnIndex)->GetBytes();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 
@@ -61,8 +63,7 @@ void SelectUpAction::Perform() {
 		if (!row->IsDummyRow())
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 
@@ -74,7 +75,8 @@ void SelectUpAction::Perform() {
 			movedRow->GetAt(columnIndex)->ToggleSelection();
 
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->Previous();
+			currentOffset -= movedRow->GetAt(columnIndex)->GetBytes();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}

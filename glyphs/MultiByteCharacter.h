@@ -15,6 +15,7 @@ public:
 	virtual string MakeString();
 	virtual bool IsWordCharacter();
 	virtual bool IsMultiByteCharacter();
+	virtual Long GetBytes();
 
 	bool IsEqual(const MultiByteCharacter& other);
 	bool IsEqual(const char(*content));
@@ -35,6 +36,10 @@ private:
 
 inline char* MultiByteCharacter::GetContent() const {
 	return const_cast<char*>(this->content);
+}
+
+inline Long MultiByteCharacter::GetBytes() {
+	return 2;
 }
 
 #endif // !_MULTIBYTECHARACTER_H

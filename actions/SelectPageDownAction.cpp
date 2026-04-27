@@ -45,6 +45,8 @@ void SelectPageDownAction::Perform() {
 		//1.3. 마지막줄이 아니고, 내려가야할 줄 수가 남았으면,
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		Long pageMax;
+		Long bytes;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
 		Long i = 0;
 		while (rowIndex + 1 < note->GetLength() && i < rowCount)
 		{
@@ -61,10 +63,11 @@ void SelectPageDownAction::Perform() {
 			while (columnIndex < row->GetLength())
 			{
 				row->GetAt(columnIndex)->ToggleSelection();
+				bytes = row->GetAt(columnIndex)->GetBytes();
 				columnIndex = row->Next();
 
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->Next();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 				pagingBuffer->EndSelectionIfCollapsed();
 			}
 
@@ -76,7 +79,7 @@ void SelectPageDownAction::Perform() {
 			if (!row->IsDummyRow())
 			{
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->NextRow();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + 2);
 				pagingBuffer->EndSelectionIfCollapsed();
 			}
 
@@ -85,10 +88,11 @@ void SelectPageDownAction::Perform() {
 			while (columnIndex < nearestIndex)
 			{
 				row->GetAt(columnIndex)->ToggleSelection();
+				bytes = row->GetAt(columnIndex)->GetBytes();
 				columnIndex = row->Next();
 
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->Next();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 				pagingBuffer->EndSelectionIfCollapsed();
 			}
 

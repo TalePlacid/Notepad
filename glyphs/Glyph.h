@@ -58,6 +58,10 @@ public:
 	virtual Glyph* operator[](Long index);
 	virtual operator char*() const;
 
+	virtual Long GetBytes();
+	virtual Long GetPreviousBytes(Long index);
+	virtual Long GetNextBytes(Long index);
+
 	virtual Long GetCapacity() const;
 	virtual Long GetLength() const;
 	virtual Long GetCurrent() const;
@@ -87,6 +91,18 @@ inline bool Glyph::IsAboveTopLine(Long index) {
 
 inline bool Glyph::IsBelowBottomLine(Long index) {
 	return false;
+}
+
+inline Long Glyph::GetBytes() {
+	return 0;
+}
+
+inline Long Glyph::GetPreviousBytes(Long index) {
+	return 0;
+}
+
+inline Long Glyph::GetNextBytes(Long index) {
+	return 0;
 }
 
 #endif // !_GLYPH_H

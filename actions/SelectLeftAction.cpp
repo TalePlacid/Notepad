@@ -25,17 +25,20 @@ void SelectLeftAction::Perform() {
 
 	//2. 줄의 처음이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (columnIndex > 0)
 	{
 		//2.1. 노트에서 이동한다.
 		columnIndex = row->Previous();
+		bytes = row->GetAt(columnIndex)->GetBytes();
 
 		//2.2. 노트에서 선택한다.
 		row->GetAt(columnIndex)->ToggleSelection();
 
 		//2.3. 페이징 버퍼에서 선택과 이동한다.
 		pagingBuffer->BeginSelectionIfNeeded();
-		pagingBuffer->Previous();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 		pagingBuffer->EndSelectionIfCollapsed();
 	}
 	else //3. 줄의 처음이면,
@@ -60,8 +63,7 @@ void SelectLeftAction::Perform() {
 			if (!row->IsDummyRow())
 			{
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->PreviousRow();
-				pagingBuffer->Last();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 				pagingBuffer->EndSelectionIfCollapsed();
 			}
 		}		

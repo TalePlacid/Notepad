@@ -638,6 +638,7 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 	}
 
 	this->isDirty = TRUE;
+	this->Notify("ChangeCaret");
 	this->Notify("UpdateStatusBar");
 	this->Notify("UpdateCaptionUnsaved");
 	this->Invalidate();
@@ -666,10 +667,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 			this->captionController->RemoveInProgressCaption();
 		}
 
-		if (action->NeedUpdateCaption())
-		{
-			this->captionController->UpdateCaption();
-		}
 
 		if (action->NeedScrollBarUpdate())
 		{

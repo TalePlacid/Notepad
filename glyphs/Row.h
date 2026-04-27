@@ -23,6 +23,10 @@ public:
 	virtual Long SelectRange(Long start, Long end, bool isSelecting = true);
 	virtual Long FindPreviousWordStart(Long columnIndex);
 	virtual Long FindNextWordStart(Long columnIndex);
+
+	virtual Long GetBytes();
+	virtual Long GetPreviousBytes(Long index);
+	virtual Long GetNextBytes(Long index);
 };
 
 #endif // !_ROW_H

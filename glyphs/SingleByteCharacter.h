@@ -15,6 +15,7 @@ public:
 	virtual Glyph* Clone();
 	virtual string MakeString();
 	virtual bool IsWordCharacter();
+	virtual Long GetBytes();
 
 	bool IsEqual(const SingleByteCharacter& other);
 	bool IsEqual(const char content);
@@ -35,6 +36,10 @@ private:
 
 inline char SingleByteCharacter::GetContent() const {
 	return this->content;
+}
+
+inline Long SingleByteCharacter::GetBytes() {
+	return 1;
 }
 
 #endif // !_SINGLEBYTECHARACTER_H

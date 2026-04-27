@@ -27,25 +27,25 @@ void SelectWordRightAction::Perform() {
 
 	//2. 줄의 끝이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Long currentOffset;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (columnIndex < row->GetLength())
 	{
-		//2.1. 노트에서 다음 단어 시작으로 이동한다.
+		//2.1. 다음 단어 시작을 찾는다.
 		Long wordStart = row->FindNextWordStart(columnIndex);
-		Long movedIndex = row->Move(wordStart);
 
-		//2.2. 노트에서 범위만큼 선택한다.
-		row->ToggleSelection(columnIndex, movedIndex);
-
-		//2.3. 차이만큼 반복한다.
-		Long difference = movedIndex - columnIndex;
-		Long i = 0;
-		while (i < difference)
+		//2.2. 다음 단어 시작까지 반복한다.
+		Long bytes;
+		while (columnIndex < wordStart)
 		{
+			//2.2.1. 노트에서 선택하면 이동한다.
+			row->GetAt(columnIndex)->ToggleSelection();
+			bytes = row->GetAt(columnIndex)->GetBytes();
+			columnIndex = row->Next();
+
+			//2.2.2. 페이징 버퍼에서 선택하며 이동한다.
 			pagingBuffer->BeginSelectionIfNeeded();
-			currentOffset = pagingBuffer->Next();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
-			i++;
 		}
 	}
 	else //3. 줄의 끝이면,
@@ -57,19 +57,24 @@ void SelectWordRightAction::Perform() {
 		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 		{
 			PageManager::LoadNext(this->parent);
+			rowIndex = note->GetCurrent();
 		}
 
-		//3.2. 노트에서 이동한다.
-		rowIndex = note->Next();
-		row = note->GetAt(rowIndex);
-		columnIndex = row->First();
-
-		//3.3. 줄이 진짜이면,
-		if (!row->IsDummyRow())
+		//3.2. 마지막줄이 아니면,
+		if (rowIndex + 1 < note->GetLength())
 		{
-			pagingBuffer->BeginSelectionIfNeeded();
-			currentOffset = pagingBuffer->NextRow();
-			pagingBuffer->EndSelectionIfCollapsed();
+			//3.2.1. 노트에서 이동한다.
+			rowIndex = note->Next();
+			row = note->GetAt(rowIndex);
+			columnIndex = row->First();
+
+			//3.2.2. 줄이 진짜이면, 페이징버퍼에서 선택하며 이동한다.
+			if (!row->IsDummyRow())
+			{
+				pagingBuffer->BeginSelectionIfNeeded();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + 2);
+				pagingBuffer->EndSelectionIfCollapsed();
+			}
 		}
 	}
 }

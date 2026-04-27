@@ -24,13 +24,16 @@ void SelectLineRearAction::Perform() {
 
 	//2. 줄의 끝까지 반복한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	while (columnIndex < row->GetLength())
 	{
 		row->GetAt(columnIndex)->ToggleSelection();
+		bytes = row->GetAt(columnIndex)->GetBytes();
 		columnIndex = row->Next();
 
 		pagingBuffer->BeginSelectionIfNeeded();
-		pagingBuffer->Next();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 		pagingBuffer->EndSelectionIfCollapsed();
 	}
 }

@@ -45,17 +45,21 @@ void SelectDownAction::Perform() {
 		Long originalWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
 
 		//3.2. 줄의 끝까지 반복한다.
+		Long bytes;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
 		while (columnIndex < row->GetLength())
 		{
 			row->GetAt(columnIndex)->ToggleSelection();
+			bytes = row->GetAt(columnIndex)->GetBytes();
 			columnIndex = row->Next();
 
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->Next();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 
 		//3.3. 노트에서 이동한다.
+		bytes = row->GetNextBytes(columnIndex) + 2;
 		rowIndex = note->Next();
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
@@ -63,7 +67,7 @@ void SelectDownAction::Perform() {
 		if (!row->IsDummyRow())
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->NextRow();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 
@@ -72,10 +76,11 @@ void SelectDownAction::Perform() {
 		while (columnIndex < nearestIndex)
 		{
 			row->GetAt(columnIndex)->ToggleSelection();
+			bytes = row->GetAt(columnIndex)->GetBytes();
 			columnIndex = row->Next();
 
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->Next();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}

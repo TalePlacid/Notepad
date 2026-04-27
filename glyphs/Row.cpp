@@ -127,6 +127,42 @@ Long Row::FindNextWordStart(Long columnIndex) {
 	return ret;
 }
 
+Long Row::GetBytes() {
+	Long bytes = 0;
+	Long i = 0;
+	while (i < this->length)
+	{
+		bytes += this->glyphs[i]->GetBytes();
+		i++;
+	}
+
+	return bytes;
+}
+
+Long Row::GetPreviousBytes(Long index) {
+	Long bytes = 0;
+	Long i = 0;
+	while (i < index)
+	{
+		bytes += this->glyphs[i]->GetBytes();
+		i++;
+	}
+
+	return bytes;
+}
+
+Long Row::GetNextBytes(Long index) {
+	Long bytes = 0;
+	Long i = index;
+	while (i < this->length)
+	{
+		bytes += this->glyphs[i]->GetBytes();
+		i++;
+	}
+
+	return bytes;
+}
+
 #if 0
 
 #include <iostream>

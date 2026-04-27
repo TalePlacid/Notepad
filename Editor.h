@@ -14,8 +14,10 @@ public:
 	void EraseRange(Long frontOffset, Long rearOffset, CString text, Long& columnIndex);
 	void Replace(Long offset, CString sourceText, CString replacingText, 
 		BOOL isSelected, Long& columnIndex);
+
 	void MoveUp();
 	void MoveDown();
+
 	void DragUp(CPoint point);
 	void DragDown(CPoint point);
 	void DragLeft(CPoint point);

@@ -27,17 +27,20 @@ void SelectRightAction::Perform() {
 
 	//2. 줄의 끝이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (columnIndex < row->GetLength())
 	{
 		//2.1. 노트에서 선택한다.
 		row->GetAt(columnIndex)->ToggleSelection();
+		bytes = row->GetAt(columnIndex)->GetBytes();
 
 		//2.2. 노트에서 이동한다.
 		columnIndex = row->Next();
 
 		//2.3. 페이징 버퍼에서 선택과 이동한다.
 		pagingBuffer->BeginSelectionIfNeeded();
-		pagingBuffer->Next();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 		pagingBuffer->EndSelectionIfCollapsed();
 	}
 	else //3. 줄의 끝이면,
@@ -49,6 +52,7 @@ void SelectRightAction::Perform() {
 		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
 		{
 			PageManager::LoadNext(this->parent);
+			rowIndex = note->GetCurrent();
 		}
 
 		//3.2. 마지막줄이 아니면,
@@ -63,7 +67,7 @@ void SelectRightAction::Perform() {
 			if (!row->IsDummyRow())
 			{
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->NextRow();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + 2);
 				pagingBuffer->EndSelectionIfCollapsed();
 			}
 		}

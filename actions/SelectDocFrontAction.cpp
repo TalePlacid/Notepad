@@ -17,12 +17,15 @@ SelectDocFrontAction::~SelectDocFrontAction() {
 
 void SelectDocFrontAction::Perform() {
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-
-	if (selectionBeginOffset < 0)
+	if (pagingBuffer->GetFileEndOffset() > 0)
 	{
-		pagingBuffer->MarkSelectionBegin();
-	}
+		Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
 
-	PageManager::LoadFirst(this->parent);
+		if (selectionBeginOffset < 0)
+		{
+			pagingBuffer->MarkSelectionBegin();
+		}
+
+		PageManager::LoadFirst(this->parent);
+	}
 }

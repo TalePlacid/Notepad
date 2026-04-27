@@ -25,24 +25,28 @@ void SelectWordLeftAction::Perform() {
 
 	//2. 줄의 처음이 아니면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	if (columnIndex > 0)
 	{
-		//2.1. 노트에서 이동한다.
+		//2.1. 단어 시작을 찾는다.
 		Long wordStart = row->FindPreviousWordStart(columnIndex);
-		Long moved = row->Move(wordStart);
 
-		//2.2. 노트에서 선택한다.
-		row->ToggleSelection(moved, columnIndex);
-
-		//2.3. 페이징버퍼에서 선택하며 이동한다.
-		Long count = columnIndex - moved;
-		Long i = 0;
-		while (i < count)
+		//2.2. 단어 시작까지 반복한다.
+		Long bytes;
+		Long i = columnIndex;
+		while (i > wordStart)
 		{
+			//2.2.1. 노트에서 이동하면 선택한다.
+			columnIndex = row->Previous();
+			row->GetAt(columnIndex)->ToggleSelection();
+			bytes = row->GetAt(columnIndex)->GetBytes();
+
+			//2.2.2. 페이징 버퍼에서 선택하며 이동한다.
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->Previous();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
-			i++;
+
+			i--;
 		}
 	}
 	else //3. 줄의 처음이면,
@@ -67,8 +71,7 @@ void SelectWordLeftAction::Perform() {
 			if (!row->IsDummyRow())
 			{
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->PreviousRow();
-				pagingBuffer->Last();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 				pagingBuffer->EndSelectionIfCollapsed();
 			}
 		}
