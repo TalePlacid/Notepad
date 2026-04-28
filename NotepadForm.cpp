@@ -627,7 +627,6 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 	}
 
 	this->isDirty = TRUE;
-	this->Notify("ChangeCaret");
 	this->Notify("UpdateStatusBar");
 	this->Notify("UpdateCaptionUnsaved");
 	this->Invalidate();
@@ -667,7 +666,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 		delete action;
 	}
 
-	this->Notify("ChangeCaret");
 	this->Notify("UpdateStatusBar");
 	this->Notify("UpdateCaptionUnsaved");
 	this->Invalidate();
