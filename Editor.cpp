@@ -662,6 +662,8 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 			Glyph* character;
 			Long characterLength;
 
+			Long bytes;
+			Long currentOffset = pagingBuffer->GetCurrentOffset();
 			Long i = 0;
 			while (i < option.findString.GetLength())
 			{
@@ -676,10 +678,11 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 					}
 
 					row->GetAt(columnIndex)->Select(true);
+					bytes = row->GetAt(columnIndex)->GetBytes();
 					columnIndex = row->Next();
 
 					pagingBuffer->BeginSelectionIfNeeded();
-					pagingBuffer->Next();
+					currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 				}
 				else
 				{
@@ -749,6 +752,8 @@ bool Editor::FindPrevious() {
 		Glyph* character;
 		Long characterLength;
 		
+		Long bytes;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
 		Long i = 0;
 		while (i < option.findString.GetLength())
 		{
@@ -763,10 +768,11 @@ bool Editor::FindPrevious() {
 				}
 
 				row->GetAt(columnIndex)->Select(true);
+				bytes = row->GetAt(columnIndex)->GetBytes();
 				columnIndex = row->Next();
 
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->Next();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			}
 			else
 			{
@@ -835,6 +841,8 @@ bool Editor::FindNext() {
 		Glyph* character;
 		Long characterLength;
 		
+		Long bytes;
+		Long currentOffset = pagingBuffer->GetCurrentOffset();
 		Long i = 0;
 		while (i < option.findString.GetLength())
 		{
@@ -849,10 +857,11 @@ bool Editor::FindNext() {
 				}
 
 				row->GetAt(columnIndex)->Select(true);
+				bytes = row->GetAt(columnIndex)->GetBytes();
 				columnIndex = row->Next();
 
 				pagingBuffer->BeginSelectionIfNeeded();
-				pagingBuffer->Next();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			}
 			else
 			{
