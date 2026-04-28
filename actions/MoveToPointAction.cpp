@@ -34,7 +34,10 @@ void MoveToPointAction::Perform() {
 	Glyph* currentRow = note->GetAt(currentRowIndex);
 	Long currentColumnIndex = currentRow->GetCurrent();
 	currentRow->First();
-	pagingBuffer->Previous(currentColumnIndex);
+
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
+	Long bytes = currentRow->GetPreviousBytes(currentColumnIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 
 	//4. 현재 위치보다 앞이면,
 	Glyph* previousRow;
@@ -49,35 +52,37 @@ void MoveToPointAction::Perform() {
 			currentColumnIndex = currentRow->Last();
 			if (!previousRow->IsDummyRow())
 			{
-				pagingBuffer->PreviousRow();
-				pagingBuffer->Last();
+				currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 			}
 
 			//첫번째 위치로 이동
 			currentRow->First();
-			pagingBuffer->Previous(currentRow->GetLength());
+			bytes = currentRow->GetPreviousBytes(currentColumnIndex);
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 		}
 	}
 	else //5. 현재 위치보다 뒤이면,
 	{
+		Long previousColumnIndex;
 		while (currentRowIndex < rowIndex)
 		{
 			previousRow = currentRow;
+			previousColumnIndex = previousRow->GetCurrent();
 			currentRowIndex = note->Next();
 			currentRow = note->GetAt(currentRowIndex);
 			currentRow->First();
-			if (currentRow->IsDummyRow())
+
+			bytes = previousRow->GetNextBytes(previousColumnIndex);
+			if (!currentRow->IsDummyRow())
 			{
-				pagingBuffer->Next(previousRow->GetLength());
+				bytes += 2;
 			}
-			else
-			{
-				pagingBuffer->NextRow();
-			}
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 		}
 	}
 
 	//6. 칸 위치로 이동한다.
-	currentRow->Move(columnIndex);
-	pagingBuffer->Next(columnIndex);
+	columnIndex = currentRow->Move(columnIndex);
+	bytes = currentRow->GetPreviousBytes(columnIndex);
+	currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 }

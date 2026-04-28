@@ -435,11 +435,13 @@ void Editor::DragUp(CPoint point) {
 	Long currentColumnIndex = row->GetCurrent();
 	
 	//3. 목표 줄까지 위로 선택 이동한다.
-	Glyph* previousRow;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll;
+	Glyph* previousRow;
 	Long difference;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	while (currentRowIndex > rowIndex)
 	{
 		//3.1. 현재 줄의 앞쪽을 선택한다.
@@ -448,7 +450,8 @@ void Editor::DragUp(CPoint point) {
 			pagingBuffer->BeginSelectionIfNeeded();
 			currentColumnIndex = row->Previous();
 			row->GetAt(currentColumnIndex)->ToggleSelection();
-			pagingBuffer->Previous();
+			bytes = row->GetAt(currentColumnIndex)->GetBytes();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 		
@@ -470,8 +473,7 @@ void Editor::DragUp(CPoint point) {
 		if (!previousRow->IsDummyRow())
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->PreviousRow();
-			pagingBuffer->Last();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - 2);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 		
@@ -481,7 +483,8 @@ void Editor::DragUp(CPoint point) {
 			pagingBuffer->BeginSelectionIfNeeded();
 			currentColumnIndex = row->Previous();
 			row->GetAt(currentColumnIndex)->ToggleSelection();
-			pagingBuffer->Previous();
+			bytes = row->GetAt(currentColumnIndex)->GetBytes();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}
@@ -500,12 +503,14 @@ void Editor::DragDown(CPoint point) {
 	Long currentColumnIndex = row->GetCurrent();
 	
 	//3. 목표 줄까지 아래로 선택 이동한다.
-	Glyph* previousRow;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	Scroll vScroll;
 	Long pageMax;
+	Glyph* previousRow;
 	Long difference;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	while (currentRowIndex < rowIndex)
 	{
 		//3.1. 현재 줄의 뒤쪽을 선택한다.
@@ -513,8 +518,9 @@ void Editor::DragDown(CPoint point) {
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
 			row->GetAt(currentColumnIndex)->ToggleSelection();
+			bytes = row->GetAt(currentColumnIndex)->GetBytes();
 			currentColumnIndex = row->Next();
-			pagingBuffer->Next();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 		
@@ -537,7 +543,7 @@ void Editor::DragDown(CPoint point) {
 		if (!row->IsDummyRow())
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
-			pagingBuffer->NextRow();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + 2);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 		
@@ -546,8 +552,9 @@ void Editor::DragDown(CPoint point) {
 		{
 			pagingBuffer->BeginSelectionIfNeeded();
 			row->GetAt(currentColumnIndex)->ToggleSelection();
+			bytes = row->GetAt(currentColumnIndex)->GetBytes();
 			currentColumnIndex = row->Next();
-			pagingBuffer->Next();
+			currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 			pagingBuffer->EndSelectionIfCollapsed();
 		}
 	}
@@ -567,12 +574,15 @@ void Editor::DragLeft(CPoint point) {
 	
 	//3. 목표 칸까지 왼쪽으로 선택 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	while (currentColumnIndex > columnIndex)
 	{
 		pagingBuffer->BeginSelectionIfNeeded();
 		currentColumnIndex = row->Previous();
 		row->GetAt(currentColumnIndex)->ToggleSelection();
-		pagingBuffer->Previous();
+		bytes = row->GetAt(currentColumnIndex)->GetBytes();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 		pagingBuffer->EndSelectionIfCollapsed();
 	}
 }
@@ -591,15 +601,19 @@ void Editor::DragRight(CPoint point) {
 	
 	//3. 목표 칸까지 오른쪽으로 선택 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Long bytes;
+	Long currentOffset = pagingBuffer->GetCurrentOffset();
 	while (currentColumnIndex < columnIndex)
 	{
 		pagingBuffer->BeginSelectionIfNeeded();
 		row->GetAt(currentColumnIndex)->ToggleSelection();
+		bytes = row->GetAt(currentColumnIndex)->GetBytes();
 		currentColumnIndex = row->Next();
-		pagingBuffer->Next();
+		currentOffset = pagingBuffer->MoveOffset(currentOffset + bytes);
 		pagingBuffer->EndSelectionIfCollapsed();
 	}
 }
+
 Long Editor::Find(FindReplaceOption findReplaceOption) {
 	//1. 검색옵션을 최신화한다.
 	SearchResultController* searchResultController = ((NotepadForm*)(this->parent))->searchResultController;
@@ -638,7 +652,6 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 			//4.2.2. 위치로 이동한다.
 			CaretNavigator caretNavigator(this->parent);
 			caretNavigator.MoveTo(searchResultController->GetAt(nearestIndex));
-			
 			caretNavigator.NormalizeColumn(0);
 
 			//4.2.3. 선택한다.
