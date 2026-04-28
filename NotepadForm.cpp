@@ -79,7 +79,6 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_TIMER()
 	END_MESSAGE_MAP()
 
-
 NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* statusBarController) {
 	this->parent = parent;
 	this->note = NULL;
@@ -601,17 +600,7 @@ void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar,
 		isSelected, findReplaceOption);
 	if (command != NULL)
 	{
-		if (command->NeedInProgressCaption())
-		{
-			this->captionController->AddInProgressCaption();
-		}
-
 		command->Execute();
-
-		if (command->NeedInProgressCaption())
-		{
-			this->captionController->RemoveInProgressCaption();
-		}
 
 		if (command->NeedNoteTruncation())
 		{
@@ -649,11 +638,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	Action* action = ActionFactory::Create(this, nID, findReplaceOption, point, zDelta);
 	if (action != NULL)
 	{
-		if (action->NeedInProgressCaption())
-		{
-			this->captionController->AddInProgressCaption();
-		}
-
 		action->Perform();
 
 		if (action->NeedNoteTruncation())
@@ -661,12 +645,6 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 			KillTimer(TIMER_ID_LAZY_TRIM);
 			SetTimer(TIMER_ID_LAZY_TRIM, LAZY_TRIM_INTERVAL, NULL);
 		}
-
-		if (action->NeedInProgressCaption())
-		{
-			this->captionController->RemoveInProgressCaption();
-		}
-
 
 		if (action->NeedScrollBarUpdate())
 		{
@@ -694,5 +672,4 @@ void NotepadForm::HandleAction(AppID nID, FindReplaceOption* findReplaceOption,
 	this->Notify("UpdateCaptionUnsaved");
 	this->Invalidate();
 }
-
 

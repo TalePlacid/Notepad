@@ -20,7 +20,6 @@ public:
 	virtual Command* Clone();
 	virtual AppID GetID();
 	virtual bool NeedNoteTruncation();
-	virtual bool NeedInProgressCaption();
 private:
 	Long frontOffset;
 	Long rearOffset;
@@ -34,10 +33,6 @@ inline AppID PasteCommand::GetID() {
 }
 
 inline bool PasteCommand::NeedNoteTruncation() {
-	return true;
-}
-
-inline bool PasteCommand::NeedInProgressCaption() {
 	return true;
 }
 

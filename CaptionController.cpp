@@ -20,19 +20,6 @@ void CaptionController::UpdateCaption() {
 	notepadForm->GetParent()->GetWindowTextA(this->caption);
 }
 
-void CaptionController::AddInProgressCaption() {
-	CString inProgressCaption;
-	inProgressCaption.Format("%s <Ã³¸®Áß>", this->caption);
-
-	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-	notepadForm->GetParent()->SetWindowTextA(inProgressCaption);
-}
-
-void CaptionController::RemoveInProgressCaption() {
-	NotepadForm* notepadForm = (NotepadForm*)(this->parent);
-	notepadForm->GetParent()->SetWindowTextA(this->caption);
-}
-
 void CaptionController::Update(Subject* subject, string interest) {
 	if (interest == "UpdateCaptionUnsaved")
 	{

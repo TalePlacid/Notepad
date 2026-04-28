@@ -10,12 +10,7 @@ public:
 	virtual ~PrintAction();
 
 	virtual void Perform();
-	virtual bool NeedInProgressCaption();
 };
-
-inline bool PrintAction::NeedInProgressCaption() {
-	return true;
-}
 
 #endif // !_PRINTACTION_H
 

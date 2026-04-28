@@ -10,13 +10,8 @@ public:
 	virtual ~SelectPageUpAction();
 
 	virtual void Perform();
-	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 };
-
-inline bool SelectPageUpAction::NeedInProgressCaption() {
-	return true;
-}
 
 inline bool SelectPageUpAction::ShouldKeepSelection() {
 	return true;

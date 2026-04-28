@@ -25,7 +25,6 @@ public:
 	virtual bool IsMacroCommand();
 	virtual bool NeedScrollBarUpdate();
 	virtual bool NeedNoteTruncation();
-	virtual bool NeedInProgressCaption();
 
 	virtual AppID GetID();
 	virtual Long GetOffset();
@@ -56,10 +55,6 @@ inline bool Command::NeedScrollBarUpdate() {
 }
 
 inline bool Command::NeedNoteTruncation() {
-	return false;
-}
-
-inline bool Command::NeedInProgressCaption() {
 	return false;
 }
 

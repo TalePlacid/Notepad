@@ -11,9 +11,6 @@ public:
 
 	void UpdateCaption();
 
-	void AddInProgressCaption();
-	void RemoveInProgressCaption();
-
 	virtual void Update(Subject* subject, string interest);
 private:
 	CWnd* parent;

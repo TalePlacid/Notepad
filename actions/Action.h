@@ -12,7 +12,6 @@ public:
 	virtual bool NeedScrollBarUpdate();
 	virtual bool NeedUpdateLatestPoint();
 	virtual bool NeedNoteTruncation();
-	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 protected:
 	CWnd* parent;
@@ -22,16 +21,11 @@ inline bool Action::NeedScrollBarUpdate() {
 	return true;
 }
 
-
 inline bool Action::NeedUpdateLatestPoint() {
 	return false;
 }
 
 inline bool Action::NeedNoteTruncation() {
-	return false;
-}
-
-inline bool Action::NeedInProgressCaption() {
 	return false;
 }
 

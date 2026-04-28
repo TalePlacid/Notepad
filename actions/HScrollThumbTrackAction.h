@@ -13,12 +13,7 @@ public:
 
 	virtual void Perform();
 	virtual bool NeedScrollBarUpdate();
-	virtual bool NeedInProgressCaption();
 	virtual bool ShouldKeepSelection();
 };
-
-inline bool HScrollThumbTrackAction::NeedInProgressCaption() {
-	return true;
-}
 
 #endif // !_HSCROLLTHUMBTRACKACTION_H
