@@ -48,12 +48,16 @@ public:
 
 	virtual void Accept(Visitor& visitor);
 
+	virtual bool MarkLastPage();
+	virtual bool UnmarkLastPage();
+
 	virtual bool IsAboveTopLine(Long index);
 	virtual bool IsBelowBottomLine(Long index);
 	virtual bool IsDummyRow();
 	virtual bool IsWordCharacter();
 	virtual bool IsMultiByteCharacter();
 	virtual bool IsSelected() const;
+	virtual bool IsLastPage() const;
 
 	virtual Glyph* operator[](Long index);
 	virtual operator char*() const;
@@ -67,6 +71,7 @@ public:
 	virtual Long GetCurrent() const;
 protected:
 	bool isSelected;
+	bool isLastPage;
 };
 
 inline Long Glyph::GetCapacity() const {
@@ -83,6 +88,10 @@ inline Long Glyph::GetCurrent() const {
 
 inline bool Glyph::IsSelected() const {
 	return this->isSelected;
+}
+
+inline bool Glyph::IsLastPage() const {
+	return this->isLastPage;
 }
 
 inline bool Glyph::IsAboveTopLine(Long index) {

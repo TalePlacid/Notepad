@@ -27,10 +27,8 @@ void SelectDownAction::Perform() {
 
 	//2. 적재 범위에서 벗어나면 적재한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-	Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * sizeCalculator->GetRowHeight();
-	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
+	if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex + 1))
 	{
 		PageManager::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();

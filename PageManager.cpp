@@ -30,7 +30,8 @@ void PageManager::LoadFirst(CWnd* parent) {
 
 	TCHAR* loadedContents = NULL;
 	Long loadedByteCount = 0;
-	pagingBuffer->LoadNext(loadedContents, loadedByteCount);
+	bool isFileEndIncluded;
+	pagingBuffer->LoadNext(loadedContents, loadedByteCount, &isFileEndIncluded);
 
 	NoteConverter noteConverter;
 	Glyph* loadedNote = noteConverter.Convert(loadedContents);
@@ -56,6 +57,10 @@ void PageManager::LoadFirst(CWnd* parent) {
 	((NotepadForm*)parent)->noteWidthCache = new NoteWidthCache(parent, ((NotepadForm*)parent)->note);
 
 	Glyph* note = ((NotepadForm*)parent)->note;
+	if (isFileEndIncluded)
+	{
+		note->MarkLastPage();
+	}
 	Long rowIndex = note->First();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->First();
@@ -295,8 +300,12 @@ void PageManager::LoadPrevious(CWnd* parent) {
 
 	//6. 노트에서 아랫 부분을 지운다.
 	Long belowIndex = currentRowIndex + PAGE_ROWCOUNT;
-	note->TruncateAfter(belowIndex);
+	Long truncatedCount = note->TruncateAfter(belowIndex);
 	noteWidthCache->TruncateAfter(belowIndex);
+	if (note->IsLastPage() && truncatedCount > 0)
+	{
+		note->UnmarkLastPage();
+	}
 
 	//7. 수평 스크롤바 최대값을 갱신한다.
 	SizeCalculator* sizeCalculator = ((NotepadForm*)parent)->sizeCalculator;
@@ -373,7 +382,9 @@ void PageManager::LoadNext(CWnd* parent) {
 
 	TCHAR* loadedContents = NULL;
 	Long loadedByteCount = 0;
-	pagingBuffer->LoadNext(loadedContents, loadedByteCount);
+	bool isFileEndIncluded;
+	pagingBuffer->LoadNext(loadedContents, loadedByteCount, &isFileEndIncluded);
+	
 	Glyph* loadedNote = NULL;
 	NoteWidthCache* loadedCache = NULL;
 	if (loadedByteCount > 0)
@@ -396,6 +407,10 @@ void PageManager::LoadNext(CWnd* parent) {
 
 			//4.1.2. 적재된 노트를 붙인다.
 			note->AppendFromRear(loadedNote);
+			if (isFileEndIncluded)
+			{
+				note->MarkLastPage();
+			}
 			noteWidthCache->AppendFromRear(*loadedCache);
 
 			//4.1.3. 로드된 뒷 부분의 선택여부를 반영한다.
@@ -538,9 +553,10 @@ void PageManager::LoadLast(CWnd* parent) {
 		delete ((NotepadForm*)parent)->noteWidthCache;
 	}
 	((NotepadForm*)parent)->noteWidthCache = new NoteWidthCache(parent, ((NotepadForm*)parent)->note);
+	Glyph* note = ((NotepadForm*)parent)->note;
+	note->MarkLastPage();
 
 	//7. 노트에서 마지막으로 이동한다.
-	Glyph* note = ((NotepadForm*)parent)->note;
 	Long rowIndex = note->Last();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->Last();
@@ -600,17 +616,24 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 
 	//3. 현재 줄 아래의 기존 적재분은 버린다.
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)parent)->noteWidthCache;
-	currentRow->TruncateAfter(currentColumnIndex);
+	Long truncatedCount = currentRow->TruncateAfter(currentColumnIndex);
 	noteWidthCache->GetAt(currentRowIndex)->Recalculate(currentRow);
 	noteWidthCache->GetAt(currentRowIndex)->CleanDirty();
-	note->TruncateAfter(currentRowIndex);
+
+	truncatedCount += note->TruncateAfter(currentRowIndex);
 	noteWidthCache->TruncateAfter(currentRowIndex);
+
+	if (note->IsLastPage() && truncatedCount > 0)
+	{
+		note->UnmarkLastPage();
+	}
 
 	//4. 현재 offset의 뒷부분을 다시 읽는다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)parent)->pagingBuffer;
 	TCHAR* loadedContents = NULL;
 	Long loadedByteCount = 0;
-	pagingBuffer->LoadNext(loadedContents, loadedByteCount);
+	bool isFileEndIncluded;
+	pagingBuffer->LoadNext(loadedContents, loadedByteCount, &isFileEndIncluded);
 
 	Glyph* loadedNote = NULL;
 	NoteWidthCache* loadedCache = NULL;
@@ -649,6 +672,11 @@ void PageManager::ReloadAfterErase(CWnd* parent) {
 			note->AppendFromRear(loadedNote);
 			noteWidthCache->AppendFromRear(*loadedCache);
 		}
+	}
+
+	if (isFileEndIncluded)
+	{
+		note->MarkLastPage();
 	}
 
 	if (loadedCache != NULL)
@@ -720,8 +748,13 @@ void PageManager::TrimIfNeeded(CWnd* parent) {
 		aboveRowIndex -= belowRest;
 
 		NoteWidthCache* noteWidthCache = ((NotepadForm*)parent)->noteWidthCache;
-		note->TruncateAfter(belowRowIndex);
+		Long truncatedCount = note->TruncateAfter(belowRowIndex);
+		if (truncatedCount > 0)
+		{
+			note->UnmarkLastPage();
+		}
 		noteWidthCache->TruncateAfter(belowRowIndex);
+
 		note->TruncateBefore(aboveRowIndex);
 		noteWidthCache->TruncateBefore(aboveRowIndex);
 		pagingBuffer->CacheRowStartIndex(aboveRowIndex);

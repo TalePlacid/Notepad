@@ -4,6 +4,7 @@
 
 Glyph::Glyph() {
 	this->isSelected = false;
+	this->isLastPage = false;
 }
 
 Glyph::~Glyph() {
@@ -12,10 +13,12 @@ Glyph::~Glyph() {
 
 Glyph::Glyph(const Glyph& source) {
 	this->isSelected = source.isSelected;
+	this->isLastPage = source.isLastPage;
 }
 
 Glyph& Glyph::operator=(const Glyph& source) {
 	this->isSelected = source.isSelected;
+	this->isLastPage = source.isLastPage;
 
 	return *this;
 }
@@ -62,6 +65,18 @@ Long Glyph::Last() {
 
 Long Glyph::Move(Long index) {
 	return -1;
+}
+
+bool Glyph::MarkLastPage() {
+	this->isLastPage = true;
+	
+	return this->isLastPage;
+}
+
+bool Glyph::UnmarkLastPage() {
+	this->isLastPage = false;
+
+	return this->isLastPage;
 }
 
 bool Glyph::IsDummyRow() {

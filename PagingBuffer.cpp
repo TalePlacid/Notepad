@@ -164,7 +164,7 @@ void PagingBuffer::LoadPrevious(TCHAR*& contents, Long& byteCount) {
 	fseek(this->file, currentOffset, SEEK_SET);
 }
 
-void PagingBuffer::LoadNext(TCHAR*& contents, Long& byteCount) {
+void PagingBuffer::LoadNext(TCHAR*& contents, Long& byteCount, bool* isFileEndIncluded) {
 	//1. 바이트수가 페이지 크기보다 작고, 줄수가 적재 줄수보다 작으면 반복한다.
 	Long currentOffset = ftell(this->file);
 
@@ -196,6 +196,15 @@ void PagingBuffer::LoadNext(TCHAR*& contents, Long& byteCount) {
 	}
 	contents[i] = '\0';
 	byteCount = i;
+
+	if (isFileEndIncluded != NULL)
+	{
+		*isFileEndIncluded = false;
+		if (currentOffset + byteCount >= fileEndOffset)
+		{
+			*isFileEndIncluded = true;
+		}
+	}
 
 	//4. 기존 위치로 이동한다.
 	fseek(this->file, currentOffset, SEEK_SET);

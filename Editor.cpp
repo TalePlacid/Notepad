@@ -381,13 +381,9 @@ void Editor::MoveUp() {
 void Editor::MoveDown() {
 	//1. 다음 줄이 재적재범위에 들어가면, 재적재한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-
-	Scroll vScroll = scrollController->GetVScroll();
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
-	Long pageMax = vScroll.GetPos() + vScroll.GetPage();
-	if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
+	if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex + 1))
 	{
 		PageManager::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();
@@ -436,8 +432,6 @@ void Editor::DragUp(CPoint point) {
 	
 	//3. 목표 줄까지 위로 선택 이동한다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	Scroll vScroll;
 	Glyph* previousRow;
 	Long difference;
 	Long bytes;
@@ -456,8 +450,7 @@ void Editor::DragUp(CPoint point) {
 		}
 		
 		//3.2. 필요하면 이전 페이지를 적재한다.
-		vScroll = scrollController->GetVScroll();
-		if (note->IsAboveTopLine(currentRowIndex) && vScroll.GetPos() > 0)
+		if (note->IsAboveTopLine(currentRowIndex) && pagingBuffer->GetRowStartIndex() > 0)
 		{
 			difference = currentRowIndex - rowIndex;
 			PageManager::LoadPrevious(this->parent);
@@ -525,9 +518,7 @@ void Editor::DragDown(CPoint point) {
 		}
 		
 		//3.2. 필요하면 다음 페이지를 적재한다.
-		vScroll = scrollController->GetVScroll();
-		pageMax = vScroll.GetPos() + vScroll.GetPage();
-		if (note->IsBelowBottomLine(currentRowIndex + 1) && pageMax < vScroll.GetMax())
+		if (!note->IsLastPage() && note->IsBelowBottomLine(currentRowIndex + 1))
 		{
 			difference = rowIndex - currentRowIndex;
 			PageManager::LoadNext(this->parent);

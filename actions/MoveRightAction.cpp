@@ -36,11 +36,7 @@ void MoveRightAction::Perform() {
 	}
 	else
 	{
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		Scroll vScroll = scrollController->GetVScroll();
-		Long pageMax = vScroll.GetPos() + vScroll.GetPage();
-		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
+		if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex + 1))
 		{
 			PageManager::LoadNext(this->parent);
 			rowIndex = note->GetCurrent();

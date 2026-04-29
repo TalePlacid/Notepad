@@ -56,9 +56,7 @@ void MovePageDownAction::Perform() {
 		while (i < rowCount && rowIndex < note->GetLength() - 1)
 		{
 			//1.4.1. 적재범위에서 벗어났으면, 재적재한다.
-			vScroll = scrollController->GetVScroll();
-			Long pageMax = vScroll.GetPos() + vScroll.GetPage();
-			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < vScroll.GetMax())
+			if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex + 1))
 			{
 				PageManager::LoadNext(this->parent);
 				rowIndex = note->GetCurrent();

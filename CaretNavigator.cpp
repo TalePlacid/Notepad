@@ -32,14 +32,9 @@ Long CaretNavigator::MoveTo(Long offset) {
 	currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 
 	//2. 현재 오프셋이 지정 offset보다 이전이면 반복한다.
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	Scroll vScroll;
-	Long pageMax;
 	while (currentOffset < offset && rowIndex < note->GetLength() - 1)
 	{
-		vScroll = scrollController->GetVScroll();
-		pageMax = vScroll.GetPos() + vScroll.GetPage();
-		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
+		if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex + 1))
 		{
 			PageManager::LoadNext(this->parent);
 			rowIndex = note->GetCurrent();
@@ -180,7 +175,7 @@ void CaretNavigator::MoveCaretDownToAbsoluteRow(Long absoluteRowIndex, Long rowW
 	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
 	Long rowEndIndex = rowStartIndex + note->GetLength();
 	Long previousRowEndIndex = -1;
-	while (absoluteRowIndex >= rowEndIndex && previousRowEndIndex != rowEndIndex)
+	while (absoluteRowIndex >= rowEndIndex && previousRowEndIndex != rowEndIndex && !note->IsLastPage())
 	{
 		previousRowEndIndex = rowStartIndex + note->GetLength();
 		PageManager::LoadNext(this->parent);
@@ -256,8 +251,7 @@ void CaretNavigator::AdjustCaretUpToVScroll(Long rowWidth) {
 	Long rowCount = rowIndexToMove - rowIndex;
 
 	//3. 적재범위를 벗어나면, 재적재한다.
-	Long pageMax = (rowStartIndex + note->GetLength()) * rowHeight;
-	if (note->IsBelowBottomLine(rowIndexToMove) && pageMax < vScroll.GetMax())
+	if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndexToMove))
 	{
 		PageManager::LoadNext(this->parent);
 		rowIndex = note->GetCurrent();

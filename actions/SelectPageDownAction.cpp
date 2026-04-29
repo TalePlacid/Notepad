@@ -44,15 +44,13 @@ void SelectPageDownAction::Perform() {
 
 		//1.3. 마지막줄이 아니고, 내려가야할 줄 수가 남았으면,
 		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		Long pageMax;
 		Long bytes;
 		Long currentOffset = pagingBuffer->GetCurrentOffset();
 		Long i = 0;
 		while (rowIndex + 1 < note->GetLength() && i < rowCount)
 		{
 			//1.3.1. 적재범위를 넘어서면, 재적재한다.
-			pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * rowHeight;
-			if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
+			if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex + 1))
 			{
 				PageManager::LoadNext(this->parent);
 				rowIndex = note->GetCurrent();

@@ -15,7 +15,7 @@ public:
 	~PagingBuffer();
 
 	void LoadPrevious(TCHAR*& contents, Long& byteCount);
-	void LoadNext(TCHAR*& contents, Long& byteCount);
+	void LoadNext(TCHAR*& contents, Long& byteCount, bool* isFileEndIncluded = NULL);
 	Long Add(char(*character));
 	Long Add(CString str);
 	Long Remove();

@@ -48,10 +48,7 @@ void MoveWordRightAction::Perform() {
 	else //3. 줄의 마지막이면,
 	{
 		//3.1. 적재범위를 벗어나면, 재적재한다.
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long pageMax = (pagingBuffer->GetRowStartIndex() + note->GetLength()) * sizeCalculator->GetRowHeight();
-		if (note->IsBelowBottomLine(rowIndex + 1) && pageMax < scrollController->GetVScroll().GetMax())
+		if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex + 1))
 		{
 			PageManager::LoadNext(this->parent);
 			rowIndex = note->GetCurrent();

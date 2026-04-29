@@ -83,7 +83,7 @@ Long PreviewPaginator::Previous() {
 		Long rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
 
 		//2.2. 시작줄이 적재범위보다 위이면, 재적재한다.
-		if (note->IsAboveTopLine(rowIndex))
+		if (note->IsAboveTopLine(rowIndex) && pagingBuffer->GetRowStartIndex() > 0)
 		{
 			PageManager::LoadPrevious(this->parent);
 			rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
@@ -114,7 +114,7 @@ Long PreviewPaginator::Previous() {
 		Long notePageEndIndex = pageEndIndex - pagingBuffer->GetRowStartIndex();
 
 		//2.5. 페이지 끝 줄 위치가 적재범위에 없다면, 재적재한다.
-		if (note->IsBelowBottomLine(notePageEndIndex))
+		if (!note->IsLastPage() && note->IsBelowBottomLine(notePageEndIndex))
 		{
 			PageManager::LoadNext(this->parent);
 		}
@@ -145,7 +145,7 @@ Long PreviewPaginator::Next() {
 		Long rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
 
 		//2.2. 시작줄이 적재범위보다 아래이면, 재적재한다.
-		if (note->IsBelowBottomLine(rowIndex))
+		if (!note->IsLastPage() && note->IsBelowBottomLine(rowIndex))
 		{
 			PageManager::LoadNext(this->parent);
 			rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
@@ -175,7 +175,7 @@ Long PreviewPaginator::Next() {
 		Long notePageEndIndex = pageEndIndex - pagingBuffer->GetRowStartIndex();
 
 		//2.5. 페이지 끝 줄 위치가 적재범위에 없다면, 재적재한다.
-		if (note->IsBelowBottomLine(notePageEndIndex))
+		if (!note->IsLastPage() && note->IsBelowBottomLine(notePageEndIndex))
 		{
 			PageManager::LoadNext(this->parent);
 		}
@@ -205,7 +205,7 @@ Long PreviewPaginator::Last() {
 		Long rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
 
 		//2.3. 시작줄이 적재범위보다 위이면, 재적재한다.
-		if (note->IsAboveTopLine(rowIndex))
+		if (note->IsAboveTopLine(rowIndex) && pagingBuffer->GetRowStartIndex() > 0)
 		{
 			PageManager::LoadPrevious(this->parent);
 			rowIndex = pageStartIndex - pagingBuffer->GetRowStartIndex();
