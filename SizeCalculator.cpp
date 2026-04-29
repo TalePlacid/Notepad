@@ -167,20 +167,26 @@ Long SizeCalculator::GetWrapCuttingIndex(Long rowIndex) {
 	}
 
 	Long width = ((NotepadForm*)(this->parent))->GetClientAreaSize().width;
-	BOOL isLessThanWidth = TRUE;
-	Long i = 0;
-	while (i < rowWidthCache->GetLength() && isLessThanWidth)
+	Long low = 0;
+	Long high = rowWidthCache->GetLength() - 1;
+	Long wrapIndex = -1;
+	while (low <= high)
 	{
-		if (rowWidthCache->GetAt(i) >= width)
+		Long mid = low + (high - low) / 2;
+		if (rowWidthCache->GetAt(mid) >= width)
 		{
-			isLessThanWidth = FALSE;
+			wrapIndex = mid;
+			high = mid - 1;
 		}
-		i++;
+		else
+		{
+			low = mid + 1;
+		}
 	}
 
-	if (!isLessThanWidth)
+	if (wrapIndex >= 0)
 	{
-		index = i - 2;
+		index = wrapIndex - 1;
 		if (index <= 0)
 		{
 			index = 1;
