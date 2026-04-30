@@ -416,7 +416,7 @@ void PageManager::LoadNext(CWnd* parent) {
 			//4.1.3. 로드된 뒷 부분의 선택여부를 반영한다.
 			Long previousRowIndex = -1;
 			Long selectionBeginOffset = pagingBuffer->GetSelectionBeginOffset();
-			rowIndex = note->GetLength() - loadedNote->GetLength();
+			rowIndex = note->Move(note->GetLength() - loadedNote->GetLength());
 			if (rowIndex < 0)
 			{
 				rowIndex = 0;
