@@ -19,6 +19,7 @@ VScrollLineDownAction::~VScrollLineDownAction() {
 }
 
 void VScrollLineDownAction::Perform() {
+	//1. 수직 스크롤 위치를 내린다.
 	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Scroll vScroll = scrollController->GetVScroll();
@@ -31,20 +32,23 @@ void VScrollLineDownAction::Perform() {
 	}
 	pos = scrollController->MoveVScroll(pos);
 
+	//2. 화면 상단 절대줄을 구한다.
+	Long absoluteAboveIndex = pos / rowHeight;
+	if (pos % rowHeight > 0)
+	{
+		absoluteAboveIndex++;
+	}
+
+	//3. 현재 줄위치가 화면 상단 절대줄보다 이전이면,
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
-	Glyph* row = note->GetAt(rowIndex);
-	Long columnIndex = row->GetCurrent();
-	Long rowWidth = sizeCalculator->GetRowWidth(rowIndex, columnIndex);
-
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	Long rowStartIndex = pagingBuffer->GetRowStartIndex();
-	Long currentPos = (rowStartIndex + rowIndex) * rowHeight;
-
-	if (currentPos < pos)
+	Long absoluteRowIndex = rowIndex + pagingBuffer->GetRowStartIndex();
+	if (absoluteRowIndex < absoluteAboveIndex)
 	{
+		//3.1. 화면 상단 줄로 이동한다.
 		CaretNavigator caretNavigator(this->parent);
-		caretNavigator.AdjustCaretUpToVScroll(rowWidth);
+		caretNavigator.AdjustCaretUpToVScroll();
 	}
 }
 
