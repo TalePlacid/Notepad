@@ -49,7 +49,6 @@ public:
 	HistoryBook* undoHistoryBook;
 	HistoryBook* redoHistoryBook;
 	StatusBarController* statusBarController;
-	PageSetting pageSetting;
 	PreviewForm* previewForm;
 	MouseHandler* mouseHandler;
 	CFindReplaceDialog* findReplaceDialog;
@@ -115,6 +114,7 @@ private:
 	void HandleAction(AppID nID, FindReplaceOption* findReplaceOption = NULL,
 		CPoint* point = NULL, short zDelta = 0);
 private:
+	PageSetting pageSetting;
 	CFont* originalFont;
 	CFont* displayFont;
 	BOOL isAutoWrapped;

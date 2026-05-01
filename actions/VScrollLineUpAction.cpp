@@ -24,7 +24,7 @@ void VScrollLineUpAction::Perform() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Long rowHeight = sizeCalculator->GetRowHeight();
 	Scroll vScroll = scrollController->GetVScroll();
-	Long pos = vScroll.GetPos() - rowHeight;
+	Long pos = vScroll.GetPos() - rowHeight * 3;
 	if (pos < 0)
 	{
 		pos = 0;

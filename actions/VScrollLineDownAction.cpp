@@ -24,7 +24,7 @@ void VScrollLineDownAction::Perform() {
 	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	Scroll vScroll = scrollController->GetVScroll();
 	Long rowHeight = sizeCalculator->GetRowHeight();
-	Long pos = vScroll.GetPos() + rowHeight;
+	Long pos = vScroll.GetPos() + rowHeight * 3;
 	Long posLimit = vScroll.GetMax() - vScroll.GetPage();
 	if (pos > posLimit)
 	{
