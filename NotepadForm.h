@@ -31,6 +31,7 @@ class FindReplaceOption;
 class CFindReplaceDialog;
 class CaptionController;
 class NoteWidthCache;
+class IMEController;
 
 class NotepadForm : public CWnd, public Subject {
 public:
@@ -53,8 +54,9 @@ public:
 	MouseHandler* mouseHandler;
 	CFindReplaceDialog* findReplaceDialog;
 	CaptionController* captionController;
+	IMEController* imeController;
 public:
-	BOOL IsCompositing() const;
+	BOOL HasCompositionCharacter() const;
 	CWnd* GetParent();
 	CFont* GetOriginalFont() const;
 	void ReplaceOriginalFont(CFont* font);
@@ -80,6 +82,12 @@ public:
 	void ApplyPageSetting(const PageSetting& pageSetting);
 	ClientAreaSize GetClientAreaSize() const;
 	void UpdateClientAreaSize(Long width, Long height);
+	BOOL BeginWaitingForImeComposition();
+	BOOL EndWaitingForImeComposition();
+	BOOL IsWaitingForImeComposition() const;
+	BOOL BeginWaitingForImeConversion();
+	BOOL EndWaitingForImeConversion();
+	BOOL IsWaitingForImeConversion() const;
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -87,7 +95,8 @@ protected:
 	LRESULT OnImeStartComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeChar(WPARAM wParam, LPARAM lParam);
-	LRESULT OnImeEndComposition(WPARAM wParam, LPARAM lParam);
+	LRESULT OnImeNotify(WPARAM wParam, LPARAM lParam);
+	LRESULT OnIMEConversion(WPARAM wParam, LPARAM lParam);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnPaint();
 	void OnSetFocus(CWnd* pOldWnd);
@@ -109,6 +118,7 @@ protected:
 private:
 	void ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption);
 	void ResolveMouseEvent(AppID rawId, UINT nFlags, CPoint point, short zDelta = 0);
+	void ResolveIMEEvent();
 	void HandleCommand(AppID nID, const TCHAR(*character) = 0, BOOL onChar = TRUE,
 		FindReplaceOption* findReplaceOption = NULL);
 	void HandleAction(AppID nID, FindReplaceOption* findReplaceOption = NULL,
@@ -123,12 +133,14 @@ private:
 	CString sourcePath;
 	Encoding encoding;
 	BOOL isDirty;
-	BOOL isCompositing;
+	BOOL hasCompositionCharacter;
+	BOOL isWaitingForImeComposition;
+	BOOL isWaitingForImeConversion;
 	ClientAreaSize clientAreaSize;
 };
 
-inline BOOL NotepadForm::IsCompositing() const {
-	return this->isCompositing;
+inline BOOL NotepadForm::HasCompositionCharacter() const {
+	return this->hasCompositionCharacter;
 }
 
 inline CWnd* NotepadForm::GetParent() {
@@ -233,6 +245,40 @@ inline ClientAreaSize NotepadForm::GetClientAreaSize() const {
 inline void NotepadForm::UpdateClientAreaSize(Long width, Long height) {
 	this->clientAreaSize.width = width;
 	this->clientAreaSize.height = height;
+}
+
+inline BOOL NotepadForm::BeginWaitingForImeComposition() {
+	this->isWaitingForImeComposition = TRUE;
+	this->isWaitingForImeConversion = FALSE;
+
+	return this->isWaitingForImeComposition;
+}
+
+inline BOOL NotepadForm::EndWaitingForImeComposition() {
+	this->isWaitingForImeComposition = FALSE;
+
+	return this->isWaitingForImeComposition;
+}
+
+inline BOOL NotepadForm::IsWaitingForImeComposition() const {
+	return this->isWaitingForImeComposition;
+}
+
+inline BOOL NotepadForm::BeginWaitingForImeConversion() {
+	this->isWaitingForImeComposition = FALSE;
+	this->isWaitingForImeConversion = TRUE;
+
+	return this->isWaitingForImeConversion;
+}
+
+inline BOOL NotepadForm::EndWaitingForImeConversion() {
+	this->isWaitingForImeConversion = FALSE;
+
+	return this->isWaitingForImeConversion;
+}
+
+inline BOOL NotepadForm::IsWaitingForImeConversion() const {
+	return this->isWaitingForImeConversion;
 }
 
 #endif // !_NOTEPADFORM_H

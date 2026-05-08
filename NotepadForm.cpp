@@ -37,6 +37,7 @@
 #include "FindReplaceRequestResolver.h"
 #include "MouseEventResolver.h"
 #include "glyphs/NoteWidthCache.h"
+#include "IMEController.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -61,7 +62,8 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_MESSAGE(WM_IME_STARTCOMPOSITION, OnImeStartComposition)
 	ON_MESSAGE(WM_IME_COMPOSITION, OnImeComposition)
 	ON_MESSAGE(WM_IME_CHAR, OnImeChar)
-	ON_MESSAGE(WM_IME_ENDCOMPOSITION, OnImeEndComposition)
+	ON_MESSAGE(WM_IME_NOTIFY, OnImeNotify)
+	ON_MESSAGE(WM_CONVERT_IME_CHARACTER, OnIMEConversion)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_COMMAND_RANGE(ID_MENU_UNDO, ID_MENU_SETPAGE, OnMenuClicked)
@@ -83,7 +85,6 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->parent = parent;
 	this->note = NULL;
 	this->noteWidthCache = NULL;
-	this->isCompositing = FALSE;
 	this->originalFont = NULL;
 	this->displayFont = NULL;
 	this->sizeCalculator = NULL;
@@ -99,7 +100,10 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->previewForm = NULL;
 	this->statusBarController = statusBarController;
 	this->mouseHandler = NULL;
-	this->isCompositing = FALSE;
+	this->imeController = NULL;
+	this->hasCompositionCharacter = FALSE;
+	this->isWaitingForImeComposition = FALSE;
+	this->isWaitingForImeConversion = FALSE;
 	this->isAutoWrapped = FALSE;
 	this->autoWrapSuspendCount = 0;
 	this->magnification = 1.0;
@@ -189,6 +193,11 @@ NotepadForm::~NotepadForm() {
 	{
 		delete this->captionController;
 	}
+
+	if (this->imeController != NULL)
+	{
+		delete this->imeController;
+	}
 }
 
 BOOL NotepadForm::PreCreateWindow(CREATESTRUCT& cs) {
@@ -204,7 +213,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CRect clientArea;
 	this->GetClientRect(&clientArea);
 	this->UpdateClientAreaSize(clientArea.Width(), clientArea.Height());
-	
+
 	FontSelector fontSelector;
 	LOGFONT logFont = fontSelector.SelectBaseLogFont(this);
 
@@ -270,6 +279,8 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->captionController = new CaptionController(this);
 	this->Register(this->captionController);
 
+	this->imeController = new IMEController(this);
+
 	this->Notify("UpdateScrollBars");
 	this->Notify("UpdateCaptionUnsaved");
 	this->Notify("UpdateStatusBar");
@@ -297,47 +308,99 @@ LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
-	if (lParam & GCS_COMPSTR)
-	{
-		HIMC himc = ImmGetContext(this->GetSafeHwnd());
-		TCHAR character[256];
-		Command* command = NULL;
-		Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
-		character[length] = '\0';
+	TRACE("\n================\nOnImeComposition\n================\n");
+	if ((lParam & GCS_COMPSTR) && !this->isWaitingForImeComposition && !this->isWaitingForImeConversion) //1. 일반 조합 중이면,
+    {
+        TCHAR character[256];
+        Long length;
+        this->imeController->GetCurrentCompositionText(character, length);
+		TRACE("compoText: %s\n", character);
 
-		if (length > 0)
-		{
-			AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-			this->HandleCommand(nID, character, FALSE);
-			this->isCompositing = TRUE;
+        Command* command = NULL;
+        if (length > 0)
+        {
+            AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+			TRACE("beforeCommand//AppID: %ld, hasCompositionCharacter: %ld\n", nID, this->hasCompositionCharacter);
+            this->HandleCommand(nID, character, FALSE);
+            this->hasCompositionCharacter = TRUE;
+			TRACE("afterCommand//AppID: %ld, hasCompositionCharacter: %ld\n", nID, this->hasCompositionCharacter);
 		}
-		else if (length == 0)
-		{
+        else if (length == 0)
+        {
+			TRACE("beforeErase//AppID: ID_COMMAND_ERASE_BEFORE_CARET, hasCompositionCharacter: %ld\n", this->hasCompositionCharacter);
 			this->HandleCommand(AppID::ID_COMMAND_ERASE_BEFORE_CARET, NULL, FALSE);
-			this->isCompositing = FALSE;
+            this->hasCompositionCharacter = FALSE;
+			TRACE("afterErase//AppID: ID_COMMAND_ERASE_BEFORE_CARET, hasCompositionCharacter: %ld\n", this->hasCompositionCharacter);
 		}
+    }
+    else if (this->isWaitingForImeComposition && (lParam & GCS_COMPSTR)) //2. IME에 주입한 조합 문자열이 메시지 흐름에 반영되면,
+    {
+		TRACE("PostMessage\n");
+        this->isWaitingForImeComposition = FALSE;
+        this->isWaitingForImeConversion = TRUE;
+        this->PostMessage(WM_CONVERT_IME_CHARACTER, 0, 0);
+    }
 
-		ImmReleaseContext(this->GetSafeHwnd(), himc);
-	}
-
-	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
+    return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
 }
 
 LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
+	TRACE("\n================\nOnImeChar\n================\n");
 	char character[2];
-	character[0] = (BYTE)(wParam >> 8);
-	character[1] = (BYTE)wParam;
+    character[0] = (BYTE)(wParam >> 8);
+    character[1] = (BYTE)wParam;
 
-	AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-	this->HandleCommand(nID, character, TRUE);
+	char traceCharacter[3];
+	traceCharacter[0] = character[0];
+	traceCharacter[1] = character[1];
+	traceCharacter[2] = '\0';
+	TRACE("character: %s\n", traceCharacter);
 
-	return 0;
+	TRACE("!isWaitingForImeComposition: %ld\n", !this->isWaitingForImeComposition);
+    if (!this->isWaitingForImeComposition) //1. 한자 변환중이 아니면,
+    {
+		if (!this->isWaitingForImeConversion)
+		{
+			AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+			TRACE("beforeCommand//AppID: %ld, hasCompositionCharacter: %ld, isWaitingForImeConversion: %ld\n", nID, this->hasCompositionCharacter, this->isWaitingForImeConversion);
+			this->HandleCommand(nID, character, TRUE);
+			this->hasCompositionCharacter = FALSE;
+			TRACE("afterCommand//AppID: %ld, hasCompositionCharacter: %ld, isWaitingForImeConversion: %ld\n", nID, this->hasCompositionCharacter, this->isWaitingForImeConversion);
+		}
+		else
+		{
+			this->imeController->RecordConverted(character);
+			this->ResolveIMEEvent();
+		}
+	}
+
+    return 0;
 }
 
-LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
-	this->isCompositing = FALSE;
+LRESULT NotepadForm::OnImeNotify(WPARAM wParam, LPARAM lParam) {
+	TRACE("\n================\nOnImeNotify\n================\n");
+	if (wParam == IMN_OPENCANDIDATE)
+	{
+		TRACE("IMN_OPENCANDIDATE\n");
+	}
+	else if (wParam == IMN_CLOSECANDIDATE)
+	{
+		TRACE("IMN_CLOSECANDIDATE\n");
+	}
 
-	return TRUE;
+	return DefWindowProc(WM_IME_NOTIFY, wParam, lParam);
+}
+
+LRESULT NotepadForm::OnIMEConversion(WPARAM wParam, LPARAM lParam) {
+	TRACE("\n================\nOnIMEConversion\n================\n");
+	TRACE("isWaitingForImeConversion: %ld\n", this->isWaitingForImeConversion);
+	if (this->isWaitingForImeConversion)
+	{
+		this->imeController->SetWindowPosition();
+		this->imeController->Convert();
+	}
+
+	return 0;
 }
 
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
@@ -357,7 +420,7 @@ void NotepadForm::OnPaint() {
 	ClientAreaSize clientAreaSize = this->GetClientAreaSize();
 	Long width = clientAreaSize.width;
 	Long height = clientAreaSize.height;
-	
+
 	RECT rect;
 	rect.left = 0;
 	rect.top = 0;
@@ -425,7 +488,7 @@ void NotepadForm::OnMenuClicked(UINT nID) {
 void NotepadForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	BOOL hasSelectionRange = this->pagingBuffer->GetSelectionBeginOffset() >= 0;
 	AppID nID = KeyDownInterpreter::DetermineID(nChar, hasSelectionRange);
-	
+
 	if (nID != AppID::NONE)
 	{
 		if (KeyDownInterpreter::IsFindReplace(nID))
@@ -590,6 +653,17 @@ void NotepadForm::ResolveMouseEvent(AppID rawID, UINT nFlags, CPoint point, shor
 	CPoint absolutePoint = coordinateConverter.DisplayToAbsolute(point);
 
 	this->HandleAction(appID, NULL, &absolutePoint);
+}
+
+void NotepadForm::ResolveIMEEvent() {
+	//1. 선택되었으면,
+	if (this->imeController->IsConverted())
+	{
+		this->HandleCommand(AppID::ID_COMMAND_CONVERT_TO_IME_CHARACTER,
+			this->imeController->GetConverted());
+	}
+	this->imeController->ClearCharacters();
+	this->isWaitingForImeConversion = FALSE;
 }
 
 void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar, 

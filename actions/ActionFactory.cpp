@@ -71,6 +71,7 @@
 #include "HScrollPageLeftAction.h"
 #include "HScrollPageRightAction.h"
 #include "HScrollThumbTrackAction.h"
+#include "StartKoreanImeConversionAction.h"
 
 #pragma warning(disable:4996)
 
@@ -261,6 +262,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_REDO:
 		action = new RedoAction(parent);
+		break;
+	case AppID::ID_ACTION_START_KOREAN_IME_CONVERSION:
+		action = new StartKoreanImeConversionAction(parent);
 		break;
 	case AppID::ID_ACTION_TOGGLE_STATUSBAR:
 		action = new ToggleStatusBarAction(parent);

@@ -562,6 +562,15 @@
     <ClCompile Include="glyphs\NoteWidthCache.cpp">
       <Filter>소스 파일\glyphs</Filter>
     </ClCompile>
+    <ClCompile Include="actions\StartKoreanImeConversionAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="IMEController.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\ConvertToIMECharacter.cpp">
+      <Filter>소스 파일\commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -1091,6 +1100,15 @@
     </ClInclude>
     <ClInclude Include="glyphs\NoteWidthCache.h">
       <Filter>헤더 파일\glyphs</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\StartKoreanImeConversionAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="IMEController.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\ConvertToIMECharacterCommand.h">
+      <Filter>헤더 파일\commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

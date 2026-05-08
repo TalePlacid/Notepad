@@ -79,10 +79,12 @@ void InsertAtCaretCommand::Execute() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	//3. 조합중이면, 조합중이던 글자를 지운다.
+	//3. 조합문자가 남아 있으면, 조합중이던 글자를 지운다.
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (((NotepadForm*)(this->parent))->IsCompositing())
+	BOOL hasCompositionCharacter = ((NotepadForm*)(this->parent))->HasCompositionCharacter();
+	Long beforeLength = row->GetLength();
+	if (hasCompositionCharacter)
 	{
 		row->Remove(columnIndex - 1);
 		columnIndex = row->GetCurrent();

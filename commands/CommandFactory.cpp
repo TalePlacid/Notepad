@@ -4,6 +4,7 @@
 #include "CommandFactory.h"
 #include "WriteAtEndCommand.h"
 #include "InsertAtCaretCommand.h"
+#include "ConvertToIMECharacterCommand.h"
 #include "EraseBeforeCaretCommand.h"
 #include "EraseAfterCaretCommand.h"
 #include "PasteCommand.h"
@@ -33,6 +34,9 @@ Command* CommandFactory::Create(CWnd* parent, AppID nID, const TCHAR(*character)
 		break;
 	case AppID::ID_COMMAND_INSERT_AT_CARET:
 		command = new InsertAtCaretCommand(parent, character, onChar);
+		break;
+	case AppID::ID_COMMAND_CONVERT_TO_IME_CHARACTER:
+		command = new ConvertToIMECharacterCommand(parent, character);
 		break;
 	case AppID::ID_COMMAND_ERASE_BEFORE_CARET:
 		if (isSelected)

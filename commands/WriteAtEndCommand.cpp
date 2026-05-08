@@ -63,6 +63,7 @@ WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source)
 }
 
 void WriteAtEndCommand::Execute() {
+	TRACE("\n================\nWriteAtEndCommand\n================\n");
 	//1. 선택범위가 있으면, 먼저 지운다.
 	Editor editor(this->parent);
 	this->isErased = editor.GetSelectedRange(this->erasedFrontOffset, this->erasedRearOffset);
@@ -84,7 +85,9 @@ void WriteAtEndCommand::Execute() {
 	this->columnIndex = row->GetCurrent();
 	
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-	if (((NotepadForm*)(this->parent))->IsCompositing())
+	BOOL hasCompositionCharacter = ((NotepadForm*)(this->parent))->HasCompositionCharacter();
+	TRACE("hasCompositionCharacter: %ld\n", hasCompositionCharacter);
+	if (hasCompositionCharacter)
 	{
 		row->Remove();
 		noteWidthCache->MarkDirty(rowIndex);

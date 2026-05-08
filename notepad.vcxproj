@@ -150,6 +150,7 @@
     <ClCompile Include="actions\PreviewAction.cpp" />
     <ClCompile Include="actions\PrintAction.cpp" />
     <ClCompile Include="actions\RedoAction.cpp" />
+    <ClCompile Include="actions\StartKoreanImeConversionAction.cpp" />
     <ClCompile Include="actions\VScrollLineUpAction.cpp" />
     <ClCompile Include="actions\VScrollLineDownAction.cpp" />
     <ClCompile Include="actions\VScrollPageUpAction.cpp" />
@@ -204,8 +205,10 @@
     <ClCompile Include="AutoScroller.cpp" />
     <ClCompile Include="ByteChecker.cpp" />
     <ClCompile Include="CaptionController.cpp" />
+    <ClCompile Include="commands\ConvertToIMECharacter.cpp" />
     <ClCompile Include="glyphs\NoteWidthCache.cpp" />
     <ClCompile Include="glyphs\RowWidthCache.cpp" />
+    <ClCompile Include="IMEController.cpp" />
     <ClCompile Include="LeadByteChecker.cpp" />
     <ClCompile Include="Caret.cpp" />
     <ClCompile Include="CaretController.cpp" />
@@ -321,6 +324,7 @@
     <ClInclude Include="actions\PreviewAction.h" />
     <ClInclude Include="actions\PrintAction.h" />
     <ClInclude Include="actions\RedoAction.h" />
+    <ClInclude Include="actions\StartKoreanImeConversionAction.h" />
     <ClInclude Include="actions\VScrollLineUpAction.h" />
     <ClInclude Include="actions\VScrollLineDownAction.h" />
     <ClInclude Include="actions\VScrollPageUpAction.h" />
@@ -377,8 +381,10 @@
     <ClInclude Include="AutoScroller.h" />
     <ClInclude Include="ByteChecker.h" />
     <ClInclude Include="CaptionController.h" />
+    <ClInclude Include="commands\ConvertToIMECharacterCommand.h" />
     <ClInclude Include="glyphs\NoteWidthCache.h" />
     <ClInclude Include="glyphs\RowWidthCache.h" />
+    <ClInclude Include="IMEController.h" />
     <ClInclude Include="LeadByteChecker.h" />
     <ClInclude Include="Caret.h" />
     <ClInclude Include="CaretController.h" />
