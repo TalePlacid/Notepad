@@ -5,6 +5,7 @@
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
 #include "../HistoryBook.h"
+#include "../CaptionController.h"
 
 #pragma warning(disable:4996)
 
@@ -42,7 +43,8 @@ void NewAction::Perform() {
 	notepadForm->AssignSourcePath(CString(""));
 	notepadForm->ApplyEncoding(ANSI);
 
-	notepadForm->parent->SetWindowTextA("메모장 ~제목없음");
+	notepadForm->GetParent()->SetWindowTextA("메모장 ~제목없음");
+	notepadForm->captionController->UpdateCaption();
 
 	this->parent->Invalidate();
 }
