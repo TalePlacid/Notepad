@@ -693,6 +693,7 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 		CString message;
 		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)option.findString);
 		this->parent->MessageBox(message);
+		((CWnd*)(((NotepadForm*)(this->parent))->findReplaceDialog))->SetFocus();
 	}
 
 	return ret;
@@ -780,6 +781,7 @@ bool Editor::FindPrevious() {
 		CString message;
 		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)option.findString);
 		this->parent->MessageBox(message);
+		((CWnd*)(((NotepadForm*)(this->parent))->findReplaceDialog))->SetFocus();
 	}
 
 	return ret;
@@ -869,6 +871,7 @@ bool Editor::FindNext() {
 		CString message;
 		message.Format("\"%s\"을(를) 찾을 수 없습니다.", (LPCTSTR)option.findString);
 		this->parent->MessageBox(message);
+		((CWnd*)(((NotepadForm*)(this->parent))->findReplaceDialog))->SetFocus();
 	}
 
 	return ret;

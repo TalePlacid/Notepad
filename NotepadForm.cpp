@@ -293,12 +293,14 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
+	TRACE("START\n");
 	return TRUE;
 }
 
 LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 	if (lParam & GCS_COMPSTR)
 	{
+		TRACE("COMPO\n");
 		HIMC himc = ImmGetContext(this->GetSafeHwnd());
 		TCHAR character[256];
 		Command* command = NULL;
@@ -324,6 +326,7 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
+	TRACE("CHAR\n");
 	char character[2];
 	character[0] = (BYTE)(wParam >> 8);
 	character[1] = (BYTE)wParam;
@@ -335,6 +338,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
+	TRACE("END\n");
 	this->isCompositing = FALSE;
 
 	return TRUE;
