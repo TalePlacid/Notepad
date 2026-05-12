@@ -38,11 +38,20 @@ CPoint MouseEventResolver::NormalizePoint(CPoint point, const ClientAreaSize& cl
 }
 
 AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, BOOL isDragging, short zDelta) {
+	int onShiftKey = GetKeyState(VK_SHIFT) & 0x8000;
+	
 	AppID appID = AppID::NONE;
 	switch (rawID)
 	{
 	case AppID::ID_MOUSE_LBUTTON_DOWN:
-		appID = AppID::ID_ACTION_MOVE_TO_POINT;
+		if (onShiftKey)
+		{
+			appID = AppID::ID_ACTION_SELECT_TO_POINT;
+		}
+		else
+		{
+			appID = AppID::ID_ACTION_MOVE_TO_POINT;
+		}
 		break;
 	case AppID::ID_MOUSE_LBUTTON_DOUBLE_CLICK:
 		appID = AppID::ID_ACTION_SELECT_DOUBLE_CLICKED;
