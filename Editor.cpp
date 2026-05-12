@@ -227,6 +227,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 	TCHAR character[2];
 	GlyphFactory glyphFactory;
 	Glyph* glyph;
+	Glyph* nextRow;
 	Long j = 0;
 	Long i = 0;
 	while (i < commonLength)
@@ -247,7 +248,15 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 			j++;
 		}
 
+#if 0
 		if (currentColumnIndex >= row->GetLength())
+		{
+			currentRowIndex = note->Next();
+			row = note->GetAt(currentRowIndex);
+			currentColumnIndex = row->First();
+		}
+#endif
+		if (currentColumnIndex >= row->GetLength() && currentRowIndex + 1 < note->GetLength())
 		{
 			currentRowIndex = note->Next();
 			row = note->GetAt(currentRowIndex);
@@ -282,6 +291,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		i = 0;
 		while (i < restLength)
 		{
+#if 0
 			if (currentColumnIndex < row->GetLength())
 			{
 				row->Remove(currentColumnIndex);
@@ -297,6 +307,30 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 			}
 
 			i++;
+#endif
+			if (currentColumnIndex < row->GetLength())
+			{
+				row->Remove(currentColumnIndex);
+				currentColumnIndex = row->Move(currentColumnIndex);
+				noteWidthCache->MarkDirty(currentRowIndex);
+				i++;
+			}
+			else if (currentRowIndex + 1 < note->GetLength())
+			{
+				nextRow = note->GetAt(currentRowIndex + 1);
+				BOOL isNextRowDummy = nextRow->IsDummyRow();
+				note->MergeRows(currentRowIndex);
+				noteWidthCache->Remove(currentRowIndex + 1);
+				noteWidthCache->MarkDirty(currentRowIndex);
+				if (!isNextRowDummy)
+				{
+					i += 2;
+				}
+			}
+			else
+			{
+				i = restLength;
+			}
 		}
 	}
 

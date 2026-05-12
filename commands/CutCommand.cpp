@@ -57,3 +57,7 @@ void CutCommand::Redo() {
 	Editor editor(this->parent);
 	editor.EraseRange(this->frontOffset, this->rearOffset, this->contents, this->columnIndex);
 }
+
+Command* CutCommand::Clone() {
+	return new CutCommand(*this);
+}

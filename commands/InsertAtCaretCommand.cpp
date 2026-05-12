@@ -19,7 +19,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(CWnd* parent, const TCHAR(*character)
 	this->character[1] = character[1];
 	this->onChar = onChar;
 	this->offset = -1;
-	this->columnIndex = -1;
+	this->columnIndex = 0;
 	this->isErased = FALSE;
 	this->erasedFrontOffset = -1;
 	this->erasedRearOffset = -1;
@@ -47,6 +47,7 @@ InsertAtCaretCommand::InsertAtCaretCommand(const InsertAtCaretCommand& source)
 
 InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand& source){
 	Command::operator=(source);
+
 	this->character[0] = const_cast<InsertAtCaretCommand&>(source).character[0];
 	this->character[1] = const_cast<InsertAtCaretCommand&>(source).character[1];
 	this->onChar = source.onChar;
@@ -63,85 +64,65 @@ InsertAtCaretCommand& InsertAtCaretCommand::operator=(const InsertAtCaretCommand
 
 void InsertAtCaretCommand::Execute() {
 	//1. 선택범위가 있으면, 먼저 지운다.
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Editor editor(this->parent);
 	this->isErased = editor.GetSelectedRange(this->erasedFrontOffset, this->erasedRearOffset);
 	if (this->isErased == TRUE)
 	{
 		this->isUndoable = true;
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		this->erasedContents = pagingBuffer->MakeSelectedString();
 		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedContents, this->erasedColumnIndex);
 	}
 
-	//2. 현재 위치를 읽는다.
+	//2. 노트에서 조합중인 문자가 있으면, 지운다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Long rowIndex = note->GetCurrent();
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	//3. 조합중이면, 조합중이던 글자를 지운다.
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	if (((NotepadForm*)(this->parent))->IsCompositing())
 	{
 		row->Remove(columnIndex - 1);
-		columnIndex = row->GetCurrent();
 		noteWidthCache->MarkDirty(rowIndex);
+		columnIndex = row->GetCurrent();
 	}
 
-	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	//3. 노트에서 적는다.
 	Long vScrollChanged = 0;
-	if (this->character[0] != '\r') //4. 줄바꿈 문자가 아니면,
+	GlyphFactory glyphFactory;
+	Glyph* glyph = glyphFactory.Create(this->character);
+	if (this->character[0] != '\r')
 	{
-		//4.1. 노트에서 더한다.
-		GlyphFactory glyphFactory;
-		Glyph* glyph = glyphFactory.Create(this->character);
-		columnIndex = row->Add(columnIndex, glyph);
+		row->Add(columnIndex, glyph);
 		columnIndex = row->GetCurrent();
 		noteWidthCache->MarkDirty(rowIndex);
-
-		//4.2. 조합 확정이면, 페이징버퍼에서 적는다. 
-		if (this->onChar)
-		{
-			pagingBuffer->Add(this->character);
-			this->isUndoable = TRUE;
-		}
 	}
-	else //5. 줄바꿈 문자라면,
+	else
 	{
-		//5.1. 줄을 나눈다.
 		note->SplitRows(rowIndex, columnIndex);
 		noteWidthCache->Add(rowIndex + 1);
 		noteWidthCache->MarkDirty(rowIndex);
-
-		//5.2. 자동개행이 켜져 있다면,
-		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
-		{
-			//5.2.1. 재개행한다.
-			NoteWrapper noteWrapper(this->parent);
-			vScrollChanged += noteWrapper.Rewrap();
-			rowIndex = note->GetCurrent();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->GetCurrent();
-		}
 
 		rowIndex = note->Next();
 		row = note->GetAt(rowIndex);
 		columnIndex = row->First();
 		noteWidthCache->MarkDirty(rowIndex);
-	
-		//5.3. 페이징버퍼에서 적는다.
-		pagingBuffer->Add(this->character);
-		this->isUndoable = TRUE;
 
-		vScrollChanged += 1;
+		vScrollChanged++;
 	}
 
-	//6. 자동개행이 켜져 있다면,
+	//4. 확정문자이면, 페이징버퍼에서 적는다.
+	if (this->onChar)
+	{
+		TCHAR character_[3] = { this->character[0], this->character[1], '\0' };
+		pagingBuffer->Add(character_);
+		this->isUndoable = TRUE;
+	}
+
+	//5. 자동개행중이면, 재개행한다.
 	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 	{
-		//6.1. 재개행한다.
 		NoteWrapper noteWrapper(this->parent);
 		vScrollChanged += noteWrapper.Rewrap();
 		rowIndex = note->GetCurrent();
@@ -149,11 +130,14 @@ void InsertAtCaretCommand::Execute() {
 		columnIndex = row->GetCurrent();
 	}
 
-	//7. 수직 스크롤이 있다면, 반영한다.
+	//6. 수직 스크롤이 있으면 변화량을 적용한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 	if (scrollController->HasVScroll())
 	{
 		Scroll vScroll = scrollController->GetVScroll();
-		Long max = vScroll.GetMax() + vScrollChanged * sizeCalculator->GetRowHeight();
+		Long rowHeight = sizeCalculator->GetRowHeight();
+		Long max = vScroll.GetMax() + vScrollChanged * rowHeight;
 		scrollController->ResizeVRange(max);
 	}
 
@@ -162,56 +146,55 @@ void InsertAtCaretCommand::Execute() {
 }
 
 void InsertAtCaretCommand::Undo() {
-	//1. 오프셋 기반으로 이동한다.
-	CaretNavigator caretNavigator(this->parent);
-	caretNavigator.MoveTo(this->offset);
-	caretNavigator.NormalizeColumn(this->columnIndex);
+	//1. 확정문자였으면,
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 
-	//2. 확정문자였었으면,
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
+	Long vScrollChanged = 0;
 	if (this->onChar)
 	{
-		//2.1. 현재 위치룰 읽는다.
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
+		//1.1. 오프셋 기반으로 이동한다.
+		CaretNavigator caretNavigator(this->parent);
+		caretNavigator.MoveTo(this->offset);
+		caretNavigator.NormalizeColumn(this->columnIndex);
+
+		//1.2. 노트에서 지운다.
+		rowIndex = note->GetCurrent();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->GetCurrent();
 
 		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
 		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
 		NoteWrapper noteWrapper(this->parent);
-		Long vScrollChanged = 0;
-		if (columnIndex > 0) //2.2. 줄의 처음이 아니면,
+		if (this->character[0] != '\r')
 		{
-			//2.2.1. 노트에서 지운다.
 			row->Remove(columnIndex - 1);
 			columnIndex = row->GetCurrent();
 			noteWidthCache->MarkDirty(rowIndex);
 
-			//2.2.2. 자동개행중이라면,
 			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 			{
-				//2.2.2.1. 재개행한다.
 				vScrollChanged += noteWrapper.Rewrap();
 				rowIndex = note->GetCurrent();
 				row = note->GetAt(rowIndex);
 				columnIndex = row->GetCurrent();
 			}
 		}
-		else //2.3. 줄의 처음이라면,
+		else
 		{
-			//2.3.1. 적재범위에서 벗어났다면, 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
 				PageManager::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
-			//2.3.2. 첫번째 줄이 아니라면,
 			if (rowIndex > 0)
 			{
-				//2.3.2.1. 이전 줄과 합친다.
 				Glyph* previousRow = note->GetAt(rowIndex - 1);
 				columnIndex = previousRow->Last();
 
@@ -223,132 +206,123 @@ void InsertAtCaretCommand::Undo() {
 				columnIndex = row->Move(columnIndex);
 				noteWidthCache->MarkDirty(rowIndex);
 
-				//2.3.2.2. 자동개행중이라면, 재개행한다.
 				if (((NotepadForm*)(this->parent))->IsAutoWrapped())
 				{
-					//4.2.2.1. 재개행한다.
 					vScrollChanged += noteWrapper.Rewrap();
 					rowIndex = note->GetCurrent();
 					row = note->GetAt(rowIndex);
 					columnIndex = row->GetCurrent();
 				}
-				else //2.3.2.3. 자동개행중이 아니라면,
+				else
 				{
 					vScrollChanged -= 1;
 				}
 			}
 		}
 
-		//2.4. 페이징 버퍼에서 지운다.
+		//1.3. 페이징 버퍼에서 지운다.
 		pagingBuffer->Remove();
 
-		//2.5. 수직 스크롤이 있다면, 반영한다.
+		//1.4. 수직 스크롤이 있다면 변화량을 반영한다.
 		if (scrollController->HasVScroll())
 		{
 			Scroll vScroll = scrollController->GetVScroll();
-			Long max = vScroll.GetMax() + vScrollChanged * sizeCalculator->GetRowHeight();
+			Long rowHeight = sizeCalculator->GetRowHeight();
+			Long max = vScroll.GetMax() + vScrollChanged * rowHeight;
 			scrollController->ResizeVRange(max);
 		}
-
-		this->offset = pagingBuffer->GetCurrentOffset();
-		this->columnIndex = columnIndex;
 	}
 
-	//3. 범위가 지워졌었으면, 다시 적는다.
+	//2. 범위 삭제 되었었으면, 다시 적는다.
 	if (this->isErased)
 	{
 		Editor editor(this->parent);
 		editor.InsertTextAt(this->erasedFrontOffset, this->erasedColumnIndex, this->erasedContents, true);
 	}
+
+	this->offset = pagingBuffer->GetCurrentOffset();
+	this->columnIndex = columnIndex;
 }
 
 void InsertAtCaretCommand::Redo() {
-	//1. 선택범위가 지워졌었으면, 다시 지운다.
-	if (this->isErased)
+	//1. 오프셋 기반으로 이동한다.
+	CaretNavigator caretNavigator(this->parent);
+	caretNavigator.MoveTo(this->offset);
+	caretNavigator.NormalizeColumn(this->columnIndex);
+
+	//2. 선택범위가 있으면, 먼저 지운다.
+	Editor editor(this->parent);
+	if (this->isErased == TRUE)
 	{
-		Editor editor(this->parent);
 		editor.EraseRange(this->erasedFrontOffset, this->erasedRearOffset, this->erasedContents, this->erasedColumnIndex);
 	}
 
-	//2. 확정문자였었으면, 다시 적는다.
+	//3. 확정문자였었으면,
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	Long rowIndex = note->GetCurrent();
+	Glyph* row = note->GetAt(rowIndex);
+	Long columnIndex = row->GetCurrent();
+
+	Long vScrollChanged = 0;
 	if (this->onChar)
 	{
-		//2.1. 오프셋 기반으로 이동한다.
-		CaretNavigator caretNavigator(this->parent);
-		caretNavigator.MoveTo(this->offset);
-		caretNavigator.NormalizeColumn(this->columnIndex);
-
-		//2.2. 현재 위치를 읽는다.
-		Glyph* note = ((NotepadForm*)(this->parent))->note;
-		Long rowIndex = note->GetCurrent();
-		Glyph* row = note->GetAt(rowIndex);
-		Long columnIndex = row->GetCurrent();
+		//3.1. 노트에서 적는다.
+		rowIndex = note->GetCurrent();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->GetCurrent();
 
 		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-		ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
-		SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
-		Long vScrollChanged = 0;
-		if (this->character[0] != '\r') //2.3. 줄바꿈 문자가 아니면,
+		GlyphFactory glyphFactory;
+		Glyph* glyph = glyphFactory.Create(this->character);
+		if (this->character[0] != '\r')
 		{
-			//2.3.1. 노트에서 더한다.
-			GlyphFactory glyphFactory;
-			Glyph* glyph = glyphFactory.Create(this->character, true);
-			columnIndex = row->Add(columnIndex, glyph);
+			row->Add(columnIndex, glyph);
 			columnIndex = row->GetCurrent();
 			noteWidthCache->MarkDirty(rowIndex);
 		}
-		else //2.4. 줄바꿈 문자라면,
+		else
 		{
-			//2.4.1. 줄을 나눈다.
 			note->SplitRows(rowIndex, columnIndex);
 			noteWidthCache->Add(rowIndex + 1);
 			noteWidthCache->MarkDirty(rowIndex);
-
-			//2.4.2. 자동개행이 켜져 있다면,
-			if (((NotepadForm*)(this->parent))->IsAutoWrapped())
-			{
-				//2.4.2.1. 재개행한다.
-				NoteWrapper noteWrapper(this->parent);
-				vScrollChanged += noteWrapper.Rewrap();
-				rowIndex = note->GetCurrent();
-				row = note->GetAt(rowIndex);
-				columnIndex = row->GetCurrent();
-			}
 
 			rowIndex = note->Next();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 			noteWidthCache->MarkDirty(rowIndex);
 
-			vScrollChanged += 1;
+			vScrollChanged++;
 		}
 
-		//2.5. 자동개행이 켜져 있다면,
-		if (((NotepadForm*)(this->parent))->IsAutoWrapped())
-		{
-			//2.5.1. 재개행한다.
-			NoteWrapper noteWrapper(this->parent);
-			vScrollChanged += noteWrapper.Rewrap();
-			rowIndex = note->GetCurrent();
-			row = note->GetAt(rowIndex);
-			columnIndex = row->GetCurrent();
-		}
-
-		//2.6. 페이징버퍼에서 적는다.
-		pagingBuffer->Add(this->character);
-
-		//2.7. 수직 스크롤이 있다면, 반영한다.
-		if (scrollController->HasVScroll())
-		{
-			Scroll vScroll = scrollController->GetVScroll();
-			Long max = vScroll.GetMax() + vScrollChanged * sizeCalculator->GetRowHeight();
-			scrollController->ResizeVRange(max);
-		}
-
-		this->offset = pagingBuffer->GetCurrentOffset();
-		this->columnIndex = columnIndex;
+		//3.2. 페이징버퍼에서 적는다.
+		TCHAR character_[3] = { this->character[0], this->character[1], '\0' };
+		pagingBuffer->Add(character_);
 	}
+
+	//4. 자동개행중이면 재개행한다.
+	if (((NotepadForm*)(this->parent))->IsAutoWrapped())
+	{
+		NoteWrapper noteWrapper(this->parent);
+		vScrollChanged += noteWrapper.Rewrap();
+		rowIndex = note->GetCurrent();
+		row = note->GetAt(rowIndex);
+		columnIndex = row->GetCurrent();
+	}
+
+	//5. 수직 스크롤이 있으면 변화량을 적용한다.
+	ScrollController* scrollController = ((NotepadForm*)(this->parent))->scrollController;
+	SizeCalculator* sizeCalculator = ((NotepadForm*)(this->parent))->sizeCalculator;
+	if (scrollController->HasVScroll())
+	{
+		Scroll vScroll = scrollController->GetVScroll();
+		Long rowHeight = sizeCalculator->GetRowHeight();
+		Long max = vScroll.GetMax() + vScrollChanged * rowHeight;
+		scrollController->ResizeVRange(max);
+	}
+
+	this->offset = pagingBuffer->GetCurrentOffset();
+	this->columnIndex = columnIndex;
 }
 
 Command* InsertAtCaretCommand::Clone() {
