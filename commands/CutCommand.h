@@ -16,6 +16,7 @@ public:
 	virtual void Redo();
 
 	virtual AppID GetID();
+	virtual Command* Clone();
 private:
 	Long frontOffset;
 	Long rearOffset;

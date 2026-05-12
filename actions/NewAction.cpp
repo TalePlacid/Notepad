@@ -3,8 +3,10 @@
 #include "../NotepadForm.h"
 #include "../glyphs/GlyphFactory.h"
 #include "../glyphs/Glyph.h"
+#include "../glyphs/NoteWidthCache.h"
 #include "../PagingBuffer.h"
 #include "../HistoryBook.h"
+#include "../CaptionController.h"
 
 #pragma warning(disable:4996)
 
@@ -30,6 +32,13 @@ void NewAction::Perform() {
 	notepadForm->note = glyphFactory.Create(&character);
 	character = '\r';
 	notepadForm->note->Add(glyphFactory.Create(&character));
+	
+	if (notepadForm->noteWidthCache != NULL)
+	{
+		delete notepadForm->noteWidthCache;
+		notepadForm->noteWidthCache = NULL;
+	}
+	notepadForm->noteWidthCache = new NoteWidthCache(notepadForm, notepadForm->note);
 
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	pagingBuffer->Clear();
@@ -42,7 +51,8 @@ void NewAction::Perform() {
 	notepadForm->AssignSourcePath(CString(""));
 	notepadForm->ApplyEncoding(ANSI);
 
-	notepadForm->parent->SetWindowTextA("메모장 ~제목없음");
+	notepadForm->GetParent()->SetWindowTextA("메모장 ~제목없음");
+	notepadForm->captionController->UpdateCaption();
 
 	this->parent->Invalidate();
 }

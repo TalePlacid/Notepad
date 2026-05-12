@@ -151,6 +151,8 @@
     <ClCompile Include="actions\PrintAction.cpp" />
     <ClCompile Include="actions\RedoAction.cpp" />
     <ClCompile Include="actions\StartKoreanImeConversionAction.cpp" />
+    <ClCompile Include="actions\SelectDoubleClickedAction.cpp" />
+    <ClCompile Include="actions\SelectToPointAction.cpp" />
     <ClCompile Include="actions\VScrollLineUpAction.cpp" />
     <ClCompile Include="actions\VScrollLineDownAction.cpp" />
     <ClCompile Include="actions\VScrollPageUpAction.cpp" />
@@ -325,6 +327,8 @@
     <ClInclude Include="actions\PrintAction.h" />
     <ClInclude Include="actions\RedoAction.h" />
     <ClInclude Include="actions\StartKoreanImeConversionAction.h" />
+    <ClInclude Include="actions\SelectDoubleClickedAction.h" />
+    <ClInclude Include="actions\SelectToPointAction.h" />
     <ClInclude Include="actions\VScrollLineUpAction.h" />
     <ClInclude Include="actions\VScrollLineDownAction.h" />
     <ClInclude Include="actions\VScrollPageUpAction.h" />

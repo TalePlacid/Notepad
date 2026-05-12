@@ -571,6 +571,12 @@
     <ClCompile Include="commands\ConvertToIMECharacter.cpp">
       <Filter>소스 파일\commands</Filter>
     </ClCompile>
+    <ClCompile Include="actions\SelectDoubleClickedAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\SelectToPointAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -1109,6 +1115,12 @@
     </ClInclude>
     <ClInclude Include="commands\ConvertToIMECharacterCommand.h">
       <Filter>헤더 파일\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\SelectDoubleClickedAction.h">
+      <Filter>헤더 파일\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\SelectToPointAction.h">
+      <Filter>헤더 파일\actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

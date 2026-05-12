@@ -74,6 +74,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
 	ON_MESSAGE(WM_FINDREPLACE_FOCUS, OnFindReplaceFocused)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONDBLCLK()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
@@ -304,10 +305,12 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
+	TRACE("START\n");
 	return TRUE;
 }
 
 LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
+<<<<<<< HEAD
 	TRACE("\n================\nOnImeComposition\n================\n");
 	if ((lParam & GCS_COMPSTR) && !this->isWaitingForImeComposition && !this->isWaitingForImeConversion) //1. 일반 조합 중이면,
     {
@@ -315,6 +318,16 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
         Long length;
         this->imeController->GetCurrentCompositionText(character, length);
 		TRACE("compoText: %s\n", character);
+=======
+	if (lParam & GCS_COMPSTR)
+	{
+		TRACE("COMPO\n");
+		HIMC himc = ImmGetContext(this->GetSafeHwnd());
+		TCHAR character[256];
+		Command* command = NULL;
+		Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
+		character[length] = '\0';
+>>>>>>> main
 
         Command* command = NULL;
         if (length > 0)
@@ -345,7 +358,11 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
+<<<<<<< HEAD
 	TRACE("\n================\nOnImeChar\n================\n");
+=======
+	TRACE("CHAR\n");
+>>>>>>> main
 	char character[2];
     character[0] = (BYTE)(wParam >> 8);
     character[1] = (BYTE)wParam;
@@ -377,6 +394,7 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
     return 0;
 }
 
+<<<<<<< HEAD
 LRESULT NotepadForm::OnImeNotify(WPARAM wParam, LPARAM lParam) {
 	TRACE("\n================\nOnImeNotify\n================\n");
 	if (wParam == IMN_OPENCANDIDATE)
@@ -387,6 +405,11 @@ LRESULT NotepadForm::OnImeNotify(WPARAM wParam, LPARAM lParam) {
 	{
 		TRACE("IMN_CLOSECANDIDATE\n");
 	}
+=======
+LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
+	TRACE("END\n");
+	this->isCompositing = FALSE;
+>>>>>>> main
 
 	return DefWindowProc(WM_IME_NOTIFY, wParam, lParam);
 }
@@ -545,6 +568,10 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
 	this->ResolveMouseEvent(AppID::ID_MOUSE_LBUTTON_DOWN, nFlags, point);
+}
+
+void NotepadForm::OnLButtonDblClk(UINT nFlags, CPoint point) {
+	this->ResolveMouseEvent(AppID::ID_MOUSE_LBUTTON_DOUBLE_CLICK, nFlags, point);
 }
 
 void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {

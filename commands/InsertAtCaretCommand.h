@@ -20,7 +20,7 @@ public:
 	virtual bool NeedNoteTruncation();
 private:
 	char character[2];
-	UINT onChar;
+	BOOL onChar;
 	Long offset;
 	Long columnIndex;
 	BOOL isErased;

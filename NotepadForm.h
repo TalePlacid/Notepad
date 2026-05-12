@@ -109,6 +109,7 @@ protected:
 	LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
 	LRESULT OnFindReplaceFocused(WPARAM wParam, LPARAM lParam);
 	void OnLButtonDown(UINT nFlags, CPoint point);
+	void OnLButtonDblClk(UINT nFlags, CPoint point);
 	void OnMouseMove(UINT nFlags, CPoint point);
 	void OnLButtonUp(UINT nFlags, CPoint point);
 	void OnRButtonDown(UINT nFlags, CPoint point);
