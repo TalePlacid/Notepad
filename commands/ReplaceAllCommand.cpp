@@ -53,6 +53,7 @@ ReplaceAllCommand& ReplaceAllCommand::operator=(const ReplaceAllCommand& source)
 	{
 		delete[] this->offsets;
 	}
+
 	this->offsets = new Long[source.length];
 	Long i = 0;
 	while (i < source.length)
@@ -66,20 +67,25 @@ ReplaceAllCommand& ReplaceAllCommand::operator=(const ReplaceAllCommand& source)
 }
 
 void ReplaceAllCommand::Execute() {
-	//1. 전체 문서의 첫 위치로 이동한다.
+	//1. 기존의 선택을 취소한다.
+	Glyph* note = ((NotepadForm*)(this->parent))->note;
+	note->Select(false);
+	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
+	pagingBuffer->UnmarkSelectionBegin();
+
+	//2. 전체 문서의 첫 위치로 이동한다.
 	PageManager::LoadFirst(this->parent);
 
-	//2. 찾는다.
+	//3. 찾는다.
 	Editor editor(this->parent);
 	Long count = editor.Find(this->findReplaceOption);
 
-	//3. 검색결과가 있다면,
+	//4. 검색결과가 있다면,
 	if (count > 0)
 	{
-		//3.1. 상태를 적는다.
+		//4.1. 상태를 적는다.
 		this->isUndoable = true;
 
-		PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 		this->source = pagingBuffer->MakeSelectedString();
 		this->replaced = this->findReplaceOption.replaceString;
 
@@ -93,7 +99,7 @@ void ReplaceAllCommand::Execute() {
 			i++;
 		}
 
-		//3.2. 끝까지 바꾼다.
+		//4.2. 끝까지 바꾼다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
 		Long difference = this->replaced.GetLength() - this->source.GetLength();
 		Long j;
@@ -102,6 +108,7 @@ void ReplaceAllCommand::Execute() {
 		{
 			note->Select(false);
 			pagingBuffer->UnmarkSelectionBegin();
+			this->columnIndex = 0;
 			editor.Replace(this->offsets[i], this->source, this->replaced, TRUE, this->columnIndex);
 
 			j = i + 1;
@@ -130,6 +137,7 @@ void ReplaceAllCommand::Undo() {
 	{
 		note->Select(false);
 		pagingBuffer->UnmarkSelectionBegin();
+		this->columnIndex = 0;
 		editor.Replace(this->offsets[i], this->replaced, this->source, TRUE, this->columnIndex);
 
 		j = i + 1;
@@ -155,6 +163,7 @@ void ReplaceAllCommand::Redo() {
 	{
 		note->Select(false);
 		pagingBuffer->UnmarkSelectionBegin();
+		this->columnIndex = 0;
 		editor.Replace(this->offsets[i], this->source, this->replaced, TRUE, this->columnIndex);
 
 		j = i + 1;
