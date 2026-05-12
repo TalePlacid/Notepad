@@ -44,6 +44,9 @@ AppID MouseEventResolver::Resolve(AppID rawID, UINT nFlags, CPoint point, BOOL i
 	case AppID::ID_MOUSE_LBUTTON_DOWN:
 		appID = AppID::ID_ACTION_MOVE_TO_POINT;
 		break;
+	case AppID::ID_MOUSE_LBUTTON_DOUBLE_CLICK:
+		appID = AppID::ID_ACTION_SELECT_DOUBLE_CLICKED;
+		break;
 	case AppID::ID_MOUSE_MOVE:
 		if (nFlags == MK_LBUTTON)
 		{

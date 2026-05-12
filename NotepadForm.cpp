@@ -72,6 +72,7 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplace)
 	ON_MESSAGE(WM_FINDREPLACE_FOCUS, OnFindReplaceFocused)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONDBLCLK()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
@@ -486,6 +487,10 @@ LRESULT NotepadForm::OnFindReplaceFocused(WPARAM wParam, LPARAM lParam) {
 
 void NotepadForm::OnLButtonDown(UINT nFlags, CPoint point) {
 	this->ResolveMouseEvent(AppID::ID_MOUSE_LBUTTON_DOWN, nFlags, point);
+}
+
+void NotepadForm::OnLButtonDblClk(UINT nFlags, CPoint point) {
+	this->ResolveMouseEvent(AppID::ID_MOUSE_LBUTTON_DOUBLE_CLICK, nFlags, point);
 }
 
 void NotepadForm::OnMouseMove(UINT nFlags, CPoint point) {

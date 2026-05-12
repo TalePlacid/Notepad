@@ -562,6 +562,9 @@
     <ClCompile Include="glyphs\NoteWidthCache.cpp">
       <Filter>소스 파일\glyphs</Filter>
     </ClCompile>
+    <ClCompile Include="actions\SelectDoubleClickedAction.cpp">
+      <Filter>소스 파일\actions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NotepadApp.h">
@@ -1091,6 +1094,9 @@
     </ClInclude>
     <ClInclude Include="glyphs\NoteWidthCache.h">
       <Filter>헤더 파일\glyphs</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\SelectDoubleClickedAction.h">
+      <Filter>헤더 파일\actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

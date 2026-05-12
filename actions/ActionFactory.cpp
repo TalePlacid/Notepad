@@ -45,6 +45,7 @@
 #include "SelectPageUpAction.h"
 #include "SelectPageDownAction.h"
 #include "SelectAllAction.h"
+#include "SelectDoubleClickedAction.h"
 #include "CopyAction.h"
 #include "OpenFindDialogAction.h"
 #include "OpenReplaceDialogAction.h"
@@ -222,6 +223,9 @@ Action* ActionFactory::Create(CWnd* parent, AppID nID, FindReplaceOption* findRe
 		break;
 	case AppID::ID_ACTION_SELECT_ALL:
 		action = new SelectAllAction(parent);
+		break;
+	case AppID::ID_ACTION_SELECT_DOUBLE_CLICKED:
+		action = new SelectDoubleClickedAction(parent, *point);
 		break;
 	case AppID::ID_ACTION_COPY:
 		action = new CopyAction(parent);
