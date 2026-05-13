@@ -80,21 +80,15 @@ void InsertAtCaretCommand::Execute() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-<<<<<<< HEAD
 	//3. 조합문자가 남아 있으면, 조합중이던 글자를 지운다.
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	BOOL hasCompositionCharacter = ((NotepadForm*)(this->parent))->HasCompositionCharacter();
-	Long beforeLength = row->GetLength();
 	if (hasCompositionCharacter)
-=======
-	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-	if (((NotepadForm*)(this->parent))->IsCompositing())
->>>>>>> main
 	{
 		row->Remove(columnIndex - 1);
 		noteWidthCache->MarkDirty(rowIndex);
 		columnIndex = row->GetCurrent();
+		((NotepadForm*)(this->parent))->UnmarkCompositionCharacterExist();
 	}
 
 	//3. 노트에서 적는다.
@@ -127,6 +121,10 @@ void InsertAtCaretCommand::Execute() {
 		TCHAR character_[3] = { this->character[0], this->character[1], '\0' };
 		pagingBuffer->Add(character_);
 		this->isUndoable = TRUE;
+	}
+	else
+	{
+		((NotepadForm*)(this->parent))->MarkCompositionCharacterExist();
 	}
 
 	//5. 자동개행중이면, 재개행한다.

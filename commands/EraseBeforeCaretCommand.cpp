@@ -48,8 +48,9 @@ EraseBeforeCaretCommand& EraseBeforeCaretCommand::operator=(const EraseBeforeCar
 void EraseBeforeCaretCommand::Execute() {
 	//1. 파일의 시작 위치가 아니거나, 조합중 문자가 존재하면,
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
-	if (pagingBuffer->GetCurrentOffset() > 0
-		|| (!this->onChar && ((NotepadForm*)(this->parent))->HasCompositionCharacter()))
+	BOOL hasCompositionCharacter = ((NotepadForm*)(this->parent))->HasCompositionCharacter();
+	if ((this->onChar && pagingBuffer->GetCurrentOffset() > 0)
+		|| hasCompositionCharacter)
 	{
 		//1.1. 현재 위치를 읽는다.
 		Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -123,12 +124,17 @@ void EraseBeforeCaretCommand::Execute() {
 		}
 
 		//1.4. 페이징버퍼에서 지운다.
-		if (this->onChar && bytes > 0)
+		if (this->onChar && bytes > 0 && !hasCompositionCharacter)
 		{
 			Long currentOffset = pagingBuffer->GetCurrentOffset();
 			currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 			pagingBuffer->Remove(currentOffset + bytes);
 			this->isUndoable = true;
+		}
+		
+		if (hasCompositionCharacter)
+		{
+			((NotepadForm*)(this->parent))->UnmarkCompositionCharacterExist();
 		}
 
 		//1.5. 자동개행중이면, 재개행한다.

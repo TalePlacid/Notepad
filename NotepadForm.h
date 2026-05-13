@@ -56,7 +56,6 @@ public:
 	CaptionController* captionController;
 	IMEController* imeController;
 public:
-	BOOL HasCompositionCharacter() const;
 	CWnd* GetParent();
 	CFont* GetOriginalFont() const;
 	void ReplaceOriginalFont(CFont* font);
@@ -82,6 +81,9 @@ public:
 	void ApplyPageSetting(const PageSetting& pageSetting);
 	ClientAreaSize GetClientAreaSize() const;
 	void UpdateClientAreaSize(Long width, Long height);
+	BOOL HasCompositionCharacter() const;
+	BOOL MarkCompositionCharacterExist();
+	BOOL UnmarkCompositionCharacterExist();
 	BOOL BeginWaitingForImeComposition();
 	BOOL EndWaitingForImeComposition();
 	BOOL IsWaitingForImeComposition() const;
@@ -95,7 +97,6 @@ protected:
 	LRESULT OnImeStartComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeChar(WPARAM wParam, LPARAM lParam);
-	LRESULT OnImeNotify(WPARAM wParam, LPARAM lParam);
 	LRESULT OnIMEConversion(WPARAM wParam, LPARAM lParam);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnPaint();
@@ -115,6 +116,8 @@ protected:
 	void OnRButtonDown(UINT nFlags, CPoint point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	void OnTimer(UINT_PTR nIDEvent);
+	LRESULT OnImeNotify(WPARAM wParam, LPARAM lParam);
+	LRESULT OnImeSetContext(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 private:
 	void ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption);
@@ -139,10 +142,6 @@ private:
 	BOOL isWaitingForImeConversion;
 	ClientAreaSize clientAreaSize;
 };
-
-inline BOOL NotepadForm::HasCompositionCharacter() const {
-	return this->hasCompositionCharacter;
-}
 
 inline CWnd* NotepadForm::GetParent() {
 	return this->parent;
@@ -246,6 +245,22 @@ inline ClientAreaSize NotepadForm::GetClientAreaSize() const {
 inline void NotepadForm::UpdateClientAreaSize(Long width, Long height) {
 	this->clientAreaSize.width = width;
 	this->clientAreaSize.height = height;
+}
+
+inline BOOL NotepadForm::HasCompositionCharacter() const {
+	return this->hasCompositionCharacter;
+}
+
+inline BOOL NotepadForm::MarkCompositionCharacterExist() {
+	this->hasCompositionCharacter = TRUE;
+
+	return this->hasCompositionCharacter;
+}
+
+inline BOOL NotepadForm::UnmarkCompositionCharacterExist() {
+	this->hasCompositionCharacter = FALSE;
+
+	return this->hasCompositionCharacter;
 }
 
 inline BOOL NotepadForm::BeginWaitingForImeComposition() {

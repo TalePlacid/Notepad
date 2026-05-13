@@ -88,6 +88,10 @@ bool IMEController::Convert() {
     return isSucceed;
 }
 
+bool IMEController::CloseCompositionWindow() {
+    return ImmNotifyIME(this->hIMC, NI_COMPOSITIONSTR, CPS_CANCEL, 0);
+}
+
 void IMEController::GetCurrentCompositionText(char* text, Long& length) {
     length = ImmGetCompositionString(this->hIMC, GCS_COMPSTR, text, 256);
     text[length] = '\0';

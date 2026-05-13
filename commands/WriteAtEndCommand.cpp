@@ -63,7 +63,6 @@ WriteAtEndCommand& WriteAtEndCommand::operator=(const WriteAtEndCommand& source)
 }
 
 void WriteAtEndCommand::Execute() {
-	TRACE("\n================\nWriteAtEndCommand\n================\n");
 	//1. 선택범위가 있으면, 먼저 지운다.
 	PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
 	Editor editor(this->parent);
@@ -83,11 +82,11 @@ void WriteAtEndCommand::Execute() {
 
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	BOOL hasCompositionCharacter = ((NotepadForm*)(this->parent))->HasCompositionCharacter();
-	TRACE("hasCompositionCharacter: %ld\n", hasCompositionCharacter);
 	if (hasCompositionCharacter)
 	{
 		row->Remove();
 		noteWidthCache->MarkDirty(rowIndex);
+		((NotepadForm*)(this->parent))->UnmarkCompositionCharacterExist();
 	}
 
 	//3. 노트에서 적는다.
@@ -116,6 +115,10 @@ void WriteAtEndCommand::Execute() {
 		TCHAR character_[3] = { this->character[0], this->character[1], '\0' };
 		pagingBuffer->Add(character_);
 		this->isUndoable = true;
+	}
+	else
+	{
+		((NotepadForm*)(this->parent))->MarkCompositionCharacterExist();
 	}
 
 	//5. 자동개행중이면 재개행한다.

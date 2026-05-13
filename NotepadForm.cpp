@@ -62,7 +62,6 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_MESSAGE(WM_IME_STARTCOMPOSITION, OnImeStartComposition)
 	ON_MESSAGE(WM_IME_COMPOSITION, OnImeComposition)
 	ON_MESSAGE(WM_IME_CHAR, OnImeChar)
-	ON_MESSAGE(WM_IME_NOTIFY, OnImeNotify)
 	ON_MESSAGE(WM_CONVERT_IME_CHARACTER, OnIMEConversion)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
@@ -80,6 +79,8 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_TIMER()
+	ON_MESSAGE(WM_IME_NOTIFY, OnImeNotify)
+	ON_MESSAGE(WM_IME_SETCONTEXT, OnImeSetContext)
 	END_MESSAGE_MAP()
 
 NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* statusBarController) {
@@ -305,64 +306,49 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
-	TRACE("START\n");
 	return TRUE;
 }
 
 LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
-<<<<<<< HEAD
-	TRACE("\n================\nOnImeComposition\n================\n");
-	if ((lParam & GCS_COMPSTR) && !this->isWaitingForImeComposition && !this->isWaitingForImeConversion) //1. 일반 조합 중이면,
-    {
-        TCHAR character[256];
-        Long length;
-        this->imeController->GetCurrentCompositionText(character, length);
-		TRACE("compoText: %s\n", character);
-=======
-	if (lParam & GCS_COMPSTR)
+	LRESULT ret;
+	if (lParam & GCS_COMPSTR && !this->isWaitingForImeConversion)
 	{
-		TRACE("COMPO\n");
-		HIMC himc = ImmGetContext(this->GetSafeHwnd());
-		TCHAR character[256];
-		Command* command = NULL;
-		Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
-		character[length] = '\0';
->>>>>>> main
+		if (!this->isWaitingForImeComposition) //IME 한자변환 입력이 아니면,
+		{
+			HIMC himc = ImmGetContext(this->GetSafeHwnd());
+			TCHAR character[256];
+			Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
+			character[length] = '\0';
 
-        Command* command = NULL;
-        if (length > 0)
-        {
-            AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-			TRACE("beforeCommand//AppID: %ld, hasCompositionCharacter: %ld\n", nID, this->hasCompositionCharacter);
-            this->HandleCommand(nID, character, FALSE);
-            this->hasCompositionCharacter = TRUE;
-			TRACE("afterCommand//AppID: %ld, hasCompositionCharacter: %ld\n", nID, this->hasCompositionCharacter);
+			Command* command = NULL;
+			if (length > 0)
+			{
+				AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
+				this->HandleCommand(nID, character, FALSE);
+			}
+			else if (length == 0)
+			{
+				this->HandleCommand(AppID::ID_COMMAND_ERASE_BEFORE_CARET, NULL, FALSE);
+			}
 		}
-        else if (length == 0)
-        {
-			TRACE("beforeErase//AppID: ID_COMMAND_ERASE_BEFORE_CARET, hasCompositionCharacter: %ld\n", this->hasCompositionCharacter);
-			this->HandleCommand(AppID::ID_COMMAND_ERASE_BEFORE_CARET, NULL, FALSE);
-            this->hasCompositionCharacter = FALSE;
-			TRACE("afterErase//AppID: ID_COMMAND_ERASE_BEFORE_CARET, hasCompositionCharacter: %ld\n", this->hasCompositionCharacter);
+		else //IME 한자 변환 입력이면,
+		{
+			this->isWaitingForImeComposition = FALSE;
+			this->isWaitingForImeConversion = TRUE;
+			this->PostMessage(WM_CONVERT_IME_CHARACTER, 0, 0);
 		}
-    }
-    else if (this->isWaitingForImeComposition && (lParam & GCS_COMPSTR)) //2. IME에 주입한 조합 문자열이 메시지 흐름에 반영되면,
-    {
-		TRACE("PostMessage\n");
-        this->isWaitingForImeComposition = FALSE;
-        this->isWaitingForImeConversion = TRUE;
-        this->PostMessage(WM_CONVERT_IME_CHARACTER, 0, 0);
-    }
 
-    return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
+		ret = 0;
+	}
+	else
+	{
+		//ret = DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
+	}
+
+	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);//ret;
 }
 
 LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
-<<<<<<< HEAD
-	TRACE("\n================\nOnImeChar\n================\n");
-=======
-	TRACE("CHAR\n");
->>>>>>> main
 	char character[2];
     character[0] = (BYTE)(wParam >> 8);
     character[1] = (BYTE)wParam;
@@ -371,18 +357,13 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	traceCharacter[0] = character[0];
 	traceCharacter[1] = character[1];
 	traceCharacter[2] = '\0';
-	TRACE("character: %s\n", traceCharacter);
 
-	TRACE("!isWaitingForImeComposition: %ld\n", !this->isWaitingForImeComposition);
     if (!this->isWaitingForImeComposition) //1. 한자 변환중이 아니면,
     {
 		if (!this->isWaitingForImeConversion)
 		{
 			AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-			TRACE("beforeCommand//AppID: %ld, hasCompositionCharacter: %ld, isWaitingForImeConversion: %ld\n", nID, this->hasCompositionCharacter, this->isWaitingForImeConversion);
 			this->HandleCommand(nID, character, TRUE);
-			this->hasCompositionCharacter = FALSE;
-			TRACE("afterCommand//AppID: %ld, hasCompositionCharacter: %ld, isWaitingForImeConversion: %ld\n", nID, this->hasCompositionCharacter, this->isWaitingForImeConversion);
 		}
 		else
 		{
@@ -394,33 +375,30 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
     return 0;
 }
 
-<<<<<<< HEAD
 LRESULT NotepadForm::OnImeNotify(WPARAM wParam, LPARAM lParam) {
-	TRACE("\n================\nOnImeNotify\n================\n");
-	if (wParam == IMN_OPENCANDIDATE)
+	if (wParam == IMN_OPENCANDIDATE || wParam == IMN_CLOSECANDIDATE)
 	{
-		TRACE("IMN_OPENCANDIDATE\n");
+		this->KillTimer(TIMER_ID_IME_OPEN_CANDIDATE);
 	}
-	else if (wParam == IMN_CLOSECANDIDATE)
-	{
-		TRACE("IMN_CLOSECANDIDATE\n");
-	}
-=======
-LRESULT NotepadForm::OnImeEndComposition(WPARAM wParam, LPARAM lParam) {
-	TRACE("END\n");
-	this->isCompositing = FALSE;
->>>>>>> main
 
-	return DefWindowProc(WM_IME_NOTIFY, wParam, lParam);
+	return  DefWindowProc(WM_IME_NOTIFY, wParam, lParam);
+}
+
+LRESULT NotepadForm::OnImeSetContext(WPARAM wParam, LPARAM lParam) {
+	if (wParam)
+	{
+		//lParam &= ~ISC_SHOWUICOMPOSITIONWINDOW;
+	}
+
+	return DefWindowProc(WM_IME_SETCONTEXT, wParam, lParam);
 }
 
 LRESULT NotepadForm::OnIMEConversion(WPARAM wParam, LPARAM lParam) {
-	TRACE("\n================\nOnIMEConversion\n================\n");
-	TRACE("isWaitingForImeConversion: %ld\n", this->isWaitingForImeConversion);
 	if (this->isWaitingForImeConversion)
 	{
 		this->imeController->SetWindowPosition();
 		this->imeController->Convert();
+		this->SetTimer(TIMER_ID_IME_OPEN_CANDIDATE, IME_OPEN_CANDIDATE_INTERVAL, 0);
 	}
 
 	return 0;
@@ -644,6 +622,13 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 		this->Invalidate();
 	}
 	break;
+	case TIMER_ID_IME_OPEN_CANDIDATE:
+		this->KillTimer(TIMER_ID_IME_OPEN_CANDIDATE);
+		this->imeController->CloseCompositionWindow();
+		this->isWaitingForImeComposition = FALSE;
+		this->isWaitingForImeConversion = FALSE;
+		this->hasCompositionCharacter = FALSE;
+		break;
 	default:
 		break;
 	}

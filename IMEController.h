@@ -15,6 +15,7 @@ public:
 	bool SetWindowPosition();
 	bool Convert();
 	void GetCurrentCompositionText(char* text, Long& length);
+	bool CloseCompositionWindow();
 
 	char* RecordSource(char(*source));
 	char* RecordConverted(char(*converted));
