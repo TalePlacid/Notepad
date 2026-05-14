@@ -1,26 +1,25 @@
 #include <afxwin.h>
 #include <imm.h>
-#include <stdio.h>
-#include "StartKoreanImeConversionAction.h"
+#include "StartImeConversionAction.h"
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
-#include "../IMEController.h"
+#include "../IMEs/IMEAdapter.h"
 #include "../ByteChecker.h"
 
 #pragma warning(disable:4996)
 #pragma comment(lib, "imm32.lib")
 
-StartKoreanImeConversionAction::StartKoreanImeConversionAction(CWnd* parent)
+StartImeConversionAction::StartImeConversionAction(CWnd* parent)
     :Action(parent) {
 
 }
 
-StartKoreanImeConversionAction::~StartKoreanImeConversionAction() {
+StartImeConversionAction::~StartImeConversionAction() {
 
 }
 
-void StartKoreanImeConversionAction::Perform() {
+void StartImeConversionAction::Perform() {
     //1. 한글 후보를 찾는다.
     PagingBuffer* pagingBuffer = ((NotepadForm*)(this->parent))->pagingBuffer;
     Glyph* note = ((NotepadForm*)(this->parent))->note;
@@ -61,11 +60,11 @@ void StartKoreanImeConversionAction::Perform() {
     if (candidate[0] != '\0')
     {
         //2.1. 변환중 표시를 한다.
-        ((NotepadForm*)(this->parent))->BeginWaitingForImeComposition();
+        IMEAdapter* imeAdapter = ((NotepadForm*)(this->parent))->imeAdapter;
+        imeAdapter->BeginWaitingForComposition();
 
-        //2.2. IME컨트롤러에서 설정한다.
-        IMEController* imeController = ((NotepadForm*)(this->parent))->imeController;
-        imeController->RecordSource(candidate);
-        imeController->SetConversionOptions(candidate);
+        //2.2. IME어댑터에서 설정한다.
+        imeAdapter->RecordSource(candidate);
+        imeAdapter->ApplyConversionOptions(candidate);
     }
 }

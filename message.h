@@ -2,7 +2,7 @@
 #define _MESSAGE_H
 #include <afxwin.h>
 #define WM_FINDREPLACE_FOCUS (WM_APP+1)
-#define WM_CONVERT_IME_CHARACTER (WM_APP+2)
+#define WM_IME_CONVERSION (WM_APP+2)
 
 #endif // !_MESSAGE_H
 

@@ -1,14 +1,15 @@
 #ifndef _IMECONTROLLER_H //guard
 #define _IMECONTROLLER_H
+#include <afxwin.h>
 #include <imm.h>
 
 typedef signed long int Long;
 
-class CWnd;
+class CaretController;
 
 class IMEController {
 public:
-	IMEController(CWnd* parent);
+	IMEController(HWND hWnd, CaretController* caretController);
 	~IMEController();
 
 	bool SetConversionOptions(const char* korean);
@@ -16,22 +17,10 @@ public:
 	bool Convert();
 	void GetCurrentCompositionText(char* text, Long& length);
 	bool CloseCompositionWindow();
-
-	char* RecordSource(char(*source));
-	char* RecordConverted(char(*converted));
-	void ClearCharacters();
-	bool IsConverted();
-
-	char* GetConverted();
 private:
-	CWnd* parent;
+	HWND hWnd;
 	HIMC hIMC;
-	char source[2];
-	char converted[2];
+	CaretController* caretController;
 };
-
-inline char* IMEController::GetConverted() {
-	return this->converted;
-}
 
 #endif // !_IMECONTROLLER_H

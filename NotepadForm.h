@@ -31,7 +31,7 @@ class FindReplaceOption;
 class CFindReplaceDialog;
 class CaptionController;
 class NoteWidthCache;
-class IMEController;
+class IMEAdapter;
 
 class NotepadForm : public CWnd, public Subject {
 public:
@@ -54,7 +54,7 @@ public:
 	MouseHandler* mouseHandler;
 	CFindReplaceDialog* findReplaceDialog;
 	CaptionController* captionController;
-	IMEController* imeController;
+	IMEAdapter* imeAdapter;
 public:
 	CWnd* GetParent();
 	CFont* GetOriginalFont() const;
@@ -84,12 +84,6 @@ public:
 	BOOL HasCompositionCharacter() const;
 	BOOL MarkCompositionCharacterExist();
 	BOOL UnmarkCompositionCharacterExist();
-	BOOL BeginWaitingForImeComposition();
-	BOOL EndWaitingForImeComposition();
-	BOOL IsWaitingForImeComposition() const;
-	BOOL BeginWaitingForImeConversion();
-	BOOL EndWaitingForImeConversion();
-	BOOL IsWaitingForImeConversion() const;
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -97,7 +91,9 @@ protected:
 	LRESULT OnImeStartComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeComposition(WPARAM wParam, LPARAM lParam);
 	LRESULT OnImeChar(WPARAM wParam, LPARAM lParam);
+	LRESULT OnImeNotify(WPARAM wParam, LPARAM lParam);
 	LRESULT OnIMEConversion(WPARAM wParam, LPARAM lParam);
+	LRESULT OnForwardingIMEAdapter(UINT message, WPARAM wParam, LPARAM lParam);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnPaint();
 	void OnSetFocus(CWnd* pOldWnd);
@@ -116,8 +112,6 @@ protected:
 	void OnRButtonDown(UINT nFlags, CPoint point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	void OnTimer(UINT_PTR nIDEvent);
-	LRESULT OnImeNotify(WPARAM wParam, LPARAM lParam);
-	LRESULT OnImeSetContext(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 private:
 	void ResolveFindReplaceRequest(AppID appID, FindReplaceOption& findReplaceOption);
@@ -138,8 +132,6 @@ private:
 	Encoding encoding;
 	BOOL isDirty;
 	BOOL hasCompositionCharacter;
-	BOOL isWaitingForImeComposition;
-	BOOL isWaitingForImeConversion;
 	ClientAreaSize clientAreaSize;
 };
 
@@ -261,40 +253,6 @@ inline BOOL NotepadForm::UnmarkCompositionCharacterExist() {
 	this->hasCompositionCharacter = FALSE;
 
 	return this->hasCompositionCharacter;
-}
-
-inline BOOL NotepadForm::BeginWaitingForImeComposition() {
-	this->isWaitingForImeComposition = TRUE;
-	this->isWaitingForImeConversion = FALSE;
-
-	return this->isWaitingForImeComposition;
-}
-
-inline BOOL NotepadForm::EndWaitingForImeComposition() {
-	this->isWaitingForImeComposition = FALSE;
-
-	return this->isWaitingForImeComposition;
-}
-
-inline BOOL NotepadForm::IsWaitingForImeComposition() const {
-	return this->isWaitingForImeComposition;
-}
-
-inline BOOL NotepadForm::BeginWaitingForImeConversion() {
-	this->isWaitingForImeComposition = FALSE;
-	this->isWaitingForImeConversion = TRUE;
-
-	return this->isWaitingForImeConversion;
-}
-
-inline BOOL NotepadForm::EndWaitingForImeConversion() {
-	this->isWaitingForImeConversion = FALSE;
-
-	return this->isWaitingForImeConversion;
-}
-
-inline BOOL NotepadForm::IsWaitingForImeConversion() const {
-	return this->isWaitingForImeConversion;
 }
 
 #endif // !_NOTEPADFORM_H

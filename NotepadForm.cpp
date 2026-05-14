@@ -37,7 +37,7 @@
 #include "FindReplaceRequestResolver.h"
 #include "MouseEventResolver.h"
 #include "glyphs/NoteWidthCache.h"
-#include "IMEController.h"
+#include "IMEs/IMEAdapter.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -62,7 +62,8 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_MESSAGE(WM_IME_STARTCOMPOSITION, OnImeStartComposition)
 	ON_MESSAGE(WM_IME_COMPOSITION, OnImeComposition)
 	ON_MESSAGE(WM_IME_CHAR, OnImeChar)
-	ON_MESSAGE(WM_CONVERT_IME_CHARACTER, OnIMEConversion)
+	ON_MESSAGE(WM_IME_NOTIFY, OnImeNotify)
+	ON_MESSAGE(WM_IME_CONVERSION, OnIMEConversion)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_COMMAND_RANGE(ID_MENU_UNDO, ID_MENU_SETPAGE, OnMenuClicked)
@@ -79,8 +80,6 @@ BEGIN_MESSAGE_MAP(NotepadForm, CWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_TIMER()
-	ON_MESSAGE(WM_IME_NOTIFY, OnImeNotify)
-	ON_MESSAGE(WM_IME_SETCONTEXT, OnImeSetContext)
 	END_MESSAGE_MAP()
 
 NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* statusBarController) {
@@ -102,10 +101,8 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 	this->previewForm = NULL;
 	this->statusBarController = statusBarController;
 	this->mouseHandler = NULL;
-	this->imeController = NULL;
+	this->imeAdapter = NULL;
 	this->hasCompositionCharacter = FALSE;
-	this->isWaitingForImeComposition = FALSE;
-	this->isWaitingForImeConversion = FALSE;
 	this->isAutoWrapped = FALSE;
 	this->autoWrapSuspendCount = 0;
 	this->magnification = 1.0;
@@ -196,9 +193,9 @@ NotepadForm::~NotepadForm() {
 		delete this->captionController;
 	}
 
-	if (this->imeController != NULL)
+	if (this->imeAdapter != NULL)
 	{
-		delete this->imeController;
+		delete this->imeAdapter;
 	}
 }
 
@@ -281,7 +278,7 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->captionController = new CaptionController(this);
 	this->Register(this->captionController);
 
-	this->imeController = new IMEController(this);
+	this->imeAdapter = new IMEAdapter(this);
 
 	this->Notify("UpdateScrollBars");
 	this->Notify("UpdateCaptionUnsaved");
@@ -310,6 +307,8 @@ LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
+	return this->OnForwardingIMEAdapter(WM_IME_COMPOSITION, wParam, lParam);
+#if 0
 	LRESULT ret;
 	if (lParam & GCS_COMPSTR && !this->isWaitingForImeConversion)
 	{
@@ -346,17 +345,14 @@ LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 	}
 
 	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);//ret;
+#endif
 }
-
 LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
+	return this->OnForwardingIMEAdapter(WM_IME_CHAR, wParam, lParam);
+#if 0
 	char character[2];
     character[0] = (BYTE)(wParam >> 8);
     character[1] = (BYTE)wParam;
-
-	char traceCharacter[3];
-	traceCharacter[0] = character[0];
-	traceCharacter[1] = character[1];
-	traceCharacter[2] = '\0';
 
     if (!this->isWaitingForImeComposition) //1. 한자 변환중이 아니면,
     {
@@ -373,27 +369,24 @@ LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	}
 
     return 0;
+#endif
 }
 
 LRESULT NotepadForm::OnImeNotify(WPARAM wParam, LPARAM lParam) {
+	return this->OnForwardingIMEAdapter(WM_IME_NOTIFY, wParam, lParam);
+#if 0
 	if (wParam == IMN_OPENCANDIDATE || wParam == IMN_CLOSECANDIDATE)
 	{
 		this->KillTimer(TIMER_ID_IME_OPEN_CANDIDATE);
 	}
 
 	return  DefWindowProc(WM_IME_NOTIFY, wParam, lParam);
-}
-
-LRESULT NotepadForm::OnImeSetContext(WPARAM wParam, LPARAM lParam) {
-	if (wParam)
-	{
-		//lParam &= ~ISC_SHOWUICOMPOSITIONWINDOW;
-	}
-
-	return DefWindowProc(WM_IME_SETCONTEXT, wParam, lParam);
+#endif
 }
 
 LRESULT NotepadForm::OnIMEConversion(WPARAM wParam, LPARAM lParam) {
+	return this->OnForwardingIMEAdapter(WM_IME_CONVERSION, wParam, lParam);
+#if 0
 	if (this->isWaitingForImeConversion)
 	{
 		this->imeController->SetWindowPosition();
@@ -402,6 +395,28 @@ LRESULT NotepadForm::OnIMEConversion(WPARAM wParam, LPARAM lParam) {
 	}
 
 	return 0;
+#endif
+}
+
+LRESULT NotepadForm::OnForwardingIMEAdapter(UINT message, WPARAM wParam, LPARAM lParam) {
+	AppID appID;
+	BOOL isProceed;
+	TCHAR character[2];
+	BOOL onChar;
+	this->imeAdapter->HandleMessage(message, wParam, lParam, appID, isProceed, character, onChar);
+
+	if (appID != AppID::NONE)
+	{
+		this->HandleCommand(appID, character, onChar);
+	} 
+
+	LRESULT ret = 0;
+	if (!isProceed)
+	{
+		ret = DefWindowProcA(message, wParam, lParam);
+	}
+
+	return ret;
 }
 
 void NotepadForm::OnSize(UINT nType, int cx, int cy) {
@@ -624,10 +639,15 @@ void NotepadForm::OnTimer(UINT_PTR nIDEvent) {
 	break;
 	case TIMER_ID_IME_OPEN_CANDIDATE:
 		this->KillTimer(TIMER_ID_IME_OPEN_CANDIDATE);
-		this->imeController->CloseCompositionWindow();
-		this->isWaitingForImeComposition = FALSE;
-		this->isWaitingForImeConversion = FALSE;
-		this->hasCompositionCharacter = FALSE;
+		this->imeAdapter->CloseCompositionWindow();
+		this->imeAdapter->EndWaitingForComposition();
+		this->imeAdapter->EndWaitingForConversion();
+		this->imeAdapter->ClearCharacters();
+		break;
+	case TIMER_ID_IME_CLOSE_CANDIDATE:
+		this->KillTimer(TIMER_ID_IME_CLOSE_CANDIDATE);
+		this->imeAdapter->EndWaitingForConversion();
+		this->imeAdapter->ClearCharacters();
 		break;
 	default:
 		break;
@@ -667,6 +687,7 @@ void NotepadForm::ResolveMouseEvent(AppID rawID, UINT nFlags, CPoint point, shor
 	this->HandleAction(appID, NULL, &absolutePoint);
 }
 
+#if 0
 void NotepadForm::ResolveIMEEvent() {
 	//1. 선택되었으면,
 	if (this->imeController->IsConverted())
@@ -677,6 +698,7 @@ void NotepadForm::ResolveIMEEvent() {
 	this->imeController->ClearCharacters();
 	this->isWaitingForImeConversion = FALSE;
 }
+#endif
 
 void NotepadForm::HandleCommand(AppID nID, const TCHAR(*character), BOOL onChar, 
 	FindReplaceOption* findReplaceOption) {

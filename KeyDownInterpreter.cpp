@@ -194,7 +194,7 @@ AppID KeyDownInterpreter::DetermineID(UINT nChar, BOOL hasSelectionRange) {
 		}
 		break;
 	case VK_HANJA:
-		nID = AppID::ID_ACTION_START_KOREAN_IME_CONVERSION;
+		nID = AppID::ID_ACTION_START_IME_CONVERSION;
 		break;
 	case VK_BACK:
 		nID = AppID::ID_COMMAND_ERASE_BEFORE_CARET;

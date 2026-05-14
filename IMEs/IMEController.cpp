@@ -1,35 +1,31 @@
 #include <afxwin.h>
 #include "IMEController.h"
-#include "NotepadForm.h"
-#include "CaretController.h"
-#include "Caret.h"
+#include "../CaretController.h"
+#include "../Caret.h"
 
 #pragma warning(disable:4996)
 
-IMEController::IMEController(CWnd* parent) {
-	this->parent = parent;
-	this->hIMC = ::ImmGetContext(this->parent->GetSafeHwnd());
-    this->source[0] = '\0';
-    this->source[1] = '\0';
-    this->converted[0] = '\0';
-    this->converted[1] = '\0';
+IMEController::IMEController(HWND hWnd, CaretController* caretController) {
+    this->hWnd = hWnd;
+    this->caretController = caretController;
+    this->hIMC = ::ImmGetContext(this->hWnd);
 }
 
 IMEController::~IMEController() {
-	::ImmReleaseContext(this->parent->GetSafeHwnd(), this->hIMC);
+    ::ImmReleaseContext(this->hWnd, this->hIMC);
 }
 
 bool IMEController::SetConversionOptions(const char* character) {
-	//1. 변환 문자 정보를 IME에 주입한다.
-	BYTE attrs[2] = { ATTR_TARGET_NOTCONVERTED , ATTR_TARGET_NOTCONVERTED };
-	DWORD clauses[2] = { 0, 2 };
+    //1. 변환 문자 정보를 IME에 주입한다.
+    BYTE attrs[2] = { ATTR_TARGET_NOTCONVERTED , ATTR_TARGET_NOTCONVERTED };
+    DWORD clauses[2] = { 0, 2 };
 
-	ImmSetCompositionStringA(this->hIMC, SCS_SETSTR, (LPVOID)character, 2, (LPVOID)character, 2);
-	ImmSetCompositionStringA(this->hIMC, SCS_CHANGEATTR, attrs, 2, attrs, 2);
-	ImmSetCompositionStringA(this->hIMC, SCS_CHANGECLAUSE, clauses, sizeof(clauses), clauses, sizeof(clauses));
+    ImmSetCompositionStringA(this->hIMC, SCS_SETSTR, (LPVOID)character, 2, (LPVOID)character, 2);
+    ImmSetCompositionStringA(this->hIMC, SCS_CHANGEATTR, attrs, 2, attrs, 2);
+    ImmSetCompositionStringA(this->hIMC, SCS_CHANGECLAUSE, clauses, sizeof(clauses), clauses, sizeof(clauses));
 
-	//2. WM_IME_COMPOSITION을 발생시켜 적용시킨다.
-	BOOL isSucceed = ImmNotifyIME(this->hIMC, NI_OPENCANDIDATE, 0, 0);
+    //2. WM_IME_COMPOSITION을 발생시켜 적용시킨다.
+    BOOL isSucceed = ImmNotifyIME(this->hIMC, NI_OPENCANDIDATE, 0, 0);
 
     return isSucceed;
 }
@@ -46,9 +42,8 @@ bool IMEController::SetWindowPosition() {
     compositionForm.rcArea.bottom = -31999;
     BOOL isCompositionSetted = ImmSetCompositionWindow(this->hIMC, &compositionForm);
 
-    //2. 한자 후보창을 NotepadForm의 현재 캐럿 위치를 기준으로 띄운다.
-    CaretController* caretController = ((NotepadForm*)(this->parent))->caretController;
-    Caret* caret = caretController->GetCaret();
+    //2. 한자 후보창을 현재 캐럿 위치를 기준으로 띄운다.
+    Caret* caret = this->caretController->GetCaret();
     POINT caretPoint;
     caretPoint.x = caret->GetX();
     caretPoint.y = caret->GetY();
@@ -74,8 +69,8 @@ bool IMEController::SetWindowPosition() {
 
 bool IMEController::Convert() {
     //1. 설정 완료된 상태에서 한자 변환키을 요청한다.
-    BOOL isConvertKeyDown = ImmSimulateHotKey(this->parent->GetSafeHwnd(), IME_KHOTKEY_HANJACONVERT);
-    
+    BOOL isConvertKeyDown = ImmSimulateHotKey(this->hWnd, IME_KHOTKEY_HANJACONVERT);
+
     //2. IME입력기에 요청을 적용한다.
     BOOL isCandidateOpened = ImmNotifyIME(this->hIMC, NI_OPENCANDIDATE, 0, 0);
 
@@ -94,39 +89,9 @@ bool IMEController::CloseCompositionWindow() {
 
 void IMEController::GetCurrentCompositionText(char* text, Long& length) {
     length = ImmGetCompositionString(this->hIMC, GCS_COMPSTR, text, 256);
-    text[length] = '\0';
-}
-
-char* IMEController::RecordSource(char(*source)) {
-    this->source[0] = source[0];
-    this->source[1] = source[1];
-
-    return this->source;
-}
-
-char* IMEController::RecordConverted(char(*converted)) {
-    this->converted[0] = converted[0];
-    this->converted[1] = converted[1];
-
-    return this->converted;
-}
-
-void IMEController::ClearCharacters() {
-    this->source[0] = '\0';
-    this->source[1] = '\0';
-    this->converted[0] = '\0';
-    this->converted[1] = '\0';
-}
-
-bool IMEController::IsConverted() {
-    bool ret = false;
-    
-    if (this->converted[0] != '\0'
-        && (this->source[0] != this->converted[0]
-        || this->source[1] != this->converted[1]))
+    if (length < 0)
     {
-        ret = true;
+        length = 0;
     }
-
-    return ret;
+    text[length] = '\0';
 }

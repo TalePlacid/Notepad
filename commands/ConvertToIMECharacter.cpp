@@ -6,7 +6,6 @@
 #include "../PagingBuffer.h"
 #include "../CaretNavigator.h"
 #include "../glyphs/GlyphFactory.h"
-#include "../IMEController.h"
 
 #pragma warning(disable:4996)
 
