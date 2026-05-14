@@ -99,6 +99,7 @@ void EraseBeforeCaretCommand::Execute() {
 				columnIndex = note->GetAt(rowIndex - 1)->GetLength();
 				noteWidthCache->Remove(rowIndex);
 				rowIndex = note->MergeRows(rowIndex - 1);
+				rowIndex = note->Move(rowIndex);
 				row = note->GetAt(rowIndex);
 				columnIndex = row->Move(columnIndex);
 				noteWidthCache->MarkDirty(rowIndex);
@@ -278,6 +279,7 @@ void EraseBeforeCaretCommand::Redo() {
 			columnIndex = note->GetAt(rowIndex - 1)->GetLength();
 			noteWidthCache->Remove(rowIndex);
 			rowIndex = note->MergeRows(rowIndex - 1);
+			rowIndex = note->Move(rowIndex);
 			row = note->GetAt(rowIndex);
 			columnIndex = row->Move(columnIndex);
 			noteWidthCache->MarkDirty(rowIndex);

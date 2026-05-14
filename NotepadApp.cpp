@@ -16,10 +16,10 @@ BOOL NotepadApp::InitInstance() {
 	CWinApp::InitInstance();
 
 	//테스트용 파일경로
-	CString testPath = "C:\\parkcom\\notepad\\notepad\\textFile\\test.txt";
-	NotepadFrame* notepadFrame = new NotepadFrame((LPCTSTR)testPath);
+	//CString testPath = "C:\\parkcom\\notepad\\notepad\\textFile\\test.txt";
+	//NotepadFrame* notepadFrame = new NotepadFrame((LPCTSTR)testPath);
 	
-	//NotepadFrame* notepadFrame = new NotepadFrame(this->m_lpCmdLine);
+	NotepadFrame* notepadFrame = new NotepadFrame(this->m_lpCmdLine);
 
 	notepadFrame->Create(NULL, "메모장 ~제목없음");         
 
