@@ -20,6 +20,7 @@
 #include "CaptionController.h"
 #include "TextFileIO.h"
 #include "FontSelector.h"
+#include "IMEs/IMEAdapter.h"
 #include "PageManager.h"
 
 #include "NoteWrapper.h"
@@ -37,7 +38,7 @@
 #include "FindReplaceRequestResolver.h"
 #include "MouseEventResolver.h"
 #include "glyphs/NoteWidthCache.h"
-#include "IMEs/IMEAdapter.h"
+#include "ViewOptionStorage.h"
 
 #include "glyphs/GlyphFactory.h"
 #include "commands/CommandFactory.h"
@@ -115,6 +116,18 @@ NotepadForm::NotepadForm(CWnd *parent, CString sourcePath, StatusBarController* 
 }
 
 NotepadForm::~NotepadForm() {
+	if (this->originalFont != NULL)
+	{
+		LOGFONT logFont = { 0, };
+		this->originalFont->GetLogFont(&logFont);
+		BOOL isStatusBarVisible = FALSE;
+		if (this->statusBarController != NULL)
+		{
+			isStatusBarVisible = this->statusBarController->IsVisible();
+		}
+		ViewOptionStorage::Save(logFont, this->isAutoWrapped, this->magnification, isStatusBarVisible);
+	}
+
 	if (this->note != NULL)
 	{
 		delete this->note;
@@ -214,9 +227,16 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->UpdateClientAreaSize(clientArea.Width(), clientArea.Height());
 
 	FontSelector fontSelector;
-	LOGFONT logFont = fontSelector.SelectBaseLogFont(this);
-
 	this->originalFont = new CFont;
+	LOGFONT logFont = { 0, };
+	BOOL isAutoWrapped = FALSE;
+	BOOL isStatusBarVisible = FALSE;
+
+	BOOL hasViewOptionFile = ViewOptionStorage::Load(logFont, isAutoWrapped, this->magnification, isStatusBarVisible);
+	if (!hasViewOptionFile)
+	{
+		logFont = fontSelector.SelectBaseLogFont(this);
+	}
 	this->originalFont->CreateFontIndirect(&logFont);
 
 	logFont = fontSelector.SelectScaledLogFont(logFont, this->magnification);
@@ -279,6 +299,16 @@ int NotepadForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->Register(this->captionController);
 
 	this->imeAdapter = new IMEAdapter(this);
+
+	if (isAutoWrapped)
+	{
+		this->HandleAction(AppID::ID_ACTION_AUTOWRAP);
+	}
+
+	if (isStatusBarVisible)
+	{
+		this->HandleAction(AppID::ID_ACTION_TOGGLE_STATUSBAR);
+	}
 
 	this->Notify("UpdateScrollBars");
 	this->Notify("UpdateCaptionUnsaved");

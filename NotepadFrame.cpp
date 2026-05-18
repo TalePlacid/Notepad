@@ -99,14 +99,14 @@ void NotepadFrame::OnClose() {
 		}
 	}
 	
-	if (this->statusBarController != NULL)
-	{
-		delete this->statusBarController;
-	}
-
 	if (this->notepadForm != NULL)
 	{
 		delete this->notepadForm;
+	}
+
+	if (this->statusBarController != NULL)
+	{
+		delete this->statusBarController;
 	}
 
 	CFrameWnd::OnClose();
