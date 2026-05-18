@@ -23,10 +23,14 @@ void SelectDoubleClickedAction::Perform() {
 	Long clickedColumnIndex;
 	coordinateConverter.AbsoluteToNotePosition(this->point, clickedRowIndex, clickedColumnIndex);
 
-	//2. 해당 위치 이전의 단어 시작점을 찾는다.
+	//2. 해당 위치가 단어 시작점이 아니라면, 해당 위치 이전의 단어 시작점을 찾는다.
 	Glyph* note = ((NotepadForm*)(this->parent))->note;
 	Glyph* clickedRow = note->GetAt(clickedRowIndex);
-	Long wordStart = clickedRow->FindPreviousWordStart(clickedColumnIndex);
+	Long wordStart = clickedColumnIndex;
+	if (clickedColumnIndex > 0 && clickedRow->GetAt(clickedColumnIndex - 1)->IsWordCharacter())
+	{
+		wordStart = clickedRow->FindPreviousWordStart(clickedColumnIndex);
+	}
 
 	//3. 단어 시작점으로 이동한다.
 	Long rowIndex = note->GetCurrent();

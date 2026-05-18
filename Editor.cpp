@@ -248,14 +248,6 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 			j++;
 		}
 
-#if 0
-		if (currentColumnIndex >= row->GetLength())
-		{
-			currentRowIndex = note->Next();
-			row = note->GetAt(currentRowIndex);
-			currentColumnIndex = row->First();
-		}
-#endif
 		if (currentColumnIndex >= row->GetLength() && currentRowIndex + 1 < note->GetLength())
 		{
 			currentRowIndex = note->Next();
@@ -291,23 +283,6 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 		i = 0;
 		while (i < restLength)
 		{
-#if 0
-			if (currentColumnIndex < row->GetLength())
-			{
-				row->Remove(currentColumnIndex);
-				currentColumnIndex = row->Move(currentColumnIndex);
-				noteWidthCache->MarkDirty(currentRowIndex);
-			}
-
-			if (currentColumnIndex >= row->GetLength())
-			{
-				note->MergeRows(currentRowIndex);
-				noteWidthCache->Remove(currentRowIndex + 1);
-				noteWidthCache->MarkDirty(currentRowIndex);
-			}
-
-			i++;
-#endif
 			if (currentColumnIndex < row->GetLength())
 			{
 				row->Remove(currentColumnIndex);

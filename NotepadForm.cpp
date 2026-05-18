@@ -308,94 +308,17 @@ LRESULT NotepadForm::OnImeStartComposition(WPARAM wParam, LPARAM lParam) {
 
 LRESULT NotepadForm::OnImeComposition(WPARAM wParam, LPARAM lParam) {
 	return this->OnForwardingIMEAdapter(WM_IME_COMPOSITION, wParam, lParam);
-#if 0
-	LRESULT ret;
-	if (lParam & GCS_COMPSTR && !this->isWaitingForImeConversion)
-	{
-		if (!this->isWaitingForImeComposition) //IME 한자변환 입력이 아니면,
-		{
-			HIMC himc = ImmGetContext(this->GetSafeHwnd());
-			TCHAR character[256];
-			Long length = ImmGetCompositionString(himc, GCS_COMPSTR, character, 256);
-			character[length] = '\0';
-
-			Command* command = NULL;
-			if (length > 0)
-			{
-				AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-				this->HandleCommand(nID, character, FALSE);
-			}
-			else if (length == 0)
-			{
-				this->HandleCommand(AppID::ID_COMMAND_ERASE_BEFORE_CARET, NULL, FALSE);
-			}
-		}
-		else //IME 한자 변환 입력이면,
-		{
-			this->isWaitingForImeComposition = FALSE;
-			this->isWaitingForImeConversion = TRUE;
-			this->PostMessage(WM_CONVERT_IME_CHARACTER, 0, 0);
-		}
-
-		ret = 0;
-	}
-	else
-	{
-		//ret = DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);
-	}
-
-	return DefWindowProc(WM_IME_COMPOSITION, wParam, lParam);//ret;
-#endif
 }
 LRESULT NotepadForm::OnImeChar(WPARAM wParam, LPARAM lParam) {
 	return this->OnForwardingIMEAdapter(WM_IME_CHAR, wParam, lParam);
-#if 0
-	char character[2];
-    character[0] = (BYTE)(wParam >> 8);
-    character[1] = (BYTE)wParam;
-
-    if (!this->isWaitingForImeComposition) //1. 한자 변환중이 아니면,
-    {
-		if (!this->isWaitingForImeConversion)
-		{
-			AppID nID = WritingModeSelector::DetermineWritingMode(this->pagingBuffer);
-			this->HandleCommand(nID, character, TRUE);
-		}
-		else
-		{
-			this->imeController->RecordConverted(character);
-			this->ResolveIMEEvent();
-		}
-	}
-
-    return 0;
-#endif
 }
 
 LRESULT NotepadForm::OnImeNotify(WPARAM wParam, LPARAM lParam) {
 	return this->OnForwardingIMEAdapter(WM_IME_NOTIFY, wParam, lParam);
-#if 0
-	if (wParam == IMN_OPENCANDIDATE || wParam == IMN_CLOSECANDIDATE)
-	{
-		this->KillTimer(TIMER_ID_IME_OPEN_CANDIDATE);
-	}
-
-	return  DefWindowProc(WM_IME_NOTIFY, wParam, lParam);
-#endif
 }
 
 LRESULT NotepadForm::OnIMEConversion(WPARAM wParam, LPARAM lParam) {
 	return this->OnForwardingIMEAdapter(WM_IME_CONVERSION, wParam, lParam);
-#if 0
-	if (this->isWaitingForImeConversion)
-	{
-		this->imeController->SetWindowPosition();
-		this->imeController->Convert();
-		this->SetTimer(TIMER_ID_IME_OPEN_CANDIDATE, IME_OPEN_CANDIDATE_INTERVAL, 0);
-	}
-
-	return 0;
-#endif
 }
 
 LRESULT NotepadForm::OnForwardingIMEAdapter(UINT message, WPARAM wParam, LPARAM lParam) {

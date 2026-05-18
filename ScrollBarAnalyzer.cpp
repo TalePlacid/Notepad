@@ -65,48 +65,7 @@ void ScrollBarAnalyzer::AnalyzeWithoutWrap() {
 		}
 		i++;
 	}
-#if 0
-	if (scrollController->HasHScroll())
-	{
-		Long rowIndex = note->GetCurrent();
-		i = rowIndex - rowCount;
-		if (i < 0)
-		{
-			i = 0;
-		}
 
-		Long j = rowIndex + rowCount;
-		if (j > note->GetLength() - 1)
-		{
-			j = note->GetLength() - 1;
-		}
-
-		while (i <= j)
-		{
-			row = note->GetAt(i);
-			width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-			if (width > this->contentsWidth)
-			{
-				this->contentsWidth = width;
-			}
-			i++;
-		}
-	}
-	else
-	{
-		i = 0;
-		while (i < note->GetLength())
-		{
-			row = note->GetAt(i);
-			width = sizeCalculator->GetRowWidth(row->MakeString().c_str());
-			if (width > this->contentsWidth)
-			{
-				this->contentsWidth = width;
-			}
-			i++;
-		}
-	}
-#endif
 	this->vScrollNeeded = this->contentsHeight > this->clientAreaHeight;
 	this->hScrollNeeded = this->contentsWidth > this->clientAreaWidth;
 
