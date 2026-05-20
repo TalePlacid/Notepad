@@ -11,11 +11,10 @@ Note::Note(Long capacity)
 
 Note::Note(string str, Long capapcity)
 	:Composite(capacity) {
-	GlyphFactory glyphFactory;
 	char character[2];
 	
 	character[0] = '\r';
-	Glyph* glyph = glyphFactory.Create(character);
+	Glyph* glyph = GlyphFactory::Create(character);
 	
 	Long index = this->Add(glyph);
 	Glyph* current = this->GetAt(index);
@@ -30,7 +29,7 @@ Note::Note(string str, Long capapcity)
 			character[1] = str.at(i);
 		}
 
-		glyph = glyphFactory.Create(character);
+		glyph = GlyphFactory::Create(character);
 
 		if (character[0] != '\r')
 		{
@@ -131,7 +130,6 @@ Long Note::MergeRows(Long index) {
 }
 
 Long Note::SplitRows(Long rowIndex, Long columnIndex, bool isDummyRow) {
-	GlyphFactory glyphFactory;
 	char contents[2];
 	if (!isDummyRow)
 	{
@@ -142,7 +140,7 @@ Long Note::SplitRows(Long rowIndex, Long columnIndex, bool isDummyRow) {
 	{
 		contents[0] = '\n';
 	}
-	Glyph* newRow = glyphFactory.Create(contents);
+	Glyph* newRow = GlyphFactory::Create(contents);
 
 	Long index = -1;
 	if (rowIndex < this->length)

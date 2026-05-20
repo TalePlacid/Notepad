@@ -1,5 +1,4 @@
 #include "Row.h"
-#include "../TextOutVisitor.h"
 
 #pragma warning(disable:4996)
 
@@ -173,7 +172,6 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 	string str("this is    test");
-	GlyphFactory factory;
 	Glyph* glyph;
 	Row row;
 
@@ -185,7 +183,7 @@ int main(int argc, char* argv[]) {
 	while (i < str.length())
 	{
 		content = str.at(i);
-		glyph = factory.Create(&content);
+		glyph = GlyphFactory::Create(&content);
 		row.Add(glyph);
 		i++;
 	}

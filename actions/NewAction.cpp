@@ -27,11 +27,10 @@ void NewAction::Perform() {
 		notepadForm->note = NULL;
 	}
 
-	GlyphFactory glyphFactory;
 	char character = '\0';
-	notepadForm->note = glyphFactory.Create(&character);
+	notepadForm->note = GlyphFactory::Create(&character);
 	character = '\r';
-	notepadForm->note->Add(glyphFactory.Create(&character));
+	notepadForm->note->Add(GlyphFactory::Create(&character));
 	
 	if (notepadForm->noteWidthCache != NULL)
 	{

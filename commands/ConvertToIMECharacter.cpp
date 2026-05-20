@@ -83,8 +83,7 @@ void ConvertToIMECharacterCommand::Execute() {
 		this->source[0] = character[0];
 		this->source[1] = character[1];
 
-		GlyphFactory glyphFactory;
-		Glyph* glyph = glyphFactory.Create(this->replaced);
+		Glyph* glyph = GlyphFactory::Create(this->replaced);
 		row->Replace(this->columnIndex, glyph);
 		row->Next();
 
@@ -105,8 +104,7 @@ void ConvertToIMECharacterCommand::Undo() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	GlyphFactory glyphFactory;
-	Glyph* glyph = glyphFactory.Create(this->source, true);
+	Glyph* glyph = GlyphFactory::Create(this->source, true);
 	row->Replace(columnIndex, glyph);
 	columnIndex = row->Next();
 
@@ -129,8 +127,7 @@ void ConvertToIMECharacterCommand::Redo() {
 	Glyph* row = note->GetAt(rowIndex);
 	Long columnIndex = row->GetCurrent();
 
-	GlyphFactory glyphFactory;
-	Glyph* glyph = glyphFactory.Create(this->replaced, true);
+	Glyph* glyph = GlyphFactory::Create(this->replaced, true);
 	row->Replace(columnIndex, glyph);
 	columnIndex = row->Next();
 

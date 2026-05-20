@@ -10,7 +10,7 @@ public:
 	GlyphFactory();
 	virtual ~GlyphFactory();
 
-	virtual Glyph* Create(char(*content), bool isSelected = false);
+	static Glyph* Create(char(*content), bool isSelected = false);
 };
 
 #endif // !_GLYPHFACTORY_H

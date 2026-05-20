@@ -181,8 +181,7 @@ void EraseBeforeCaretCommand::Undo() {
 	if (this->character[0] != '\r')
 	{
 		//3.1. 노트에서 삽입한다.
-		GlyphFactory glyphFactory;
-		Glyph* glyph = glyphFactory.Create(this->character);
+		Glyph* glyph = GlyphFactory::Create(this->character);
 		row->Add(columnIndex, glyph);
 		columnIndex = row->GetCurrent();
 		noteWidthCache->MarkDirty(rowIndex);

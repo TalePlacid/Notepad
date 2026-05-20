@@ -1,5 +1,4 @@
 #include "Character.h"
-#include "../TextOutVisitor.h"
 
 #pragma warning(disable:4996)
 

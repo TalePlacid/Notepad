@@ -91,8 +91,7 @@ void WriteAtEndCommand::Execute() {
 
 	//3. 노트에서 적는다.
 	Long vScrollChanged = 0;
-	GlyphFactory glyphFactory;
-	Glyph* glyph = glyphFactory.Create(this->character);
+	Glyph* glyph = GlyphFactory::Create(this->character);
 	if (this->character[0] != '\r')
 	{
 		row->Add(glyph);
@@ -252,8 +251,7 @@ void WriteAtEndCommand::Redo() {
 		columnIndex = row->GetCurrent();
 
 		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-		GlyphFactory glyphFactory;
-		Glyph* glyph = glyphFactory.Create(this->character);
+		Glyph* glyph = GlyphFactory::Create(this->character);
 		if (this->character[0] != '\r')
 		{
 			row->Add(glyph);

@@ -13,15 +13,14 @@ NoteConverter::~NoteConverter() {
 }
 
 Glyph* NoteConverter::Convert(string str) {
-	GlyphFactory glyphFactory;
 	char character[2];
 
 	character[0] = '\0';
-	Glyph* note = glyphFactory.Create(character);
+	Glyph* note = GlyphFactory::Create(character);
 
 	character[0] = '\r';
 	character[1] = '\n';
-	Glyph* row = glyphFactory.Create(character);
+	Glyph* row = GlyphFactory::Create(character);
 	Long rowIndex = note->Add(row);
 
 	Glyph* glyph;
@@ -35,7 +34,7 @@ Glyph* NoteConverter::Convert(string str) {
 			character[1] = str.at(i);
 		}
 
-		glyph = glyphFactory.Create(character);
+		glyph = GlyphFactory::Create(character);
 
 		if (character[0] != '\r')
 		{

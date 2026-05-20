@@ -38,7 +38,6 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 
 	//3. 복사할 내용의 끝까지 반복한다.
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
-	GlyphFactory glyphFactory;
 	NoteWrapper noteWrapper(this->parent);
 	Glyph* glyph;
 	TCHAR character[2];
@@ -56,7 +55,7 @@ void Editor::InsertTextAt(Long offset, Long columnIndex, CString text, BOOL isSe
 		//3.2. 줄바꿈 문자가 아니라면, 줄에서 쓴다.
 		if (character[0] != '\r')
 		{
-			glyph = glyphFactory.Create(character, isSelected);
+			glyph = GlyphFactory::Create(character, isSelected);
 			row->Add(currentColumnIndex, glyph);
 			currentColumnIndex = row->GetCurrent();
 			noteWidthCache->MarkDirty(currentRowIndex);
@@ -225,7 +224,6 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 	
 	NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 	TCHAR character[2];
-	GlyphFactory glyphFactory;
 	Glyph* glyph;
 	Glyph* nextRow;
 	Long j = 0;
@@ -240,7 +238,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 				character[1] = replacingText.GetAt(++j);
 			}
 
-			glyph = glyphFactory.Create(character, true);
+			glyph = GlyphFactory::Create(character, true);
 			row->Replace(currentColumnIndex, glyph);
 			currentColumnIndex = row->Next();
 			noteWidthCache->MarkDirty(currentRowIndex);
@@ -269,7 +267,7 @@ void Editor::Replace(Long offset, CString sourceText, CString replacingText,
 				character[1] = replacingText.GetAt(++j);
 			}
 
-			glyph = glyphFactory.Create(character, true);
+			glyph = GlyphFactory::Create(character, true);
 			row->Add(currentColumnIndex, glyph);
 			currentColumnIndex = row->GetCurrent();
 			noteWidthCache->MarkDirty(currentRowIndex);
