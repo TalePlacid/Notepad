@@ -1,6 +1,6 @@
 #include "NoteConverter.h"
-#include "glyphs/GlyphFactory.h"
-#include "glyphs/Glyph.h"
+#include "GlyphFactory.h"
+#include "Glyph.h"
 
 #pragma warning(disable:4996)
 

@@ -10,7 +10,7 @@
 #include "SizeCalculator.h"
 #include "NoteWrapper.h"
 #include "SuspendAutoWrap.h"
-#include "NoteConverter.h"
+#include "glyphs/NoteConverter.h"
 
 #pragma warning(disable:4996)
 

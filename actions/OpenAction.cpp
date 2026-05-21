@@ -7,7 +7,7 @@
 #include "../PagingBuffer.h"
 #include "../ScrollController.h"
 #include "../HistoryBook.h"
-#include "../NoteConverter.h"
+#include "../glyphs/NoteConverter.h"
 #include "../NoteWrapper.h"
 #include "../TextFileIO.h"
 #include "../PageManager.h"
