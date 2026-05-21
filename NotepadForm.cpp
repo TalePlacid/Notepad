@@ -13,7 +13,7 @@
 #include "CaretController.h"
 #include "ScrollController.h"
 #include "HistoryBook.h"
-#include "SearchResultController.h"
+#include "searches/SearchResultController.h"
 #include "StatusBarController.h"
 #include "MouseHandler.h"
 #include "ClipboardController.h"

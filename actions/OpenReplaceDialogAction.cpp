@@ -3,7 +3,7 @@
 #include "OpenReplaceDialogAction.h"
 #include "../message.h"
 #include "../NotepadForm.h"
-#include "../SearchResultController.h"
+#include "../searches/SearchResultController.h"
 #include "../PagingBuffer.h"
 
 #pragma warning(disable:4996)

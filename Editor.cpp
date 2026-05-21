@@ -2,7 +2,7 @@
 #include "NotepadForm.h"
 #include "glyphs/Glyph.h"
 #include "PagingBuffer.h"
-#include "SearchResultController.h"
+#include "searches/SearchResultController.h"
 #include "ScrollController.h"
 #include "SizeCalculator.h"
 #include "glyphs/NoteWidthCache.h"

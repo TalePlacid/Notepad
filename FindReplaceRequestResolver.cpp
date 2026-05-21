@@ -1,7 +1,7 @@
 #include <afxwin.h>
 #include "FindReplaceRequestResolver.h"
 #include "NotepadForm.h"
-#include "SearchResultController.h"
+#include "searches/SearchResultController.h"
 #include "PagingBuffer.h"
 #include "FindReplaceOptionMaker.h"
 

@@ -2,7 +2,7 @@
 #include "FindNextAction.h"
 #include "../FindReplaceOption.h"
 #include "../NotepadForm.h"
-#include "../SearchResultController.h"
+#include "../searches/SearchResultController.h"
 #include "../Editor.h"
 
 #pragma warning(disable:4996)

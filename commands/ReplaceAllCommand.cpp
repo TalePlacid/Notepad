@@ -3,7 +3,7 @@
 #include "../NotepadForm.h"
 #include "../glyphs/Glyph.h"
 #include "../PagingBuffer.h"
-#include "../SearchResultController.h"
+#include "../searches/SearchResultController.h"
 #include "../Editor.h"
 #include "../PageManager.h"
 

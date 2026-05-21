@@ -1,7 +1,7 @@
 #ifndef _SEARCHRESULTCONTROLLER_H //guard
 #define _SEARCHRESULTCONTROLLER_H
 #include <afxwin.h>
-#include "FindReplaceOption.h"
+#include "../FindReplaceOption.h"
 
 typedef signed long int Long;
 
