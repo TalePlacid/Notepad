@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "../Visitor.h"
 
 #pragma warning(disable:4996)
 
