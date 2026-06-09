@@ -52,7 +52,5 @@ void NewAction::Perform() {
 
 	notepadForm->GetParent()->SetWindowTextA("메모장 ~제목없음");
 	notepadForm->captionController->UpdateCaption();
-
-	this->parent->Invalidate();
 }
 

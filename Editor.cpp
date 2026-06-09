@@ -694,7 +694,7 @@ Long Editor::Find(FindReplaceOption findReplaceOption) {
 		}
 	}
 
-	//3. 검색결과가 없으면, 경고문을 출력한다.
+	//5. 검색결과가 없으면, 경고문을 출력한다.
 	if (searchResultController->GetLength() <= 0 || nearestIndex < 0)
 	{
 		CString message;

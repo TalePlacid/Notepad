@@ -274,10 +274,6 @@ void InsertAtCaretCommand::Redo() {
 	if (this->onChar)
 	{
 		//3.1. 노트에서 적는다.
-		rowIndex = note->GetCurrent();
-		row = note->GetAt(rowIndex);
-		columnIndex = row->GetCurrent();
-
 		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		Glyph* glyph = GlyphFactory::Create(this->character);
 		if (this->character[0] != '\r')

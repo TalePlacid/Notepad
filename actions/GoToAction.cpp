@@ -47,7 +47,7 @@ void GoToAction::Perform() {
 				//2.2. 차이를 구한다.
 				Long difference = pagingBuffer->GetRowStartIndex() + note->GetCurrent() - lineNumber;
 
-				//2.3. 음수이면 MoveDown()을 횟수만큼 반복한다.
+				//2.3. 음수이면 횟수만큼 아랫줄로 이동한다.
 				Editor editor(this->parent);
 				Long i = 0;
 				if (difference < 0)
@@ -59,7 +59,7 @@ void GoToAction::Perform() {
 						i++;
 					}
 				}
-				else if (difference > 0) //2.4. 양수이면 MoveUp()을 횟수만큼 반복한다.
+				else if (difference > 0) //2.4. 양수이면 횟수만큼 윗줄로 이동한다.
 				{
 					while (i < difference)
 					{

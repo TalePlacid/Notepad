@@ -48,7 +48,7 @@ void MovePageUpAction::Perform() {
 		Long bytes = row->GetPreviousBytes(columnIndex);
 		currentOffset = pagingBuffer->MoveOffset(currentOffset - bytes);
 
-		//1.3. 줄 수 만큼, 첫번째 줄이 아니면 반복한다.
+		//1.4. 줄 수 만큼, 첫번째 줄이 아니면 반복한다.
 		Glyph* previousRow;
 		Long previousColumnIndex;
 		Long rowBytes;
@@ -56,21 +56,21 @@ void MovePageUpAction::Perform() {
 		Long i = 0;
 		while (i < rowCount && rowIndex > 0)
 		{
-			//1.3.1. 적재범위를 벗어나면, 재적재한다.
+			//1.4.1. 적재범위를 벗어나면, 재적재한다.
 			if (note->IsAboveTopLine(rowIndex - 1) && pagingBuffer->GetRowStartIndex() > 0)
 			{
 				PageManager::LoadPrevious(this->parent);
 				rowIndex = note->GetCurrent();
 			}
 
-			//1.3.2. 노트에서 이동한다.
+			//1.4.2. 노트에서 이동한다.
 			previousRow = note->GetAt(rowIndex);
 			previousColumnIndex = previousRow->GetCurrent();
 			rowIndex = note->Previous();
 			row = note->GetAt(rowIndex);
 			columnIndex = row->First();
 
-			//1.3.3. 페이징 버퍼에서 이동한다.
+			//1.4.3. 페이징 버퍼에서 이동한다.
 			previousRowBytes = previousRow->GetPreviousBytes(previousColumnIndex);
 			rowBytes = row->GetBytes();
 			bytes = previousRowBytes + rowBytes;
@@ -83,7 +83,7 @@ void MovePageUpAction::Perform() {
 			i++;
 		}
 
-		//1.4. 줄 너비와 가장 가까운 위치로 이동한다.
+		//1.5. 줄 너비와 가장 가까운 위치로 이동한다.
 		Long nearestIndex = sizeCalculator->GetNearestColumnIndex(rowIndex, originalRowWidth);
 		movedIndex = row->Move(nearestIndex);
 		bytes = row->GetPreviousBytes(movedIndex);

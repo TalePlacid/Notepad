@@ -59,6 +59,7 @@ void EraseBeforeCaretCommand::Execute() {
 		Long columnIndex = row->GetCurrent();
 
 		//1.2. 줄의 처음이 아니라면,
+		Glyph* previousRow;
 		NoteWidthCache* noteWidthCache = ((NotepadForm*)(this->parent))->noteWidthCache;
 		Long bytes = 0;
 		Long vScrollChanged = 0;
@@ -108,7 +109,7 @@ void EraseBeforeCaretCommand::Execute() {
 			}
 			else //1.3.3. 현재줄이 가짜줄이면, 이전줄의 마지막 글자를 지운다.
 			{
-				Glyph* previousRow = note->GetAt(rowIndex - 1);
+				previousRow = note->GetAt(rowIndex - 1);
 				Glyph* letter = previousRow->GetAt(previousRow->GetLength() - 1);
 				TCHAR(*letter_) = (char*)(*letter);
 				this->character[0] = letter_[0];
@@ -271,6 +272,7 @@ void EraseBeforeCaretCommand::Redo() {
 		}
 
 		//4.2. 현재 줄이 진짜줄이면, 이전줄과 합친다.
+		Glyph* previousRow;
 		if (!row->IsDummyRow())
 		{
 			bytes = 2;
@@ -287,7 +289,7 @@ void EraseBeforeCaretCommand::Redo() {
 		}
 		else //4.3. 현재줄이 가짜줄이면, 이전줄의 마지막 글자를 지운다.
 		{
-			Glyph* previousRow = note->GetAt(rowIndex - 1);
+			previousRow = note->GetAt(rowIndex - 1);
 			bytes = 1;
 			if (!ByteChecker::IsASCII(this->character))
 			{
