@@ -4,9 +4,14 @@
 !*.cpp
 !*.h
 !*.rc
+!README.md
+!docs/*.pdf
+!docs/*.xlsx
 
 Debug/
-Release/
+Release/*
+release/*
+!release/SetupNotepad.msi
 x64/
 x86/
 Win32/
